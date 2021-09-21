@@ -1,5 +1,62 @@
-\documentclass[a4paper]{article}
+% !TeX program = xelatex
+% !TeX encoding = utf8
+% !TeX root = ProjectPlan.tex
 
+\documentclass[a4paper, twosided, 11pt]{scrartcl}
 
+%% Language configuration
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+
+%$ Specify where floatings go and make nicer looking tables
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+%% graphics
+\usepackage{graphicx}
+
+%% Set up font
+\usepackage[T1]{fontenc}
+\usepackage[usefilenames, DefaultFeatures={Ligatures=Common}]{plex-otf}
+\renewcommand*\familydefault{\sfdefault}
+
+%% Header and Footers
+\usepackage[automark]{scrlayer-scrpage}
+\ihead{Project Plan}
+\chead{}
+\ohead{\headmark}
+
+\ifoot{}
+\cfoot{}
+\ofoot{\pagemark}
+
+%% Access metadata
+\usepackage{titling}
+
+% Metadata
+\title{Project Plan}
+\author{Naoki Pross, Sara Cinzia Halter}
+
+% Document
 \begin{document}
+\begin{titlepage}
+  \includegraphics[height=3cm]{fig/ost-logo}
+  \begin{flushright}
+    % TODO: OST logo
+    \vspace{5cm}
+    {\Huge \bfseries \thetitle} \\
+    \vspace{5mm}
+    {\LARGE Project: \textit{Fading illustration with SDR}} \\
+    \vspace{5mm}
+    {\LARGE \bfseries Version 0.1}
+  \end{flushright}
+\end{titlepage}
+
+\clearpage
+
+\section{Changelog}
+\section{Introduction}
+
 \end{document}
