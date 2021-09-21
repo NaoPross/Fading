@@ -37,6 +37,8 @@
 
 %% gantt configuration
 \usepackage{pgfgantt}
+\usepackage[Optionen]{geometry}
+
 
 %% Landscape pages
 \usepackage{pdflscape}
@@ -88,21 +90,67 @@
 
 \section{Introduction}
 
-\section{Project Schedule}
+\clearpage
 
+\section{Project Schedule}
+\newgeometry{margin=0.5cm} 
 \begin{landscape}
-	\begin{figure}[h] \centering
-		\begin{ganttchart}{1}{12}
-			\gantttitle{2011}{12} \\
-			\gantttitlelist{1,...,12}{1} \\
-			\ganttgroup{Group 1}{1}{7} \\
-			\ganttbar{Task 1}{1}{2} \\
-			\ganttlinkedbar{Task 2}{3}{7} \ganttnewline
-			\ganttmilestone{Milestone}{7} \ganttnewline
-			\ganttbar{Final Task}{8}{12}
-			\ganttlink{elem2}{elem3}
-			\ganttlink{elem3}{elem4}
-		\end{ganttchart}
+	\begin{figure}[h] %%\centering
+%		\begin{ganttchart}{1}{12}
+%			\gantttitle{Project Schedule}{12} \\
+%			\gantttitlelist{1,...,12}{1} \\
+%			\ganttgroup{Group 1}{1}{7} \\
+%			\ganttbar{Task 1}{1}{2} \\
+%			\ganttlinkedbar{Task 2}{3}{7} \ganttnewline
+%			\ganttmilestone{Milestone}{7} \ganttnewline
+%			\ganttbar{Final Task}{8}{12}
+%			\ganttlink{elem2}{elem3}
+%			\ganttlink{elem3}{elem4}
+%		\end{ganttchart}
+	
+	 
+
+%	\begin{ganttchart}[
+%		hgrid, 
+%		vgrid, x unit=3cm]{1}{7}
+%		\gantttitlelist[
+%		title list options=%
+%		{var=\y, evaluate=\y as \x%
+%			using "\pgfcalendarweekdayshortname{\y}"}
+%		]{0,...,6}{1} \\
+%		\ganttbar{}{1}{4}
+%		\ganttbar{}{6}{7}
+%	\end{ganttchart}
+
+% https://mirror.foobar.to/CTAN/graphics/pgf/contrib/pgfgantt/pgfgantt.pdf
+
+
+\begin{ganttchart}[
+	hgrid,
+	vgrid,
+	x unit=2.62mm,
+%	y unit title=.6cm,
+%	y unit chart=1.5cm,
+	time slot format=isodate
+	]{2021-09-20}{2021-12-26}
+	\gantttitlecalendar{year, month=name, week=38} \\
+	\ganttmilestone{Milestone 1}{2021-12-24}\ganttnewline
+	\ganttbar{Research}{2021-09-20}{2021-12-26}\ganttnewline
+	\ganttbar{Simulation}{2021-09-20}{2021-12-26}\ganttnewline
+	\ganttbar{Measurements}{2021-09-20}{2021-12-26}\ganttnewline
+	\ganttbar{\textbf{Documentation}}{2021-09-21}{2021-12-20}\ganttnewline
+	\ganttbar{Projectplan \& Specification}{2021-09-21}{2021-10-05}\ganttnewline
+	\ganttbar{Abstract}{2021-09-20}{2021-12-26}\ganttnewline
+	\ganttbar{Abstract}{2021-09-20}{2021-12-26}\ganttnewline
+	\ganttbar{Print}{2021-12-20}{2021-12-24}\ganttnewline
+	\ganttbar{Reserve}{2021-12-01}{2021-12-24}\ganttnewline
+	\ganttmilestone{Submission}{2021-12-24}\ganttnewline
+	\ganttbar{Presentation prep.}{2021-12-13}{2021-12-24}\ganttnewline
+	\ganttmilestone{Presentation}{2021-12-23}
+
+	
+\end{ganttchart}
 	\end{figure}
 \end{landscape}
+\restoregeometry % Wieder die alten Ränder
 \end{document}
