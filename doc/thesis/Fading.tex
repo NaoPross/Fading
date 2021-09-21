@@ -1,0 +1,25 @@
+% !TeX program = xelatex
+% !TeX encoding = utf8
+% !TeX root = Fading.tex
+% vim: set ts=2 sw=2 noet:
+
+\RequirePackage{silence} % :-\
+\WarningFilter{scrreprt}{Usage of package `tocloft'}
+%\WarningFilter{scrreprt}{Activating an ugly workaround}
+\WarningFilter{titlesec}{Non standard sectioning command}
+
+\documentclass[
+	twoside, openright, titlepage, numbers = noenddot,
+	headinclude, footinclude, cleardoblepage = empty, abstract = on,
+	BCOR = 5mm, paper = a4, fontsize = 11pt
+]{scrreprt}
+
+\input{tex/classicthesis-config}
+\usepackage{tex/classicthesis}
+
+\begin{document}
+
+\cleardoublepage
+\chapter{Intro}
+
+\end{document}
