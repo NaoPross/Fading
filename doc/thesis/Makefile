@@ -29,7 +29,6 @@ all: $(PDF)
 	$(TEX) $(TEXARGS) $<
 	# TODO: makeindex and stuff
 	$(TEX) $(TEXARGS) $<
-	$(TEX) $(TEXARGS) $<
 
 .PHONY: clean cleanall
 clean:

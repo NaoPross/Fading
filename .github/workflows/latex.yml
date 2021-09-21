@@ -14,3 +14,9 @@ jobs:
       uses: DanySK/setup-texlive-action@0.1.1
       with:
         requirements-file: .github/texlive/packages.tex
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+    - name: Typeset Project Plan
+      run: make -C doc/projectplan
+    - name: Typeset Thesis
+      run: make -C doc/thesis
