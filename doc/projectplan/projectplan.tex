@@ -35,9 +35,16 @@
 %% Access metadata
 \usepackage{titling}
 
+%% gantt configuration
+\usepackage{pgfgantt}
+
+%% Landscape pages
+\usepackage{pdflscape}
+
 % Metadata
 \title{Project Plan}
 \author{Naoki Pross, Sara Cinzia Halter}
+
 
 % Document
 \begin{document}
@@ -81,4 +88,21 @@
 
 \section{Introduction}
 
+\section{Project Schedule}
+
+\begin{landscape}
+	\begin{figure}[h] \centering
+		\begin{ganttchart}{1}{12}
+			\gantttitle{2011}{12} \\
+			\gantttitlelist{1,...,12}{1} \\
+			\ganttgroup{Group 1}{1}{7} \\
+			\ganttbar{Task 1}{1}{2} \\
+			\ganttlinkedbar{Task 2}{3}{7} \ganttnewline
+			\ganttmilestone{Milestone}{7} \ganttnewline
+			\ganttbar{Final Task}{8}{12}
+			\ganttlink{elem2}{elem3}
+			\ganttlink{elem3}{elem4}
+		\end{ganttchart}
+	\end{figure}
+\end{landscape}
 \end{document}
