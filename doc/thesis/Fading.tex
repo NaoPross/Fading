@@ -5,13 +5,12 @@
 
 \RequirePackage{silence} % :-\
 \WarningFilter{scrreprt}{Usage of package `tocloft'}
-%\WarningFilter{scrreprt}{Activating an ugly workaround}
 \WarningFilter{titlesec}{Non standard sectioning command}
 
 \documentclass[
-	twoside, openright, titlepage, numbers = noenddot,
-	headinclude, footinclude, cleardoblepage = empty, abstract = on,
-	BCOR = 5mm, paper = a4, fontsize = 11pt
+	twoside, openright, titlepage, numbers=noenddot,
+	headinclude, footinclude, cleardoublepage=empty, abstract=on,
+	BCOR=5mm, paper=a4, fontsize=11pt
 ]{scrreprt}
 
 \input{tex/classicthesis-config}
@@ -19,7 +18,16 @@
 
 \begin{document}
 
-\cleardoublepage
-\chapter{Intro}
+%% Table of contents, List of figures, etc.
+\begingroup
+	\let\clearpage\relax
+	\let\cleardoublepage\relax
+
+	\pagestyle{scrheadings}
+	\tableofcontents
+	\listoffigures
+	\listoftables
+	\lstlistoflistings
+\endgroup
 
 \end{document}
