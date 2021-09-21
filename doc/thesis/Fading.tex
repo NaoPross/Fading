@@ -17,17 +17,28 @@
 \usepackage{tex/classicthesis}
 
 \begin{document}
+	% stuff before
+	\hypersetup{pageanchor = false}
+	\include{tex/titlepage}
 
-%% Table of contents, List of figures, etc.
-\begingroup
-	\let\clearpage\relax
-	\let\cleardoublepage\relax
+	\pdfbookmark[1]{Abstract}{Abstract}
+	\begin{abstract}
+		%% TODO
+	\end{abstract}
+	\cleardoublepage
 
-	\pagestyle{scrheadings}
-	\tableofcontents
-	\listoffigures
-	\listoftables
-	\lstlistoflistings
-\endgroup
+	\pagenumbering{roman}
+	\include{tex/preamble}
+
+	% actual content
+	\hypersetup{pageanchor = true}
+	\pagenumbering{arabic}
+	\setcounter{page}{1}
+	\include{chapters/introduction}
+	\include{chapters/theory}
+	\include{chapters/implementation}
+	\include{chapters/conclusions}
+
+	% TODO: stuff after
 
 \end{document}
