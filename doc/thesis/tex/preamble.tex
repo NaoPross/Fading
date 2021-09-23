@@ -1,0 +1,29 @@
+% vim: set ts=2 sw=2 noet:
+
+% Table of contents
+\pdfbookmark[1]{\contentsname}{tableofcontents}
+\tableofcontents
+
+\clearpage
+
+% List of figures, tables and listings
+\begingroup
+	\let\clearpage\relax
+	\let\cleardoublepage\relax
+
+	\automark[section]{chapter}
+	\renewcommand{\chaptermark}[1]{\markboth{\spacedlowsmallcaps{#1}}{\spacedlowsmallcaps{#1}}}
+	\renewcommand{\sectionmark}[1]{\markright{\textsc{\thesection}\enspace\spacedlowsmallcaps{#1}}}
+
+	\pagestyle{scrheadings}
+
+	\pdfbookmark[1]{\listfigurename}{lof}
+	\listoffigures
+
+	\pdfbookmark[1]{\listtablename}{lot}
+	\listoftables
+
+	\pdfbookmark[1]{\lstlistlistingname}{lol}
+	\lstlistoflistings
+\endgroup
+
