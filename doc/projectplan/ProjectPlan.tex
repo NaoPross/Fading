@@ -70,6 +70,8 @@
 	\bfseries Date & \bfseries Version & \bfseries Author & \bfseries Description \\
 	\midrule
 	2021-09-21 & 0.1 & Pross N.  & Created document \\
+	2021-09-23 & 0.2 & Pross N./ Halter S. & Created Project Plan \\
+	2021-09-23 & 0.3 & Halter S. & First Task description \\
 	\bottomrule
 \end{tabularx}
 
@@ -93,25 +95,45 @@
 
 \section{Task Description}
 
-\begin{itemize}
-	\item Prototype of QAM transmission with SDR (add other modulations later)
-	\item Model of a fading channel and simulation
-	\begin{itemize}
-		\item Slow fading (shadowing)
-		\item Fast fading (flat fading and multi path 
-	\end{itemize}
-	\item Demonstration (hardware) with fading channel
-	\item Demonstration with moving receiver 
-\end{itemize}
+\subsection{Research}
+Get some basically knowledge about the topic.
+
+Decide wish software fits the best, get to know this.
+Same thing with the SDR Hardware.
+
+\subsection{Prototype}
+The first simulation will be from the Transmitter to the Reviser without any planed effects in between, with fixed parameters. After the Simulation on that Setup we will try it on the Hardware.
+
+The Goal of that task is to have a functional Prototype for further simulation and measurements to compare with. 
+
+\subsection{Demonstration}
+After we have a functional baseline we will add some fading channel Models.
+First without movement. Later when that is done and tested, begins the same with a movable Reviser.
+
+\subsection{Result}
+
+So at the end we can show Fading the fading effect simple. 
+
+	  
+%\begin{itemize}
+%	\item Prototype of QAM transmission with SDR (add other modulations later)
+%	\item Model of a fading channel and simulation
+%	\begin{itemize}
+%		\item Slow fading (shadowing)
+%		\item Fast fading (flat fading and multi path 
+%	\end{itemize}
+%	\item Demonstration (hardware) with fading channel
+%	\item Demonstration with moving receiver 
+%\end{itemize}
 
 
 
 \clearpage
-\newgeometry{vmargin = 2.5cm, hmargin = 2cm} 
+\newgeometry{vmargin = 2.5cm, hmargin = 1.5cm} 
 
 \begin{landscape}
-	\section{Project Schedule}
 	\begin{figure}[h]
+		\section{Project Schedule}
 		\begin{ganttchart}[
 			time slot format = isodate,
 			% style changes
