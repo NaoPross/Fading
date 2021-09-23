@@ -78,7 +78,7 @@
 	\renewcommand{\arraystretch}{2}
 	\begin{tabularx}{\textwidth}{lp{.2\textwidth}X}
 		                   & \bfseries Date & \bfseries Signature\\
-		Halter Cinzia Sara & \hrulefill & \hrulefill \\
+		Halter Sara Cinzia & \hrulefill & \hrulefill \\
 		Pross Naoki        & \hrulefill & \hrulefill \\
 	\end{tabularx}
 }
@@ -91,54 +91,77 @@
 
 \section{Introduction}
 
+\section{Task Description}
+
+\begin{itemize}
+	\item Prototype of QAM transmission with SDR (add other modulations later)
+	\item Model of a fading channel and simulation
+	\begin{itemize}
+		\item Slow fading (shadowing)
+		\item Fast fading (flat fading and multi path 
+	\end{itemize}
+	\item Demonstration (hardware) with fading channel
+	\item Demonstration with moving receiver 
+\end{itemize}
+
+
+
 \clearpage
+\newgeometry{vmargin = 2.5cm, hmargin = 2cm} 
 
-\section{Project Schedule}
-\newgeometry{vmargin=5mm, hmargin = 1cm} 
 \begin{landscape}
-	\begin{figure}[h] %%\centering
-%		\begin{ganttchart}{1}{12}
-%			\gantttitle{Project Schedule}{12} \\
-%			\gantttitlelist{1,...,12}{1} \\
-%			\ganttgroup{Group 1}{1}{7} \\
-%			\ganttbar{Task 1}{1}{2} \\
-%			\ganttlinkedbar{Task 2}{3}{7} \ganttnewline
-%			\ganttmilestone{Milestone}{7} \ganttnewline
-%			\ganttbar{Final Task}{8}{12}
-%			\ganttlink{elem2}{elem3}
-%			\ganttlink{elem3}{elem4}
-%		\end{ganttchart}
-	
-	 
-
-% https://mirror.foobar.to/CTAN/graphics/pgf/contrib/pgfgantt/pgfgantt.pdf
-
-
-
+	\section{Project Schedule}
+	\begin{figure}[h]
 		\begin{ganttchart}[
-			hgrid,
+			time slot format = isodate,
+			% style changes
+			% hgrid,
 			vgrid,
-			x unit=2.5mm,
-		%	y unit title=.6cm,
-		%	y unit chart=1.5cm,
-			time slot format=isodate
-			]{2021-09-20}{2021-12-26}
-			\gantttitlecalendar{year, month=name, week=38} \\
-			\ganttmilestone{Milestone 1}{2021-12-24}\ganttnewline
-			\ganttbar{Research}{2021-09-20}{2021-12-26}\ganttnewline
-			\ganttbar{Simulation}{2021-09-20}{2021-12-26}\ganttnewline
-			\ganttbar{Measurements}{2021-09-20}{2021-12-26}\ganttnewline
-			\ganttbar{\textbf{Documentation}}{2021-09-21}{2021-12-20}\ganttnewline
-			%%\ganttbar{Projectplan \& Specification}{2021-09-21}{2021-10-05}\ganttnewline
-			\ganttbar{Abstract}{2021-09-20}{2021-12-26}\ganttnewline
-			\ganttbar{Abstract}{2021-09-20}{2021-12-26}\ganttnewline
-			\ganttbar{Print}{2021-12-20}{2021-12-24}\ganttnewline
-			\ganttbar{Reserve}{2021-12-01}{2021-12-24}\ganttnewline
-			\ganttmilestone{Submission}{2021-12-24}\ganttnewline
-			\ganttbar{Presentation prep.}{2021-12-13}{2021-12-24}\ganttnewline
+			x unit = 2.5mm,
+			y unit chart = 1.5cm,
+			bar height = .4,
+			inline,
+			milestone inline label node/.append style = {
+				above = 4mm, anchor = south east,
+				fill = white,
+			},
+		]{2021-09-20}{2021-12-26}
+
+			\gantttitlecalendar{year, month = name, week = 38} \\
+
+			\ganttgroup{Research}{2021-09-21}{2021-11-28} \ganttnewline
+			\ganttbar{Theory}{2021-09-22}{2021-11-28} \ganttnewline
+			\ganttbar{Software Toolboxes}{2021-09-27}{2021-10-31} \ganttnewline
+
+			\ganttgroup{Prototype}{2021-10-04}{2021-10-31}
+			\ganttgroup{Demonstration}{2021-11-03}{2021-12-05}
+			\ganttnewline
+
+			\ganttbar{Simulation}{2021-10-04}{2021-10-18}
+			\ganttbar{Hardware}{2021-10-18}{2021-10-31}
+			\ganttmilestone{Working SDR TX -- RX}{2021-11-01}
+
+			\ganttbar{Fading model}{2021-11-03}{2021-11-19}
+			\ganttbar{Measurements}{2021-11-20}{2021-12-05}
+			\ganttmilestone{TX -- RX with Fading}{2021-12-06}
+			\ganttnewline
+
+			\ganttgroup{Documentation}{2021-09-21}{2021-12-20} \ganttnewline
+			\ganttbar{Project Plan}{2021-09-21}{2021-10-04}
+			\ganttmilestone{Submission}{2021-10-05}
+			\ganttbar{Slides}{2021-12-06}{2021-12-22}
 			\ganttmilestone{Presentation}{2021-12-23}
-		
-			
+			\ganttnewline
+
+			\ganttbar{Introduction and Task Desc.}{2021-09-27}{2021-10-24}
+			\ganttbar{Methods (SW and HW)}{2021-10-27}{2021-11-16}
+			\ganttbar{Results}{2021-11-20}{2021-12-11}
+			\ganttmilestone{Ready}{2021-12-12}
+			\ganttbar{Review}{2021-12-14}{2021-12-23}
+			\ganttmilestone{Submission}{2021-12-24}
+			\ganttnewline
+
+			\ganttbar{Theory}{2021-10-07}{2021-12-05}
 		\end{ganttchart}
 	\end{figure}
 \end{landscape}
