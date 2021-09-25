@@ -36,10 +36,13 @@
 %% Access metadata
 \usepackage{titling}
 
+%% Pretty pictures
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+
 %% gantt configuration
 \usepackage{pgfgantt}
 \usepackage[]{geometry}
-
 
 %% Landscape pages
 \usepackage{pdflscape}
@@ -72,6 +75,8 @@
 	2021-09-21 & 0.1 & Pross N.            & Created document       \\
 	2021-09-23 & 0.2 & Pross N., Halter S. & Created Project Plan   \\
 	2021-09-23 & 0.3 & Halter S.           & First Task description \\
+	2021-09-25 & 0.4 & Pross N.            &
+		Updated introduction, task description and described timeline \\
 	\bottomrule
 \end{tabularx}
 
@@ -93,54 +98,187 @@
 
 \section{Introduction}
 
-For the semester thesis at the University of Applied Sciences Eastern Switzerland (OST) it has been requested to create a demonstrative setup to show the \emph{fading effect} in wireless communication systems.
+For the semester thesis at the University of Applied Sciences Eastern Switzerland (OST) it has been requested to create a demonstrative setup to show the fading effect, which is present in real world wireless communication systems.
 The device is intended to be used for pedagogical purposes such as to show the effect at the Open Days or for demonstrations during future lectures on fading channels.
 
 \section{Task Description}
 
-% \section{Research}
+\begin{figure}[h]
+	\centering
+	\begin{tikzpicture}[
+			cpoint/.style = {
+				inner sep = 0,
+				outer sep = 0,
+			},
+			computer/.pic = {
+				% display
+				\node[
+					draw, thick,
+					rounded corners = 2pt,
+					minimum height = 10mm,
+					minimum width = 15mm,
+				] (-screen) {};
+				% stand
+				\draw[thick] (-screen.south) ++(-2mm,0) 
+					to[out = -90, in = 60] ++(-1mm, -3mm) 
+					to ++(6mm,0)
+					to[out = 120, in = -90] ++(-1mm, 3mm);
+			},
+			antenna/.pic = {
+				\draw[very thick] (0,0) -- ++(2mm, 3mm) -- ++(-4mm,0) -- cycle;
+				\draw[very thick] (0,0) -- ++(0,-5mm) node[cpoint] (-mast) {};
+				\draw[thick] (0,0) -- ++(0,3mm);
+				\node[outer sep = 2mm] (-center) at (0,-1mm) {};
+			},
+		]
 
-\section{Hardware and software tools}
+		\begin{scope}[shift = {(-10, 2)}]
+			\pic (txPC) {computer};
+			\node at (txPC-screen) {\textbf{TX}};
+			\node[draw, thick, right = 5mm of txPC-screen, yshift = -6mm] (txSDR) {SDR};
+			\pic[above = of txSDR.north east, xshift = -3mm] (txA) {antenna};
+			\draw[very thick]
+				(txPC-screen.east) ++(0,-.2) to[out = 0, in = 180] (txSDR.west)
+				(txA-mast) -- (txA-mast |- txSDR.north);
+
+			\node[below = 5mm of txPC-screen.south] {Stationary sender};
+		\end{scope}
+
+		\begin{scope}
+			\pic (rxPC) {computer};
+			\node at (rxPC-screen) {\textbf{RX}};
+			\node[draw, thick, left = 5mm of rxPC-screen, yshift = -6mm] (rxSDR) {SDR};
+			\pic[above = of rxSDR.west, xshift = -15mm] (rxA) {antenna};
+			\draw[very thick]
+				(rxPC-screen.west) ++(0,-.2) to[out = 180, in = 0] (rxSDR.east)
+				(rxA-mast) to[out = -90, in = 0] ++(0,-1)
+					to[out =  180, in = -120] ++( -4mm,  2mm)
+					to[out =   50, in =   60] ++(  8mm, -1mm)
+					to[out = -120, in = -120] ++( -8mm,  0mm)
+					to[out =   30, in =  150] ++(  7mm,  1mm)
+					to[out =  -30, in =  180] (rxSDR.west)
+				;
+			\node[below = 5mm of rxPC-screen.south] {Moving Receiver};
+		\end{scope}
+
+		\draw[line width = 1mm, draw = red!50!white, -latex] 
+			(txA-center) -- node[midway, above, sloped] {LOS path} (rxA-center);
+
+		\begin{scope}[
+			ultra thick, draw = blue!50!white, -latex
+		]
+			\draw (txA-center) -- ++(5,0) node[above] {Reflected paths} -- (rxA-center);
+			\draw (txA-center) -- ++(3,1) -- (rxA-center);
+			\draw (txA-center) -- ++(1,-2) -- (rxA-center);
+		\end{scope}
+	\end{tikzpicture}
+	\caption[
+		Sketch of the setup that will be modelled and implemented.
+	]{ Sketch of the setup that will be modelled and implemented.
+		The model will need to be adjusted depending on whether there is a line of sight (LOS) between the sender and receiver.
+		For both devices a software defined radio will be used, which means that the ``movable'' part of the receiver will probably be just the antenna.
+	}
+\end{figure}
+
+The scope of the project is to realize a demonstration of a fading channel using a software defined radio (SDR).
+Out of the many types of fading effects that exist only small scale fading effects ought to be shown in the demonstration, specifically multi path propagation fading is of interest.
+The project requirements that must be fulfilled are thus:
+\begin{itemize}
+	\item Understand of one or more mathematical models of the fading effect.
+	\item Evaluate a suitable development environment for the SDR.
+	\item Develop of a signal processing chain for the SDR transmitter and receiver.
+	\item Develop of an interface to vary the parameter of the transmission, such as the modulation scheme.
+	\item The demonstration should work with both stationary and moving receivers.
+\end{itemize}
 
 \section{Development plan}
 
+The development of the project will be carried out roughly in three phases, of which the first two will start in parallel.
+\begin{enumerate}
+	\item Develop an understanding of fading and how to work with SDR devices.
+	\item Create a basic TX -- RX line \emph{without} a fading channel model.
+	\item Integrate the fading channel model into the prototype.
+\end{enumerate}
+
+\subsection{SDR Device}
+\subsection{Prototype}
+\subsection{Theory of fading channels}
+
 \section{Milestones}
 
-%\begin{itemize}
-%	\item Prototype of QAM transmission with SDR (add other modulations later)
-%	\item Model of a fading channel and simulation
-%	\begin{itemize}
-%		\item Slow fading (shadowing)
-%		\item Fast fading (flat fading and multi path 
-%	\end{itemize}
-%	\item Demonstration (hardware) with fading channel
-%	\item Demonstration with moving receiver 
-%\end{itemize}
+\begin{table}[h]
+	\centering
+	\caption{Milestones of the project}
+	\renewcommand\arraystretch{1.2}
+	\begin{tabularx}{\linewidth}{l c X}
+		\toprule
+		\bfseries Name & \bfseries Due date & \bfseries Description \\
+		\midrule
+		Project plan & Week 40 & 
+			Finalization of this document. \\
 
+		Working SDR TX -- RX  & Week 44 &
+			Completion of an RX -- TX line on SDR with variable parameters for configuration. \\
 
+		Working fading TX -- RX & Week 49 &
+			Both the simulated and the physical transmission lines work and it is possible to observe the consequences of fading.\\
+
+		Documentation & Week 50 &
+			The documentation is complete both on the theory and practical sides. \\
+
+		Presentation & 23 Dec. 2021 &
+			Presentation of the project on Campus. \\
+		Submission & 24 Dec. 2021 & --- \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+\appendix
 
 \clearpage
 \newgeometry{vmargin = 2.5cm, hmargin = 1.5cm} 
-
 \begin{landscape}
 	\begin{figure}[h]
-		\section{Project Schedule}
+		\caption{Project schedule (Gantt diagram)}
 		\begin{ganttchart}[
+			expand chart = \linewidth,
+			% use dates
 			time slot format = isodate,
-			% style changes
-			% hgrid,
-			vgrid,
+			% set up canvas
+			canvas/.append style = {thick},
+			title/.style = {draw, thick},
+			% set grid
+			vgrid = {*6{dotted}, *1{blue!50!black, thick, dotted}},
+			% set height and width
 			x unit = 2.5mm,
-			y unit chart = 1.5cm,
-			bar height = .4,
+			y unit chart = 12mm,
+			% put everything in the chart 
 			inline,
+			% modify positioning of elements
+			group top shift = .6,
+			bar top shift = .1,
+			bar height = .4,
+			milestone top shift = .2,
+			milestone height = .3,
+			% modify stile of elements
+			bar/.append style = {
+				thick,
+			},
+			bar inline label node/.append style = {
+				font = \footnotesize,
+			},
+			milestone/.append style = {
+				fill = red!50!white, thick,
+			},
 			milestone inline label node/.append style = {
-				above = 4mm, anchor = south east,
+				font = \footnotesize\itshape,
+				below = 3mm, xshift = 2mm,
+				anchor = north east,
 				fill = white,
 			},
 		]{2021-09-20}{2021-12-26}
 
-			\gantttitlecalendar{year, month = name, week = 38} \\
+			\gantttitlecalendar{month = name, week = 38} \\
 
 			\ganttgroup{Research}{2021-09-21}{2021-11-28} \ganttnewline
 			\ganttbar{Theory}{2021-09-22}{2021-11-28} \ganttnewline
@@ -156,7 +294,7 @@ The device is intended to be used for pedagogical purposes such as to show the e
 
 			\ganttbar{Fading model}{2021-11-03}{2021-11-19}
 			\ganttbar{Measurements}{2021-11-20}{2021-12-05}
-			\ganttmilestone{TX -- RX with Fading}{2021-12-06}
+			\ganttmilestone{Working fading TX -- RX}{2021-12-06}
 			\ganttnewline
 
 			\ganttgroup{Documentation}{2021-09-21}{2021-12-20} \ganttnewline
@@ -178,5 +316,5 @@ The device is intended to be used for pedagogical purposes such as to show the e
 		\end{ganttchart}
 	\end{figure}
 \end{landscape}
-\restoregeometry % Wieder die alten Ränder
+\restoregeometry
 \end{document}
