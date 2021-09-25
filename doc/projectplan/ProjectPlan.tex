@@ -1,7 +1,7 @@
 % !TeX program = xelatex
 % !TeX encoding = utf8
 % !TeX root = ProjectPlan.tex
-% vim: set ts=2 sw=2 noet:
+% vim: set ts=2 sw=2 noet linebreak spell:
 
 \documentclass[a4paper, twosided, 11pt]{scrartcl}
 
@@ -69,9 +69,9 @@
 	\toprule
 	\bfseries Date & \bfseries Version & \bfseries Author & \bfseries Description \\
 	\midrule
-	2021-09-21 & 0.1 & Pross N.  & Created document \\
-	2021-09-23 & 0.2 & Pross N./ Halter S. & Created Project Plan \\
-	2021-09-23 & 0.3 & Halter S. & First Task description \\
+	2021-09-21 & 0.1 & Pross N.            & Created document       \\
+	2021-09-23 & 0.2 & Pross N., Halter S. & Created Project Plan   \\
+	2021-09-23 & 0.3 & Halter S.           & First Task description \\
 	\bottomrule
 \end{tabularx}
 
@@ -81,7 +81,7 @@
 	\begin{tabularx}{\textwidth}{lp{.2\textwidth}X}
 		                   & \bfseries Date & \bfseries Signature\\
 		Halter Sara Cinzia & \hrulefill & \hrulefill \\
-		Pross Naoki        & \hrulefill & \hrulefill \\
+		Pross Naoki Sean   & \hrulefill & \hrulefill \\
 	\end{tabularx}
 }
 
@@ -93,28 +93,19 @@
 
 \section{Introduction}
 
+For the semester thesis at the University of Applied Sciences Eastern Switzerland (OST) it has been requested to create a demonstrative setup to show the \emph{fading effect} in wireless communication systems.
+The device is intended to be used for pedagogical purposes such as to show the effect at the Open Days or for demonstrations during future lectures on fading channels.
+
 \section{Task Description}
 
-\subsection{Research}
-Get some basically knowledge about the topic.
+% \section{Research}
 
-Decide wish software fits the best, get to know this.
-Same thing with the SDR Hardware.
+\section{Hardware and software tools}
 
-\subsection{Prototype}
-The first simulation will be from the Transmitter to the Reviser without any planed effects in between, with fixed parameters. After the Simulation on that Setup we will try it on the Hardware.
+\section{Development plan}
 
-The Goal of that task is to have a functional Prototype for further simulation and measurements to compare with. 
+\section{Milestones}
 
-\subsection{Demonstration}
-After we have a functional baseline we will add some fading channel Models.
-First without movement. Later when that is done and tested, begins the same with a movable Reviser.
-
-\subsection{Result}
-
-So at the end we can show Fading the fading effect simple. 
-
-	  
 %\begin{itemize}
 %	\item Prototype of QAM transmission with SDR (add other modulations later)
 %	\item Model of a fading channel and simulation
