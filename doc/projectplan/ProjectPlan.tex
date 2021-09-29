@@ -55,9 +55,7 @@
 % Document
 \begin{document}
 \begin{titlepage}
-	\includegraphics[height=3cm]{fig/ost-logo}
 	\begin{flushright}
-		% TODO: OST logo
 		\vspace{5cm}
 		{\Huge \bfseries \thetitle} \\
 		\vspace{5mm}
@@ -93,13 +91,11 @@
 
 \clearpage
 \tableofcontents
-\listoffigures
-\listoftables
 \clearpage
 
 \section{Introduction}
 
-For the semester thesis at the University of Applied Sciences Eastern Switzerland (OST) it has been requested to create a demonstrative setup to show the fading effect, which is present in real world wireless communication systems.
+For the semester thesis at the Eastern Switzerland University of Applied Sciences (OST) it has been requested to create a demonstrative setup to show the fading effect, which is present in real world wireless communication systems.
 The device is intended to be used for pedagogical purposes such as to show the effect at the Open Days or for demonstrations during future lectures on fading channels.
 
 \section{Task Description}
@@ -177,7 +173,6 @@ The device is intended to be used for pedagogical purposes such as to show the e
 		Sketch of the setup that will be modelled and implemented.
 	]{ Sketch of the setup that will be modelled and implemented.
 		The model will need to be adjusted depending on whether there is a line of sight (LOS) between the sender and receiver.
-		For both devices a software defined radio will be used, which means that the ``movable'' part of the receiver will probably be just the antenna.
 	}
 \end{figure}
 
@@ -289,9 +284,17 @@ At the end comes the same with a movable Reviser. Walking will be used to demons
 
 			\gantttitlecalendar{month = name, week = 38} \\
 
-			\ganttgroup{Research}{2021-09-21}{2021-11-28} \ganttnewline
-			\ganttbar{Theory}{2021-09-22}{2021-11-28} \ganttnewline
-			\ganttbar{Software Toolboxes}{2021-09-27}{2021-10-31} \ganttnewline
+			\ganttgroup{Research}{2021-09-21}{2021-11-28}
+			\ganttnewline
+			
+			\ganttbar{Theory}{2021-09-22}{2021-11-28}
+			\ganttnewline
+
+			\ganttbar{Software Toolboxes}{2021-09-27}{2021-10-31}
+			\ganttnewline
+						
+			\ganttbar{Hardware}{2021-10-04}{2021-10-31}
+			\ganttnewline			
 
 			\ganttgroup{Prototype}{2021-10-04}{2021-10-31}
 			\ganttgroup{Demonstration}{2021-11-03}{2021-12-05}
@@ -300,28 +303,33 @@ At the end comes the same with a movable Reviser. Walking will be used to demons
 			\ganttbar{Simulation}{2021-10-04}{2021-10-18}
 			\ganttbar{Hardware}{2021-10-18}{2021-10-31}
 			\ganttmilestone{Working SDR TX -- RX}{2021-11-01}
-
 			\ganttbar{Fading model}{2021-11-03}{2021-11-19}
 			\ganttbar{Measurements}{2021-11-20}{2021-12-05}
 			\ganttmilestone{Working fading TX -- RX}{2021-12-06}
 			\ganttnewline
 
-			\ganttgroup{Documentation}{2021-09-21}{2021-12-20} \ganttnewline
+			\ganttgroup{Documentation}{2021-09-21}{2021-12-20}
+			\ganttnewline
+			
 			\ganttbar{Project Plan}{2021-09-21}{2021-10-04}
 			\ganttmilestone{Submission}{2021-10-05}
-			\ganttbar{Slides}{2021-12-06}{2021-12-22}
-			\ganttmilestone{Presentation}{2021-12-23}
+			\ganttbar{Elevator Pitch Video}{2021-11-08}{2021-11-28}
+			\ganttbar{Abstract}{2021-12-02}{2021-12-09}
+			\ganttmilestone{Abstract Draft}{2021-12-10}
 			\ganttnewline
 
 			\ganttbar{Introduction and Task Desc.}{2021-09-27}{2021-10-24}
 			\ganttbar{Methods (SW and HW)}{2021-10-27}{2021-11-16}
 			\ganttbar{Results}{2021-11-20}{2021-12-11}
 			\ganttmilestone{Ready}{2021-12-12}
-			\ganttbar{Review}{2021-12-14}{2021-12-23}
-			\ganttmilestone{Submission}{2021-12-24}
+			\ganttbar{Review}{2021-12-14}{2021-12-22}
+			\ganttmilestone{Submission}{2021-12-23}
 			\ganttnewline
 
-			\ganttbar{Theory}{2021-10-07}{2021-12-05}
+			\ganttbar{Theory}{2021-10-07}{2021-12-04}
+			\ganttbar{Slides}{2021-12-06}{2021-12-22}
+			\ganttmilestone{Presentation}{2021-12-23}
+			\ganttnewline
 		\end{ganttchart}
 	\end{figure}
 \end{landscape}
