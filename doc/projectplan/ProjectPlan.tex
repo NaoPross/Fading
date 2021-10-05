@@ -50,16 +50,17 @@
 % Metadata
 \title{Fading illustration with SDR -- Project Plan}
 \author{Naoki Pross, Sara Cinzia Halter}
+\date{Fall semester 2021}
 
 
 % Document
 \begin{document}
 
 \thispagestyle{plain}
+\pagenumbering{roman}
+
 \maketitle
-
 \tableofcontents
-
 \vfill
 {
 	\renewcommand{\arraystretch}{2}
@@ -70,6 +71,9 @@
 	\end{tabularx}
 }
 \cleardoublepage
+
+\setcounter{page}{1}
+\pagenumbering{arabic}
 
 \section{Introduction}
 
@@ -88,13 +92,13 @@ The device is intended to be used for pedagogical purposes such as to show the e
 			computer/.pic = {
 				% display
 				\node[
-					draw, thick,
+					draw, very thick,
 					rounded corners = 2pt,
 					minimum height = 10mm,
 					minimum width = 15mm,
 				] (-screen) {};
 				% stand
-				\draw[thick] (-screen.south) ++(-2mm,0) 
+				\draw[very thick] (-screen.south) ++(-2mm,0) 
 					to[out = -90, in = 60] ++(-1mm, -3mm) 
 					to ++(6mm,0)
 					to[out = 120, in = -90] ++(-1mm, 3mm);
@@ -110,7 +114,7 @@ The device is intended to be used for pedagogical purposes such as to show the e
 		\begin{scope}[shift = {(-10, 2)}]
 			\pic (txPC) {computer};
 			\node at (txPC-screen) {\textbf{TX}};
-			\node[draw, thick, right = 5mm of txPC-screen, yshift = -6mm] (txSDR) {SDR};
+			\node[draw, very thick, right = 5mm of txPC-screen, yshift = -6mm] (txSDR) {SDR};
 			\pic[above = of txSDR.north east, xshift = -3mm] (txA) {antenna};
 			\draw[very thick]
 				(txPC-screen.east) ++(0,-.2) to[out = 0, in = 180] (txSDR.west)
@@ -122,7 +126,7 @@ The device is intended to be used for pedagogical purposes such as to show the e
 		\begin{scope}
 			\pic (rxPC) {computer};
 			\node at (rxPC-screen) {\textbf{RX}};
-			\node[draw, thick, left = 5mm of rxPC-screen, yshift = -6mm] (rxSDR) {SDR};
+			\node[draw, very thick, left = 5mm of rxPC-screen, yshift = -6mm] (rxSDR) {SDR};
 			\pic[above = of rxSDR.west, xshift = -15mm] (rxA) {antenna};
 			\draw[very thick]
 				(rxPC-screen.west) ++(0,-.2) to[out = 180, in = 0] (rxSDR.east)
@@ -175,15 +179,22 @@ The development of the project will be carried out roughly in three phases, of w
 \end{enumerate}
 
 \subsection{SDR Device}
-Finding the right software tool, like GNURadio or Matlab, for the Project and learn how the program works. The same with the Hardware, is the \textit{USRP B210} the best option or is there an other SDR, which fits better too our requirements. 
+
+At the time of writing, we are given an \emph{USRP B210} SDR as hardware device for the project.
+An evaluation based on various criteria, including software compatibility and performance, will be made to decide which combination of SDR devices and software toolboxes will used.
 
 \subsection{Prototype}
-Create the first Prototype line TX-RX without any effects. Including some simulation on that setup first and then tests and measurements on the Hardware. 
-After a successful set up, some possible variable parameters will be included. 
 
-\subsection{Theory of fading channels}
-When the Prototype works the integration of the fading channel models starts, including simulations and tests on the Hardware. 
-At the end comes the same with a movable Reviser. Walking will be used to demonstrate that on a scenario. If there will be some time left also with the help of a car.
+The first concrete step will be the realization of a prototype both simulated and with the hardware.
+A TX -- RX line with an ideal channel\footnote{In hardware that means a short coaxial cable between the two SDR devices.} will be used to test the modulation and demodulation steps of the signal processing chain.
+Furthermore in this phase a software interface to select the modulation scheme and to configure the modulation parameters will be developed.
+
+\subsection{Fading channels}
+
+Once the prototype works we will integrate one or more fading channel models, both in software (simulation) and in hardware.
+The latter will be done by taking out the devices around the campus.
+Some effects of the channel will require the receiver to move, walking will be used to demonstrate those a scenarios.
+If there will be some time left, we may also use a car to demonstrate some other effects that are not observable at a walking speed.
 
 \clearpage
 
