@@ -4,10 +4,10 @@
 % vim: set ts=2 sw=2 noet linebreak spell:
 
 \documentclass[a4paper, twosided, 11pt]{scrartcl}
+% \documentclass{univie-ling-paper}
 
-%% Language configuration
-\usepackage{polyglossia}
-\setdefaultlanguage{english}
+%% Geometry
+\usepackage[a4paper]{geometry}
 
 %$ Specify where floatings go and make nicer looking tables
 \usepackage{float}
@@ -19,8 +19,10 @@
 \usepackage{graphicx}
 
 %% Set up font
-\usepackage[T1]{fontenc}
-\usepackage[usefilenames, DefaultFeatures={Ligatures=Common}]{plex-otf}
+% \usepackage[T1]{fontenc}
+% \usepackage[usefilenames, DefaultFeatures={Ligatures=Common}]{plex-otf}
+
+\usepackage{roboto}
 \renewcommand*\familydefault{\sfdefault}
 
 %% Header and Footers
@@ -30,43 +32,32 @@
 \ohead{\headmark}
 
 \ifoot{}
-\cfoot{}
-\ofoot{\pagemark}
+\cfoot{\pagemark}
+\ofoot{}
 
 %% Access metadata
 \usepackage{titling}
 
 %% Pretty pictures
 \usepackage{tikz}
-\usetikzlibrary{patterns}
 
 %% gantt configuration
 \usepackage{pgfgantt}
-\usepackage[]{geometry}
 
 %% Landscape pages
 \usepackage{pdflscape}
 
 % Metadata
-\title{Project Plan}
+\title{Fading illustration with SDR -- Project Plan}
 \author{Naoki Pross, Sara Cinzia Halter}
 
 
 % Document
 \begin{document}
-\begin{titlepage}
-	\begin{flushright}
-		\vspace{5cm}
-		{\Huge \bfseries \thetitle} \\
-		\vspace{5mm}
-		{\LARGE Project: \textit{Fading illustration with SDR}} \\
-		\vspace{5mm}
-		{\LARGE \bfseries Version 1.0}
-	\end{flushright}
-\end{titlepage}
 
-\clearpage
-\clearpage
+\thispagestyle{plain}
+\maketitle
+
 \tableofcontents
 
 \vfill
@@ -78,7 +69,7 @@
 		Pross Naoki Sean   & \hrulefill & \hrulefill \\
 	\end{tabularx}
 }
-\clearpage
+\cleardoublepage
 
 \section{Introduction}
 
@@ -194,7 +185,8 @@ After a successful set up, some possible variable parameters will be included.
 When the Prototype works the integration of the fading channel models starts, including simulations and tests on the Hardware. 
 At the end comes the same with a movable Reviser. Walking will be used to demonstrate that on a scenario. If there will be some time left also with the help of a car.
 
-\newpage
+\clearpage
+
 \section{Milestones}
 
 \begin{table}[h]
