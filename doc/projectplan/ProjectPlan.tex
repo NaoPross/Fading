@@ -61,23 +61,13 @@
 		\vspace{5mm}
 		{\LARGE Project: \textit{Fading illustration with SDR}} \\
 		\vspace{5mm}
-		{\LARGE \bfseries Version 1}
+		{\LARGE \bfseries Version 1.0}
 	\end{flushright}
 \end{titlepage}
 
-%\section*{Changelog}
-%\begin{tabularx}{\textwidth}{lrlX}
-%	\toprule
-%	\bfseries Date & \bfseries Version & \bfseries Author & \bfseries Description \\
-%	\midrule
-%	2021-09-21 & 0.1 & Pross N.            & Created document       \\
-%	2021-09-23 & 0.2 & Pross N., Halter S. & Created Project Plan   \\
-%	2021-09-23 & 0.3 & Halter S.           & First Task description \\
-%	2021-09-25 & 0.4 & Pross N.            &
-%		Updated introduction, task description and described timeline \\
-%	2021-09-27 & 0.5 & Halter S.           & Updated development plan \\
-%	\bottomrule
-%\end{tabularx}
+\clearpage
+\clearpage
+\tableofcontents
 
 \vfill
 {
@@ -88,9 +78,6 @@
 		Pross Naoki Sean   & \hrulefill & \hrulefill \\
 	\end{tabularx}
 }
-
-\clearpage
-\tableofcontents
 \clearpage
 
 \section{Introduction}
@@ -267,8 +254,13 @@ At the end comes the same with a movable Reviser. Walking will be used to demons
 			bar height = .4,
 			milestone top shift = .2,
 			milestone height = .3,
-			% clored elements
-			bar/.append style={fill=gray},bar incomplete/.append style={fill=white},
+			% colored elements
+			bar/.append style={
+				fill = teal!30!white,
+			},
+			bar incomplete/.append style={
+				fill = white
+			},
 			progress label text=\relax,
 			% modify stile of elements
 			bar/.append style = {
