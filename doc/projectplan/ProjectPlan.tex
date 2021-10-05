@@ -61,23 +61,23 @@
 		\vspace{5mm}
 		{\LARGE Project: \textit{Fading illustration with SDR}} \\
 		\vspace{5mm}
-		{\LARGE \bfseries Version 0.5}
+		{\LARGE \bfseries Version 1}
 	\end{flushright}
 \end{titlepage}
 
-\section*{Changelog}
-\begin{tabularx}{\textwidth}{lrlX}
-	\toprule
-	\bfseries Date & \bfseries Version & \bfseries Author & \bfseries Description \\
-	\midrule
-	2021-09-21 & 0.1 & Pross N.            & Created document       \\
-	2021-09-23 & 0.2 & Pross N., Halter S. & Created Project Plan   \\
-	2021-09-23 & 0.3 & Halter S.           & First Task description \\
-	2021-09-25 & 0.4 & Pross N.            &
-		Updated introduction, task description and described timeline \\
-	2021-09-27 & 0.5 & Halter S.           & Updated development plan \\
-	\bottomrule
-\end{tabularx}
+%\section*{Changelog}
+%\begin{tabularx}{\textwidth}{lrlX}
+%	\toprule
+%	\bfseries Date & \bfseries Version & \bfseries Author & \bfseries Description \\
+%	\midrule
+%	2021-09-21 & 0.1 & Pross N.            & Created document       \\
+%	2021-09-23 & 0.2 & Pross N., Halter S. & Created Project Plan   \\
+%	2021-09-23 & 0.3 & Halter S.           & First Task description \\
+%	2021-09-25 & 0.4 & Pross N.            &
+%		Updated introduction, task description and described timeline \\
+%	2021-09-27 & 0.5 & Halter S.           & Updated development plan \\
+%	\bottomrule
+%\end{tabularx}
 
 \vfill
 {
@@ -226,6 +226,9 @@ At the end comes the same with a movable Reviser. Walking will be used to demons
 
 		Working fading TX -- RX & Week 49 &
 			Both the simulated and the physical transmission lines work and it is possible to observe the consequences of fading.\\
+			
+		Abstract & 17 Dec. 2021 &
+			The abstract is handed in. \\
 
 		Documentation & Week 50 &
 			The documentation is complete both on the theory and practical sides. \\
@@ -264,6 +267,9 @@ At the end comes the same with a movable Reviser. Walking will be used to demons
 			bar height = .4,
 			milestone top shift = .2,
 			milestone height = .3,
+			% clored elements
+			bar/.append style={fill=gray},bar incomplete/.append style={fill=white},
+			progress label text=\relax,
 			% modify stile of elements
 			bar/.append style = {
 				thick,
@@ -287,24 +293,24 @@ At the end comes the same with a movable Reviser. Walking will be used to demons
 			\ganttgroup{Research}{2021-09-21}{2021-11-28}
 			\ganttnewline
 			
-			\ganttbar{Theory}{2021-09-22}{2021-11-28}
+			\ganttbar[progress=20]{Theory}{2021-09-22}{2021-11-28}
 			\ganttnewline
 
-			\ganttbar{Software Toolboxes}{2021-09-27}{2021-10-31}
+			\ganttbar [progress=25]{Software Toolboxes}{2021-09-27}{2021-10-31}
 			\ganttnewline
 						
-			\ganttbar{Hardware}{2021-10-04}{2021-10-31}
+			\ganttbar[progress=6]{Hardware}{2021-10-04}{2021-10-31}
 			\ganttnewline			
 
 			\ganttgroup{Prototype}{2021-10-04}{2021-10-31}
 			\ganttgroup{Demonstration}{2021-11-03}{2021-12-05}
 			\ganttnewline
 
-			\ganttbar{Simulation}{2021-10-04}{2021-10-18}
-			\ganttbar{Hardware}{2021-10-18}{2021-10-31}
+			\ganttbar[progress=0]{Simulation}{2021-10-04}{2021-10-18}
+			\ganttbar[progress=0]{Hardware}{2021-10-18}{2021-10-31}
 			\ganttmilestone{Working SDR TX -- RX}{2021-11-01}
-			\ganttbar{Fading model}{2021-11-03}{2021-11-19}
-			\ganttbar{Measurements}{2021-11-20}{2021-12-05}
+			\ganttbar[progress=0]{Fading model}{2021-11-03}{2021-11-19}
+			\ganttbar[progress=0]{Measurements}{2021-11-20}{2021-12-05}
 			\ganttmilestone{Working fading TX -- RX}{2021-12-06}
 			\ganttnewline
 
@@ -313,21 +319,21 @@ At the end comes the same with a movable Reviser. Walking will be used to demons
 			
 			\ganttbar{Project Plan}{2021-09-21}{2021-10-04}
 			\ganttmilestone{Submission}{2021-10-05}
-			\ganttbar{Elevator Pitch Video}{2021-11-08}{2021-11-28}
-			\ganttbar{Abstract}{2021-12-02}{2021-12-09}
+			\ganttbar[progress=0]{Elevator Pitch Video}{2021-11-08}{2021-11-28}
+			\ganttbar[progress=0]{Abstract}{2021-12-02}{2021-12-09}
 			\ganttmilestone{Abstract Draft}{2021-12-10}
 			\ganttnewline
 
-			\ganttbar{Introduction and Task Desc.}{2021-09-27}{2021-10-24}
-			\ganttbar{Methods (SW and HW)}{2021-10-27}{2021-11-16}
-			\ganttbar{Results}{2021-11-20}{2021-12-11}
+			\ganttbar[progress=0]{Introduction and Task Desc.}{2021-09-27}{2021-10-24}
+			\ganttbar[progress=0]{Methods (SW and HW)}{2021-10-27}{2021-11-16}
+			\ganttbar[progress=0]{Results}{2021-11-20}{2021-12-11}
 			\ganttmilestone{Ready}{2021-12-12}
-			\ganttbar{Review}{2021-12-14}{2021-12-22}
+			\ganttbar[progress=0]{Review}{2021-12-14}{2021-12-22}
 			\ganttmilestone{Submission}{2021-12-23}
 			\ganttnewline
 
-			\ganttbar{Theory}{2021-10-07}{2021-12-04}
-			\ganttbar{Slides}{2021-12-06}{2021-12-22}
+			\ganttbar[progress=0]{Theory}{2021-10-07}{2021-12-04}
+			\ganttbar[progress=0]{Slides}{2021-12-06}{2021-12-22}
 			\ganttmilestone{Presentation}{2021-12-23}
 			\ganttnewline
 		\end{ganttchart}
