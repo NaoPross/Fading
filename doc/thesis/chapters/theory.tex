@@ -3,4 +3,31 @@
 \chapter{Theory}
 
 \section{Problem description}
-\section{Mathematical Model}
+
+\section{Geometric Model}
+
+\section{Statistical Model}
+%% TODO: write about advantage of statistical model instead of geometric
+
+%% TODO: review and rewrite notes
+
+\subsection{Continuous time model}
+
+Continuous time small scale fading channel response.
+
+time varying channel impulse response:
+\begin{equation}
+	h(t, \tau) = \sum_k c_k (t) \delta(\tau - \tau_k(t))
+\end{equation}
+
+received signal \(y = h * x\), i.e. convolution with channel model.
+
+\subsection{Time discretization of the model}
+
+%% TODO: explain why
+
+Assume \(x\) is a time discrete signal with and bandwidth \(W\), thus the pulse is sinc shaped
+\begin{equation}
+	x(t) = \sum_n x[n] \sinc(t/T - n)
+\end{equation}
+Ideal sampling at rate \(2W\) of \(y\) gives

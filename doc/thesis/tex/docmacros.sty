@@ -1,0 +1,18 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tex/docmacros}[2021/09/27 v0.1 Document Macros]
+
+\RequirePackage{amsmath}
+\RequirePackage{amsthm}
+
+% Probability
+\DeclareMathOperator{\expectation}{E}
+\newcommand{\E}[1]{\expectation \left\{#1\right\}}
+
+\DeclareMathOperator{\variance}{Var}
+\newcommand{\Var}[1]{\variance \left\{#1\right\}}
+
+\DeclareMathOperator{\probability}{Pr}
+\renewcommand{\Pr}[1]{\probability \left\{#1\right\}}
+
+% Functions
+\DeclareMathOperator{\sinc}{sinc}

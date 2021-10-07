@@ -3,37 +3,34 @@
 % !TeX root = Fading.tex
 % vim: set ts=2 sw=2 noet:
 
-\RequirePackage{silence} % :-\
-\WarningFilter{scrreprt}{Usage of package `tocloft'}
-\WarningFilter{titlesec}{Non standard sectioning command}
-
 \documentclass[
-	twoside, openright, titlepage, numbers=noenddot,
-	headinclude, footinclude, cleardoublepage=empty, abstract=on,
-	BCOR=5mm, paper=a4, fontsize=11pt
+	twoside, openright, titlepage, numbers = noenddot,
+	headinclude, footinclude, cleardoublepage = empty, abstract = on,
+	BCOR = 5mm, paper = a4, fontsize = 11pt
 ]{scrreprt}
 
-\input{tex/classicthesis-config}
-\usepackage{tex/classicthesis}
+\usepackage{tex/docmacros}
+
+\usepackage{hyperref}
+
 
 \begin{document}
 	% stuff before
 	\hypersetup{pageanchor = false}
-	\include{tex/titlepage}
+	% \include{tex/titlepage}
 
-	\pdfbookmark[1]{Abstract}{Abstract}
 	\begin{abstract}
 		%% TODO
 	\end{abstract}
-	\cleardoublepage
 
+	\cleardoublepage
 	\pagenumbering{roman}
-	\include{tex/preamble}
 
 	% actual content
 	\hypersetup{pageanchor = true}
 	\pagenumbering{arabic}
 	\setcounter{page}{1}
+
 	\include{chapters/introduction}
 	\include{chapters/theory}
 	\include{chapters/implementation}
