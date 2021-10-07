@@ -1,7 +1,9 @@
-TEX := pdflatex 
+TEX := xelatex
 TEXARGS := -halt-on-error -interaction=nonstopmode
 
-SOURCES := Fading.tex \
+SOURCES := \
+	Fading.tex \
+	Fading.bib \
 	tex/classicthesis.sty \
 	tex/classicthesis-config.tex \
 	\
@@ -27,7 +29,8 @@ all: $(PDF)
 
 %.pdf: %.tex $(SOURCES)
 	$(TEX) $(TEXARGS) $<
-	# TODO: makeindex and stuff
+	# TODO: makeindex
+	biber $(basename $(MAIN))
 	$(TEX) $(TEXARGS) $<
 
 .PHONY: clean cleanall
@@ -38,3 +41,7 @@ clean:
 
 cleanall: clean
 	@rm -vf $(PDF)
+
+.PHONY: continuous
+continuous:
+	ls $(SOURCES) | entr -d make

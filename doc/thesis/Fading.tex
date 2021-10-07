@@ -9,24 +9,39 @@
 	BCOR = 5mm, paper = a4, fontsize = 11pt
 ]{scrreprt}
 
+%% Custom packages
 \usepackage{tex/docmacros}
 
+%% Language configuration
+\usepackage{polyglossia}
+
+%% Links
 \usepackage{hyperref}
 
+\hypersetup{
+	colorlinks = true
+}
+
+%% Citations
+\usepackage[
+	backend = biber,
+	style = ieee,
+]{biblatex}
+
+\addbibresource{Fading.bib}
 
 \begin{document}
-	% stuff before
-	\hypersetup{pageanchor = false}
-	% \include{tex/titlepage}
 
-	\begin{abstract}
-		%% TODO
-	\end{abstract}
+	\hypersetup{pageanchor = false}
+	%% TODO: titlepage
 
 	\cleardoublepage
 	\pagenumbering{roman}
 
-	% actual content
+	%% TODO: abstract
+	% \begin{abstract}
+	% \end{abstract}
+
 	\hypersetup{pageanchor = true}
 	\pagenumbering{arabic}
 	\setcounter{page}{1}
@@ -36,6 +51,6 @@
 	\include{chapters/implementation}
 	\include{chapters/conclusions}
 
-	% TODO: stuff after
+	\printbibliography
 
 \end{document}
