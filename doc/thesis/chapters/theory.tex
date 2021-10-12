@@ -1,14 +1,48 @@
-% vim: set ts=2 sw=2 noet:
+% vim: set ts=2 sw=2 noet spell:
 
 \chapter{Theory}
+
+\section{Review of modulation schemes}
+
+\begin{figure}
+	\centering
+	\input{figures/tikz/overview}
+	\caption{
+		Block diagram for a general wireless communication system with annotated signal names.
+		Frequency domain representations of signals use the uppercase symbol of their respective time domain name.
+		\label{fig:notation}
+	}
+\end{figure}
+
+In this section we will briefly give the mathematical background required by the modulation schemes used in the project. For conciseness encoding schemes and (digital) signal processing calculations are left out and discussed later. Thus in this section is \(m_e = m\).
+
+\paragraph{AM / DSB}
+
+Ordinary amplitude modulation (AM), sometimes also known as double sideband (DSB) modulation in its simplest form is mathematically formulated in time and frequency domain through the following equations\cite{Hsu}:
+\begin{subequations}
+	\begin{align}
+		x(t) &= \big( 1 + \mu m(t) \big) x_c(t), \\
+		X(\omega) &= \pi\delta(-\omega_c)
+			+ \pi\delta(\omega_c)
+			+ \frac{\mu}{2} M(\omega - \omega_c)
+			+ \frac{\mu}{2} M(\omega + \omega_c).
+	\end{align}
+\end{subequations}
+Where \(\mu > 0\) is the so called modulation factor, that can be adjusted to avoid clipping and improve performance.
+
+\subsection{Quadrature amplitude modulation (QAM)}
+
+Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. In general a QAM signal has the form
+
+\paragraph{QPSK}
 
 \section{Problem description}
 
 \section{Geometric Model}
 
 \section{Statistical Model}
-%% TODO: write about advantage of statistical model instead of geometric
 
+%% TODO: write about advantage of statistical model instead of geometric
 %% TODO: review and rewrite notes
 
 \subsection{Continuous time model}

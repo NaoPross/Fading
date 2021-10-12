@@ -30,6 +30,18 @@
 
 \addbibresource{Fading.bib}
 
+%% Pretty figures
+\usepackage{tikz}
+
+\usetikzlibrary{
+	calc,
+	backgrounds
+}
+
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
 \begin{document}
 
 	\hypersetup{pageanchor = false}
