@@ -2,6 +2,7 @@
 \ProvidesPackage{tex/docmacros}[2021/09/27 v0.1 Document Macros]
 
 \RequirePackage{amsmath}
+\RequirePackage{bm}
 
 % Probability
 \DeclareMathOperator{\expectation}{E}
@@ -16,6 +17,20 @@
 % Functions
 \DeclareMathOperator{\sinc}{sinc}
 
+% Complex numbers
+\renewcommand{\Re}[1]{\mathrm{Re} \left\{#1\right\}}
+\renewcommand{\Im}[1]{\mathrm{Im} \left\{#1\right\}}
+
 % Linear operators
 \DeclareMathOperator{\fourier}{\mathcal{F}}
 \DeclareMathOperator{\hilbert}{\mathcal{H}}
+
+% Vectors and matrices
+\renewcommand{\vec}[1]{\mathbf{\bm{#1}}}
+\newcommand{\uvec}[1]{\vec{\hat{#1}}}
+
+\newcommand{\dotp}{\boldsymbol\cdot}
+\newcommand{\crossp}{\boldsymbol\times}
+
+\newcommand{\mx}[1]{\bm{\mathrm{#1}}}
+

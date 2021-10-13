@@ -14,15 +14,15 @@
 	}
 \end{figure}
 
-In this section we will briefly give the mathematical background required by the modulation schemes used in the project. For conciseness encoding schemes and (digital) signal processing calculations are left out and discussed later. Thus in this section is \(m_e = m\).
+In this section we will briefly give the mathematical background required by the modulation schemes used in the project. For conciseness encoding schemes and (digital) signal processing calculations are left out and discussed later. Thus for this section \(m_e = m\).
 
 \paragraph{AM / DSB}
 
 Ordinary amplitude modulation (AM), sometimes also known as double sideband (DSB) modulation in its simplest form is mathematically formulated in time and frequency domain through the following equations\cite{Hsu}:
 \begin{subequations}
 	\begin{align}
-		x(t) &= \big( 1 + \mu m(t) \big) x_c(t), \\
-		X(\omega) &= \pi\delta(-\omega_c)
+		s(t) &= \big( 1 + \mu m(t) \big) \cdot \Re{e^{j\omega_c t}}, \\
+		S(\omega) &= \pi\delta(-\omega_c)
 			+ \pi\delta(\omega_c)
 			+ \frac{\mu}{2} M(\omega - \omega_c)
 			+ \frac{\mu}{2} M(\omega + \omega_c).
@@ -32,9 +32,13 @@ Where \(\mu > 0\) is the so called modulation factor, that can be adjusted to av
 
 \subsection{Quadrature amplitude modulation (QAM)}
 
-Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. In general a QAM signal has the form
+Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. The simple yet effective idea behind QAM is to encode extra information into an orthogonal carrier signal, thus increasing the number of bits sent per unit of time.
 
-\paragraph{QPSK}
+\paragraph{Mathematical formulation}
+
+For QAM we wish to split the signal space into two orthonormal basis functions \(\psi_i\) and \(\psi_q\), such that the inner product \(\langle \psi_i | \psi_q \rangle = 0\). The two functions \(\psi_i\) and \(\psi_q\) are called in-phase and quadrature component. For a cosinusoidal in-phase carrier component we obtain from the previous requirement that \(\psi_i = \sqrt{\omega_c} \cos(\omega_c t), \text{ and } \psi_q = \sqrt{\omega_c} \sin(\omega_c t)\)
+
+Now, let \(\vec{m} \in \{0,1\}^n\) be a binary row vector that encodes our message.
 
 \section{Problem description}
 

@@ -23,20 +23,20 @@
 	\draw[very thick, -latex]
 		(SRC) edge node[midway, above] {\(m\)}    (ENC)
 		(ENC) edge node[midway, above] {\(m_e\)}  (MOD)
-		(MOD) edge node[midway, right] {\(x\)}    (CHN)
+		(MOD) edge node[midway, right] {\(s\)}    (CHN)
 		(CHN) edge node[midway, right] {\(y\)}    (DMD)
 		(DMD) edge node[midway, above] {\(m_e'\)} (DEC)
 		(DEC) edge node[midway, above] {\(m'\)}   (SNK)
 	;
 
 	\draw[very thick, -latex]
-		($(MOD.east)+(5mm,0)$) node[right] (CARR) {Carrier \(x_c\)} to (MOD);
+		($(MOD.east)+(5mm,0)$) node[right] (CARR) {Carrier \(e^{j(\omega_c t + \phi)}\)} to (MOD);
 
 	\draw[very thick, -latex]
 		($(CHN.east)+(5mm,0)$) node[right] (NOISE) {Noise \(n\)} to (CHN);
 
-	\draw[very thick, -latex]
-		($(CHN.west)-(5mm,0)$) node[left] (FADE) {Fading} to (CHN);
+	% \draw[very thick, -latex]
+	% 	($(CHN.west)-(5mm,0)$) node[left] (FADE) {Fading} to (CHN);
 
 	\draw[very thick, -latex]
 		($(DMD.east)+(5mm,0)$) node[right] (SYNC) {Sync} to (DMD);
