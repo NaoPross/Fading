@@ -34,28 +34,16 @@ Where \(\mu > 0\) is the so called modulation factor, that can be adjusted to av
 
 Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. The simple yet effective idea behind QAM is to encode extra information into an orthogonal carrier signal, thus increasing the number of bits sent per unit of time.
 
-\paragraph{Mathematical formulation}
+\section{Fading}
 
-For QAM we wish to split the signal space into two orthonormal basis functions \(\psi_i\) and \(\psi_q\), such that the inner product \(\langle \psi_i | \psi_q \rangle = 0\). The two functions \(\psi_i\) and \(\psi_q\) are called in-phase and quadrature component. For a cosinusoidal in-phase carrier component we obtain from the previous requirement that \(\psi_i = \sqrt{\omega_c} \cos(\omega_c t), \text{ and } \psi_q = \sqrt{\omega_c} \sin(\omega_c t)\)
-
-Now, let \(\vec{m} \in \{0,1\}^n\) be a binary row vector that encodes our message.
-
-\section{Problem description}
-
-%% NP: move in introduction?
-Since decades now modern wireless devices have become so ubiquitous and are no longer employed under carefully chosen conditions. Cellphones and IoT devices are carried around by users and thus have to work in environments where reflexions are omnipresent. In order to efficiently develop such devices we need for mathematical models to simulate such environments.
-
-In this chapter we will briefly illustrate some undergraduate level mathematical models employed in modern communication devices.
-
-\section{Geometric Model}
-
-\section{Statistical Model}
+\subsection{Geometric Model}
+\subsection{Statistical Model}
 
 %% TODO: write about advantage of statistical model instead of geometric
 
-\subsection{Continuous time model}
+\paragraph{Continuous time model}
 
-Continuous time small scale fading channel response. \cite{Alimohammad2009}
+Continuous time small scale fading channel response.
 
 time varying channel impulse response:
 \begin{equation}
