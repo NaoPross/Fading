@@ -2,6 +2,40 @@
 
 \chapter{Theory}
 
+\section{Review of modulation schemes}
+
+\begin{figure}
+	\centering
+	\input{figures/tikz/overview}
+	\caption{
+		Block diagram for a general wireless communication system with annotated signal names.
+		Frequency domain representations of signals use the uppercase symbol of their respective time domain name.
+		\label{fig:notation}
+	}
+\end{figure}
+
+In this section we will briefly give the mathematical background required by the modulation schemes used in the project. For conciseness encoding schemes and (digital) signal processing calculations are left out and discussed later. Thus in this section is \(m_e = m\).
+
+\paragraph{AM / DSB}
+
+Ordinary amplitude modulation (AM), sometimes also known as double sideband (DSB) modulation in its simplest form is mathematically formulated in time and frequency domain through the following equations\cite{Hsu}:
+\begin{subequations}
+	\begin{align}
+		x(t) &= \big( 1 + \mu m(t) \big) x_c(t), \\
+		X(\omega) &= \pi\delta(-\omega_c)
+			+ \pi\delta(\omega_c)
+			+ \frac{\mu}{2} M(\omega - \omega_c)
+			+ \frac{\mu}{2} M(\omega + \omega_c).
+	\end{align}
+\end{subequations}
+Where \(\mu > 0\) is the so called modulation factor, that can be adjusted to avoid clipping and improve performance.
+
+\subsection{Quadrature amplitude modulation (QAM)}
+
+Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. In general a QAM signal has the form
+
+\paragraph{QPSK}
+
 \section{Problem description}
 
 %% NP: move in introduction?
@@ -17,14 +51,14 @@ In this chapter we will briefly illustrate some undergraduate level mathematical
 
 \subsection{Continuous time model}
 
-Continuous time small scale fading channel response.
+Continuous time small scale fading channel response. \cite{Alimohammad2009}
 
 time varying channel impulse response:
 \begin{equation}
 	h(t, \tau) = \sum_k c_k (t) \delta(\tau - \tau_k(t))
 \end{equation}
 
-received signal \(y = h * x\), i.e. convolution with channel model.
+received signal \(y = h * x\), i.e. convolution with channel model. 
 
 \subsection{Time discretization of the model}
 

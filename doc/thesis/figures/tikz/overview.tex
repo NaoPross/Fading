@@ -1,0 +1,57 @@
+% vim: set ts=2 sw=2 noet spell:
+
+\begin{tikzpicture}[
+		% show background rectangle,
+		box/.style = {
+			font = \small\sffamily\bfseries,
+			draw, thick, fill = white,
+			minimum height = 10mm,
+			minimum width = 25mm,
+		},
+	]
+	\matrix[
+		nodes = {box}, column sep = 10mm, row sep = 10mm,
+	]{
+		\node (SRC) {Source}; &
+		\node (ENC) {Encoder}; &
+		\node (MOD) {Modulator}; \\
+		&& \node (CHN) {Channel}; \\
+		\node (SNK) {Sink}; &
+		\node (DEC) {Decoder}; &
+		\node (DMD) {Demodulator}; \\
+	};
+	\draw[very thick, -latex]
+		(SRC) edge node[midway, above] {\(m\)}    (ENC)
+		(ENC) edge node[midway, above] {\(m_e\)}  (MOD)
+		(MOD) edge node[midway, right] {\(x\)}    (CHN)
+		(CHN) edge node[midway, right] {\(y\)}    (DMD)
+		(DMD) edge node[midway, above] {\(m_e'\)} (DEC)
+		(DEC) edge node[midway, above] {\(m'\)}   (SNK)
+	;
+
+	\draw[very thick, -latex]
+		($(MOD.east)+(5mm,0)$) node[right] (CARR) {Carrier \(x_c\)} to (MOD);
+
+	\draw[very thick, -latex]
+		($(CHN.east)+(5mm,0)$) node[right] (NOISE) {Noise \(n\)} to (CHN);
+
+	\draw[very thick, -latex]
+		($(CHN.west)-(5mm,0)$) node[left] (FADE) {Fading} to (CHN);
+
+	\draw[very thick, -latex]
+		($(DMD.east)+(5mm,0)$) node[right] (SYNC) {Sync} to (DMD);
+
+	\begin{pgfonlayer}{background}
+		\fill[lightgray!20] ($(SRC.north west)+(-5mm,5mm)$) node (TX) {}
+			rectangle ($(MOD.south -| CARR.east)+(5mm,-5mm)$);
+
+		\fill[lightgray!20] ($(SNK.north west)+(-5mm,5mm)$) node (RX) {}
+			rectangle ($(DMD.south -| CARR.east)+(5mm,-5mm)$);
+
+		\node[gray, font = \sffamily\bfseries, anchor = south west]
+			at (TX.north) {Transmitter};
+
+		\node[gray, font = \sffamily\bfseries, anchor = south west]
+			at (RX.north) {Receiver};
+	\end{pgfonlayer}
+\end{tikzpicture}

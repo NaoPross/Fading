@@ -4,16 +4,17 @@ TEXARGS := -halt-on-error -interaction=nonstopmode
 SOURCES := \
 	Fading.tex \
 	Fading.bib \
-	tex/classicthesis.sty \
-	tex/classicthesis-config.tex \
 	\
-	tex/titlepage.tex \
+	tex/docmacros.sty \
 	tex/preamble.tex \
+	tex/titlepage.tex \
 	\
 	chapters/introduction.tex \
 	chapters/theory.tex \
 	chapters/implementation.tex \
-	chapters/conclusions.tex
+	chapters/conclusions.tex \
+	\
+	figures/tikz/overview.tex
 
 # Get the main file from the file
 MAIN := $(shell sed -ne 's/^.*\!TeX root =\(.*\)$$/\1/ p' $(SOURCES))
