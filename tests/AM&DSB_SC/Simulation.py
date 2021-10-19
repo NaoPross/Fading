@@ -350,9 +350,9 @@ class Simulation(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.set_decim(self.samp_rate/self.audio_rate)
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
+        self.fosphor_glfw_sink_c_0.set_frequency_range(0, self.samp_rate)
         self.freq_xlating_fir_filter_xxx_0.set_taps(firdes.low_pass(1.0,self.samp_rate,3000,100))
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
-        self.fosphor_glfw_sink_c_0.set_frequency_range(0, self.samp_rate)
 
     def get_audio_rate(self):
         return self.audio_rate
