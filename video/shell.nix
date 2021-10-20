@@ -1,16 +1,16 @@
 with import <nixpkgs> {};
 let
-  manimpango = callPackage manimpango/default.nix {
+  manimpango = callPackage ./manimpango.nix {
     buildPythonPackage = pkgs.python3Packages.buildPythonPackage;
     fetchPypi = pkgs.python3Packages.fetchPypi;
   };
 
-  mapbox-earcut = callPackage manimgl/mapbox-earcut.nix {
+  mapbox-earcut = callPackage ./mapbox-earcut.nix {
     buildPythonPackage = pkgs.python3Packages.buildPythonPackage;
     fetchPypi = pkgs.python3Packages.fetchPypi;
   };
 
-  manimgl = callPackage manimgl/default.nix {
+  manimgl = callPackage ./manimgl.nix {
     buildPythonApplication = pkgs.python3Packages.buildPythonApplication;
     buildPythonPackage = pkgs.python3Packages.buildPythonPackage;
     fetchPypi = pkgs.python3Packages.fetchPypi;
