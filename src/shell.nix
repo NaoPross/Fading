@@ -8,18 +8,11 @@ let
   };
 
 in mkShell {
-  buildInputs = [ dearpygui ] ++ (with pkgs; []);
+  buildInputs = [ dearpygui ] ++ (with pkgs; [
+    gnuradio
+    python38Packages.setuptools
+    # gnuradio block dev dependencies
+    cmake pkg-config log4cpp mpir boost175 gmp volk
+    python38Packages.pybind11
+  ]);
 }
-
-# (pkgs.buildFHSUserEnv {
-#   name = "pipzone";
-#   targetPkgs = pkgs: (with pkgs; [
-#     python38
-#     python38Packages.pip
-#     python38Packages.virtualenv
-#     libGL
-#     libGL_driver
-#     xorg.libX11
-#   ]);
-#   runScript = "bash";
-# }).env
