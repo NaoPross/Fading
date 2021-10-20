@@ -2,44 +2,39 @@
 
 \chapter{Theory}
 
-\section{Review of modulation schemes}
-
 \begin{figure}
-	\centering	
+	\centering
 	\input{figures/tikz/overview}
 	\caption{
-		Block diagram for a general wireless communicatiSon system with annotated signal names.
-		Frequency domain representations of signals use the uppercase symbol of their respective time domain name.
+		Block diagram for a general wireless communication system with annotated signal names. Frequency domain representations of signals use the uppercase symbol of their respective time domain name.
 		\label{fig:notation}
 	}
 \end{figure}
 
-In this section we will briefly give the mathematical background required by the modulation schemes used in the project. For conciseness encoding schemes and (digital) signal processing calculations are left out and discussed later. Thus for this section \(m_e = m\).
+In this section we will briefly give the mathematical background required by the modulation schemes used in the project. The notation used is summarised in figure \ref{fig:notation}. For conciseness encoding schemes and (digital) signal processing calculations are left out and discussed later. Thus for this section \(m_e = m\).
 
-\paragraph{AM / DSB}
-
-Ordinary amplitude modulation (AM), sometimes also known as double sideband (DSB) modulation in its simplest form is mathematically formulated in time and frequency domain through the following equations\cite{Hsu}:
-\begin{subequations}
-	\begin{align}
-		s(t) &= \big( 1 + \mu m(t) \big) \cdot \Re{e^{j\omega_c t}}, \\
-		S(\omega) &= \pi\delta(-\omega_c)
-			+ \pi\delta(\omega_c)
-			+ \frac{\mu}{2} M(\omega - \omega_c)
-			+ \frac{\mu}{2} M(\omega + \omega_c).
-	\end{align}
-\end{subequations}
-Where \(\mu > 0\) is the so called modulation factor, that can be adjusted to avoid clipping and improve performance.
-
-\subsection{Quadrature amplitude modulation (QAM)}
+\section{Quadrature amplitude modulation}
 
 Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. The simple yet effective idea behind QAM is to encode extra information into an orthogonal carrier signal, thus increasing the number of bits sent per unit of time.
 
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpks-constellation}
+	\caption{
+		% TODO: write caption
+		\label{fig:qpks-constellation}
+	}
+\end{figure}
+
 \subsection{Phase Shift Keying (PSK)}
 
-PSK \cite{Meyer2011} is a popular modulation type for data transmission. With a bipolar binary signal, the amplitude remains constant and only the phase will be changed with phase jumps of 180 degrees, which can be seen as a multiplication of the carrier signal with $\pm$ 1. That is alow known as binary phase shift keying.
-\includegraphics[width=5cm]{./image/BPSK2.png}
-%TODO: Better Image
-%https://sites.google.com/site/billmahroukelec675/bipolar-phase-shift-keying
+PSK is a popular modulation type for data transmission\cite{Meyer2011}. With a bipolar binary signal, the amplitude remains constant and only the phase will be changed with phase jumps of 180 degrees, which can be seen as a multiplication of the carrier signal with $\pm$ 1. That is alow known as binary phase shift keying.
+
+\begin{figure}
+	% TODO: Better Image
+	% https://sites.google.com/site/billmahroukelec675/bipolar-phase-shift-keying
+	\includegraphics[width=5cm]{./image/BPSK2.png}
+\end{figure}
 
 \subsection{Quadrature Phase Shift Keying (QPSK)}
 
@@ -48,14 +43,11 @@ Two bits are modulated at ones with the same bandwidth as a 2-PSK so more inform
 Most times there is noise and the points on the constellation diagram become a surface. 
 If the surfaces overlap there will be a problem with decoding. 
 
-
-
-
-
-
 \section{Fading}
 
 \subsection{Geometric Model}
+
+
 \subsection{Statistical Model}
 
 %% TODO: write about advantage of statistical model instead of geometric
