@@ -32,9 +32,12 @@ class qa_rx_ui_sink(gr_unittest.TestCase):
         self.tb = None
 
     def test_001_t(self):
-        # set up fg
+        src_data = (-3, 4, -5.5, 2, 3)
+        src = blocks.vector_source_c(src_data, False)
+        sink = rx_ui_sink()
+
+        self.tb.connect(src, sink)
         self.tb.run()
-        # check data
 
 
 if __name__ == '__main__':

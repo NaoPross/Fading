@@ -12,7 +12,9 @@ in mkShell {
     gnuradio
     python38Packages.setuptools
     # gnuradio block dev dependencies
-    cmake pkg-config log4cpp mpir boost175 gmp volk
+    cmake ninja pkg-config log4cpp mpir boost175 gmp volk
     python38Packages.pybind11
+  ]) ++ (with pkgs.python38Packages; [
+    numpy
   ]);
 }
