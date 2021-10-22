@@ -1,0 +1,7 @@
+/*!
+ * \defgroup block GNU Radio FADING_UI C++ Signal Processing Blocks
+ * \brief All C++ blocks that can be used from the FADING_UI GNU Radio
+ *        module are listed here or in the subcategories below.
+ *
+ */
+
