@@ -7,7 +7,7 @@
 # GNU Radio Python Flow Graph
 # Title: QPSK
 # Author: Pross Naoki, Halter Sara Cinzia
-# GNU Radio version: 3.8.2.0
+# GNU Radio version: 3.9.2.0
 
 from distutils.version import StrictVersion
 
@@ -30,19 +30,23 @@ import numpy
 from gnuradio import channels
 from gnuradio import digital
 from gnuradio import gr
+from gnuradio.fft import window
 import sys
 import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio.qtgui import Range, RangeWidget
+from PyQt5 import QtCore
+
+
 
 from gnuradio import qtgui
 
 class qpks(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "QPSK")
+        gr.top_block.__init__(self, "QPSK", catch_exceptions=True)
         Qt.QWidget.__init__(self)
         self.setWindowTitle("QPSK")
         qtgui.util.check_set_qss()
@@ -106,16 +110,16 @@ class qpks(gr.top_block, Qt.QWidget):
         self.params_grid_layout_1 = Qt.QGridLayout()
         self.params_layout_1.addLayout(self.params_grid_layout_1)
         self.params.addTab(self.params_widget_1, 'Receiver')
-        self.top_grid_layout.addWidget(self.params)
+        self.top_layout.addWidget(self.params)
         self._timing_loop_bw_range = Range(0, 200e-3, 10e-3, 2 * 3.141592653589793 / 100, 200)
-        self._timing_loop_bw_win = RangeWidget(self._timing_loop_bw_range, self.set_timing_loop_bw, 'Time Bandwidth', "counter_slider", float)
+        self._timing_loop_bw_win = RangeWidget(self._timing_loop_bw_range, self.set_timing_loop_bw, 'Time Bandwidth', "counter_slider", float, QtCore.Qt.Horizontal)
         self.params_grid_layout_0.addWidget(self._timing_loop_bw_win, 1, 1, 1, 1)
         for r in range(1, 2):
             self.params_grid_layout_0.setRowStretch(r, 1)
         for c in range(1, 2):
             self.params_grid_layout_0.setColumnStretch(c, 1)
         self._time_offset_range = Range(0.999, 1.001, 0.0001, 1.0, 200)
-        self._time_offset_win = RangeWidget(self._time_offset_range, self.set_time_offset, 'Timing Offset', "counter_slider", float)
+        self._time_offset_win = RangeWidget(self._time_offset_range, self.set_time_offset, 'Timing Offset', "counter_slider", float, QtCore.Qt.Horizontal)
         self.params_grid_layout_0.addWidget(self._time_offset_win, 0, 1, 1, 1)
         for r in range(0, 1):
             self.params_grid_layout_0.setRowStretch(r, 1)
@@ -137,30 +141,30 @@ class qpks(gr.top_block, Qt.QWidget):
         self.plots_grid_layout_2 = Qt.QGridLayout()
         self.plots_layout_2.addLayout(self.plots_grid_layout_2)
         self.plots.addTab(self.plots_widget_2, 'Time')
-        self.top_grid_layout.addWidget(self.plots)
+        self.top_layout.addWidget(self.plots)
         self._phase_bw_range = Range(0, 1, .01, 2 * 3.141592653589793 / 100, 200)
-        self._phase_bw_win = RangeWidget(self._phase_bw_range, self.set_phase_bw, 'Phase Bandwidth', "counter_slider", float)
+        self._phase_bw_win = RangeWidget(self._phase_bw_range, self.set_phase_bw, 'Phase Bandwidth', "counter_slider", float, QtCore.Qt.Horizontal)
         self.params_grid_layout_1.addWidget(self._phase_bw_win, 1, 0, 1, 1)
         for r in range(1, 2):
             self.params_grid_layout_1.setRowStretch(r, 1)
         for c in range(0, 1):
             self.params_grid_layout_1.setColumnStretch(c, 1)
         self._noise_volt_range = Range(0, 1, 0.01, 0.0001, 200)
-        self._noise_volt_win = RangeWidget(self._noise_volt_range, self.set_noise_volt, 'Noise Voltage', "counter_slider", float)
+        self._noise_volt_win = RangeWidget(self._noise_volt_range, self.set_noise_volt, 'Noise Voltage', "counter_slider", float, QtCore.Qt.Horizontal)
         self.params_grid_layout_0.addWidget(self._noise_volt_win, 0, 0, 1, 1)
         for r in range(0, 1):
             self.params_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 1):
             self.params_grid_layout_0.setColumnStretch(c, 1)
         self._freq_offset_range = Range(-100e-3, 100e-3, 1e-3, 0, 200)
-        self._freq_offset_win = RangeWidget(self._freq_offset_range, self.set_freq_offset, 'Frequency Offset', "counter_slider", float)
+        self._freq_offset_win = RangeWidget(self._freq_offset_range, self.set_freq_offset, 'Frequency Offset', "counter_slider", float, QtCore.Qt.Horizontal)
         self.params_grid_layout_0.addWidget(self._freq_offset_win, 1, 0, 1, 1)
         for r in range(1, 2):
             self.params_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 1):
             self.params_grid_layout_0.setColumnStretch(c, 1)
         self._eq_gain_range = Range(0, .1, .001, .01, 200)
-        self._eq_gain_win = RangeWidget(self._eq_gain_range, self.set_eq_gain, 'Equalizer Rate', "counter_slider", float)
+        self._eq_gain_win = RangeWidget(self._eq_gain_range, self.set_eq_gain, 'Equalizer Rate', "counter_slider", float, QtCore.Qt.Horizontal)
         self.params_grid_layout_1.addWidget(self._eq_gain_win, 0, 0, 1, 1)
         for r in range(0, 1):
             self.params_grid_layout_1.setRowStretch(r, 1)
@@ -170,7 +174,8 @@ class qpks(gr.top_block, Qt.QWidget):
             1024, #size
             samp_rate, #samp_rate
             "Decoded", #name
-            2 #number of inputs
+            2, #number of inputs
+            None # parent
         )
         self.qtgui_time_sink_x_0.set_update_time(0.10)
         self.qtgui_time_sink_x_0.set_y_axis(-1, 1)
@@ -219,11 +224,12 @@ class qpks(gr.top_block, Qt.QWidget):
             self.plots_grid_layout_2.setColumnStretch(c, 1)
         self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
             1024, #size
-            firdes.WIN_BLACKMAN_hARRIS, #wintype
+            window.WIN_BLACKMAN_hARRIS, #wintype
             0, #fc
             samp_rate, #bw
             "Channel", #name
-            1
+            1,
+            None # parent
         )
         self.qtgui_freq_sink_x_0.set_update_time(0.10)
         self.qtgui_freq_sink_x_0.set_y_axis(-140, 10)
@@ -234,6 +240,7 @@ class qpks(gr.top_block, Qt.QWidget):
         self.qtgui_freq_sink_x_0.set_fft_average(1.0)
         self.qtgui_freq_sink_x_0.enable_axis_labels(True)
         self.qtgui_freq_sink_x_0.enable_control_panel(False)
+        self.qtgui_freq_sink_x_0.set_fft_window_normalized(False)
 
 
 
@@ -264,7 +271,8 @@ class qpks(gr.top_block, Qt.QWidget):
         self.qtgui_const_sink_x_2 = qtgui.const_sink_c(
             1024, #size
             "Locked", #name
-            1 #number of inputs
+            1, #number of inputs
+            None # parent
         )
         self.qtgui_const_sink_x_2.set_update_time(0.10)
         self.qtgui_const_sink_x_2.set_y_axis(-2, 2)
@@ -308,7 +316,8 @@ class qpks(gr.top_block, Qt.QWidget):
         self.qtgui_const_sink_x_1 = qtgui.const_sink_c(
             1024, #size
             "Equalized", #name
-            1 #number of inputs
+            1, #number of inputs
+            None # parent
         )
         self.qtgui_const_sink_x_1.set_update_time(0.10)
         self.qtgui_const_sink_x_1.set_y_axis(-2, 2)
@@ -352,7 +361,8 @@ class qpks(gr.top_block, Qt.QWidget):
         self.qtgui_const_sink_x_0_0 = qtgui.const_sink_c(
             2048, #size
             "Synchronized", #name
-            1 #number of inputs
+            1, #number of inputs
+            None # parent
         )
         self.qtgui_const_sink_x_0_0.set_update_time(0.10)
         self.qtgui_const_sink_x_0_0.set_y_axis(-2, 2)
@@ -396,7 +406,8 @@ class qpks(gr.top_block, Qt.QWidget):
         self.qtgui_const_sink_x_0 = qtgui.const_sink_c(
             2048, #size
             "Channel", #name
-            1 #number of inputs
+            1, #number of inputs
+            None # parent
         )
         self.qtgui_const_sink_x_0.set_update_time(0.10)
         self.qtgui_const_sink_x_0.set_y_axis(-2, 2)
@@ -448,7 +459,8 @@ class qpks(gr.top_block, Qt.QWidget):
             pre_diff_code=True,
             excess_bw=excess_bw,
             verbose=False,
-            log=False)
+            log=False,
+            truncate=False)
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(qpsk_const)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
         self.channels_channel_model_0 = channels.channel_model(
@@ -497,6 +509,9 @@ class qpks(gr.top_block, Qt.QWidget):
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "qpks")
         self.settings.setValue("geometry", self.saveGeometry())
+        self.stop()
+        self.wait()
+
         event.accept()
 
     def get_sps(self):
@@ -606,7 +621,6 @@ class qpks(gr.top_block, Qt.QWidget):
 
 
 
-
 def main(top_block_cls=qpks, options=None):
     if gr.enable_realtime_scheduling() != gr.RT_OK:
         print("Error: failed to enable real-time scheduling.")
@@ -623,6 +637,9 @@ def main(top_block_cls=qpks, options=None):
     tb.show()
 
     def sig_handler(sig=None, frame=None):
+        tb.stop()
+        tb.wait()
+
         Qt.QApplication.quit()
 
     signal.signal(signal.SIGINT, sig_handler)
@@ -632,11 +649,6 @@ def main(top_block_cls=qpks, options=None):
     timer.start(500)
     timer.timeout.connect(lambda: None)
 
-    def quitting():
-        tb.stop()
-        tb.wait()
-
-    qapp.aboutToQuit.connect(quitting)
     qapp.exec_()
 
 if __name__ == '__main__':
