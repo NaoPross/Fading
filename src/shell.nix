@@ -1,7 +1,7 @@
 # vim: set ts=2 sw=2 et:
-with import <nixpkgs> {};
+with import <nixpkgs> { overlays = [ (import ./nix/gnuradio-overlay.nix) ]; };
 let
-  dearpygui = callPackage ./dearpygui.nix {
+  dearpygui = callPackage ./nix/dearpygui.nix {
     buildPythonPackage = pkgs.python38Packages.buildPythonPackage;
     fetchPypi = pkgs.python38Packages.fetchPypi;
     isPy38 = pkgs.python38Packages.isPy38;
