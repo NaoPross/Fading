@@ -29,6 +29,9 @@ class TimeDependentComplexPlane(ComplexPlane):
     def number_to_point(self, number, time=0):
         return self.coords_to_point(number.real, number.imag, time)
 
+    def point_to_number(self, point, time=0):
+        return point[0] + 1j * point[1]
+
     def n2p(self, number, time=0):
         return self.number_to_point(number, time)
 
@@ -65,23 +68,46 @@ class QamModulation(Scene):
     CONFIG = {}
 
     def construct(self):
-        cplane = TimeDependentComplexPlane()
+        self.camera.frame.reorient(0, 0, 0)
 
+        cplane = TimeDependentComplexPlane()
         self.play(ShowCreation(cplane))
+
+
+        dot = Dot(cplane.n2p(1 + 2j))
+        number = DecimalNumber()
+
+        number.add_updater(lambda m: m.next_to(dot, RIGHT))
+
+        def update_nums(m):
+            x, y, z = dot.get_center()
+            num = cplane.p2n((x,y))
+            m.set_value(num)
+
+        number.add_updater(update_nums)
+
+        self.play(ShowCreation(dot), ShowCreation(number))
+        self.play(dot.animate.move_to(cplane.n2p(-5 + 3j)), run_time=2)
+        self.play(dot.animate.move_to(cplane.n2p(-1 - 3j)), run_time=2)
+        self.play(dot.animate.move_to(cplane.n2p(4 - 3j)))
+
+        self.wait(1)
+
+        # Get out and show time dependence
         self.play(self.camera.frame.animate.move_to(2 * OUT))
 
-        graph_y = cplane.get_inphase_graph(lambda t: 2 * np.cos(2 * t), color=RED)
+        graph_y = cplane.get_inphase_graph(lambda t: -2 * np.cos(2 * t), color=RED)
         graph_x = cplane.get_quadrature_graph(lambda t: 1 * sig.square(4 * t), color=BLUE)
 
-        self.play(self.camera.frame.animate.reorient(90, 90, 90))
+        self.play(self.camera.frame.animate.reorient(-90, 90, 90))
         self.play(ShowCreation(graph_x))
 
         self.play(self.camera.frame.animate.reorient(0, 90, 90))
         self.play(ShowCreation(graph_y))
 
-        self.play(self.camera.frame.animate.reorient(80, 90, 90))
+        self.play(self.camera.frame.animate.reorient(-100, 90, 90))
 
         # arrow = Arrow(
 
         # open an interactive IPython shell here
-        self.embed()
+        # self.embed()
