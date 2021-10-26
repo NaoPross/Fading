@@ -109,7 +109,7 @@ class AM_Simulation_v1(gr.top_block, Qt.QWidget):
         self.uhd_usrp_sink_0.set_center_freq(223e6, 0)
         self.uhd_usrp_sink_0.set_normalized_gain(0.5, 0)
         self.uhd_usrp_sink_0.set_antenna('TX/RX', 0)
-        self.uhd_usrp_sink_0.set_bandwidth(400e3, 0)
+        self.uhd_usrp_sink_0.set_bandwidth(600e3, 0)
         self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
         self.uhd_usrp_sink_0.set_time_unknown_pps(uhd.time_spec())
         self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
@@ -321,12 +321,12 @@ class AM_Simulation_v1(gr.top_block, Qt.QWidget):
                 1,
                 samp_rate,
                 500,
-                6e3,
-                6e3,
+                200e3,
+                200e3,
                 firdes.WIN_HAMMING,
                 6.76))
         self.analog_sig_source_x_0_0 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, 100E3, 10, 0, 0)
-        self.analog_sig_source_x_0 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, 5e3, 1, 0, 0)
+        self.analog_sig_source_x_0 = analog.sig_source_f(samp_rate, analog.GR_SIN_WAVE, 5e3, 1, 0, 0)
         self.analog_const_source_x_1 = analog.sig_source_f(0, analog.GR_CONST_WAVE, 0, 0, 0)
         self.analog_const_source_x_0_0 = analog.sig_source_f(0, analog.GR_CONST_WAVE, 0, 0, 0)
         self.analog_const_source_x_0 = analog.sig_source_f(0, analog.GR_CONST_WAVE, 0, 0, 700e-3)
@@ -368,7 +368,7 @@ class AM_Simulation_v1(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
         self.analog_sig_source_x_0_0.set_sampling_freq(self.samp_rate)
-        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, 500, 6e3, 6e3, firdes.WIN_HAMMING, 6.76))
+        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, 500, 200e3, 200e3, firdes.WIN_HAMMING, 6.76))
         self.freq_xlating_fir_filter_xxx_0.set_taps(firdes.low_pass(1,self.samp_rate,6e3, 2000))
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate)

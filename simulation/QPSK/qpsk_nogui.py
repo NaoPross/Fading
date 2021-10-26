@@ -7,7 +7,7 @@
 # GNU Radio Python Flow Graph
 # Title: QPSK with IMGUI
 # Author: Naoki Pross
-# GNU Radio version: 3.9.2.0
+# GNU Radio version: 3.8.2.0
 
 from gnuradio import blocks
 import numpy
@@ -15,7 +15,6 @@ from gnuradio import channels
 from gnuradio.filter import firdes
 from gnuradio import digital
 from gnuradio import gr
-from gnuradio.fft import window
 import sys
 import signal
 from argparse import ArgumentParser
@@ -23,12 +22,10 @@ from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 
 
-
-
 class qpsk_nogui(gr.top_block):
 
     def __init__(self):
-        gr.top_block.__init__(self, "QPSK with IMGUI", catch_exceptions=True)
+        gr.top_block.__init__(self, "QPSK with IMGUI")
 
         ##################################################
         # Variables
@@ -64,8 +61,7 @@ class qpsk_nogui(gr.top_block):
             pre_diff_code=True,
             excess_bw=excess_bw,
             verbose=False,
-            log=False,
-            truncate=False)
+            log=False)
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(qpsk_const)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
         self.channels_channel_model_0 = channels.channel_model(
@@ -201,6 +197,7 @@ class qpsk_nogui(gr.top_block):
     def set_chn_taps(self, chn_taps):
         self.chn_taps = chn_taps
         self.channels_channel_model_0.set_taps(self.chn_taps)
+
 
 
 
