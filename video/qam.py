@@ -1,6 +1,18 @@
 from manimlib import *
 from scipy import signal as sig
 
+def square(t, slew_rate=.1):
+    t = t % 1
+
+    if t < .1:
+        return t * 1 / slew_rate
+    elif t < .5 - slew_rate / 2:
+        return 1
+    elif t < .5 + slew_rate / 2:
+        return 1 - (t - (.5 - slew_rate / 2)) * 1 / slew_rate
+    else:
+        return 0
+
 
 class TimeDependentComplexPlane(ComplexPlane):
     CONFIG = {
@@ -70,11 +82,13 @@ class QamModulation(Scene):
     def construct(self):
         self.camera.frame.reorient(0, 0, 0)
 
+        # create a complex plane
         cplane = TimeDependentComplexPlane()
         self.play(ShowCreation(cplane))
 
+        # a complex number
+        dot = Dot(cplane.n2p(1 + 2j), color=GREEN)
 
-        dot = Dot(cplane.n2p(1 + 2j))
         number = DecimalNumber()
 
         number.add_updater(lambda m: m.next_to(dot, RIGHT))
@@ -86,18 +100,36 @@ class QamModulation(Scene):
 
         number.add_updater(update_nums)
 
+        # create and move complex number around
         self.play(ShowCreation(dot), ShowCreation(number))
-        self.play(dot.animate.move_to(cplane.n2p(-5 + 3j)), run_time=2)
-        self.play(dot.animate.move_to(cplane.n2p(-1 - 3j)), run_time=2)
-        self.play(dot.animate.move_to(cplane.n2p(4 - 3j)))
+        self.play(dot.animate.move_to(cplane.n2p(-5+3j)), run_time=2)
+        self.play(dot.animate.move_to(cplane.n2p(-4-3j)), run_time=2)
 
-        self.wait(1)
+        # move the number according to a time dependend complex function
+        def signal_func(t):
+            real = -2 * np.cos(2 * t)
+            imag = 3 * (square(t / 2) - .5)
 
-        # Get out and show time dependence
-        self.play(self.camera.frame.animate.move_to(2 * OUT))
+            return real + 1j * imag
 
-        graph_y = cplane.get_inphase_graph(lambda t: -2 * np.cos(2 * t), color=RED)
-        graph_x = cplane.get_quadrature_graph(lambda t: 1 * sig.square(4 * t), color=BLUE)
+        signal_func_at_zero = signal_func(0)
+
+        self.play(dot.animate.move_to(cplane.n2p(signal_func_at_zero)), run_time=2)
+
+        def dot_update_func(m, dt):
+            m.move_to(cplane.n2p(signal_func(m.time)))
+            m.time = m.time + dt / 2
+
+        dot.time = 0
+        dot.add_updater(dot_update_func)
+        self.wait(5)
+
+        # get out and show time dependence
+        self.play(self.camera.frame.animate.shift(2 * OUT))
+
+        # show functions
+        graph_y = cplane.get_inphase_graph(lambda t: signal_func(t).real, color=RED)
+        graph_x = cplane.get_quadrature_graph(lambda t: signal_func(t).imag, color=BLUE)
 
         self.play(self.camera.frame.animate.reorient(-90, 90, 90))
         self.play(ShowCreation(graph_x))
@@ -106,8 +138,38 @@ class QamModulation(Scene):
         self.play(ShowCreation(graph_y))
 
         self.play(self.camera.frame.animate.reorient(-100, 90, 90))
+        self.play(self.camera.frame.animate.rotate(40 * DEGREES, axis = UP))
 
-        # arrow = Arrow(
+        # create arrow for complex value
+        dot.remove_updater(dot_update_func)
+        self.play(dot.animate.move_to(cplane.n2p(signal_func_at_zero)), run_time=2)
+
+        arr = Arrow(cplane.n2p(0), cplane.n2p(signal_func_at_zero))
+        self.play(ShowCreation(arr))
+
+        def arr_update_func(m, dt):
+            m.set_points_by_ends(
+                cplane.n2p(0, time=m.time),
+                cplane.n2p(signal_func(m.time), time=m.time)
+            )
+            m.time = m.time + dt / 2
+
+        dot.time = 0
+        arr.time = 0
+
+        dot.add_updater(dot_update_func)
+        arr.add_updater(arr_update_func)
+        self.wait(10)
+
+        self.play(*map(FadeOut, (arr, graph_x, graph_y)))
+        self.play(
+            self.camera.frame.animate.rotate(50 * DEGREES, axis = UP),
+            dot.animate.move_to(cplane.n2p(1+1j))
+        )
+        self.play(self.camera.frame.animate.shift(-2 * OUT))
+
+        dot.remove_updater(dot_update_func)
+        arr.remove_updater(arr_update_func)
 
         # open an interactive IPython shell here
         # self.embed()
