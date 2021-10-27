@@ -32,18 +32,6 @@ options:
     state: enabled
 
 blocks:
-- name: decim
-  id: variable
-  parameters:
-    comment: ''
-    value: '16'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [288, 12.0]
-    rotation: 0
-    state: enabled
 - name: samp_rate
   id: variable
   parameters:
@@ -260,24 +248,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [728, 288.0]
-    rotation: 0
-    state: true
-- name: blocks_repeat_0
-  id: blocks_repeat
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    interp: '20'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1528, 316.0]
     rotation: 0
     state: true
 - name: freq_xlating_fir_filter_xxx_0
@@ -610,7 +580,7 @@ blocks:
     marker7: '-1'
     marker8: '-1'
     marker9: '-1'
-    name: '"Demodul"'
+    name: '"Demodulation"'
     nconnections: '1'
     size: '1024'
     srate: samp_rate
@@ -948,7 +918,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1768, 236.0]
+    coordinate: [1568, 236.0]
     rotation: 0
     state: true
 - name: uhd_usrp_source_0
@@ -1339,9 +1309,8 @@ connections:
 - [blocks_multiply_xx_0_0, '0', blocks_add_xx_1, '0']
 - [blocks_multiply_xx_0_1, '0', blocks_float_to_complex_0, '0']
 - [blocks_multiply_xx_0_1, '0', qtgui_freq_sink_x_0, '0']
-- [blocks_repeat_0, '0', uhd_usrp_sink_0, '0']
 - [freq_xlating_fir_filter_xxx_0, '0', band_pass_filter_0, '0']
-- [rational_resampler_xxx_0, '0', blocks_repeat_0, '0']
+- [rational_resampler_xxx_0, '0', uhd_usrp_sink_0, '0']
 - [uhd_usrp_source_0, '0', freq_xlating_fir_filter_xxx_0, '0']
 
 metadata:

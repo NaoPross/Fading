@@ -132,41 +132,19 @@ blocks:
     alias: ''
     amp: '1'
     comment: ''
-    freq: 5e3
+    freq: 10e3
     maxoutbuf: '0'
     minoutbuf: '0'
     offset: '0'
     phase: '0'
     samp_rate: samp_rate
     type: float
-    waveform: analog.GR_SIN_WAVE
+    waveform: analog.GR_TRI_WAVE
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
     coordinate: [80, 244.0]
-    rotation: 0
-    state: true
-- name: analog_sig_source_x_0_0
-  id: analog_sig_source_x
-  parameters:
-    affinity: ''
-    alias: ''
-    amp: '10'
-    comment: ''
-    freq: 100E3
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    offset: '0'
-    phase: '0'
-    samp_rate: samp_rate
-    type: float
-    waveform: analog.GR_COS_WAVE
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [456, 420.0]
     rotation: 0
     state: true
 - name: band_pass_filter_0
@@ -178,14 +156,14 @@ blocks:
     comment: ''
     decim: '1'
     gain: '1'
-    high_cutoff_freq: 200e3
+    high_cutoff_freq: 100e3
     interp: '1'
     low_cutoff_freq: '500'
     maxoutbuf: '0'
     minoutbuf: '0'
     samp_rate: samp_rate
     type: fir_filter_ccf
-    width: 200e3
+    width: 100e3
     win: firdes.WIN_HAMMING
   states:
     bus_sink: false
@@ -209,7 +187,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [520, 272.0]
+    coordinate: [512, 272.0]
     rotation: 0
     state: true
 - name: blocks_complex_to_real_0
@@ -262,24 +240,6 @@ blocks:
     coordinate: [320, 256.0]
     rotation: 0
     state: true
-- name: blocks_multiply_xx_0_1
-  id: blocks_multiply_xx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    num_inputs: '2'
-    type: float
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [728, 288.0]
-    rotation: 0
-    state: true
 - name: blocks_repeat_0
   id: blocks_repeat
   parameters:
@@ -297,7 +257,7 @@ blocks:
     bus_structure: null
     coordinate: [1528, 316.0]
     rotation: 0
-    state: true
+    state: bypassed
 - name: freq_xlating_fir_filter_xxx_0
   id: freq_xlating_fir_filter_xxx
   parameters:
@@ -309,7 +269,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     samp_rate: samp_rate
-    taps: firdes.low_pass(1,samp_rate,6e3, 2000)
+    taps: firdes.low_pass(1,samp_rate,50e3, 2000)
     type: ccc
   states:
     bus_sink: false
@@ -572,7 +532,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [688, 92.0]
+    coordinate: [680, 84.0]
     rotation: 0
     state: true
 - name: qtgui_time_sink_x_0_0_0_0
@@ -729,7 +689,7 @@ blocks:
     ant7: TX/RX
     ant8: TX/RX
     ant9: TX/RX
-    bw0: 600e3
+    bw0: '0'
     bw1: '0'
     bw10: '0'
     bw11: '0'
@@ -805,7 +765,7 @@ blocks:
     comment: ''
     dev_addr: '"serial=309AF59  "'
     dev_args: '""'
-    gain0: '0.5'
+    gain0: '0.2'
     gain1: '0'
     gain10: '0'
     gain11: '0'
@@ -1006,7 +966,7 @@ blocks:
     ant7: RX2
     ant8: RX2
     ant9: RX2
-    bw0: 400e3
+    bw0: '0'
     bw1: '0'
     bw10: '0'
     bw11: '0'
@@ -1338,7 +1298,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1088, 572.0]
+    coordinate: [1072, 576.0]
     rotation: 0
     state: true
 
@@ -1348,16 +1308,14 @@ connections:
 - [analog_const_source_x_1, '0', blocks_float_to_complex_0, '1']
 - [analog_pll_carriertracking_cc_0, '0', band_pass_filter_0, '0']
 - [analog_sig_source_x_0, '0', blocks_multiply_xx_0_0, '1']
-- [analog_sig_source_x_0_0, '0', blocks_multiply_xx_0_1, '1']
 - [band_pass_filter_0, '0', blocks_complex_to_real_0, '0']
 - [band_pass_filter_0, '0', qtgui_freq_sink_x_0_0, '0']
-- [blocks_add_xx_1, '0', blocks_multiply_xx_0_1, '0']
+- [blocks_add_xx_1, '0', blocks_float_to_complex_0, '0']
+- [blocks_add_xx_1, '0', qtgui_freq_sink_x_0, '0']
 - [blocks_add_xx_1, '0', qtgui_time_sink_x_0_0, '0']
 - [blocks_complex_to_real_0, '0', qtgui_time_sink_x_0_0_0_0, '0']
 - [blocks_float_to_complex_0, '0', rational_resampler_xxx_0, '0']
 - [blocks_multiply_xx_0_0, '0', blocks_add_xx_1, '0']
-- [blocks_multiply_xx_0_1, '0', blocks_float_to_complex_0, '0']
-- [blocks_multiply_xx_0_1, '0', qtgui_freq_sink_x_0, '0']
 - [blocks_repeat_0, '0', uhd_usrp_sink_0, '0']
 - [freq_xlating_fir_filter_xxx_0, '0', analog_pll_carriertracking_cc_0, '0']
 - [rational_resampler_xxx_0, '0', blocks_repeat_0, '0']

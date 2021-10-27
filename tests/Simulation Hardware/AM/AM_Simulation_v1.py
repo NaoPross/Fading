@@ -93,7 +93,6 @@ class AM_Simulation_v1(gr.top_block, Qt.QWidget):
         self.uhd_usrp_source_0.set_center_freq(223e6, 0)
         self.uhd_usrp_source_0.set_normalized_gain(0.5, 0)
         self.uhd_usrp_source_0.set_antenna('RX2', 0)
-        self.uhd_usrp_source_0.set_bandwidth(400e3, 0)
         self.uhd_usrp_source_0.set_samp_rate(samp_rate)
         self.uhd_usrp_source_0.set_time_unknown_pps(uhd.time_spec())
         self.uhd_usrp_sink_0 = uhd.usrp_sink(
@@ -107,9 +106,8 @@ class AM_Simulation_v1(gr.top_block, Qt.QWidget):
         )
         self.uhd_usrp_sink_0.set_clock_source('external', 0)
         self.uhd_usrp_sink_0.set_center_freq(223e6, 0)
-        self.uhd_usrp_sink_0.set_normalized_gain(0.5, 0)
+        self.uhd_usrp_sink_0.set_normalized_gain(0.2, 0)
         self.uhd_usrp_sink_0.set_antenna('TX/RX', 0)
-        self.uhd_usrp_sink_0.set_bandwidth(600e3, 0)
         self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
         self.uhd_usrp_sink_0.set_time_unknown_pps(uhd.time_spec())
         self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
@@ -308,9 +306,7 @@ class AM_Simulation_v1(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 1):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(1, firdes.low_pass(1,samp_rate,6e3, 2000), 0, samp_rate)
-        self.blocks_repeat_0 = blocks.repeat(gr.sizeof_gr_complex*1, 20)
-        self.blocks_multiply_xx_0_1 = blocks.multiply_vff(1)
+        self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(1, firdes.low_pass(1,samp_rate,50e3, 2000), 0, samp_rate)
         self.blocks_multiply_xx_0_0 = blocks.multiply_vff(1)
         self.blocks_float_to_complex_0 = blocks.float_to_complex(1)
         self.blocks_complex_to_real_0 = blocks.complex_to_real(1)
@@ -321,12 +317,11 @@ class AM_Simulation_v1(gr.top_block, Qt.QWidget):
                 1,
                 samp_rate,
                 500,
-                200e3,
-                200e3,
+                100e3,
+                100e3,
                 firdes.WIN_HAMMING,
                 6.76))
-        self.analog_sig_source_x_0_0 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, 100E3, 10, 0, 0)
-        self.analog_sig_source_x_0 = analog.sig_source_f(samp_rate, analog.GR_SIN_WAVE, 5e3, 1, 0, 0)
+        self.analog_sig_source_x_0 = analog.sig_source_f(samp_rate, analog.GR_TRI_WAVE, 10e3, 1, 0, 0)
         self.analog_const_source_x_1 = analog.sig_source_f(0, analog.GR_CONST_WAVE, 0, 0, 0)
         self.analog_const_source_x_0_0 = analog.sig_source_f(0, analog.GR_CONST_WAVE, 0, 0, 0)
         self.analog_const_source_x_0 = analog.sig_source_f(0, analog.GR_CONST_WAVE, 0, 0, 700e-3)
@@ -340,19 +335,16 @@ class AM_Simulation_v1(gr.top_block, Qt.QWidget):
         self.connect((self.analog_const_source_x_0_0, 0), (self.blocks_add_xx_1, 1))
         self.connect((self.analog_const_source_x_1, 0), (self.blocks_float_to_complex_0, 1))
         self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0_0, 1))
-        self.connect((self.analog_sig_source_x_0_0, 0), (self.blocks_multiply_xx_0_1, 1))
         self.connect((self.band_pass_filter_0, 0), (self.blocks_complex_to_real_0, 0))
         self.connect((self.band_pass_filter_0, 0), (self.qtgui_freq_sink_x_0_0, 0))
-        self.connect((self.blocks_add_xx_1, 0), (self.blocks_multiply_xx_0_1, 0))
+        self.connect((self.blocks_add_xx_1, 0), (self.blocks_float_to_complex_0, 0))
+        self.connect((self.blocks_add_xx_1, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.blocks_add_xx_1, 0), (self.qtgui_time_sink_x_0_0, 0))
         self.connect((self.blocks_complex_to_real_0, 0), (self.qtgui_time_sink_x_0_0_0_0, 0))
         self.connect((self.blocks_float_to_complex_0, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.blocks_multiply_xx_0_0, 0), (self.blocks_add_xx_1, 0))
-        self.connect((self.blocks_multiply_xx_0_1, 0), (self.blocks_float_to_complex_0, 0))
-        self.connect((self.blocks_multiply_xx_0_1, 0), (self.qtgui_freq_sink_x_0, 0))
-        self.connect((self.blocks_repeat_0, 0), (self.uhd_usrp_sink_0, 0))
         self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.band_pass_filter_0, 0))
-        self.connect((self.rational_resampler_xxx_0, 0), (self.blocks_repeat_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.uhd_usrp_sink_0, 0))
         self.connect((self.uhd_usrp_source_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
 
 
@@ -367,9 +359,8 @@ class AM_Simulation_v1(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
-        self.analog_sig_source_x_0_0.set_sampling_freq(self.samp_rate)
-        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, 500, 200e3, 200e3, firdes.WIN_HAMMING, 6.76))
-        self.freq_xlating_fir_filter_xxx_0.set_taps(firdes.low_pass(1,self.samp_rate,6e3, 2000))
+        self.band_pass_filter_0.set_taps(firdes.band_pass(1, self.samp_rate, 500, 100e3, 100e3, firdes.WIN_HAMMING, 6.76))
+        self.freq_xlating_fir_filter_xxx_0.set_taps(firdes.low_pass(1,self.samp_rate,50e3, 2000))
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate)

@@ -348,7 +348,7 @@ class AM_Simulation_v2(gr.top_block, Qt.QWidget):
         self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_const_sink_x_0_win)
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(1, firdes.low_pass(1,samp_rate,6e3, 2000), 0, samp_rate)
-        self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(4.004, 62.8e-3, [2], 32, 16, 1.5, 1)
+        self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(4.004, 62.8e-3, [1], 32, 16, 1.5, 1)
         self.blocks_repeat_0 = blocks.repeat(gr.sizeof_gr_complex*1, 20)
         self.blocks_multiply_xx_0_1 = blocks.multiply_vff(1)
         self.blocks_multiply_xx_0_0 = blocks.multiply_vff(1)
