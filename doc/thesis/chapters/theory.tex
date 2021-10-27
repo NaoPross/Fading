@@ -21,7 +21,7 @@ In this section we will briefly give the mathematical background required by the
 	\centering
 	\input{figures/tikz/qam-modulator}
 	\caption{
-		%% TODO: caption
+		Block diagram of a \(M\)-ary QAM modulator.
 		\label{fig:quadrature-modulation}
 	}
 \end{figure}
@@ -38,52 +38,58 @@ As mentioned earlier, quadrature modulation allows sending more than one bit per
 
 %% TODO: explain why gray code
 
-Both bit vectors \(\vec{m}_i, \vec{m}_q \in \{0,1\}^{\sqrt{M}}\) are sent through a binary to level converter. It's purpose is to reinterpret the bit vector as a number, usually in gray code, and to convert them into an analog waveform, which we will denote with \(m_i(t)\) and \(m_q(t)\) respectively. Mathematically the binary to level converter can be described as:
+Both bit vectors \(\vec{m}_i, \vec{m}_q \in \{0,1\}^{\sqrt{M}}\) are sent through a binary to level converter. It's purpose is to reinterpret the bit vectors as a numbers, usually in gray code, and to convert them into an analog waveform, which we will denote with \(m_i(t)\) and \(m_q(t)\) respectively. Mathematically the binary to level converter can be described as:
 \begin{equation}
 	m_i(t) = \text{Level}(\vec{m}_i) \cdot p(t),
 \end{equation}
-i.e. with a pulse function \(p(t)\) (typically a root raised cosine to optimize for bandwidth) scaled by the interpreted binary value, which we will write here with a ``Level'' function. So at this point the analog waveform is already encoding \(\sqrt{M}\) bits per unit time, but actually it is possible to do better.
+i.e. with a pulse function\footnote{Typically a root raised cosine to optimize for bandwidth.} \(p(t)\) scaled by the interpreted binary value, which is denoted here using a ``Level'' function. So at this point the analog waveform is already encoding \(\sqrt{M}\) bits per unit time, but actually it is possible to do better.
 
 \paragraph{Mixer}
 
 Having analog level signals, it is this now possible to mix them with radio frequency carriers. Because there are two waveforms, one might expect that two carrier frequencies are necessary, however this is not the case.
 
-The two component \(m_i(t)\) and \(m_q(t)\) are mixed with two different periodic signals \(\phi_i(t)\) and \(\phi_q(t)\) that have the same frequency \(\omega_c = 2\pi / T\). Now the clever part: the carrier functions are picked to be \emph{orthonormal}, mathematically this is expressed by the conditions
-\begin{subequations}
+The two component \(m_i(t)\) and \(m_q(t)\) are mixed with two different periodic signals \(\phi_i(t)\) and \(\phi_q(t)\) that have the same frequency \(\omega_c = 2\pi / T\). Now the clever part: the carrier signals are picked to be \emph{orthonormal}\footnote{Orthonormal here can be understood in the same sense as in finite dimensional vector spaces, where orthonormal vectors behave exactly like equations \eqref{eqn:orthonormal-conditions} under the dot product.} to each other, mathematically this is expressed by the conditions
+\begin{subequations} \label{eqn:orthonormal-conditions}
 	\begin{align}
 		\langle \phi_i | \phi_q \rangle
 			&= \int_T \phi_i^* \phi_q \, dt = \int_T \phi_i \phi_q^* \, dt
 			= 0, \text{ and } \\
 		\langle \phi_k | \phi_k \rangle
 			&= \int_T \phi_k^* \phi_k \,dt = 1,
-			\text{ where } k \text{ can be either } i \text{ or } q.
+			\text{ where } k \text{ is either } i \text{ or } q.
 	\end{align}
 \end{subequations}
-
-These rather abstract conditions remarkably allow for something very special. By defining a new signal 
+In practice typically \(\phi_i(t) = \cos(\omega_c t)\) and \(\phi_q(t) = j\sin(\omega_c t)\).  Provided these rather abstract conditions, let's define a new signal 
 \begin{equation}
-	s = m_i\phi_i + m_q\phi_q,
+	s = m_i\phi_i + m_q\phi_q.
 \end{equation}
 %% TODO: is this assumption correct?
-notice that assuming \(m_i\) and \(m_q\) are constant over the period carrier's period \(T\),
+Notice that assuming \(m_i\) and \(m_q\) are constant\footnote{This of is an approximation which assumes that the signal changes much slower than the carrier's modulation frequency.} over the carrier's period \(T\),
 \begin{align*}
 	\langle s | \phi_i \rangle = \int_T s^* \phi_i \,dt
 		&= \int m_i \phi_i^* \phi_i + m_q \phi_q^* \phi_i \,dt \\
 		&= m_i \underbrace{\int_T \phi_i^* \phi_i \,dt}_{1}
 			+ m_q \underbrace{\int_T \phi_q^* \phi_i \,dt}_{0} = m_i,
 \end{align*}
-which effectively means that it is possible to isolate a single component of the signal out of \(s\). The same of course works with \(\phi_q\) as well resulting in \(\langle s | \phi_q \rangle = m_q\).
+which effectively means that it is possible to isolate a single component \(m_i(t)\) out of \(s(t)\). The same of course works with \(\phi_q\) as well resulting in \(\langle s | \phi_q \rangle = m_q\). Thus (remarkably) it is possible to send two signals on the same frequency, without them interfering with each other. Since each can represent one of \(\sqrt{M}\) values, by having two we obtain \(\sqrt{M} \cdot \sqrt{M} = M\) possible combinations.
 
-% This formulation is rather abstract, in practice we usually pick \(\phi_i(t) = \cos(\omega_c t)\) and \(\phi_q(t) = j\sin(\omega_c t)\). 
-
-% \begin{figure}
-% 	\centering
-% 	\input{figures/tikz/qpks-constellation}
-% 	\caption{
-% 		% TODO: write caption
-% 		\label{fig:qpks-constellation}
-% 	}
-% \end{figure}
+\begin{figure}
+	\hfill
+	\begin{subfigure}{.4\linewidth}
+		\input{figures/tikz/qam-constellation}
+		\caption{16--QAM}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{.4\linewidth}
+		\input{figures/tikz/qpsk-constellation}
+		\caption{8--QPSK}
+	\end{subfigure}
+	\hfill
+	\caption{
+		Examples of constellation diagrams. Each dot represents a possible location for the complex amplitude of the passband signal.
+		\label{fig:qam-constellation}
+	}
+\end{figure}
 
 \subsection{Phase Shift Keying (PSK)}
 
