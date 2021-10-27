@@ -13,18 +13,49 @@
 
 In this section we will briefly give the mathematical background required by the modulation schemes used in the project. The notation used is summarised in figure \ref{fig:notation}. For conciseness encoding schemes and (digital) signal processing calculations are left out and discussed later. Thus for this section \(m_e = m\).
 
+%% TODO: Par on notation m(n) = m(nT) = discrete time
+
 \section{Quadrature amplitude modulation}
 
-Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. The simple yet effective idea behind QAM is to encode extra information into an orthogonal carrier signal, thus increasing the number of bits sent per unit of time.
+Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. The simple yet effective idea behind QAM is to encode extra information into an orthogonal carrier signal, thus increasing the number of bits sent per unit of time. A diagram showing the process is found in figure \ref{fig:quadrature-modulation}.
 
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpks-constellation}
-	\caption{
-		% TODO: write caption
-		\label{fig:qpks-constellation}
-	}
-\end{figure}
+%% TODO: Quick par on "we will dicusss M-Ary QAM"
+
+\paragraph{Bit splitter}
+
+As mentioned earlier, quadrature modulation allows sending more than one bit per unit time. The first step to do it is to use a so called bit splitter, that takes 2 chunks of \(\sqrt{M}\) bits from the continuous data stream \(m(n)\). The two bit vectors of length \(\sqrt{M}\), denoted with \(\vec{m}_i\) and \(\vec{m}_q\) are called in-phase and quadrature component respectively. The reason will become more clear later.
+
+\paragraph{Binary to level converter}
+
+%% TODO: explain why gray code
+
+Both bit vectors \(\vec{m}_i, \vec{m}_q \in \{0,1\}^{\sqrt{M}}\) are sent through a binary to level converter. It's purpose is to reinterpret the bit vector as a number, usually in gray code, and to convert them into an analog amplitude levels, which we will denote with \(m_i(t)\) and \(m_q(t)\). So at this point the analog amplitude level is already encoding \(\sqrt{M}\) bits per unit time. But it is possible to improve further.
+
+%% TODO: mention level converter pulse shaping
+
+\paragraph{Mixer}
+
+Having analog level signals, it is this now possible to mix them with a high frequency carrier. The two component \(m_i(t)\) and \(m_q(t)\) are mixed with two different periodic signals \(\phi_i(t)\) and \(\phi_q(t)\) that have the same frequency \(\omega_c\). Now the clever part, the carrier functions are picked to be \emph{orthogonal} to each other, mathematically expressed as 
+\begin{equation}
+	\langle \phi_i | \phi_q \rangle
+	= \int_T \phi_i^* \phi_q \, dt
+	= 0,
+\end{equation}
+i.e. their inner product is zero.
+
+\begin{equation}
+	s(t) = m_i\cdot\phi_i + m_q\cdot\phi_q,
+\end{equation}
+without any issue.
+
+% \begin{figure}
+% 	\centering
+% 	\input{figures/tikz/qpks-constellation}
+% 	\caption{
+% 		% TODO: write caption
+% 		\label{fig:qpks-constellation}
+% 	}
+% \end{figure}
 
 \subsection{Phase Shift Keying (PSK)}
 
