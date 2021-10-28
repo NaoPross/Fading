@@ -26,23 +26,23 @@ In this section we will briefly give the mathematical background required by the
 	}
 \end{figure}
 
-Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. The simple yet effective idea behind QAM is to encode extra information into an orthogonal carrier signal, thus increasing the number of bits sent per unit of time. A diagram showing the process is found in figure \ref{fig:quadrature-modulation}.
+Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. The simple yet effective idea behind QAM is to encode extra information into an orthogonal carrier signal, thus increasing the number of bits sent per unit of time. A block diagram of the process is shown in figure \ref{fig:quadrature-modulation}.
 
-%% TODO: Quick par on "we will dicusss M-Ary QAM"
+%% TODO: Quick par on "we will dicusss M-Ary QAM, M is 2^something"
 
 \paragraph{Bit splitter}
 
-As mentioned earlier, quadrature modulation allows sending more than one bit per unit time. The first step to do it is to use a so called bit splitter, converts the continuous data stream \(m(n)\) into pairs of chunks of \(\sqrt{M}\) bits. The two bit vectors of length \(\sqrt{M}\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\), are called in-phase and quadrature component respectively. The reason will become more clear later.
+As mentioned earlier, quadrature modulation allows sending more than one bit per unit time. The first step to do it is to use a so called bit splitter, converts the continuous data stream \(m(n)\) into pairs of chunks of \(\sqrt{M}\) bits. The two bit vectors of length \(\sqrt{M}\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\) in figure \ref{fig:quadrature-modulation}, are called in-phase and quadrature component respectively. The reason will become more clear later.
 
 \paragraph{Binary to level converter}
 
 %% TODO: explain why gray code
 
-Both bit vectors \(\vec{m}_i, \vec{m}_q \in \{0,1\}^{\sqrt{M}}\) are sent through a binary to level converter. It's purpose is to reinterpret the bit vectors as a numbers, usually in gray code, and to convert them into an analog waveform, which we will denote with \(m_i(t)\) and \(m_q(t)\) respectively. Mathematically the binary to level converter can be described as:
+Both bit vectors \(\vec{m}_i, \vec{m}_q \in \{0,1\}^{\sqrt{M}}\) are sent through a binary to level converter. It's purpose is to reinterpret the bit vectors as a numbers, usually in gray code, and to convert them into analog waveforms, which we will denote with \(m_i(t)\) and \(m_q(t)\) respectively. Mathematically the binary to level converter can be described as:
 \begin{equation}
 	m_i(t) = \text{Level}(\vec{m}_i) \cdot p(t),
 \end{equation}
-i.e. with a pulse function\footnote{Typically a root raised cosine to optimize for bandwidth.} \(p(t)\) scaled by the interpreted binary value, which is denoted here using a ``Level'' function. So at this point the analog waveform is already encoding \(\sqrt{M}\) bits per unit time, but actually it is possible to do better.
+i.e. a pulse function\footnote{Typically a root raised cosine to optimize for bandwidth.} \(p(t)\) scaled by the interpreted binary value, written here using a ``Level'' function. So at this point the analog waveform is already encoding \(\sqrt{M}\) bits per unit time, but actually it is possible to do better.
 
 \paragraph{Mixer}
 
@@ -64,34 +64,35 @@ In practice typically \(\phi_i(t) = \cos(\omega_c t)\) and \(\phi_q(t) = j\sin(\
 	s = m_i\phi_i + m_q\phi_q.
 \end{equation}
 %% TODO: is this assumption correct?
-Notice that assuming \(m_i\) and \(m_q\) are constant\footnote{This of is an approximation which assumes that the signal changes much slower than the carrier's modulation frequency.} over the carrier's period \(T\),
+Notice that assuming \(m_i\) and \(m_q\) are constant\footnote{This is an approximation assuming that the signal changes much slower relative to the carrier.} over the carrier's period \(T\),
 \begin{align*}
 	\langle s | \phi_i \rangle = \int_T s^* \phi_i \,dt
 		&= \int m_i \phi_i^* \phi_i + m_q \phi_q^* \phi_i \,dt \\
 		&= m_i \underbrace{\int_T \phi_i^* \phi_i \,dt}_{1}
 			+ m_q \underbrace{\int_T \phi_q^* \phi_i \,dt}_{0} = m_i,
 \end{align*}
-which effectively means that it is possible to isolate a single component \(m_i(t)\) out of \(s(t)\). The same of course works with \(\phi_q\) as well resulting in \(\langle s | \phi_q \rangle = m_q\). Thus (remarkably) it is possible to send two signals on the same frequency, without them interfering with each other. Since each can represent one of \(\sqrt{M}\) values, by having two we obtain \(\sqrt{M} \cdot \sqrt{M} = M\) possible combinations.
+which effectively means that it is possible to isolate a single component \(m_i(t)\) out of \(s(t)\). The same of course works with \(\phi_q\) as well resulting in \(\langle s | \phi_q \rangle = m_q\). Thus (remarkably) it is possible to send two signals on the same frequency, without them interfering with each other. Since each signal can represent one of \(\sqrt{M}\) values, by having two we obtain \(\sqrt{M} \cdot \sqrt{M} = M\) possible combinations.
+
+A better way to see what QAM does, is to observe a so called \emph{constellation diagram}. An example is shown in figure \ref{fig:qam-constellation} for \(M = 16\). The two carrier signals \(\phi_i\) and \(\phi_q\) can be understood as bases of a coordinate system,
 
 \begin{figure}
 	\hfill
 	\begin{subfigure}{.4\linewidth}
 		\input{figures/tikz/qam-constellation}
-		\caption{16--QAM}
+		\caption{16--QAM\label{fig:qam-constellation}}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{.4\linewidth}
 		\input{figures/tikz/qpsk-constellation}
-		\caption{8--QPSK}
+		\caption{8--QPSK\label{fig:qpsk-constellation}}
 	\end{subfigure}
 	\hfill
 	\caption{
 		Examples of constellation diagrams. Each dot represents a possible location for the complex amplitude of the passband signal.
-		\label{fig:qam-constellation}
 	}
 \end{figure}
 
-\subsection{Phase Shift Keying (PSK)}
+\section{Quadrature phase shift keying (\(M\)-QPSK)}
 
 PSK is a popular modulation type for data transmission\cite{Meyer2011}. With a bipolar binary signal, the amplitude remains constant and only the phase will be changed with phase jumps of 180 degrees, which can be seen as a multiplication of the carrier signal with $\pm$ 1. That is alow known as binary phase shift keying.
 
@@ -100,8 +101,6 @@ PSK is a popular modulation type for data transmission\cite{Meyer2011}. With a b
 % 	% https://sites.google.com/site/billmahroukelec675/bipolar-phase-shift-keying
 % 	\includegraphics[width=5cm]{./image/BPSK2.png}
 % \end{figure}
-
-\subsection{Quadrature Phase Shift Keying (QPSK)}
 
 Two bits are modulated at ones with the same bandwidth as a 2-PSK so more informations are transmitted at the same time. \cite{Meyer2011}
 %TODO: Image Signal Raum 
