@@ -15,6 +15,9 @@ In this section we will briefly give the mathematical background required by the
 
 %% TODO: Par on notation m(n) = m(nT) = discrete time
 
+%% TODO: A section on maths?
+% \section{Signal space and linear operators}
+
 \section{Quadrature amplitude modulation (\(M\)-ary QAM)}
 
 \begin{figure}
@@ -30,9 +33,11 @@ Quadrature amplitude modulation is a family of modern digital modulation methods
 
 %% TODO: Quick par on "we will dicusss M-Ary QAM, M is 2^something"
 
+\subsection{Modulation of a digital message}
+
 \paragraph{Bit splitter}
 
-As mentioned earlier, quadrature modulation allows sending more than one bit per unit time. The first step to do it is to use a so called bit splitter, converts the continuous data stream \(m(n)\) into pairs of chunks of \(\sqrt{M}\) bits. The two bit vectors of length \(\sqrt{M}\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\) in figure \ref{fig:quadrature-modulation}, are called in-phase and quadrature component respectively. The reason will become more clear later.
+As mentioned earlier, quadrature modulation allows sending more than one bit per unit time. The first step to do it is to use a so called bit splitter, that converts the continuous bitstream \(m(n)\) into pairs of chunks of \(\sqrt{M}\) bits. The two bit vectors of length \(\sqrt{M}\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\) in figure \ref{fig:quadrature-modulation}, are called in-phase and quadrature component respectively. The reason will become more clear later.
 
 \paragraph{Binary to level converter}
 
@@ -42,24 +47,28 @@ Both bit vectors \(\vec{m}_i, \vec{m}_q \in \{0,1\}^{\sqrt{M}}\) are sent throug
 \begin{equation}
 	m_i(t) = \text{Level}(\vec{m}_i) \cdot p(t),
 \end{equation}
-i.e. a pulse function\footnote{Typically a root raised cosine to optimize for bandwidth.} \(p(t)\) scaled by the interpreted binary value, written here using a ``Level'' function. So at this point the analog waveform is already encoding \(\sqrt{M}\) bits per unit time, but actually it is possible to do better.
+i.e. a pulse function\footnote{Typically a root raised cosine to optimize for bandwidth.} \(p(t)\) scaled by the interpreted binary value, written here using a ``Level'' function. So at this point a level of each analog waveform is encodes \(\sqrt{M}\) bits per unit time, and there are two of such waveforms.
+
 
 \paragraph{Mixer}
 
-Having analog level signals, it is this now possible to mix them with radio frequency carriers. Because there are two waveforms, one might expect that two carrier frequencies are necessary, however this is not the case.
+Having analog level signals, it is this now possible to mix them with radio frequency carriers. Because there are two waveforms, one might expect that two carrier frequencies are necessary, however this is not the case. The two component \(m_i(t)\) and \(m_q(t)\) are mixed with two different periodic signals \(\phi_i(t)\) and \(\phi_q(t)\) that have the same frequency \(\omega_c = 2\pi / T\). Why this is possible is explained in the next section.
 
-The two component \(m_i(t)\) and \(m_q(t)\) are mixed with two different periodic signals \(\phi_i(t)\) and \(\phi_q(t)\) that have the same frequency \(\omega_c = 2\pi / T\). Now the clever part: the carrier signals are picked to be \emph{orthonormal}\footnote{Orthonormal here can be understood in the same sense as in finite dimensional vector spaces, where orthonormal vectors behave exactly like equations \eqref{eqn:orthonormal-conditions} under the dot product.} to each other, mathematically this is expressed by the conditions
+
+\subsection{Orthogonality of carrier signals}
+
+Before explaining how the two carrier signals are generated, we first need to discuss some important mathematical properties \(\phi_i\) and \(\phi_q\) need to have, in order to modulate two messages over the same frequency \(\omega_c\). The two carriers need to be \emph{orthonormal}\footnote{Actually orthogonality alone would be sufficient, however then the left side of \eqref{eqn:orthonormal-condition} would not equal 1, and an inconvenient factor would be introduced in many later equations.} to each other, mathematically this is expressed by the conditions
 \begin{subequations} \label{eqn:orthonormal-conditions}
 	\begin{align}
 		\langle \phi_i | \phi_q \rangle
 			&= \int_T \phi_i \phi_q^* \, dt
-			= 0, \text{ and } \\
+			= 0, \text{ and } \label{eqn:orthogonal-condition} \\
 		\langle \phi_k | \phi_k \rangle
 			&= \int_T \phi_k \phi_k^*  \,dt = 1,
-			\text{ where } k \text{ is either } i \text{ or } q.
+			\text{ where } k \text{ is either } i \text{ or } q. \label{eqn:orthonormal-condition}
 	\end{align}
 \end{subequations}
-In practice typically \(\phi_i(t) = \cos(\omega_c t)\) and \(\phi_q(t) = j\sin(\omega_c t)\).  Provided these rather abstract conditions, let's define a new signal 
+Provided these rather abstract conditions, let's define a new signal 
 \begin{equation}
 	s = m_i\phi_i + m_q\phi_q.
 \end{equation}
@@ -73,7 +82,21 @@ Notice that assuming \(m_i\) and \(m_q\) are constant\footnote{This is an approx
 \end{align*}
 which effectively means that it is possible to isolate a single component \(m_i(t)\) out of \(s(t)\). The same of course works with \(\phi_q\) as well resulting in \(\langle s | \phi_q \rangle = m_q\). Thus (remarkably) it is possible to send two signals on the same frequency, without them interfering with each other. Since each signal can represent one of \(\sqrt{M}\) values, by having two we obtain \(\sqrt{M} \cdot \sqrt{M} = M\) possible combinations.
 
-A better way to see what QAM does, is to observe a so called \emph{constellation diagram}. An example is shown in figure \ref{fig:qam-constellation} for \(M = 16\). The two carrier signals \(\phi_i\) and \(\phi_q\) can be understood as bases of a coordinate system,
+A graphical way to see what is happening, is to observe a so called \emph{constellation diagram}. An example is shown in figure \ref{fig:qam-constellation} for \(M = 16\). The two carrier signals \(\phi_i\) and \(\phi_q\) can be understood as bases of a coordinate system.
+
+\subsection{Construction of orthogonal carrier signals}
+
+
+If \(\phi_i\) is a real valued signal (which is typical) it is possible to find a function the quadrature carrier using the \emph{Hilbert transform}:
+\begin{equation}
+	\hilbert g(t) = g(t) * \frac{1}{\pi t}
+		= \frac{1}{\pi} \int_\mathbb{R} \frac{g(\tau)}{t - \tau} \,d\tau
+		= \frac{1}{\pi} \int_\mathbb{R} \frac{g(t - \tau)}{\tau} \,d\tau,
+\end{equation}
+i.e. a linear operator that introduces a phase shift of \(\pi / 2\) over all frequencies. It is a known property of the Hilbert transform that given a real valued function \(g(t)\) then \(\langle g | \hilbert g \rangle = 0\).
+In practice \(\phi_i(t) = \cos(\omega_c t)\) and \(\phi_q(t) = \hilbert \phi_i(t) = \sin(\omega_c t)\).  
+
+\paragraph{Oscillator and phase shifter}
 
 \begin{figure}
 	\hfill
@@ -92,7 +115,8 @@ A better way to see what QAM does, is to observe a so called \emph{constellation
 	}
 \end{figure}
 
-\section{Quadrature phase shift keying (\(M\)-PSK)}
+
+\section{Phase shift keying (\(M\)-PSK)}
 
 PSK is a popular modulation type for data transmission\cite{Meyer2011}. With a bipolar binary signal, the amplitude remains constant and only the phase will be changed with phase jumps of 180 degrees, which can be seen as a multiplication of the carrier signal with $\pm$ 1. That is alow known as binary phase shift keying.
 
