@@ -3,10 +3,62 @@
 \chapter{Implementation}
 
 \section{Simulaton}
- For 
+%%TO DO: quelle https://wiki.gnuradio.org/
+
+For the simulation task and after for the Hardware part, the open-source Software GNU Radio has been chosen. This software uses toolboxes for signal processing systems too simulate or/and implement a software-defined radio, based on Python and some C++ implementations for some rapid-application-development environments. The toolboxes can simply, with the help of the graphical user interface, used by drag-and-drop. The Boxes are used to write applications, to receive or to transmit date for a digital system. Some blocks like different filters, channel codes or demodulator elements and a lot more are already implemented. For missing application new elements can be added by coding own block. With the help of the GNU Radio software those toolboxes can easily get connected to each other, creating data streams. 
+
+\subsection{AM Simulation}
+
+For the first Simulation we done a simple AM-simulation to learn how to work with the GNU Radio software. Without any channel effects in between. ...
+
+
+\subsection{QPSK Simulation}
+
+The second Simulation was a QPSK simulation. 
+...
+
+
+\subsection{QPSK Simulation with Fading effect}
+...
+
+
 \section{Hardware}
- USRP B210 
- RF frequencies from 70MHz to 6GHz
- Bandwidth 200kHz-56MHz
+
+As Hardware we chosen the USRP B210 from Ettus Research, with the following specifications shown in Tab. \ref{tab:USRP B210 specifications}. Because this SDR is more than enough for our requires.
+
+\subsection{Hardware setup}
+
+The First Hardware set up was from the first SDR to the second, with a coaxial cable in between. 
+
+The second was with the antennas. 2.4GHz. 
+
+% To Do: Picture
+
+
+
+\begin{table}[]
+	%To DO sepzifikationen ampssen / genauer? https://www.ettus.com/wp-content/uploads/2019/01/b200-b210_spec_sheet.pdf
+	%https://kb.ettus.com/B200/B210/B200mini/B205mini#FAQ
+	\caption{USRP B210 specifications}
+	\begin{tabular}[h]{|c|c|}
+		\hline
+		Dimensions & 9.7 x 15.5 x 1.5 cm \\
+		\hline
+		Ports &2 TX , 2 RX, Half  or Full Duplex\\
+		\hline
+		RF frequencies & from 70MHz to 6GHz\\
+		\hline
+		Bandwidth & 200kHz-56MHz\\
+		\hline 
+		External reference input & 10 MHz \\
+		\hline
+	\end{tabular}
+\label{tab:USRP B210 specifications}
+\end{table}
+
+
 \section{Measurements}
+
+
+
 \section{Results}
