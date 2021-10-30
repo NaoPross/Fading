@@ -57,7 +57,7 @@
 		\draw (B2Lq.east) -- (Mq.west);
 		\draw (Mq.east) -| (SUM.south);
 
-		\draw (SUM) -- (S);
+		\draw (SUM.east) -- (S);
 
 		\draw (OSC.east) -| (Mi.south);
 		\draw (OSC.west) -- (H.east);
@@ -77,13 +77,61 @@
 	\node[above left] at (si) {\(s_i(t)\)};
 	\node[below left] at (sq) {\(s_q(t)\)};
 
+	% Draw digital signals
+	\begin{scope}[font = \ttfamily\footnotesize, text = blue!70!white]
+		\node[above = 1mm of M, xshift = 2mm] {\(\ldots 1100101\)};
+		\node[above = 7mm of vmi, xshift = 3mm]
+			{\(\overbracket[.8pt]{\,11\ldots 00\,}^{\sqrt{M} \text{ bits}}\)};
+	\end{scope}
+
+	% Draw analog waveform
+	\begin{scope}[font = \ttfamily\tiny]
+		\coordinate (O) at ($(mi)+(-2mm,10.5mm)$);
+
+		\node[left, red!70!white, anchor = east, text width = 8mm, align = right]
+			at ($(O) + (-2mm,0)$) {\(2^{\sqrt{M}}\) levels};
+
+		\foreach \y in {-3mm,0,3mm} {
+			\draw[gray, densely dotted] (O) ++(-2mm,\y) -- ++(22mm,0);
+		}
+
+		\draw[thick, draw = red!70!white] (O)
+			-- ++(3mm,0) -- ++(0,-3mm) -- ++(3mm,0) -- ++(0,6mm)
+			-- ++(3mm,0) -- ++(0,-3mm) -- ++(3mm,0) -- ++(0,-3mm)
+			-- ++(3mm,0) -- ++(0,3mm)  -- ++(3mm,0);
+	\end{scope}
+
+	% Draw constellation diagram
+	\begin{scope}
+		\coordinate (O) at ($(S)+(-7mm,8mm)$);
+		\draw[gray, -latex] (O) ++(-2mm,0) -- ++(12mm,0) node[right] {\tiny \(\phi_i\)};
+		\draw[gray, -latex] (O) ++(0,-2mm) -- ++(0,12mm) node[above] {\tiny \(\phi_q\)};
+
+		\node[
+			circle, thick,
+			minimum size = 3pt,
+			inner sep = 0, outer sep = .8pt,
+			draw = gray, fill = red!50!white
+		] (P) at ($(O)+(5mm, 4mm)$) {};
+
+		\node[gray, above right] at (P) {\tiny \(s\)};
+
+		\draw[gray, densely dotted]
+			(P) -- (P |- O)
+			(P) -- (P -| O);
+	\end{scope}
+
+
+	% Background elements
 	\begin{pgfonlayer}{background}
 		\fill[left color = white, right color = blue!20, draw = white]
-			($(B2Li.north) + (0,1)$) coordinate (D) rectangle ($(B2Lq.south) - (3,1)$);
+			($(B2Li.north) + (0,1.1)$) coordinate (D) rectangle ($(B2Lq.south) - (3,1)$);
 		\fill[right color = white, left color = red!20, draw = white]
-			($(B2Li.north) + (0,1)$) coordinate (A) rectangle ($(B2Lq.south) + (9,-1)$);
+			($(B2Li.north) + (0,1.1)$) coordinate (A) rectangle ($(B2Lq.south) + (9,-1)$);
 
-		\node[blue!50, anchor = south east, font = \ttfamily\bfseries, xshift = -4mm] at (D) {\bfseries\ttfamily Digital bits};
-		\node[red!50, anchor = south west, font = \bfseries\ttfamily, xshift = 4mm]  at (A) {Analog waveform};
+		\node[blue!50, anchor = south east, font = \ttfamily\bfseries, xshift = -4mm]
+			at (D) {\bfseries\ttfamily Digital bits};
+		\node[red!50, anchor = south west, font = \bfseries\ttfamily, xshift = 4mm]
+			at (A) {Analog waveform};
 	\end{pgfonlayer}
 \end{circuitikz}

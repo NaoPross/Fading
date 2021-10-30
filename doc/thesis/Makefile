@@ -15,7 +15,7 @@ SOURCES := \
 	chapters/conclusions.tex \
 	\
 	figures/tikz/overview.tex \
-	figures/tikz/qpsk-constellation.tex \
+	figures/tikz/psk-constellation.tex \
 	figures/tikz/qam-modulator.tex \
 	figures/tikz/qam-constellation.tex
 
