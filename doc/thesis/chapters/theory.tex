@@ -139,9 +139,9 @@ If the surfaces overlap there will be a problem with decoding.
 
 \section{Wireless channel}
 
-In the previous section, we have discussed how the data is modulated and demodulated at the two ends of the transmission system. In this section we will discuss what happens between the sender and receiver, when the modulated passband signal is transmitted wirelessly.
+In the previous section, we discussed how the data is modulated and demodulated at the two ends of the transmission system. In this section we will discuss what happens between the sender and receiver when the modulated passband signal is transmitted wirelessly.
 
-In theory because wireless transmission happens through electromagnetic radiation, to model a wireless channel one would need to solve Maxwell's equations either for the electric or magnetic field, however in practice that is not (analytically) possible. Instead what is typically done, is to model the impulse response of the channel using a geometrical or statistical model, parametrized by a set of coefficients that are either simulated or measured experimentally \cite{Gallager}.
+In theory because wireless transmission happens through electromagnetic radiation, to model a wireless channel one would need to solve Maxwell's equations for either the electric or magnetic field, however in practice that is not (analytically) possible. Instead what is typically done, is to model the impulse response of the channel using a geometrical or statistical model, parametrized by a set of coefficients that are either simulated or measured experimentally \cite{Gallager}.
 
 In our model we are going to include an additive white Gaussian noise (AWGN) and a Rician (or Rayleighan) fading; both are required to model physical effects of the real world. The former in particular is relevant today, as it mathematically describes dense urban environments.
 
@@ -151,7 +151,7 @@ In our model we are going to include an additive white Gaussian noise (AWGN) and
 
 \subsection{Geometric multipath fading model}
 
-The simplest way to understand the multipath fading, is to consider it from a geometrical perspective. Figure \ref{fig:multipath-sketch} is a sketch a wireless transmission system affected by multipath fading. The sender's antenna radiates an electromagnetic wave in the direction of the receiver (red line), however even under the best conditions a part of the signal will be dispersed in other directions (blue lines).
+The simplest way to understand the multipath fading, is to consider it from a geometrical perspective. Figure \ref{fig:multipath-sketch} is a sketch a wireless transmission system affected by multipath fading. The sender's antenna radiates an electromagnetic wave in the direction of the receiver (red line), however even under the best circumstances a part of the signal is dispersed in other directions (blue lines).
 
 \begin{figure}
 	\centering
@@ -162,24 +162,25 @@ The simplest way to understand the multipath fading, is to consider it from a ge
 	}
 \end{figure}
 
-The problem is that, as is evident from geometry, some paths are longer than others. And thus the signal is received by the received multiple times, each with different phase shifts \cite{Gallager,Messier}. To mathematically model this effect, we describe the received signal \(r(t)\) as a linear combination of delayed copies of the sent signal \(s(t)\), each with a different phase shift \(\tau_k\):
+The problem is that, as is geometrically evident, some paths are longer than others. Thus the signal is received by the receiver multiple times with different phase shifts \cite{Gallager,Messier}. To mathematically model this effect, we describe the received signal \(r(t)\) as a linear combination of delayed copies of the sent signal \(s(t)\), each with a different attenuation \(c_k\) and phase shift \(\tau_k\):
 \begin{equation} \label{eqn:geom-multipath-rx}
 	r(t) = \sum_k c_k s(t - \tau_k).
 \end{equation}
-The linearity of the model is justified by the assumption that the electromagnetic waves act linearly (superposition holds) \cite{Gallager}. How many copies of \(s(t)\) (usually referred to as ``taps'') should be included in the formula, depends on the precision requirements of the model.
 
-A further complication arises, when one end (or both) is not stationary. In that case the lengths of the paths change over time, as a result both the delay of each copy \(\tau_k\) as well as the amplitudes \(c_k\) become functions of time: \(\tau_k(t)\) and \(c_k(t)\) respectively \cite{Gallager,Messier}. Even worse is when the velocity at which it is moving is high, because then Doppler shifts of the electromagnetic wave frequency become non negligible \cite{Gallager}.
+The linearity of the model is justified by the assumption that the underlying electromagnetic waves behave linearly (superposition holds) \cite{Gallager}. How many copies of \(s(t)\) (usually referred to as ``taps'' or ``rays'') should be included in the formula, depends on the precision requirements of the model.
 
-We can thus conclude that the arrangement can be modelled as a linear time \emph{variant} system (LTV), if either the sender or receiver (or both) is moving, and as a linear time \emph{invariant} (LTI) systems if both ends are stationary. Regardless of which of the two cases, just the linearity is sufficient to approximate the channel as finite impulse response (FIR) filter \cite{Messier}. Mathematically we can rewrite LTV version of equation \eqref{eqn:geom-multipath-rx} using a convolution product as following:
+A further complication arises, when one end (or both) is not stationary. In that case the lengths of the paths change over time, and as a result both the delays \(\tau_k\) as well as the attenuations \(c_k\) become functions of time: \(\tau_k(t)\) and \(c_k(t)\) respectively \cite{Gallager,Messier}. Even worse is when the velocity at which the device is moving is high, because then Doppler shifts of the electromagnetic wave frequency become non negligible \cite{Gallager}.
+
+We have thus observed that the arrangement can be modelled as a linear time-\emph{varying} system (LTV), if the sender or the receiver (or anything else in the channel) is moving, and as a linear time \emph{invariant} (LTI) system if the geometry is stationary. Regardless of which of the two cases, linearity alone is sufficient to approximate the channel as finite impulse response (FIR) filter \cite{Messier}. Mathematically we can rewrite LTV version of equation \eqref{eqn:geom-multipath-rx} using a convolution product as following:
 \begin{align*}
-	r(t) = \sum_k c_k(t) s(t - \tau_k(t)) &= \sum_k c_k(t) \int s(t') \delta(t' - \tau_k(t)) \,dt' \\
-		&= \int s(t') \sum_k c_k(t) \delta(t' - \tau_k(t)) \,dt' = s(t') * h(t, t'),
+	r(t) = \sum_k c_k(t) s(t - \tau_k(t)) &= \sum_k c_k(t) \int_\mathbb{R} s(\tau) \delta(\tau - \tau_k(t)) \,d\tau \\
+		&= \int_\mathbb{R} s(\tau) \sum_k c_k(t) \delta(\tau - \tau_k(t)) \,dt' = s(\tau) * h(t, \tau),
 \end{align*}
 obtaining a new function
 \begin{equation} \label{eqn:multipath-impulse-response}
-	h(t,t') = \sum_k c_k(t) \delta(t' - \tau_k(t)),
+	h(t,\tau) = \sum_k c_k(t) \delta(\tau - \tau_k(t)),
 \end{equation}
-that describes the \emph{impulse response} of the channel. This function is depends on two time parameters: actual time \(t\) and convolution time \(t'\), since after the convolution the latter is removed. To better understand \(h(t,t')\), consider an example in shown in figure \ref{fig:multipath-impulse-response}. Each stem represents a weighted Dirac delta, so each series of stems of the same color, along the convolution time \(t'\) axis, is a channel response at some specific time \(t\). Along the other \(t\) axis we see how the entire channel response changes over time. Notice that the stems are not quite aligned to the \(t'\) time raster (dotted lines), that is because in equation \eqref{eqn:multipath-impulse-response} not only the weights \(c_k\) but also the delays \(\tau_k\) are time dependent.
+that describes the \emph{impulse response} of the channel. This function is dependant on two time parameters: actual time \(t\) and convolution time \(\tau\). To better understand \(h(t,\tau)\), consider an example in shown in figure \ref{fig:multipath-impulse-response}. Each stem represents a weighted Dirac delta, so each series of stems of the same color, along the convolution time \(\tau\) axis, is a channel response at some specific time \(t\). Along the other \(t\) axis we see how the entire channel response changes over time\footnote{In the figure only a finite number of stems was drawn, but actually \(h(t,\tau)\) is continuous in \(t\), i.e. the weights \(c_k(t)\) of the Dirac deltas change continuously.}. Notice that the stems are not quite aligned to the \(\tau\) time raster (dotted lines), that is because in equation \eqref{eqn:multipath-impulse-response} not only the weights \(c_k\) but also the delays \(\tau_k\) are time dependent.
 
 \begin{figure}
 	\centering
@@ -190,8 +191,13 @@ that describes the \emph{impulse response} of the channel. This function is depe
 	}
 \end{figure}
 
+\subsection{Spectrum of a multipath fading channel}
 
-\subsection{Statistical multipath fading model}
+With a continuous time channel model we can now discuss the spectral properties of a fading channel. For this section, we will assume a LTI channel impulse response \(h(\tau)\) and consider a simple geometry.
+
+\subsection{Discrete-time model}
+
+\subsection{Statistical model}
 
 %% TODO: write about advantage of statistical model instead of geometric
 

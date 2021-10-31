@@ -21,9 +21,9 @@
 
 
 	% reflected signals
-	\draw[line width = 2pt, blue!50!white, -latex] (T-center) -- node[above, pos = .5] {\(\tau_2\)} (4,2.25) -- (R-center);
-	\draw[line width = 2pt, blue!50!white, -latex] (T-center) -- node[left, pos = .7] {\(\tau_3\)} (1,-.25) -- (R-center);
-	\draw[line width = 2pt, blue!50!white, -latex] (T-center) -- node[above, pos = .5] {\(\tau_4\)} (-2.5,1.5) -- (R-center); 
+	\draw[line width = 2pt, blue!50!white, -latex] (T-center) -- node[above, pos = .5] {\(\tau_2,c_2\)} (4,2.25) -- (R-center);
+	\draw[line width = 2pt, blue!50!white, -latex] (T-center) -- node[left, pos = .7] {\(\tau_3,c_3\)} (1,-.25) -- (R-center);
+	\draw[line width = 2pt, blue!50!white, -latex] (T-center) -- node[above, pos = .5] {\(\tau_4,c_4\)} (-2.5,1.5) -- (R-center); 
 
 	% another wall
 	\draw[thick, fill = lightgray!20] (-2,0) -- ++(-1,.5) -- ++(0,2) --++(1,-.5) -- cycle;
@@ -33,5 +33,5 @@
 		decorate, decoration = {
 			expanding waves, angle = 5, segment length = 2mm
 		}
-	] (T-center) -- node[above = 2mm, pos = .5] {\(\tau_1\)} (R-center);
+	] (T-center) -- node[above = 2mm, pos = .5] {\(\tau_1,c_1\)} (R-center);
 \end{tikzpicture}

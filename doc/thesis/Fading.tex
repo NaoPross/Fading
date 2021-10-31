@@ -52,23 +52,36 @@
 %% Recompute page margins
 \KOMAoptions{DIV=default}
 
+%% Metadata
+\title{Multipath fading demonstration using software defined radio}
+\author{Naoki Sean Pross \and Sara Cinzia Halter}
+\date{Fall semester 2021}
+
 \begin{document}
 
 	\hypersetup{pageanchor = false}
-	%% TODO: titlepage
+
+	%% TODO: create a proper titlepage
+	\maketitle
+	% \include{tex/titlepage}
 
 	\cleardoublepage
 	\pagenumbering{roman}
+	\setcounter{page}{1}
 
-	%% TODO: abstract
-	% \begin{abstract}
-	% \end{abstract}
+	\begin{abstract}
+		%% TODO: write abstract
+		Here goes the abstract
+	\end{abstract}
 
+	\tableofcontents
+
+	\cleardoublepage
 	\hypersetup{pageanchor = true}
 	\pagenumbering{arabic}
 	\setcounter{page}{1}
-
 	\pagestyle{scrheadings}
+
 	\include{chapters/introduction}
 	\include{chapters/theory}
 	\include{chapters/implementation}
