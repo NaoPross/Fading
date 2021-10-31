@@ -33,7 +33,7 @@ In this section we will briefly give the mathematical background required by the
 	}
 \end{figure}
 
-Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. The simple yet effective idea behind QAM is to encode extra information into an orthogonal carrier signal, thus increasing the number of bits sent per unit of time. A block diagram of the process is shown in figure \ref{fig:quadrature-modulation}.
+Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. The simple yet effective idea behind QAM is to encode extra information into an orthogonal carrier signal, thus increasing the number of bits sent per unit of time \cite{Gallager,Kneubuehler,Mathis,Hsu}. A block diagram of the process is shown in figure \ref{fig:quadrature-modulation}.
 
 %% TODO: Quick par on "we will dicusss M-Ary QAM, M is 2^something"
 
@@ -41,7 +41,7 @@ Quadrature amplitude modulation is a family of modern digital modulation methods
 
 \paragraph{Bit splitter}
 
-As mentioned earlier, quadrature modulation allows sending more than one bit per unit time. The first step to do it is to use a so called bit splitter, that converts the continuous bitstream \(m(n)\) into pairs of chunks of \(\sqrt{M}\) bits. The two bit vectors of length \(\sqrt{M}\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\) in figure \ref{fig:quadrature-modulation}, are called in-phase and quadrature component respectively. The reason will become more clear later.
+As mentioned earlier, quadrature modulation allows sending more than one bit per unit time. The first step to do it is to use a so called bit splitter, that converts the continuous bitstream \(m(n)\) into pairs of chunks of \(\sqrt{M}\) bits. The two bit vectors of length \(\sqrt{M}\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\) in figure \ref{fig:quadrature-modulation}, are called in-phase and quadrature component respectively\cite{Hsu}. The reason will become more clear later.
 
 \paragraph{Binary to level converter}
 
@@ -51,7 +51,7 @@ Both bit vectors \(\vec{m}_i, \vec{m}_q \in \{0,1\}^{\sqrt{M}}\) are sent throug
 \begin{equation}
 	m_i(t) = \text{Level}(\vec{m}_i) \cdot p(t),
 \end{equation}
-i.e. a pulse function\footnote{Typically a root raised cosine to optimize for bandwidth.} \(p(t)\) scaled by the interpreted binary value, written here using a ``Level'' function. So at this point a level of each analog waveform is encodes \(\sqrt{M}\) bits per unit time, and there are two of such waveforms.
+i.e. a pulse function\footnote{Typically a root raised cosine to optimize for bandwidth \cite{Hsu}.} \(p(t)\) scaled by the interpreted binary value, written here using a ``Level'' function. So at this point a level of each analog waveform is encodes \(\sqrt{M}\) bits per unit time, and there are two of such waveforms.
 
 
 \paragraph{Mixer}
@@ -61,7 +61,7 @@ Having analog level signals, it is this now possible to mix them with radio freq
 
 \subsection{Orthogonality of carrier signals}
 
-Before explaining how the two carrier signals are generated, we first need to discuss some important mathematical properties \(\phi_i\) and \(\phi_q\) need to have, in order to modulate two messages over the same frequency \(\omega_c\). The two carriers need to be \emph{orthonormal}\footnote{Actually orthogonality alone would be sufficient, however then the left side of \eqref{eqn:orthonormal-condition} would not equal 1, and an inconvenient factor would be introduced in many later equations.} to each other, mathematically this is expressed by the conditions
+Before explaining how the two carrier signals are generated, we first need to discuss some important mathematical properties \(\phi_i\) and \(\phi_q\) need to have, in order to modulate two messages over the same frequency \(\omega_c\). The two carriers need to be \emph{orthonormal}\footnote{Actually orthogonality alone would be sufficient, however then the left side of \eqref{eqn:orthonormal-condition} would not equal 1, and an inconvenient factor would be introduced in many later equations \cite{Gallager,Hsu}.} to each other, mathematically this is expressed by the conditions
 \begin{subequations} \label{eqn:orthonormal-conditions}
 	\begin{align}
 		\langle \phi_i, \phi_q \rangle
@@ -97,10 +97,12 @@ If \(\phi_i\) is a real valued signal (which is typical) it is possible to find 
 		= \frac{1}{\pi} \int_\mathbb{R} \frac{g(\tau)}{t - \tau} \,d\tau
 		= \frac{1}{\pi} \int_\mathbb{R} \frac{g(t - \tau)}{\tau} \,d\tau,
 \end{equation}
-i.e. a linear operator that introduces a phase shift of \(\pi / 2\) over all frequencies. It is a known property of the Hilbert transform that given a real valued function \(g(t)\) then \(\langle g, \hilbert g \rangle = 0\).
+i.e. a linear operator that introduces a phase shift of \(\pi / 2\) over all frequencies \cite{Hsu,Gallager}. It is a known property of the Hilbert transform that given a real valued function \(g(t)\) then \(\langle g, \hilbert g \rangle = 0\) \cite{Kschischang,Kneubuehler}.
 In practice \(\phi_i(t) = \cos(\omega_c t)\) and \(\phi_q(t) = \hilbert \phi_i(t) = \sin(\omega_c t)\).  
 
 \paragraph{Oscillator and phase shifter}
+
+\subsection{Spectral properties of a QAM signal}
 
 \begin{figure}
 	\hfill
@@ -135,34 +137,62 @@ Two bits are modulated at ones with the same bandwidth as a 2-PSK so more inform
 Most times there is noise and the points on the constellation diagram become a surface. 
 If the surfaces overlap there will be a problem with decoding. 
 
-\section{Chanel noise and fading}
+\section{Wireless channel}
 
-\subsection{Geometric Model}
+In the previous section, we have discussed how the data is modulated and demodulated at the two ends of the transmission system. In this section we will discuss what happens between the sender and receiver, when the modulated passband signal is transmitted wirelessly.
+
+In theory because wireless transmission happens through electromagnetic radiation, to model a wireless channel one would need to solve Maxwell's equations either for the electric or magnetic field, however in practice that is not (analytically) possible. Instead what is typically done, is to model the impulse response of the channel using a geometrical or statistical model, parametrized by a set of coefficients that are either simulated or measured experimentally \cite{Gallager}.
+
+In our model we are going to include an additive white Gaussian noise (AWGN) and a Rician (or Rayleighan) fading; both are required to model physical effects of the real world. The former in particular is relevant today, as it mathematically describes dense urban environments.
+
+\subsection{Additive white Gaussian noise}
+
+%% TODO: Discuss thermal stuff etc?
+
+\subsection{Geometric multipath fading model}
+
+The simplest way to understand the multipath fading, is to consider it from a geometrical perspective. Figure \ref{fig:multipath-sketch} is a sketch a wireless transmission system affected by multipath fading. The sender's antenna radiates an electromagnetic wave in the direction of the receiver (red line), however even under the best conditions a part of the signal will be dispersed in other directions (blue lines).
+
+\begin{figure}
+	\centering
+	\input{figures/tikz/multipath-sketch}
+	\caption{
+		Sketch of channel with multipath fading
+		\label{fig:multipath-sketch}
+	}
+\end{figure}
+
+The problem is that, as is evident from geometry, some paths are longer than others. And thus the signal is received by the received multiple times, each with different phase shifts \cite{Gallager,Messier}. To mathematically model this effect, we describe the received signal \(r(t)\) as a linear combination of delayed copies of the sent signal \(s(t)\), each with a different phase shift \(\tau_k\):
+\begin{equation} \label{eqn:geom-multipath-rx}
+	r(t) = \sum_k c_k s(t - \tau_k).
+\end{equation}
+The linearity of the model is justified by the assumption that the electromagnetic waves act linearly (superposition holds) \cite{Gallager}. How many copies of \(s(t)\) (usually referred to as ``taps'') should be included in the formula, depends on the precision requirements of the model.
+
+A further complication arises, when one end (or both) is not stationary. In that case the lengths of the paths change over time, as a result both the delay of each copy \(\tau_k\) as well as the amplitudes \(c_k\) become functions of time: \(\tau_k(t)\) and \(c_k(t)\) respectively \cite{Gallager,Messier}. Even worse is when the velocity at which it is moving is high, because then Doppler shifts of the electromagnetic wave frequency become non negligible \cite{Gallager}.
+
+We can thus conclude that the arrangement can be modelled as a linear time \emph{variant} system (LTV), if either the sender or receiver (or both) is moving, and as a linear time \emph{invariant} (LTI) systems if both ends are stationary. Regardless of which of the two cases, just the linearity is sufficient to approximate the channel as finite impulse response (FIR) filter \cite{Messier}. Mathematically we can rewrite LTV version of equation \eqref{eqn:geom-multipath-rx} using a convolution product as following:
+\begin{align*}
+	r(t) = \sum_k c_k(t) s(t - \tau_k(t)) &= \sum_k c_k(t) \int s(t') \delta(t' - \tau_k(t)) \,dt' \\
+		&= \int s(t') \sum_k c_k(t) \delta(t' - \tau_k(t)) \,dt' = s(t') * h(t, t'),
+\end{align*}
+obtaining a new function
+\begin{equation} \label{eqn:multipath-impulse-response}
+	h(t,t') = \sum_k c_k(t) \delta(t' - \tau_k(t)),
+\end{equation}
+that describes the \emph{impulse response} of the channel. This function is depends on two time parameters: actual time \(t\) and convolution time \(t'\), since after the convolution the latter is removed. To better understand \(h(t,t')\), consider an example in shown in figure \ref{fig:multipath-impulse-response}. Each stem represents a weighted Dirac delta, so each series of stems of the same color, along the convolution time \(t'\) axis, is a channel response at some specific time \(t\). Along the other \(t\) axis we see how the entire channel response changes over time. Notice that the stems are not quite aligned to the \(t'\) time raster (dotted lines), that is because in equation \eqref{eqn:multipath-impulse-response} not only the weights \(c_k\) but also the delays \(\tau_k\) are time dependent.
+
+\begin{figure}
+	\centering
+	\input{figures/tikz/multipath-impulse-response}
+	\caption{
+		LTV impulse response of a multipath fading channel.
+		\label{fig:multipath-impulse-response}
+	}
+\end{figure}
 
 
-\subsection{Statistical Model}
+\subsection{Statistical multipath fading model}
 
 %% TODO: write about advantage of statistical model instead of geometric
-
-\paragraph{Continuous time model}
-
-Continuous time small scale fading channel response.
-
-time varying channel impulse response:
-\begin{equation}
-	h(t, \tau) = \sum_k c_k (t) \delta(\tau - \tau_k(t))
-\end{equation}
-
-received signal \(y = h * x\), i.e. convolution with channel model. 
-
-\subsection{Time discretization of the model}
-
-%% TODO: explain why
-
-Assume \(x\) is a time discrete signal with and bandwidth \(W\), thus the pulse is sinc shaped
-\begin{equation}
-	x(t) = \sum_n x(n) \sinc(t/T - n)
-\end{equation}
-Ideal sampling at rate \(2W\) of \(y\) gives
 
 \section{Receiver DSP chain}

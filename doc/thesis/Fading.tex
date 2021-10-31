@@ -8,7 +8,7 @@
 	paper = a4, twoside, openright, BCOR = 5mm,
 	headinclude, footexclude,
 	% font size
-	fontsize = 11pt, parskip = half,
+	fontsize = 11pt,
 	% style of empty pages (after chapters)
 	cleardoublepage = empty,
 	% extra sections
@@ -25,15 +25,18 @@
 \usepackage{tex/docstyle}
 
 %% Pretty figures
-\usepackage{circuitikz} % Electric diagrams
-\usepackage{pgfplots}   % Pretty plots
-\usepackage{tikz}       % Pretty drawings
+\usepackage{circuitikz}  % Electric diagrams
+\usepackage{pgfplots}    % Pretty plots
+\usepackage{tikz}        % Pretty drawings
+\usepackage{tikz-3dplot} % More dimensions!
 
 \usetikzlibrary{
 	calc,
 	positioning,
 	backgrounds,
+	decorations.pathreplacing,
 	matrix,
+	arrows,
 }
 \pgfdeclarelayer{background}
 \pgfdeclarelayer{foreground}

@@ -18,7 +18,9 @@ SOURCES := \
 	figures/tikz/overview.tex \
 	figures/tikz/psk-constellation.tex \
 	figures/tikz/qam-modulator.tex \
-	figures/tikz/qam-constellation.tex
+	figures/tikz/qam-constellation.tex \
+	figures/tikz/multipath-sketch.tex \
+	figures/tikz/multipath-impulse-response.tex
 
 # Get the main file from the file
 MAIN := $(shell sed -ne 's/^.*\!TeX root =\(.*\)$$/\1/ p' $(SOURCES))
