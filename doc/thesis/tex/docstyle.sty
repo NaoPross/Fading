@@ -16,14 +16,24 @@
 %% Pager headers and footers (using KOMA)
 \PassOptionsToPackage{scrlayer-scrpage}{autooneside = false}
 \RequirePackage{scrlayer-scrpage}
-\setkomafont{pagenumber}{\sffamily\bfseries\upshape}
+
+\setkomafont{pagenumber}{\sffamily\bfseries}
+\setkomafont{pageheadfoot}{\itshape}
+
 % Add marks
 \lehead{\leftmark}
 \rohead{\rightmark}
 
 %% Font configuration
-%% use roboto from sans serif
+% use roboto from sans serif
 \RequirePackage{roboto}
+
+%% Floating captions configuration
+% set captions font
+\setkomafont{captionlabel}{\sffamily\bfseries}
+% set caption style
+\setcapindent{0pt}
+\renewcommand*{\captionformat}{\quad}
 
 %% Bibliography style
 \PassOptionsToPackage{biblatex}{%
@@ -33,18 +43,30 @@
 \RequirePackage{biblatex}
 
 %% Set up links
+\RequirePackage{xcolor}
 \PassOptionsToPackage{hyperref}{%
 	bookmarks = true,
+	%% TODO: set title
 	% pdftitle = {}
 	pdfsubject = {Semester Thesis}
 	pdfauthor = {Naoki Pross, Sara Halter}
 	plainpages = false,
 	psepdfpagelabels,
-	urlcolor = black,
-	citecolor = black,
-	linkcolor = black,
-	colorlinks = true,
 }
 \RequirePackage{hyperref}
+\hypersetup{
+	% remove ugly boxes
+	hidelinks,
+	% set link colors
+	colorlinks = true,
+	anchorcolor = black,
+	citecolor = black,
+	filecolor = black,
+	linkcolor = black,
+	menucolor = black,
+	runcolor = black,
+	urlcolor = {black!50!blue}, 
+	urlcolor = black,
+}
 
 % vim: set ts=2 sw=2 noet:
