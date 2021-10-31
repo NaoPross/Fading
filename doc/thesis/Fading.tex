@@ -4,34 +4,30 @@
 % vim: set ts=2 sw=2 noet:
 
 \documentclass[
-	twoside, openright, titlepage, numbers = noenddot,
-	headinclude, footinclude, cleardoublepage = empty, abstract = on,
-	BCOR = 5mm, paper = a4, fontsize = 11pt
+	% page size and margins
+	paper = a4, twoside, openright, BCOR = 5mm,
+	headinclude, footexclude,
+	% font size
+	fontsize = 11pt, parskip = half,
+	% style of empty pages (after chapters)
+	cleardoublepage = empty,
+	% extra sections
+	titlepage, abstract = on,
+	% header and footers
+	automark,
 ]{scrreprt}
-
-%% Custom packages
-\usepackage{tex/docmacros}
 
 %% Language configuration
 \usepackage{polyglossia}
 
-%% Links
-\usepackage{hyperref}
-
-\hypersetup{
-	colorlinks = true
-}
-
-%% Citations
-\usepackage[
-	backend = biber,
-	style = ieee,
-]{biblatex}
-
-\addbibresource{Fading.bib}
+%% Custom packages
+\usepackage{tex/docmacros}
+\usepackage{tex/docstyle}
 
 %% Pretty figures
-\usepackage{tikz}
+\usepackage{circuitikz} % Electric diagrams
+\usepackage{pgfplots}   % Pretty plots
+\usepackage{tikz}       % Pretty drawings
 
 \usetikzlibrary{
 	calc,
@@ -43,20 +39,15 @@
 \pgfdeclarelayer{foreground}
 \pgfsetlayers{background,main,foreground}
 
-\usepackage{circuitikz}
 
-%% Pretty plots
-\usepackage{pgfplots}
+\usepackage{graphicx}   % Include pictures
+\usepackage{subcaption} % Subfigures
 
-%% Include pictures
-\usepackage{graphicx}
+%% Load bibliography 
+\addbibresource{Fading.bib}
 
-%% Subfigures
-\usepackage{subcaption}
-
-%% TODO: move into tex/docstyle.sty
-%% Sans serif font
-\usepackage{roboto}
+%% Recompute page margins
+\KOMAoptions{DIV=default}
 
 \begin{document}
 
@@ -74,6 +65,7 @@
 	\pagenumbering{arabic}
 	\setcounter{page}{1}
 
+	\pagestyle{scrheadings}
 	\include{chapters/introduction}
 	\include{chapters/theory}
 	\include{chapters/implementation}

@@ -6,6 +6,7 @@ SOURCES := \
 	Fading.bib \
 	\
 	tex/docmacros.sty \
+	tex/docstyle.sty \
 	tex/preamble.tex \
 	tex/titlepage.tex \
 	\

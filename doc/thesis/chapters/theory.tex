@@ -4,7 +4,9 @@
 
 \begin{figure}
 	\centering
-	\input{figures/tikz/overview}
+	\resizebox{\linewidth}{!}{
+		\input{figures/tikz/overview}
+	}
 	\caption{
 		Block diagram for a general wireless communication system with annotated signal names. Frequency domain representations of signals use the uppercase symbol of their respective time domain name.
 		\label{fig:notation}
@@ -22,7 +24,9 @@ In this section we will briefly give the mathematical background required by the
 
 \begin{figure}
 	\centering
-	\input{figures/tikz/qam-modulator}
+	\resizebox{\linewidth}{!}{
+		\input{figures/tikz/qam-modulator}
+	}
 	\caption{
 		Block diagram of a \(M\)-ary QAM modulator.
 		\label{fig:quadrature-modulation}
@@ -60,10 +64,10 @@ Having analog level signals, it is this now possible to mix them with radio freq
 Before explaining how the two carrier signals are generated, we first need to discuss some important mathematical properties \(\phi_i\) and \(\phi_q\) need to have, in order to modulate two messages over the same frequency \(\omega_c\). The two carriers need to be \emph{orthonormal}\footnote{Actually orthogonality alone would be sufficient, however then the left side of \eqref{eqn:orthonormal-condition} would not equal 1, and an inconvenient factor would be introduced in many later equations.} to each other, mathematically this is expressed by the conditions
 \begin{subequations} \label{eqn:orthonormal-conditions}
 	\begin{align}
-		\langle \phi_i | \phi_q \rangle
+		\langle \phi_i, \phi_q \rangle
 			&= \int_T \phi_i \phi_q^* \, dt
 			= 0, \text{ and } \label{eqn:orthogonal-condition} \\
-		\langle \phi_k | \phi_k \rangle
+		\langle \phi_k, \phi_k \rangle
 			&= \int_T \phi_k \phi_k^*  \,dt = 1,
 			\text{ where } k \text{ is either } i \text{ or } q. \label{eqn:orthonormal-condition}
 	\end{align}
@@ -75,12 +79,12 @@ Provided these rather abstract conditions, let's define a new signal
 %% TODO: is this assumption correct?
 Notice that assuming \(m_i\) and \(m_q\) are constant\footnote{This is an approximation assuming that the signal changes much slower relative to the carrier.} over the carrier's period \(T\),
 \begin{align*}
-	\langle s | \phi_i \rangle = \int_T s \phi_i^* \,dt
+	\langle s, \phi_i \rangle = \int_T s \phi_i^* \,dt
 		&= \int m_i \phi_i \phi_i^* + m_q \phi_q \phi_i^* \,dt \\
 		&= m_i \underbrace{\int_T \phi_i \phi_i^* \,dt}_{1}
 			+ m_q \underbrace{\int_T \phi_q \phi_i^* \,dt}_{0} = m_i,
 \end{align*}
-which effectively means that it is possible to isolate a single component \(m_i(t)\) out of \(s(t)\). The same of course works with \(\phi_q\) as well resulting in \(\langle s | \phi_q \rangle = m_q\). Thus (remarkably) it is possible to send two signals on the same frequency, without them interfering with each other. Since each signal can represent one of \(\sqrt{M}\) values, by having two we obtain \(\sqrt{M} \cdot \sqrt{M} = M\) possible combinations.
+which effectively means that it is possible to isolate a single component \(m_i(t)\) out of \(s(t)\). The same of course works with \(\phi_q\) as well resulting in \(\langle s, \phi_q \rangle = m_q\). Thus (remarkably) it is possible to send two signals on the same frequency, without them interfering with each other. Since each signal can represent one of \(\sqrt{M}\) values, by having two we obtain \(\sqrt{M} \cdot \sqrt{M} = M\) possible combinations.
 
 A graphical way to see what is happening, is to observe a so called \emph{constellation diagram}. An example is shown in figure \ref{fig:qam-constellation} for \(M = 16\). The two carrier signals \(\phi_i\) and \(\phi_q\) can be understood as bases of a coordinate system.
 
@@ -93,7 +97,7 @@ If \(\phi_i\) is a real valued signal (which is typical) it is possible to find 
 		= \frac{1}{\pi} \int_\mathbb{R} \frac{g(\tau)}{t - \tau} \,d\tau
 		= \frac{1}{\pi} \int_\mathbb{R} \frac{g(t - \tau)}{\tau} \,d\tau,
 \end{equation}
-i.e. a linear operator that introduces a phase shift of \(\pi / 2\) over all frequencies. It is a known property of the Hilbert transform that given a real valued function \(g(t)\) then \(\langle g | \hilbert g \rangle = 0\).
+i.e. a linear operator that introduces a phase shift of \(\pi / 2\) over all frequencies. It is a known property of the Hilbert transform that given a real valued function \(g(t)\) then \(\langle g, \hilbert g \rangle = 0\).
 In practice \(\phi_i(t) = \cos(\omega_c t)\) and \(\phi_q(t) = \hilbert \phi_i(t) = \sin(\omega_c t)\).  
 
 \paragraph{Oscillator and phase shifter}
@@ -131,7 +135,7 @@ Two bits are modulated at ones with the same bandwidth as a 2-PSK so more inform
 Most times there is noise and the points on the constellation diagram become a surface. 
 If the surfaces overlap there will be a problem with decoding. 
 
-\section{Fading}
+\section{Chanel noise and fading}
 
 \subsection{Geometric Model}
 
@@ -157,6 +161,8 @@ received signal \(y = h * x\), i.e. convolution with channel model.
 
 Assume \(x\) is a time discrete signal with and bandwidth \(W\), thus the pulse is sinc shaped
 \begin{equation}
-	x(t) = \sum_n x[n] \sinc(t/T - n)
+	x(t) = \sum_n x(n) \sinc(t/T - n)
 \end{equation}
 Ideal sampling at rate \(2W\) of \(y\) gives
+
+\section{Receiver DSP chain}

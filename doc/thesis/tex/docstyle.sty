@@ -1,0 +1,50 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tex/docstyle}[2021/10/31 v0.1 Document Style]
+
+%% Page Margins (done with KOMA)
+% \PassOptionsToPackage{geometry}{
+% 	a4paper, showframe
+% }
+% \RequirePackage{geometry}
+% \AfterCalculatingTypearea{%
+% 	\geometry{%
+% 			inner = 1cm, outer = 1cm, includeheadfoot
+% 			top = 3cm, bottom = 3cm
+% 	}
+% }
+
+%% Pager headers and footers (using KOMA)
+\PassOptionsToPackage{scrlayer-scrpage}{autooneside = false}
+\RequirePackage{scrlayer-scrpage}
+\setkomafont{pagenumber}{\sffamily\bfseries\upshape}
+% Add marks
+\lehead{\leftmark}
+\rohead{\rightmark}
+
+%% Font configuration
+%% use roboto from sans serif
+\RequirePackage{roboto}
+
+%% Bibliography style
+\PassOptionsToPackage{biblatex}{%
+	backend = biber,
+	style = ieeee,
+}
+\RequirePackage{biblatex}
+
+%% Set up links
+\PassOptionsToPackage{hyperref}{%
+	bookmarks = true,
+	% pdftitle = {}
+	pdfsubject = {Semester Thesis}
+	pdfauthor = {Naoki Pross, Sara Halter}
+	plainpages = false,
+	psepdfpagelabels,
+	urlcolor = black,
+	citecolor = black,
+	linkcolor = black,
+	colorlinks = true,
+}
+\RequirePackage{hyperref}
+
+% vim: set ts=2 sw=2 noet:
