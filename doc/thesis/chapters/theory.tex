@@ -193,13 +193,24 @@ that describes the \emph{impulse response} of the channel. This function is depe
 
 \subsection{Spectrum of a multipath fading channel}
 
-With a continuous time channel model we can now discuss the spectral properties of a fading channel, since the frequency response is the Fourier transform of the impulse response, mathematically \(H(f, t) = \fourier h(\tau, t)\). In this case however \(h(\tau, t)\) depends on two time variables, but that is actually not an issue, it just means that the frequency response is also changing with time. Hence we perform the Fourier transform with respect to the channel (convolution) time variable \(\tau\) to obtain
+With a continuous time channel model we can now discuss the spectral properties of a fading channel since the frequency response is the Fourier transform of the impulse response, mathematically \(H(f, t) = \fourier h(\tau, t)\). In this case however \(h(\tau, t)\) depends on two time variables, but that is actually not an issue, it just means that the frequency response is also changing with time. Hence we perform the Fourier transform with respect to the channel (convolution) time variable \(\tau\) to obtain
 \begin{equation} \label{eqn:multipath-frequency-response}
 	H(f, t) = \int_\mathbb{R} \sum_k c_k(t) \delta(\tau - \tau_k(t)) e^{-2\pi jf\tau} \, d\tau
 	= \sum_k c_k(t) e^{-2\pi jf \tau_k(t)}.
 \end{equation}
 
-Equation \eqref{eqn:multipath-frequency-response} indicates that the frequency response is has a periodic (complex) sinusoidal shape, which has some important implications. A series of plots of the magnitude of the frequency response is shown in figure \ref{fig:multipath-frequency-response-plots}.
+Equation \eqref{eqn:multipath-frequency-response} indicates that the frequency response is a periodic complex exponential, which has some important implications. Notice that if there is only one tap (term), the magnitude of \(H(f, t)\) is a constant (with respect to \(f\)) since \(|e^{j\alpha f}| = 1\). This means that the channels attenuates all frequencies by the same amount, therefore it is said to be a \emph{frequency non-selective} channel. Whereas in the case when there is more than one tap, the taps interfere destructively at certain frequencies and the channel is called \emph{frequency selective}. Plots of the frequency response of a two tap channel model are shown in figure \ref{fig:multipath-frequency-response-plots}. On the left is the magnitude of \(H(f, t)\), which presents periodic ``dips'', and on the right complex loci for the two taps (red and blue), as well as their sum (magenta), over the frequency range near the first dip (2 to 2.5 MHz) are shown.
+
+\begin{figure}
+	\centering
+	\resizebox{\linewidth}{!}{
+		\input{figures/tikz/multipath-frequency-response-plots}
+	}
+	\caption{
+		Frequency response of a multipath fading channel.
+		\label{fig:multipath-frequency-response-plots}
+	}
+\end{figure}
 
 \subsection{Discrete-time model}
 

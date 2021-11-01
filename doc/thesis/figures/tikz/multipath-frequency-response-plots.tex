@@ -1,0 +1,70 @@
+% vim: set ts=2 sw=2 noet:
+\begin{tikzpicture}
+	\begin{loglogaxis}[
+			width = .6\linewidth, height = 5cm,
+			ylabel = {Response \(|H(f, t)|\)},
+			xlabel = {Frequency \(f\)/Hz},
+			xlabel near ticks,
+			ylabel near ticks,
+			ytick = \empty,
+			smooth,
+		]
+
+		\addplot[solid, magenta] table[x index = 0, y index = 2]
+			{figures/data/multipath_frequency_response.dat};
+		\addlegendentry{Multipath}
+
+		\addplot[dashed, thick, black] table[x index = 0, y index = 1]
+			{figures/data/multipath_frequency_response.dat};
+		\addlegendentry{Linear}
+
+	\end{loglogaxis}
+\end{tikzpicture}
+\hskip 5mm
+\begin{tikzpicture}[
+		decorated/.style = {
+			solid, thick,
+			postaction={decorate},
+			decoration={markings,
+				mark=at position 0.35 with {\arrow{stealth}},
+				mark=at position 0.65 with {\arrow{stealth}}},
+		},
+	]
+	\begin{axis}[
+			width = 5cm, height = 5cm,
+			ylabel = {\(\Im{H(f,t)}\)},
+			xlabel = {\(\Re{H(f,t)}\)},
+			xlabel near ticks,
+			ylabel near ticks,
+			grid = major,
+			xmin = -1.2, xmax = 1.2,
+			ymin = -1.2, ymax = 1.2,
+		]
+
+		\addplot[decorated, red] table[x index = 3, y index = 4]
+			{figures/data/multipath_frequency_response.dat}
+			node[pos = 0, circle, fill = white, draw, inner sep = 1pt] {}
+			node[pos = .2, outer sep = 1pt, inner sep = 0pt] (A) {}
+			node[pos = 1, circle, fill = white, draw, inner sep = 1pt] {};
+
+		\addplot[decorated, blue] table[x index = 5, y index = 6]
+			{figures/data/multipath_frequency_response.dat}
+			node[pos = 0, circle, fill = white, draw, inner sep = 1pt] {}
+			node[pos = .2, outer sep = 1pt, inner sep = 0pt] (B) {}
+			node[pos = 1, circle, fill = white, draw, inner sep = 1pt] {};
+
+		\addplot[decorated, magenta] table[x index = 7, y index = 8]
+			{figures/data/multipath_frequency_response.dat}
+			node[pos = 0, circle, fill = white, draw, inner sep = 1pt] {}
+			node[pos = 0, below, font = \tiny] {2 MHz}
+			node[pos = .2, outer sep = 1pt, inner sep = 0pt] (C) {}
+			node[pos = 1, circle, fill = white, draw, inner sep = 1pt] {}
+			node[pos = 1, above left, font = \tiny] {2.5 MHz};
+
+		\node[outer sep = 2pt, inner sep = 0pt] (O) at (0,0) {};
+		\draw[-latex, red!50!white] (O) -- (A);
+		\draw[-latex, blue!50!white] (O) -- (B);
+		\draw[-latex, magenta!50!white] (O) -- (C);
+
+	\end{axis}
+\end{tikzpicture}

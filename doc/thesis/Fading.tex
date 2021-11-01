@@ -30,14 +30,20 @@
 \usepackage{tikz}        % Pretty drawings
 \usepackage{tikz-3dplot} % More dimensions!
 
+\pgfplotsset{compat=1.17}
 \usetikzlibrary{
+	external,
 	calc,
 	positioning,
 	backgrounds,
 	decorations.pathreplacing,
+	decorations.markings,
 	matrix,
 	arrows,
 }
+% \tikzexternalize[
+	% mode=graphics if exists,
+	% figure list=true]
 \pgfdeclarelayer{background}
 \pgfdeclarelayer{foreground}
 \pgfsetlayers{background,main,foreground}
