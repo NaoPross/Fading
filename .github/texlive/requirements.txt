@@ -2,3 +2,4 @@ texlive-xetex
 texlive-bibtex-extra
 texlive-fonts-extra
 biber
+python3-numpy
