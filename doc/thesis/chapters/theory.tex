@@ -86,23 +86,14 @@ Notice that assuming \(m_i\) and \(m_q\) are constant\footnote{This is an approx
 \end{align*}
 which effectively means that it is possible to isolate a single component \(m_i(t)\) out of \(s(t)\). The same of course works with \(\phi_q\) as well resulting in \(\langle s, \phi_q \rangle = m_q\). Thus (remarkably) it is possible to send two signals on the same frequency, without them interfering with each other. Since each signal can represent one of \(\sqrt{M}\) values, by having two we obtain \(\sqrt{M} \cdot \sqrt{M} = M\) possible combinations.
 
-A graphical way to see what is happening, is to observe a so called \emph{constellation diagram}. An example is shown in figure \ref{fig:qam-constellation} for \(M = 16\). The two carrier signals \(\phi_i\) and \(\phi_q\) can be understood as bases of a coordinate system.
+A graphical way to see what is happening, is to observe a so called \emph{constellation diagram}. An example is shown in figure \ref{fig:qam-constellation} for \(M = 16\). The two carrier signals \(\phi_i\) and \(\phi_q\) can be understood as bases of a coordinate system, in which the two amplitude levels of the two modulated messages, determine a position in the grid.
 
-\subsection{Construction of orthogonal carrier signals}
+\paragraph{Example}
 
+A concrete example for \(M = 16\): if the message is 1110 the bit splitter creates two values \(\vec{m}_q = 11\) and \(\vec{m}_i = 10\); both are converted into an analog amplitudes \(m_q = 3\) and \(m_i = 4\); that are then mixed with their respective carrier, resulting in \(s(t)\) being the point inside the bottom right sub-quadrant of the top right quadrant (blue dot in figure \ref{fig:qam-constellation}).
 
-If \(\phi_i\) is a real valued signal (which is typical) it is possible to find a function the quadrature carrier using the \emph{Hilbert transform}:
-\begin{equation}
-	\hilbert g(t) = g(t) * \frac{1}{\pi t}
-		= \frac{1}{\pi} \int_\mathbb{R} \frac{g(\tau)}{t - \tau} \,d\tau
-		= \frac{1}{\pi} \int_\mathbb{R} \frac{g(t - \tau)}{\tau} \,d\tau,
-\end{equation}
-i.e. a linear operator that introduces a phase shift of \(\pi / 2\) over all frequencies \cite{Hsu,Gallager}. It is a known property of the Hilbert transform that given a real valued function \(g(t)\) then \(\langle g, \hilbert g \rangle = 0\) \cite{Kschischang,Kneubuehler}.
-In practice \(\phi_i(t) = \cos(\omega_c t)\) and \(\phi_q(t) = \hilbert \phi_i(t) = \sin(\omega_c t)\).  
+In figure \ref{fig:qam-constellation} the dots of the constellation have coordinates that begin on the bottom left corner, and are nicely aligned on a grid. Both are not a necessary requirement for QAM, in fact there are many schemes (for example when \(M = 32\)) that are arranged on a non square shape, and place the dots in different orders. The only constraint that most QAM modulators have in common, with regards to the geometry of the constellation, is that between any two adjacent dots (along the axis, not diagonally) only one bit of the represented value changes (gray code). This is done to improve the bit error rate (BER) of the transmission.
 
-\paragraph{Oscillator and phase shifter}
-
-\subsection{Spectral properties of a QAM signal}
 
 \begin{figure}
 	\hfill
@@ -121,6 +112,20 @@ In practice \(\phi_i(t) = \cos(\omega_c t)\) and \(\phi_q(t) = \hilbert \phi_i(t
 	}
 \end{figure}
 
+\subsection{Construction of orthogonal carrier signals}
+
+Knowing why there is a need for orthogonal carriers, we should now discuss which functions satisfy the property described by \eqref{eqn:orthogonal-condition}. If \(\phi_i\) is a real valued signal (which is typical) it is possible to find a function the quadrature carrier using the \emph{Hilbert transform} (sometimes called Hilbert filter):
+\begin{equation}
+	\hilbert g(t) = g(t) * \frac{1}{\pi t}
+		= \frac{1}{\pi} \int_\mathbb{R} \frac{g(\tau)}{t - \tau} \,d\tau
+		= \frac{1}{\pi} \int_\mathbb{R} \frac{g(t - \tau)}{\tau} \,d\tau.
+\end{equation}
+The Hilbert transform is a linear operator that introduces a phase shift of \(\pi / 2\) over all frequencies \cite{Hsu,Gallager}, and it is possible to show that given a real valued function \(g(t)\) then \(\langle g, \hilbert g \rangle = 0\) \cite{Kschischang,Kneubuehler}. There are many functions that are Hilbert transform pairs, however in practice the pair \(\phi_i(t) = \cos(\omega_c t)\) and \(\phi_q(t) = \hilbert \phi_i(t) = \sin(\omega_c t)\) is always used.
+
+% \paragraph{Oscillator and phase shifter}
+% TODO: what to write here?
+
+\subsection{Spectral properties of a QAM signal}
 
 \section{Phase shift keying (\(M\)-PSK)}
 
