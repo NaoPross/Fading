@@ -4,6 +4,8 @@
 % vim: set ts=2 sw=2 noet:
 
 \documentclass[
+	% show when a line is too long (drafting)
+	overfullrule,
 	% page size and margins
 	paper = a4, twoside, openright, BCOR = 5mm,
 	headinclude, footexclude,
@@ -22,7 +24,7 @@
 
 %% Custom packages
 \usepackage{tex/docmacros}
-\usepackage{tex/docstyle}
+\usepackage[draft]{tex/docstyle}
 
 %% Pretty figures
 \usepackage{circuitikz}  % Electric diagrams

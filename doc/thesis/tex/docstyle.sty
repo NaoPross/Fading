@@ -1,5 +1,11 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{tex/docstyle}[2021/10/31 v0.1 Document Style]
+\ProvidesPackage{tex/docstyle}[2021/10/31 v0.1 Styling for my thesis]
+
+% Package options
+\newif\ifdraftmode
+\DeclareOption{draft}{\draftmodetrue}
+
+\ProcessOptions\relax
 
 %% Page Margins (done with KOMA)
 % \PassOptionsToPackage{geometry}{
@@ -13,19 +19,29 @@
 % 	}
 % }
 
+%% Need colors
+\RequirePackage{xcolor}
+
 %% Pager headers and footers (using KOMA)
-\PassOptionsToPackage{scrlayer-scrpage}{autooneside = false}
+\PassOptionsToPackage{scrlayer-scrpage}{autooneside=false, draft=false}
 \RequirePackage{scrlayer-scrpage}
 
 \setkomafont{pagenumber}{\sffamily\bfseries\slshape}
 \setkomafont{pageheadfoot}{\itshape}
 
-% Add marks
 \lehead{\leftmark}
 \rohead{\rightmark}
 
+%% Draft date when in draft mode
+\ifdraftmode
+	\RequirePackage{scrtime}
+	\newcommand{\draftfooterstring}{\footnotesize\slshape (Draft of \today\ at \thistime)}
+	\cefoot{\draftfooterstring}
+	\cofoot{\draftfooterstring}
+\fi
+
 %% Font configuration
-% use roboto from sans serif
+% use roboto for sans serif
 \RequirePackage{roboto}
 
 %% Floating captions configuration
@@ -43,7 +59,6 @@
 \RequirePackage{biblatex}
 
 %% Set up links
-\RequirePackage{xcolor}
 \PassOptionsToPackage{hyperref}{%
 	bookmarks = true,
 	%% TODO: set title
