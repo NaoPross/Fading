@@ -13,9 +13,11 @@
 	}
 \end{figure}
 
-In this section we will briefly give the mathematical background required by the modulation schemes used in the project. The notation used is summarised in figure \ref{fig:notation}. For conciseness encoding schemes and (digital) signal processing calculations are left out and discussed later. Thus for this section \(m_e = m\).
+In the first two sections we will briefly give the mathematics required by the modulation schemes used in the project. The notation used is summarised in figure \ref{fig:notation}. For conciseness encoding schemes and (digital) signal processing calculations are left out and discussed later. Thus for this section \(m_e = m\).
+\skelpar[4]{Finish overview of the chapter.}
 
-%% TODO: Par on notation m(n) = m(nT) = discrete time
+\skelpar[3]{Discuss notation \(m(n) = m(nT)\) in discrete time and some other details.}
+
 
 %% TODO: A section on maths?
 % \section{Signal space and linear operators}
@@ -94,7 +96,6 @@ A concrete example for \(M = 16\): if the message is 1110 the bit splitter creat
 
 In figure \ref{fig:qam-constellation} the dots of the constellation have coordinates that begin on the bottom left corner, and are nicely aligned on a grid. Both are not a necessary requirement for QAM, in fact there are many schemes (for example when \(M = 32\)) that are arranged on a non square shape, and place the dots in different orders. The only constraint that most QAM modulators have in common, with regards to the geometry of the constellation, is that between any two adjacent dots (along the axis, not diagonally) only one bit of the represented value changes (gray code). This is done to improve the bit error rate (BER) of the transmission.
 
-
 \begin{figure}
 	\hfill
 	\begin{subfigure}{.4\linewidth}
@@ -122,14 +123,19 @@ Knowing why there is a need for orthogonal carriers, we should now discuss which
 \end{equation}
 The Hilbert transform is a linear operator that introduces a phase shift of \(\pi / 2\) over all frequencies \cite{Hsu,Gallager}, and it is possible to show that given a real valued function \(g(t)\) then \(\langle g, \hilbert g \rangle = 0\) \cite{Kschischang,Kneubuehler}. There are many functions that are Hilbert transform pairs, however in practice the pair \(\phi_i(t) = \cos(\omega_c t)\) and \(\phi_q(t) = \hilbert \phi_i(t) = \sin(\omega_c t)\) is always used.
 
-% \paragraph{Oscillator and phase shifter}
-% TODO: what to write here?
+\paragraph{Oscillator and phase shifter}
+
+\skelpar[4]{Give a few details on how the carrier is generated in practice.}
 
 \subsection{Spectral properties of a QAM signal}
 
+\skelpar[4]{Spectral properties of QAM}
+
 \section{Phase shift keying (\(M\)-PSK)}
 
-PSK is a popular modulation type for data transmission\cite{Meyer2011}. With a bipolar binary signal, the amplitude remains constant and only the phase will be changed with phase jumps of 180 degrees, which can be seen as a multiplication of the carrier signal with $\pm$ 1. That is alow known as binary phase shift keying.
+\skelpar[6]{Explain PSK (assuming the previous section was read).}
+
+% PSK is a popular modulation type for data transmission\cite{Meyer2011}. With a bipolar binary signal, the amplitude remains constant and only the phase will be changed with phase jumps of 180 degrees, which can be seen as a multiplication of the carrier signal with $\pm$ 1. That is alow known as binary phase shift keying.
 
 % \begin{figure}
 % 	% TODO: Better Image
@@ -137,10 +143,13 @@ PSK is a popular modulation type for data transmission\cite{Meyer2011}. With a b
 % 	\includegraphics[width=5cm]{./image/BPSK2.png}
 % \end{figure}
 
-Two bits are modulated at ones with the same bandwidth as a 2-PSK so more informations are transmitted at the same time. \cite{Meyer2011}
+% Two bits are modulated at ones with the same bandwidth as a 2-PSK so more informations are transmitted at the same time. \cite{Meyer2011}
 %TODO: Image Signal Raum 
-Most times there is noise and the points on the constellation diagram become a surface. 
-If the surfaces overlap there will be a problem with decoding. 
+% Most times there is noise and the points on the constellation diagram become a surface. If the surfaces overlap there will be a problem with decoding. 
+
+\subsection{Quadrature PSK (QPSK)}
+
+\skelpar[2]{QPSK = 4-PSK = 4-QAM}
 
 \section{Wireless channel}
 
@@ -153,6 +162,11 @@ In our model we are going to include an additive white Gaussian noise (AWGN) and
 \subsection{Additive white Gaussian noise}
 
 %% TODO: Discuss thermal stuff etc?
+\skelpar[3]{What does AWGN model?}
+\skelpar[3]{Mathematical model of AWGN, assumptions, limits etc.}
+\begin{equation}
+	\skelline
+\end{equation}
 
 \subsection{Geometric multipath fading model}
 
@@ -219,8 +233,67 @@ Equation \eqref{eqn:multipath-frequency-response} indicates that the frequency r
 
 \subsection{Discrete-time model}
 
+\skelpar[3]{Why use a discrete time model?}
+\skelpar[3]{Mathematical discretization}
+
+\begin{equation}
+	h(n, k) = \skelline[8cm]{Discrete-time multipath fading channel impulse response}
+\end{equation}
+
+\skelpar[3]{Discrete frequency response. Discuss bins, etc.}
+
 \subsection{Statistical model}
 
-%% TODO: write about advantage of statistical model instead of geometric
+\skelpar[5]{Advantages of statistical model over geometric model.}
+
+\begin{figure}
+	\centering
+	\begin{subfigure}{.45\linewidth}
+		\skelfig
+		\caption{NLOS, Rayleigh}
+	\end{subfigure}
+	\hskip 5mm
+	\begin{subfigure}{.45\linewidth}
+		\skelfig
+		\caption{LOS, Rice}
+	\end{subfigure}
+	\caption{
+		Ring of scattering objects.
+		\label{fig:multipath-statistical-models}
+	}
+\end{figure}
+
+\paragraph{NLOS case}
+
+\skelpar[4]{Explain statistical model with Rayleighan distribution.}
+\begin{equation}
+	\Re{h_l(n)}, \Im{h_l(n)}
+	\sim \mathcal{N} \left(0, \frac{1}{2} \E{|h_l(n)|^2} \right)
+\end{equation}
+\skelpar[4]
+
+\paragraph{LOS case}
+
+\skelpar[4]{Explain statistical model with Rician distribution.}
+\begin{equation}
+	\Re{h_l(n)}, \Im{h_l(n)}
+	\sim \mathcal{N} \left( \frac{A_l}{\sqrt{2}}, \frac{1}{2} \sigma_l^2 \right)
+\end{equation}
+\skelpar[4]
 
 \section{Receiver DSP chain}
+
+\skelpar[3]{Overview of the DSP chain.}
+
+\begin{figure}
+	\centering
+	\skelfig[width = .8\linewidth]
+	\caption{
+		Signal processing chain of the receiver.
+		\label{fig:rx-dsp-chain}
+	}
+\end{figure}
+
+\paragraph{Synchronization} \skelpar[4]{Polyphase filter bank.}
+\paragraph{Equalization} \skelpar[4]{CMA Equalizer.}
+\paragraph{Fine tuning} \skelpar[4]{Costas Loop.}

@@ -50,9 +50,11 @@
 \pgfdeclarelayer{foreground}
 \pgfsetlayers{background,main,foreground}
 
-
 \usepackage{graphicx}   % Include pictures
 \usepackage{subcaption} % Subfigures
+
+%% Placeholders
+\usepackage{skeldoc}
 
 %% Load bibliography 
 \addbibresource{Fading.bib}
@@ -79,7 +81,7 @@
 
 	\begin{abstract}
 		%% TODO: write abstract
-		Here goes the abstract
+		\skelpar
 	\end{abstract}
 
 	\tableofcontents
@@ -95,6 +97,8 @@
 	\include{chapters/implementation}
 	\include{chapters/conclusions}
 
+	%% TODO: remove in final version
+	\printskelnotes
 	\printbibliography
 
 \end{document}
