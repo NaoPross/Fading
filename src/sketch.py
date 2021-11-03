@@ -3,6 +3,8 @@
 from dearpygui.dearpygui import *
 from dearpygui.demo import show_demo
 
+import qpks
+
 # Create GL context and initialize DearPyGUI
 create_context()
 create_viewport()
