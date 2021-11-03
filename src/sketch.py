@@ -1,6 +1,8 @@
 from dearpygui.dearpygui import *
 from dearpygui.demo import show_demo
 
+import qpks
+
 create_context()
 create_viewport()
 setup_dearpygui()
