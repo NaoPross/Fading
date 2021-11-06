@@ -55,6 +55,8 @@ with window(label="RX DSP Flow Graph", width=800, height=800, on_close=_on_param
         add_node_link(get_alias_id("eq_out"), get_alias_id("pll_in"))
 
 
+with window(label="Example Window"):
+    add_text("Hello world")
 
 show_viewport()
 start_dearpygui()
