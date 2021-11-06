@@ -1,11 +1,21 @@
+#!/usr/bin/env python3
+
 from dearpygui.dearpygui import *
 from dearpygui.demo import show_demo
 
+import qpks
+
+# Create GL context and initialize DearPyGUI
 create_context()
 create_viewport()
 setup_dearpygui()
 
+# Show demo for dev
 show_demo()
+
+
+#================================================
+# GUI Callback functions
 
 def _on_params_close():
     pass
@@ -18,6 +28,9 @@ def _on_rx_node_link(sender, app_data):
 def _on_rx_node_delink(sender, app_data):
     link_id = app_data
     delete_item(link_id)
+
+#================================================
+# Flow Graph Window
 
 with window(label="RX DSP Flow Graph", width=800, height=800, on_close=_on_params_close, pos=(100,100), tag="rx_win"):
     with node_editor(callback=_on_rx_node_link, delink_callback=_on_rx_node_delink):
@@ -55,8 +68,13 @@ with window(label="RX DSP Flow Graph", width=800, height=800, on_close=_on_param
         add_node_link(get_alias_id("eq_out"), get_alias_id("pll_in"))
 
 
+<<<<<<< HEAD
 with window(label="Example Window"):
     add_text("Hello world")
+=======
+#================================================
+# Start window and main loop
+>>>>>>> origin/master
 
 show_viewport()
 start_dearpygui()

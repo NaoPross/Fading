@@ -21,6 +21,9 @@
 		}
 	}
 
+	% special node for the example
+	\node[star, fill = blue!40!white] at (s32) {};
+
 	\foreach \i/\l in {0/00,1/01,2/11,3/10}{
 		\node[lightgray, below = 3mm] at (s\i0) {\texttt{\l}};
 		\node[lightgray, left = 2mm] at (s0\i) {\texttt{\l}};

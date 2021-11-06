@@ -1,0 +1,34 @@
+% vim: set ts=2 sw=2 noet:
+\tdplotsetmaincoords{70}{40}
+\begin{tikzpicture}[tdplot_main_coords, font = \footnotesize\ttfamily]
+	\draw[thick, -latex] (0,0,0) -- node[sloped, midway, below, gray] {Effect of the channel} (7,0,0) node[right] {\(\tau\)};
+	\draw[thick, -latex] (0,0,0) -- node[sloped, midway, above, gray] {How the channel changes} (0,7,0) node[right] {\(t\)};
+	\draw[thick, -latex] (0,0,0) -- (0,0,2) node[above] {\(h(t,\tau)\)};
+
+	\foreach \y in {1,2,...,4}{
+		\draw[dashed, gray] (0,1.5*\y,0) -- ++(7,0,0);
+	}
+
+	\foreach \x in {1,2,...,6}{
+		\draw[dotted, gray] (\x,0,0) -- ++(0,7,0);
+	}
+
+	% draw 4 responses
+	\begin{scope}[very thick, -{Circle[fill=white]}]
+		\foreach \x/\v in {.8/1, 2.2/2, 2.9/1, 4/4, 5.1/7, 5.8/3}{
+			\draw[blue!80!red] (\x,1.5*4,0) -- ++(0,0,\v/3);
+		}
+
+		\foreach \x/\v in {.9/2, 2.1/2, 3/1, 4/3, 5/6, 6/3}{
+			\draw[blue!60!red] (\x,1.5*3,0) -- ++(0,0,\v/3);
+		}
+
+		\foreach \x/\v in {.6/1, 2/1, 2.8/3, 4.1/4, 5.5/4, 6.2/1}{
+			\draw[blue!40!red] (\x,1.5*2,0) -- ++(0,0,\v/3);
+		}
+
+		\foreach \x/\v in {1.1/2, 1.8/1, 3/2, 3.7/1, 4.8/3, 5.8/1}{
+			\draw[blue!20!red] (\x,1.5,0) -- ++(0,0,\v/3);
+		}
+	\end{scope}
+\end{tikzpicture}

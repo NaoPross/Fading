@@ -1,0 +1,87 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tex/docstyle}[2021/10/31 v0.1 Styling for my thesis]
+
+% Package options
+\newif\ifdraftmode
+\DeclareOption{draft}{\draftmodetrue}
+
+\ProcessOptions\relax
+
+%% Page Margins (done with KOMA)
+% \PassOptionsToPackage{geometry}{
+% 	a4paper, showframe
+% }
+% \RequirePackage{geometry}
+% \AfterCalculatingTypearea{%
+% 	\geometry{%
+% 			inner = 1cm, outer = 1cm, includeheadfoot
+% 			top = 3cm, bottom = 3cm
+% 	}
+% }
+
+%% Need colors
+\RequirePackage{xcolor}
+
+%% Pager headers and footers (using KOMA)
+\PassOptionsToPackage{scrlayer-scrpage}{autooneside=false, draft=false}
+\RequirePackage{scrlayer-scrpage}
+
+\setkomafont{pagenumber}{\sffamily\bfseries\slshape}
+\setkomafont{pageheadfoot}{\itshape}
+
+\lehead{\leftmark}
+\rohead{\rightmark}
+
+%% Draft date when in draft mode
+\ifdraftmode
+	\RequirePackage{scrtime}
+	\newcommand{\draftfooterstring}{\footnotesize\slshape (Draft of \today\ at \thistime)}
+	\cefoot{\draftfooterstring}
+	\cofoot{\draftfooterstring}
+\fi
+
+%% Font configuration
+% use roboto for sans serif
+\RequirePackage{roboto}
+
+%% Floating captions configuration
+% set captions font
+\setkomafont{captionlabel}{\sffamily\bfseries}
+% set caption style
+\setcapindent{0pt}
+\renewcommand*{\captionformat}{\quad}
+
+%% Bibliography style
+\PassOptionsToPackage{biblatex}{%
+	backend = biber,
+	style = ieeee,
+}
+\RequirePackage{biblatex}
+
+%% Set up links
+\PassOptionsToPackage{hyperref}{%
+	bookmarks = true,
+	%% TODO: set title
+	% pdftitle = {}
+	pdfsubject = {Semester Thesis}
+	pdfauthor = {Naoki Pross, Sara Halter}
+	plainpages = false,
+	psepdfpagelabels,
+}
+\RequirePackage{hyperref}
+\hypersetup{
+	% remove ugly boxes
+	hidelinks,
+	% set link colors
+	colorlinks = true,
+	anchorcolor = black,
+	citecolor = black,
+	filecolor = black,
+	linkcolor = black,
+	menucolor = black,
+	runcolor = black,
+	urlcolor = {black!50!blue}, 
+	urlcolor = black,
+}
+
+% vim: set ts=2 sw=2 noet:

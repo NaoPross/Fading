@@ -4,80 +4,101 @@
 % vim: set ts=2 sw=2 noet:
 
 \documentclass[
-	twoside, openright, titlepage, numbers = noenddot,
-	headinclude, footinclude, cleardoublepage = empty, abstract = on,
-	BCOR = 5mm, paper = a4, fontsize = 11pt
+	% show when a line is too long (drafting)
+	overfullrule,
+	% page size and margins
+	paper = a4, twoside, openright, BCOR = 5mm,
+	headinclude, footexclude,
+	% font size
+	fontsize = 11pt,
+	% style of empty pages (after chapters)
+	cleardoublepage = empty,
+	% extra sections
+	titlepage, abstract = on,
+	% header and footers
+	automark,
 ]{scrreprt}
-
-%% Custom packages
-\usepackage{tex/docmacros}
 
 %% Language configuration
 \usepackage{polyglossia}
 
-%% Links
-\usepackage{hyperref}
-
-\hypersetup{
-	colorlinks = true
-}
-
-%% Citations
-\usepackage[
-	backend = biber,
-	style = ieee,
-]{biblatex}
-
-\addbibresource{Fading.bib}
+%% Custom packages
+\usepackage{tex/docmacros}
+\usepackage[draft]{tex/docstyle}
 
 %% Pretty figures
-\usepackage{tikz}
+\usepackage{circuitikz}  % Electric diagrams
+\usepackage{pgfplots}    % Pretty plots
+\usepackage{tikz}        % Pretty drawings
+\usepackage{tikz-3dplot} % More dimensions!
 
+\pgfplotsset{compat=newest}
 \usetikzlibrary{
+	external,
 	calc,
+	positioning,
 	backgrounds,
+	decorations.pathreplacing,
+	decorations.markings,
 	matrix,
+	arrows,
 }
+% \tikzexternalize[
+	% mode=graphics if exists,
+	% figure list=true]
 \pgfdeclarelayer{background}
 \pgfdeclarelayer{foreground}
 \pgfsetlayers{background,main,foreground}
 
-\usepackage{circuitikz}
+\usepackage{graphicx}   % Include pictures
+\usepackage{subcaption} % Subfigures
 
-%% Pretty plots
-\usepackage{pgfplots}
+%% Placeholders
+\usepackage{skeldoc}
 
-%% Include pictures
-\usepackage{graphicx}
+%% Load bibliography 
+\addbibresource{Fading.bib}
 
-%% Subfigures
-\usepackage{subcaption}
+%% Recompute page margins
+\KOMAoptions{DIV=default}
 
-%% TODO: move into tex/docstyle.sty
-%% Sans serif font
-\usepackage{roboto}
+%% Metadata
+\title{Multipath fading demonstration using software defined radio}
+\author{Naoki Sean Pross \and Sara Cinzia Halter}
+\date{Fall semester 2021}
 
 \begin{document}
 
 	\hypersetup{pageanchor = false}
-	%% TODO: titlepage
+
+	%% TODO: create a proper titlepage
+	\maketitle
+	% \include{tex/titlepage}
 
 	\cleardoublepage
 	\pagenumbering{roman}
+	\setcounter{page}{1}
 
-	%% TODO: abstract
-	% \begin{abstract}
-	% \end{abstract}
+	\begin{abstract}
+		%% TODO: write abstract
+		\skelpar
+	\end{abstract}
 
+	\tableofcontents
+
+	\cleardoublepage
 	\hypersetup{pageanchor = true}
 	\pagenumbering{arabic}
 	\setcounter{page}{1}
+	\pagestyle{scrheadings}
 
 	\include{chapters/introduction}
 	\include{chapters/theory}
 	\include{chapters/implementation}
 	\include{chapters/conclusions}
 
+	%% TODO: remove in final version
+	\printskelnotes
 	\printbibliography
 
 \end{document}
