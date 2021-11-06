@@ -76,8 +76,8 @@ class qpsk_nogui(gr.top_block):
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_float*1)
         self.blocks_char_to_float_0 = blocks.char_to_float(1, 1)
         self.analog_random_source_x_0 = blocks.vector_source_b(list(map(int, numpy.random.randint(0, 256, 1000))), True)
-        # print(list(map(int, numpy.random.randint(0, 256, 1000))))
-        
+
+
 
         ##################################################
         # Connections
@@ -95,7 +95,6 @@ class qpsk_nogui(gr.top_block):
         self.connect((self.digital_map_bb_0, 0), (self.blocks_unpack_k_bits_bb_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_cma_equalizer_cc_0, 0))
 
-        self.test = "1"
 
     def get_sps(self):
         return self.sps
@@ -199,8 +198,6 @@ class qpsk_nogui(gr.top_block):
         self.chn_taps = chn_taps
         self.channels_channel_model_0.set_taps(self.chn_taps)
 
-    def test_2(self,x):
-        return "5"
 
 
 
@@ -228,7 +225,6 @@ def main(top_block_cls=qpsk_nogui, options=None):
     tb.stop()
     tb.wait()
 
-test = "test variabel"
 
 if __name__ == '__main__':
     main()
