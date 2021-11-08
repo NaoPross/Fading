@@ -70,10 +70,6 @@ def _on_rx_node_delink(sender, app_data):
 #         add_node_link(get_alias_id("eq_out"), get_alias_id("pll_in"))
 
 
-
-with window(label="Example Window"):
-    add_text("Hello world")
-
 #================================================
 # QPSK Window
 
