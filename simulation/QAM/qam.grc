@@ -10,7 +10,7 @@ options:
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: qpks
+    id: qam
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -21,7 +21,7 @@ options:
     run_options: prompt
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: QPSK
+    title: QAM
     window_size: ''
   states:
     bus_sink: false
@@ -42,6 +42,24 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [640, 252.0]
+    rotation: 0
+    state: true
+- name: const
+  id: variable_constellation
+  parameters:
+    comment: ''
+    const_points: '[-1-1j, -1+1j, 1+1j, 1-1j]'
+    dims: '1'
+    precision: '8'
+    rot_sym: '4'
+    soft_dec_lut: None
+    sym_map: '[0, 1, 3, 2]'
+    type: 16qam
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [224, 604.0]
     rotation: 0
     state: true
 - name: eq_gain
@@ -176,17 +194,18 @@ blocks:
     coordinate: [1640, 428.0]
     rotation: 0
     state: true
-- name: qpsk_const
+- name: qam_const
   id: variable_constellation_rect
   parameters:
     comment: ''
-    const_points: '[0.707+1j, -0.707+0.707j, -0.707-0.707j, 0.707-0.707j]'
-    imag_sect: '2'
-    precision: '8'
-    real_sect: '2'
+    const_points: '[(-3-3j), (-1-3j), (1-3j), (3-3j), (-3-1j), (-1-1j), (1-1j), (3-1j),
+      (-3+1j), (-1+1j), (1+1j), (3+1j), (-3+3j), (-1+3j), (1+3j), (3+3j)]'
+    imag_sect: '1'
+    precision: '4'
+    real_sect: '1'
     rot_sym: '4'
     soft_dec_lut: None
-    sym_map: '[0, 1, 3, 2]'
+    sym_map: '[0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10]'
     w_imag_sect: '1'
     w_real_sect: '1'
   states:
@@ -444,7 +463,7 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    constellation: qpsk_const
+    constellation: const
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
@@ -460,7 +479,7 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    constellation: qpsk_const
+    constellation: const
     differential: 'True'
     excess_bw: excess_bw
     log: 'False'

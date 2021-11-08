@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL-3.0
 #
 # GNU Radio Python Flow Graph
-# Title: QPSK
+# Title: QAM
 # Author: Pross Naoki, Halter Sara Cinzia
 # GNU Radio version: 3.8.2.0
 
@@ -39,12 +39,12 @@ from gnuradio.qtgui import Range, RangeWidget
 
 from gnuradio import qtgui
 
-class qpks(gr.top_block, Qt.QWidget):
+class qam(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "QPSK")
+        gr.top_block.__init__(self, "QAM")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("QPSK")
+        self.setWindowTitle("QAM")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -62,7 +62,7 @@ class qpks(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "qpks")
+        self.settings = Qt.QSettings("GNU Radio", "qam")
 
         try:
             if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
@@ -82,14 +82,15 @@ class qpks(gr.top_block, Qt.QWidget):
         self.time_offset = time_offset = 1.0
         self.samp_rate = samp_rate = 32000
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), excess_bw, 45*nfilts)
-        self.qpsk_const = qpsk_const = digital.constellation_rect([0.707+1j, -0.707+0.707j, -0.707-0.707j, 0.707-0.707j], [0, 1, 3, 2],
-        4, 2, 2, 1, 1).base()
+        self.qam_const = qam_const = digital.constellation_rect([(-3-3j), (-1-3j), (1-3j), (3-3j), (-3-1j), (-1-1j), (1-1j), (3-1j), (-3+1j), (-1+1j), (1+1j), (3+1j), (-3+3j), (-1+3j), (1+3j), (3+3j)], [0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10],
+        4, 1, 1, 1, 1).base()
         self.phase_bw = phase_bw = 2 * 3.141592653589793 / 100
         self.noise_volt = noise_volt = 0.0001
         self.freq_offset = freq_offset = 0
         self.eq_ntaps = eq_ntaps = 15
         self.eq_mod = eq_mod = 1
         self.eq_gain = eq_gain = .01
+        self.const = const = digital.constellation_bpsk().base()
         self.chn_taps = chn_taps = [1.0 + 0.0j, ]
 
         ##################################################
@@ -442,14 +443,14 @@ class qpks(gr.top_block, Qt.QWidget):
         self.digital_diff_decoder_bb_0 = digital.diff_decoder_bb(4)
         self.digital_costas_loop_cc_0 = digital.costas_loop_cc(phase_bw, 4, False)
         self.digital_constellation_modulator_0 = digital.generic_mod(
-            constellation=qpsk_const,
+            constellation=const,
             differential=True,
             samples_per_symbol=sps,
             pre_diff_code=True,
             excess_bw=excess_bw,
             verbose=False,
             log=False)
-        self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(qpsk_const)
+        self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=noise_volt,
@@ -495,7 +496,7 @@ class qpks(gr.top_block, Qt.QWidget):
 
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "qpks")
+        self.settings = Qt.QSettings("GNU Radio", "qam")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
@@ -550,11 +551,11 @@ class qpks(gr.top_block, Qt.QWidget):
         self.rrc_taps = rrc_taps
         self.digital_pfb_clock_sync_xxx_0.update_taps(self.rrc_taps)
 
-    def get_qpsk_const(self):
-        return self.qpsk_const
+    def get_qam_const(self):
+        return self.qam_const
 
-    def set_qpsk_const(self, qpsk_const):
-        self.qpsk_const = qpsk_const
+    def set_qam_const(self, qam_const):
+        self.qam_const = qam_const
 
     def get_phase_bw(self):
         return self.phase_bw
@@ -597,6 +598,12 @@ class qpks(gr.top_block, Qt.QWidget):
         self.eq_gain = eq_gain
         self.digital_cma_equalizer_cc_0.set_gain(self.eq_gain)
 
+    def get_const(self):
+        return self.const
+
+    def set_const(self, const):
+        self.const = const
+
     def get_chn_taps(self):
         return self.chn_taps
 
@@ -608,7 +615,7 @@ class qpks(gr.top_block, Qt.QWidget):
 
 
 
-def main(top_block_cls=qpks, options=None):
+def main(top_block_cls=qam, options=None):
     if gr.enable_realtime_scheduling() != gr.RT_OK:
         print("Error: failed to enable real-time scheduling.")
 
