@@ -497,7 +497,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
         self.digital_cma_equalizer_cc_0_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
-        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, 0, False, 4.0, 0, (0.0,0.1,1.3), (1,0.99,0.97), 8 )
+        self.channels_fading_model_0 = channels.fading_model( 8, 10.0/samp_rate, False, 4.0, 0 )
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=noise_volt,
             frequency_offset=freq_offset,
@@ -532,13 +532,13 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_unpack_k_bits_bb_0, 0), (self.blocks_char_to_float_0, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_char_to_float_0_0, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_1, 0), (self.blocks_char_to_float_0_1, 0))
-        self.connect((self.channels_channel_model_0, 0), (self.channels_selective_fading_model_0, 0))
+        self.connect((self.channels_channel_model_0, 0), (self.channels_fading_model_0, 0))
         self.connect((self.channels_channel_model_0, 0), (self.digital_pfb_clock_sync_xxx_0_0, 0))
         self.connect((self.channels_channel_model_0, 0), (self.qtgui_const_sink_x_0, 1))
         self.connect((self.channels_channel_model_0, 0), (self.qtgui_freq_sink_x_0, 1))
-        self.connect((self.channels_selective_fading_model_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
-        self.connect((self.channels_selective_fading_model_0, 0), (self.qtgui_const_sink_x_0, 0))
-        self.connect((self.channels_selective_fading_model_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.channels_fading_model_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
+        self.connect((self.channels_fading_model_0, 0), (self.qtgui_const_sink_x_0, 0))
+        self.connect((self.channels_fading_model_0, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.digital_costas_loop_cc_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.qtgui_const_sink_x_1, 0))
         self.connect((self.digital_cma_equalizer_cc_0_0, 0), (self.digital_costas_loop_cc_0_0, 0))
@@ -607,6 +607,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
+        self.channels_fading_model_0.set_fDTs(10.0/self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_freq_sink_x_2_1.set_frequency_range(0, self.samp_rate)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)

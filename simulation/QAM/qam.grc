@@ -54,7 +54,7 @@ blocks:
     rot_sym: '4'
     soft_dec_lut: None
     sym_map: '[0, 1, 3, 2]'
-    type: 16qam
+    type: 8psk
   states:
     bus_sink: false
     bus_source: false
@@ -463,7 +463,7 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    constellation: qam_const
+    constellation: const
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
@@ -479,7 +479,7 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    constellation: qam_const
+    constellation: const
     differential: 'True'
     excess_bw: excess_bw
     log: 'False'
