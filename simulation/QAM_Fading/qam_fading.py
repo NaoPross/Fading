@@ -216,7 +216,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
             self.plots_grid_layout_2.setRowStretch(r, 1)
         for c in range(0, 1):
             self.plots_grid_layout_2.setColumnStretch(c, 1)
-        self.qtgui_freq_sink_x_1 = qtgui.freq_sink_f(
+        self.qtgui_freq_sink_x_2_1 = qtgui.freq_sink_f(
             1024, #size
             firdes.WIN_BLACKMAN_hARRIS, #wintype
             0, #fc
@@ -224,18 +224,18 @@ class qam_fading(gr.top_block, Qt.QWidget):
             "", #name
             2
         )
-        self.qtgui_freq_sink_x_1.set_update_time(0.10)
-        self.qtgui_freq_sink_x_1.set_y_axis(-140, 10)
-        self.qtgui_freq_sink_x_1.set_y_label('Relative Gain', 'dB')
-        self.qtgui_freq_sink_x_1.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
-        self.qtgui_freq_sink_x_1.enable_autoscale(False)
-        self.qtgui_freq_sink_x_1.enable_grid(False)
-        self.qtgui_freq_sink_x_1.set_fft_average(0.1)
-        self.qtgui_freq_sink_x_1.enable_axis_labels(True)
-        self.qtgui_freq_sink_x_1.enable_control_panel(False)
+        self.qtgui_freq_sink_x_2_1.set_update_time(0.10)
+        self.qtgui_freq_sink_x_2_1.set_y_axis(-140, 10)
+        self.qtgui_freq_sink_x_2_1.set_y_label('Relative Gain', 'dB')
+        self.qtgui_freq_sink_x_2_1.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
+        self.qtgui_freq_sink_x_2_1.enable_autoscale(False)
+        self.qtgui_freq_sink_x_2_1.enable_grid(False)
+        self.qtgui_freq_sink_x_2_1.set_fft_average(1.0)
+        self.qtgui_freq_sink_x_2_1.enable_axis_labels(True)
+        self.qtgui_freq_sink_x_2_1.enable_control_panel(False)
 
 
-        self.qtgui_freq_sink_x_1.set_plot_pos_half(not True)
+        self.qtgui_freq_sink_x_2_1.set_plot_pos_half(not True)
 
         labels = ['Fading', '', '', '', '',
             '', '', '', '', '']
@@ -248,15 +248,15 @@ class qam_fading(gr.top_block, Qt.QWidget):
 
         for i in range(2):
             if len(labels[i]) == 0:
-                self.qtgui_freq_sink_x_1.set_line_label(i, "Data {0}".format(i))
+                self.qtgui_freq_sink_x_2_1.set_line_label(i, "Data {0}".format(i))
             else:
-                self.qtgui_freq_sink_x_1.set_line_label(i, labels[i])
-            self.qtgui_freq_sink_x_1.set_line_width(i, widths[i])
-            self.qtgui_freq_sink_x_1.set_line_color(i, colors[i])
-            self.qtgui_freq_sink_x_1.set_line_alpha(i, alphas[i])
+                self.qtgui_freq_sink_x_2_1.set_line_label(i, labels[i])
+            self.qtgui_freq_sink_x_2_1.set_line_width(i, widths[i])
+            self.qtgui_freq_sink_x_2_1.set_line_color(i, colors[i])
+            self.qtgui_freq_sink_x_2_1.set_line_alpha(i, alphas[i])
 
-        self._qtgui_freq_sink_x_1_win = sip.wrapinstance(self.qtgui_freq_sink_x_1.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_1_win)
+        self._qtgui_freq_sink_x_2_1_win = sip.wrapinstance(self.qtgui_freq_sink_x_2_1.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_2_1_win)
         self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
             1024, #size
             firdes.WIN_BLACKMAN_hARRIS, #wintype
@@ -497,7 +497,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
         self.digital_cma_equalizer_cc_0_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
-        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, 10.0/samp_rate, False, 4.0, 0, (0.0,0.1,1.3), (1,0.99,0.97), 8 )
+        self.channels_fading_model_0 = channels.fading_model( 8, 0, False, 4.0, 0 )
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=noise_volt,
             frequency_offset=freq_offset,
@@ -522,23 +522,23 @@ class qam_fading(gr.top_block, Qt.QWidget):
         ##################################################
         self.connect((self.analog_random_source_x_0, 0), (self.blocks_unpack_k_bits_bb_0_0, 0))
         self.connect((self.analog_random_source_x_0, 0), (self.digital_constellation_modulator_0, 0))
-        self.connect((self.blocks_char_to_float_0, 0), (self.qtgui_freq_sink_x_1, 0))
+        self.connect((self.blocks_char_to_float_0, 0), (self.qtgui_freq_sink_x_2_1, 0))
         self.connect((self.blocks_char_to_float_0, 0), (self.qtgui_time_sink_x_0, 0))
         self.connect((self.blocks_char_to_float_0_0, 0), (self.blocks_delay_0, 0))
-        self.connect((self.blocks_char_to_float_0_1, 0), (self.qtgui_freq_sink_x_1, 1))
+        self.connect((self.blocks_char_to_float_0_1, 0), (self.qtgui_freq_sink_x_2_1, 1))
         self.connect((self.blocks_char_to_float_0_1, 0), (self.qtgui_time_sink_x_0, 2))
         self.connect((self.blocks_delay_0, 0), (self.qtgui_time_sink_x_0, 1))
         self.connect((self.blocks_throttle_0, 0), (self.channels_channel_model_0, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0, 0), (self.blocks_char_to_float_0, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_char_to_float_0_0, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_1, 0), (self.blocks_char_to_float_0_1, 0))
-        self.connect((self.channels_channel_model_0, 0), (self.channels_selective_fading_model_0, 0))
+        self.connect((self.channels_channel_model_0, 0), (self.channels_fading_model_0, 0))
         self.connect((self.channels_channel_model_0, 0), (self.digital_pfb_clock_sync_xxx_0_0, 0))
         self.connect((self.channels_channel_model_0, 0), (self.qtgui_const_sink_x_0, 1))
         self.connect((self.channels_channel_model_0, 0), (self.qtgui_freq_sink_x_0, 1))
-        self.connect((self.channels_selective_fading_model_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
-        self.connect((self.channels_selective_fading_model_0, 0), (self.qtgui_const_sink_x_0, 0))
-        self.connect((self.channels_selective_fading_model_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.channels_fading_model_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
+        self.connect((self.channels_fading_model_0, 0), (self.qtgui_const_sink_x_0, 0))
+        self.connect((self.channels_fading_model_0, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.digital_costas_loop_cc_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.qtgui_const_sink_x_1, 0))
         self.connect((self.digital_cma_equalizer_cc_0_0, 0), (self.digital_costas_loop_cc_0_0, 0))
@@ -607,9 +607,8 @@ class qam_fading(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
-        self.channels_selective_fading_model_0.set_fDTs(10.0/self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
-        self.qtgui_freq_sink_x_1.set_frequency_range(0, self.samp_rate)
+        self.qtgui_freq_sink_x_2_1.set_frequency_range(0, self.samp_rate)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
 
     def get_rrc_taps(self):
