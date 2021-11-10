@@ -84,4 +84,9 @@
 	urlcolor = black,
 }
 
+%% Set up subfigures to look like in IEEE classes
+\RequirePackage{subcaption}
+\usepackage[labelformat=simple]{subcaption}
+\renewcommand\thesubfigure{(\alph{subfigure})}
+
 % vim: set ts=2 sw=2 noet:

@@ -13,7 +13,7 @@
 	}
 \end{figure}
 
-In the first two sections we will briefly give the mathematics required by the modulation schemes used in the project. The notation used is summarised in figure \ref{fig:notation}. For conciseness encoding schemes and (digital) signal processing calculations are left out and discussed later. Thus for this section \(m_e = m\).
+The first two sections will briefly give the mathematics required by the modulation schemes used in the project. The notation used is summarised in \figref{fig:notation}. For conciseness encoding schemes and (digital) signal processing calculations are left out and discussed later. Thus for this section \(m_e = m\).
 \skelpar[4]{Finish overview of the chapter.}
 
 \skelpar[3]{Discuss notation \(m(n) = m(nT)\) in discrete time and some other details.}
@@ -35,7 +35,7 @@ In the first two sections we will briefly give the mathematics required by the m
 	}
 \end{figure}
 
-Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. The simple yet effective idea behind QAM is to encode extra information into an orthogonal carrier signal, thus increasing the number of bits sent per unit of time \cite{Gallager,Kneubuehler,Mathis,Hsu}. A block diagram of the process is shown in figure \ref{fig:quadrature-modulation}.
+Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. The simple yet effective idea behind QAM is to encode extra information into an orthogonal carrier signal, thus increasing the number of bits sent per unit of time \cite{Gallager,Kneubuehler,Mathis,Hsu}. A block diagram of the process is shown in \figref{fig:quadrature-modulation}.
 
 %% TODO: Quick par on "we will dicusss M-Ary QAM, M is 2^something"
 
@@ -49,7 +49,7 @@ As mentioned earlier, quadrature modulation allows sending more than one bit per
 
 %% TODO: explain why gray code
 
-Both bit vectors \(\vec{m}_i, \vec{m}_q \in \{0,1\}^{\sqrt{M}}\) are sent through a binary to level converter. It's purpose is to reinterpret the bit vectors as a numbers, usually in gray code, and to convert them into analog waveforms, which we will denote with \(m_i(t)\) and \(m_q(t)\) respectively. Mathematically the binary to level converter can be described as:
+Both bit vectors \(\vec{m}_i, \vec{m}_q \in \{0,1\}^{\sqrt{M}}\) are sent through a binary to level converter. It's purpose is to reinterpret the bit vectors as numbers, usually in gray code, and to convert them into analog waveforms, which we will denote with \(m_i(t)\) and \(m_q(t)\) respectively. Mathematically the binary to level converter can be described as:
 \begin{equation}
 	m_i(t) = \text{Level}(\vec{m}_i) \cdot p(t),
 \end{equation}
@@ -88,13 +88,13 @@ Notice that assuming \(m_i\) and \(m_q\) are constant\footnote{This is an approx
 \end{align*}
 which effectively means that it is possible to isolate a single component \(m_i(t)\) out of \(s(t)\). The same of course works with \(\phi_q\) as well resulting in \(\langle s, \phi_q \rangle = m_q\). Thus (remarkably) it is possible to send two signals on the same frequency, without them interfering with each other. Since each signal can represent one of \(\sqrt{M}\) values, by having two we obtain \(\sqrt{M} \cdot \sqrt{M} = M\) possible combinations.
 
-A graphical way to see what is happening, is to observe a so called \emph{constellation diagram}. An example is shown in figure \ref{fig:qam-constellation} for \(M = 16\). The two carrier signals \(\phi_i\) and \(\phi_q\) can be understood as bases of a coordinate system, in which the two amplitude levels of the two modulated messages, determine a position in the grid.
+A graphical way to see what is happening, is to observe a so called \emph{constellation diagram}. An example is shown in \figref{fig:qam-constellation} for \(M = 16\). The two carrier signals \(\phi_i\) and \(\phi_q\) can be understood as bases of a coordinate system, in which the two amplitude levels of the two modulated messages, determine a position in the grid.
 
 \paragraph{Example}
 
-A concrete example for \(M = 16\): if the message is 1110 the bit splitter creates two values \(\vec{m}_q = 11\) and \(\vec{m}_i = 10\); both are converted into an analog amplitudes \(m_q = 3\) and \(m_i = 4\); that are then mixed with their respective carrier, resulting in \(s(t)\) being the point inside the bottom right sub-quadrant of the top right quadrant (blue dot in figure \ref{fig:qam-constellation}).
+A concrete example for \(M = 16\): if the message is 1110 the bit splitter creates two values \(\vec{m}_q = 11\) and \(\vec{m}_i = 10\); both are converted into analog amplitudes \(m_q = 3\) and \(m_i = 4\); that are then mixed with their respective carrier, resulting in \(s(t)\) being the point inside the bottom right sub-quadrant of the top right quadrant (blue dot in \figref{fig:qam-constellation}).
 
-In figure \ref{fig:qam-constellation} the dots of the constellation have coordinates that begin on the bottom left corner, and are nicely aligned on a grid. Both are not a necessary requirement for QAM, in fact there are many schemes (for example when \(M = 32\)) that are arranged on a non square shape, and place the dots in different orders. The only constraint that most QAM modulators have in common, with regards to the geometry of the constellation, is that between any two adjacent dots (along the axis, not diagonally) only one bit of the represented value changes (gray code). This is done to improve the bit error rate (BER) of the transmission.
+In \figref{fig:qam-constellation} the dots of the constellation have coordinates that begin on the bottom left corner, and are nicely aligned on a grid. Both are not a necessary requirement for QAM, in fact there are many schemes (for example when \(M = 32\)) that are arranged on a non square shape, and place the dots in different orders. The only constraint that most QAM modulators have in common, with regards to the geometry of the constellation, is that between any two adjacent dots (along the axis, not diagonally) only one bit of the represented value changes (gray code). This is done to improve the bit error rate (BER) of the transmission.
 
 \begin{figure}
 	\hfill
@@ -153,7 +153,7 @@ The Hilbert transform is a linear operator that introduces a phase shift of \(\p
 
 \section{Wireless channel}
 
-In the previous section, we discussed how the data is modulated and demodulated at the two ends of the transmission system. In this section we will discuss what happens between the sender and receiver when the modulated passband signal is transmitted wirelessly.
+In the previous section, we discussed how the data is modulated and demodulated at the two ends of the transmission system. This section discusses what happens between the sender and receiver when the modulated passband signal is transmitted wirelessly.
 
 In theory because wireless transmission happens through electromagnetic radiation, to model a wireless channel one would need to solve Maxwell's equations for either the electric or magnetic field, however in practice that is not (analytically) possible. Instead what is typically done, is to model the impulse response of the channel using a geometrical or statistical model, parametrized by a set of coefficients that are either simulated or measured experimentally \cite{Gallager}.
 
@@ -170,7 +170,7 @@ In our model we are going to include an additive white Gaussian noise (AWGN) and
 
 \subsection{Geometric multipath fading model}
 
-The simplest way to understand the multipath fading, is to consider it from a geometrical perspective. Fig.~\ref{fig:multipath-sketch} is a sketch a wireless transmission system affected by multipath fading. The sender's antenna radiates an electromagnetic wave in the direction of the receiver (red line), however even under the best circumstances a part of the signal is dispersed in other directions (blue lines).
+The simplest way to understand the multipath fading, is to consider it from a geometrical perspective. \figref{fig:multipath-sketch} is a sketch a wireless transmission system affected by multipath fading. The sender's antenna radiates an electromagnetic wave in the direction of the receiver (red line), however even under the best circumstances a part of the signal is dispersed in other directions (blue lines).
 
 \begin{figure}
 	\centering
@@ -190,7 +190,7 @@ The linearity of the model is justified by the assumption that the underlying el
 
 A further complication arises, when one end (or both) is not stationary. In that case the lengths of the paths change over time, and as a result both the delays \(\tau_k\) as well as the attenuations \(c_k\) become functions of time: \(\tau_k(t)\) and \(c_k(t)\) respectively \cite{Gallager,Messier}. Even worse is when the velocity at which the device is moving is high, because then Doppler shifts of the electromagnetic wave frequency become non negligible \cite{Gallager}.
 
-We have thus observed that the arrangement can be modelled as a linear time-\emph{varying} system (LTV), if the sender or the receiver (or anything else in the channel) is moving, and as a linear time \emph{invariant} (LTI) system if the geometry is stationary. Regardless of which of the two cases, linearity alone is sufficient to approximate the channel as finite impulse response (FIR) filter \cite{Messier}. Mathematically we can rewrite LTV version of equation \eqref{eqn:geom-multipath-rx} using a convolution product as following:
+We have thus observed that the arrangement can be modelled as a linear time-\emph{varying} system (LTV), if the sender or the receiver (or anything else in the channel) is moving, and as a linear time \emph{invariant} (LTI) system if the geometry is stationary. Regardless of which of the two cases, linearity alone is sufficient to approximate the channel as finite impulse response (FIR) filter \cite{Messier}. We can rewrite LTV version of equation \eqref{eqn:geom-multipath-rx} using a convolution product as following:
 \begin{align*}
 	r(t) = \sum_k c_k(t) s(t - \tau_k(t)) &= \sum_k c_k(t) \int_\mathbb{R} s(\tau) \delta(\tau - \tau_k(t)) \,d\tau \\
 		&= \int_\mathbb{R} s(\tau) \sum_k c_k(t) \delta(\tau - \tau_k(t)) \,d\tau = s(\tau) * h(\tau, t),
@@ -199,7 +199,7 @@ obtaining a new function
 \begin{equation} \label{eqn:multipath-impulse-response}
 	h(\tau, t) = \sum_k c_k(t) \delta(\tau - \tau_k(t)),
 \end{equation}
-that describes the \emph{impulse response} of the channel. This function is dependant on two time parameters: actual time \(t\) and convolution time \(\tau\). To better understand \(h(\tau, t)\), consider an example in shown in figure \ref{fig:multipath-impulse-response}. Each stem represents a weighted Dirac delta, so each series of stems of the same color, along the convolution time \(\tau\) axis, is a channel response at some specific time \(t\). Along the other \(t\) axis we see how the entire channel response changes over time\footnote{In the figure only a finite number of stems was drawn, but actually \(h(\tau, t)\) is continuous in \(t\), i.e. the weights \(c_k(t)\) of the Dirac deltas change continuously.}. Notice that the stems are not quite aligned to the \(\tau\) time raster (dotted lines), that is because in equation \eqref{eqn:multipath-impulse-response} not only the weights \(c_k\) but also the delays \(\tau_k\) are time dependent.
+that describes the \emph{impulse response} of the channel. This function is dependant on two time parameters: actual time \(t\) and convolution time \(\tau\). To better understand \(h(\tau, t)\), consider an example shown in figure \ref{fig:multipath-impulse-response}. Each stem represents a weighted Dirac delta, so each series of stems of the same color, along the convolution time \(\tau\) axis, is a channel response at some specific time \(t\). Along the other \(t\) axis we see how the entire channel response changes over time\footnote{In the figure only a finite number of stems was drawn, but actually \(h(\tau, t)\) is continuous in \(t\), i.e. the weights \(c_k(t)\) of the Dirac deltas change continuously.}. Notice that the stems are not quite aligned to the \(\tau\) time raster (dotted lines), that is because in \eqref{eqn:multipath-impulse-response} not only the weights \(c_k\) but also the delays \(\tau_k\) are time dependent.
 
 \begin{figure}
 	\centering
