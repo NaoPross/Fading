@@ -90,7 +90,7 @@ class qam(gr.top_block, Qt.QWidget):
         self.eq_ntaps = eq_ntaps = 15
         self.eq_mod = eq_mod = 1
         self.eq_gain = eq_gain = .01
-        self.const = const = digital.constellation_16qam().base()
+        self.const = const = digital.constellation_8psk().base()
         self.chn_taps = chn_taps = [1.0 + 0.0j, ]
 
         ##################################################
@@ -443,14 +443,14 @@ class qam(gr.top_block, Qt.QWidget):
         self.digital_diff_decoder_bb_0 = digital.diff_decoder_bb(4)
         self.digital_costas_loop_cc_0 = digital.costas_loop_cc(phase_bw, 4, False)
         self.digital_constellation_modulator_0 = digital.generic_mod(
-            constellation=qam_const,
+            constellation=const,
             differential=True,
             samples_per_symbol=sps,
             pre_diff_code=True,
             excess_bw=excess_bw,
             verbose=False,
             log=False)
-        self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(qam_const)
+        self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=noise_volt,

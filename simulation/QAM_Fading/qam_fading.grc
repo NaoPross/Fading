@@ -467,7 +467,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [928, 332.0]
+    coordinate: [960, 332.0]
     rotation: 0
     state: true
 - name: digital_cma_equalizer_cc_0
