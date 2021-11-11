@@ -90,7 +90,7 @@ class qam(gr.top_block, Qt.QWidget):
         self.eq_ntaps = eq_ntaps = 15
         self.eq_mod = eq_mod = 1
         self.eq_gain = eq_gain = .01
-        self.const = const = digital.constellation_8psk().base()
+        self.const = const = digital.constellation_16qam().base()
         self.chn_taps = chn_taps = [1.0 + 0.0j, ]
 
         ##################################################
@@ -438,7 +438,7 @@ class qam(gr.top_block, Qt.QWidget):
             self.plots_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 1):
             self.plots_grid_layout_0.setColumnStretch(c, 1)
-        self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps * 1.001, timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 2)
+        self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps * 1.001, timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, sps)
         self.digital_map_bb_0 = digital.map_bb([0, 1, 3, 2])
         self.digital_diff_decoder_bb_0 = digital.diff_decoder_bb(4)
         self.digital_costas_loop_cc_0 = digital.costas_loop_cc(phase_bw, 4, False)
@@ -451,7 +451,7 @@ class qam(gr.top_block, Qt.QWidget):
             verbose=False,
             log=False)
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
-        self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
+        self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, sps)
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=noise_volt,
             frequency_offset=freq_offset,
