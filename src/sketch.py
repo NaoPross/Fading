@@ -36,7 +36,7 @@ create_viewport()
 setup_dearpygui()
 
 # Show demo for dev
-# show_demo()
+show_demo()
 
 #================================================
 # Custom GNURadio blocks
@@ -122,25 +122,40 @@ sim.connect((sim.digital_costas_loop_cc_0, 0), (locked_time_plot, 0))
 # Settings Window
 
 with window(label="Settings", width=200, height=400, pos=(25, 450), tag="sim_win"):
-    add_button(label="Toggle Fullscreen", callback= toggle_viewport_fullscreen)
+    with child_window(autosize_x=True, height=100):
+        add_button(label="Toggle Fullscreen", callback= toggle_viewport_fullscreen)
 
-    add_text("Simulation running:")
-    add_text("false", tag="sim_running_lbl")
+    with child_window(autosize_x=True):
+        with group(horizontal=True):
+            add_text("Simulation running:")
+            add_text("false", tag="sim_running_lbl")
 
-    with group(horizontal=True):
-        def on_sim_start_btn_clicked():
-            sim.start()
-            sim_runnig = True
-            logger.debug("Started simulation")
+        with group(tag="sim_grp", horizontal=True):
+            def on_sim_start_btn_clicked():
+                global sim_running
 
-        def on_sim_stop_btn_clicked():
-            sim.stop()
-            sim.wait()
-            sim_running = False
-            logger.debug("Stopped simulation")
+                if sim_running:
+                    logger.error("Simulation is already running")
+                    return
 
-        add_button(label="Start", tag="sim_start_btn", callback=on_sim_start_btn_clicked)
-        add_button(label="Stop", tag="sim_stop_btn", callback=on_sim_stop_btn_clicked)
+                sim.start()
+                sim_running = True
+                logger.debug("Started simulation")
+
+            def on_sim_stop_btn_clicked():
+                global sim_running
+
+                if not sim_running:
+                    logger.error("Simulation not running")
+                    return
+
+                sim.stop()
+                sim.wait()
+                sim_running = False
+                logger.debug("Stopped simulation")
+
+            add_button(label="Start", tag="sim_start_btn", callback=on_sim_start_btn_clicked)
+            add_button(label="Stop", tag="sim_stop_btn", callback=on_sim_stop_btn_clicked)
 
 #================================================
 # Flow Graph Window
@@ -196,8 +211,3 @@ start_dearpygui()
 
 # clean up gui
 destroy_context()
-
-# Stop GNURadio 
-if sim_running:
-    sim.stop()
-    sim.wait()
