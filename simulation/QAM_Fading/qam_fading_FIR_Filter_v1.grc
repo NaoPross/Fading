@@ -203,7 +203,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1392, 132.0]
+    coordinate: [1376, 132.0]
     rotation: 0
     state: true
 - name: samp_rate
@@ -449,7 +449,27 @@ blocks:
     bus_structure: null
     coordinate: [648, 316.0]
     rotation: 0
-    state: bypassed
+    state: enabled
+- name: channels_fading_model_0
+  id: channels_fading_model
+  parameters:
+    K: '4.0'
+    LOS: 'False'
+    N: '8'
+    affinity: ''
+    alias: ''
+    comment: ''
+    fDTs: 10.0/samp_rate
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    seed: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [960, 332.0]
+    rotation: 0
+    state: true
 - name: digital_cma_equalizer_cc_0
   id: digital_cma_equalizer_cc
   parameters:
@@ -485,7 +505,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1544, 824.0]
+    coordinate: [1600, 724.0]
     rotation: 0
     state: true
 - name: digital_constellation_decoder_cb_0
@@ -574,7 +594,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1872, 824.0]
+    coordinate: [1936, 688.0]
     rotation: 0
     state: true
 - name: digital_diff_decoder_bb_0
@@ -653,8 +673,8 @@ blocks:
     max_dev: '1.5'
     maxoutbuf: '0'
     minoutbuf: '0'
-    osps: '1'
-    sps: sps
+    osps: '2'
+    sps: sps * 1.001
     taps: rrc_taps
     type: ccf
   states:
@@ -676,35 +696,15 @@ blocks:
     max_dev: '1.5'
     maxoutbuf: '0'
     minoutbuf: '0'
-    osps: '1'
-    sps: 'sps '
+    osps: '2'
+    sps: sps * 1.001
     taps: rrc_taps
     type: ccf
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1096, 812.0]
-    rotation: 0
-    state: true
-- name: freq_xlating_fir_filter_xxx_0
-  id: freq_xlating_fir_filter_xxx
-  parameters:
-    affinity: ''
-    alias: ''
-    center_freq: '0'
-    comment: ''
-    decim: '1'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samp_rate: samp_rate
-    taps: '[1]+[0 for n in range(0, 2*sps-1)]+[0.2]'
-    type: ccc
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [976, 348.0]
+    coordinate: [1088, 868.0]
     rotation: 0
     state: true
 - name: params
@@ -864,7 +864,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1068.0, -32]
+    coordinate: [1044.0, -48]
     rotation: 90
     state: enabled
 - name: qtgui_const_sink_x_0_0
@@ -1048,7 +1048,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1812.0, 56]
+    coordinate: [1828.0, 96]
     rotation: 90
     state: true
 - name: qtgui_const_sink_x_2
@@ -1220,7 +1220,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1120.0, 584]
+    coordinate: [1112.0, 608]
     rotation: 270
     state: true
 - name: qtgui_freq_sink_x_2_1
@@ -1400,21 +1400,6 @@ blocks:
     coordinate: [2816, 288.0]
     rotation: 0
     state: true
-- name: snippet_0
-  id: snippet
-  parameters:
-    alias: ''
-    code: import numpy as np
-    comment: ''
-    priority: ''
-    section: main_after_init
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [704, 36.0]
-    rotation: 0
-    state: true
 
 connections:
 - [analog_random_source_x_0, '0', blocks_unpack_k_bits_bb_0_0, '0']
@@ -1429,10 +1414,13 @@ connections:
 - [blocks_unpack_k_bits_bb_0, '0', blocks_char_to_float_0, '0']
 - [blocks_unpack_k_bits_bb_0_0, '0', blocks_char_to_float_0_0, '0']
 - [blocks_unpack_k_bits_bb_0_1, '0', blocks_char_to_float_0_1, '0']
+- [channels_channel_model_0, '0', channels_fading_model_0, '0']
 - [channels_channel_model_0, '0', digital_pfb_clock_sync_xxx_0_0, '0']
-- [channels_channel_model_0, '0', freq_xlating_fir_filter_xxx_0, '0']
 - [channels_channel_model_0, '0', qtgui_const_sink_x_0, '1']
 - [channels_channel_model_0, '0', qtgui_freq_sink_x_0, '1']
+- [channels_fading_model_0, '0', digital_pfb_clock_sync_xxx_0, '0']
+- [channels_fading_model_0, '0', qtgui_const_sink_x_0, '0']
+- [channels_fading_model_0, '0', qtgui_freq_sink_x_0, '0']
 - [digital_cma_equalizer_cc_0, '0', digital_costas_loop_cc_0, '0']
 - [digital_cma_equalizer_cc_0, '0', qtgui_const_sink_x_1, '0']
 - [digital_cma_equalizer_cc_0_0, '0', digital_costas_loop_cc_0_0, '0']
@@ -1452,9 +1440,6 @@ connections:
 - [digital_pfb_clock_sync_xxx_0, '0', qtgui_const_sink_x_0_0, '0']
 - [digital_pfb_clock_sync_xxx_0_0, '0', digital_cma_equalizer_cc_0_0, '0']
 - [digital_pfb_clock_sync_xxx_0_0, '0', qtgui_const_sink_x_0_0, '1']
-- [freq_xlating_fir_filter_xxx_0, '0', digital_pfb_clock_sync_xxx_0, '0']
-- [freq_xlating_fir_filter_xxx_0, '0', qtgui_const_sink_x_0, '0']
-- [freq_xlating_fir_filter_xxx_0, '0', qtgui_freq_sink_x_0, '0']
 
 metadata:
   file_format: 1
