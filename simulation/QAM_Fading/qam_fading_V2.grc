@@ -119,6 +119,27 @@ blocks:
     coordinate: [320, 268.0]
     rotation: 0
     state: true
+- name: fading_1
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 'params@0: 2,0,1,1'
+    label: Fading
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: int
+    start: '1'
+    step: '1'
+    stop: '10'
+    value: '2'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [976, 308.0]
+    rotation: 0
+    state: true
 - name: freq_offset
   id: variable_qtgui_range
   parameters:
@@ -698,13 +719,26 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     samp_rate: samp_rate
-    taps: '[1]+[0 for n in range(0, 2*sps-1)]+[0.2]'
+    taps: '[1]+([0]*fading_1)+[0.2]'
     type: ccc
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [976, 348.0]
+    coordinate: [976, 204.0]
+    rotation: 0
+    state: true
+- name: import_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: import numpy as np
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [600, 20.0]
     rotation: 0
     state: true
 - name: params
@@ -864,7 +898,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1068.0, -32]
+    coordinate: [812.0, -96]
     rotation: 90
     state: enabled
 - name: qtgui_const_sink_x_0_0
@@ -1220,7 +1254,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1120.0, 584]
+    coordinate: [1200.0, 624]
     rotation: 270
     state: true
 - name: qtgui_freq_sink_x_2_1
@@ -1258,7 +1292,7 @@ blocks:
     fftsize: '1024'
     freqhalf: 'True'
     grid: 'False'
-    gui_hint: ''
+    gui_hint: 'plots@1: 1,0,1,1'
     label: Relative Gain
     label1: Fading
     label10: ''''''
@@ -1398,21 +1432,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [2816, 288.0]
-    rotation: 0
-    state: true
-- name: snippet_0
-  id: snippet
-  parameters:
-    alias: ''
-    code: import numpy as np
-    comment: ''
-    priority: ''
-    section: main_after_init
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [704, 36.0]
     rotation: 0
     state: true
 
