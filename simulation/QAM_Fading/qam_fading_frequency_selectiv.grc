@@ -464,7 +464,7 @@ blocks:
     mags: (1,0.99,0.97)
     maxoutbuf: '0'
     minoutbuf: '0'
-    ntaps: '8'
+    ntaps: '4'
     seed: '0'
   states:
     bus_sink: false
@@ -676,7 +676,7 @@ blocks:
     max_dev: '1.5'
     maxoutbuf: '0'
     minoutbuf: '0'
-    osps: '2'
+    osps: '1'
     sps: sps * 1.001
     taps: rrc_taps
     type: ccf
@@ -699,7 +699,7 @@ blocks:
     max_dev: '1.5'
     maxoutbuf: '0'
     minoutbuf: '0'
-    osps: '2'
+    osps: '1'
     sps: sps * 1.001
     taps: rrc_taps
     type: ccf
