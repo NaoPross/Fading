@@ -1,5 +1,4 @@
 *.figlist
-
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,latex,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,latex,python
 
@@ -481,3 +480,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,linux,latex,python
+#
+#
+!src/gr-fadingui/lib
