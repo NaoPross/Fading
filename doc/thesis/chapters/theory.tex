@@ -199,7 +199,7 @@ obtaining a new function
 \begin{equation} \label{eqn:multipath-impulse-response}
 	h(\tau, t) = \sum_k c_k(t) \delta(\tau - \tau_k(t)),
 \end{equation}
-that describes the \emph{impulse response} of the channel. This function is dependant on two time parameters: actual time \(t\) and convolution time \(\tau\). To better understand \(h(\tau, t)\), consider an example shown in figure \ref{fig:multipath-impulse-response}. Each stem represents a weighted Dirac delta, so each series of stems of the same color, along the convolution time \(\tau\) axis, is a channel response at some specific time \(t\). Along the other \(t\) axis we see how the entire channel response changes over time\footnote{In the figure only a finite number of stems was drawn, but actually \(h(\tau, t)\) is continuous in \(t\), i.e. the weights \(c_k(t)\) of the Dirac deltas change continuously.}. Notice that the stems are not quite aligned to the \(\tau\) time raster (dotted lines), that is because in \eqref{eqn:multipath-impulse-response} not only the weights \(c_k\) but also the delays \(\tau_k\) are time dependent.
+that describes the \emph{channel impulse response} (CIR). This function is dependant on two time parameters: actual time \(t\) and convolution time \(\tau\). To better understand \(h(\tau, t)\), consider an example shown in figure \ref{fig:multipath-impulse-response}. Each stem represents a weighted Dirac delta, so each series of stems of the same color, along the convolution time \(\tau\) axis, is a channel response at some specific time \(t\). Along the other \(t\) axis we see how the entire channel response changes over time\footnote{In the figure only a finite number of stems was drawn, but actually \(h(\tau, t)\) is continuous in \(t\), i.e. the weights \(c_k(t)\) of the Dirac deltas change continuously.}. Notice that the stems are not quite aligned to the \(\tau\) time raster (dotted lines), that is because in \eqref{eqn:multipath-impulse-response} not only the weights \(c_k\) but also the delays \(\tau_k\) are time dependent.
 
 \begin{figure}
 	\centering
@@ -218,7 +218,7 @@ With a continuous time channel model we can now discuss the spectral properties 
 	= \sum_k c_k(t) e^{-2\pi jf \tau_k(t)}.
 \end{equation}
 
-Equation \eqref{eqn:multipath-frequency-response} indicates that the frequency response is a periodic complex exponential, which has some important implications. Notice that if there is only one tap (term), the magnitude of \(H(f, t)\) is a constant (with respect to \(f\)) since \(|e^{j\alpha f}| = 1\). This means that the channels attenuates all frequencies by the same amount, therefore it is said to be a \emph{frequency non-selective} channel. Whereas in the case when there is more than one tap, the taps interfere destructively at certain frequencies and the channel is called \emph{frequency selective}. Plots of the frequency response of a two tap channel model are shown in figure \ref{fig:multipath-frequency-response-plots}. On the left is the magnitude of \(H(f, t)\), which presents periodic ``dips'', and on the right complex loci for the two taps (red and blue), as well as their sum (magenta), over the frequency range near the first dip (2 to 2.5 MHz) are shown.
+Equation \eqref{eqn:multipath-frequency-response} shows that the frequency response is a periodic complex exponential, which has some important implications. Notice that if there is only one tap (term), the magnitude of \(H(f, t)\) is a constant (with respect to \(f\)) since \(|e^{j\alpha f}| = 1\). This means that the channels attenuates all frequencies by the same amount, therefore it is said to be a \emph{frequency non-selective} channel. Whereas in the case when there is more than one tap, the taps interfere destructively at certain frequencies and the channel is called \emph{frequency selective}. Plots of the frequency response of a two tap channel model are shown in \figref{fig:multipath-frequency-response-plots}. On the left is the magnitude of \(H(f, t)\), which presents periodic ``dips'', and on the right complex loci for the two taps (red and blue), as well as their sum (magenta), over the frequency range near the first dip (2 to 2.5 MHz) are shown.
 
 \begin{figure}
 	\centering
@@ -233,7 +233,26 @@ Equation \eqref{eqn:multipath-frequency-response} indicates that the frequency r
 
 \subsection{Discrete-time model}
 
-\skelpar[3]{Why use a discrete time model?}
+Since often in practice signal processing is done digitally, it is meaningful to discuss some properties of a discrete-time model. To keep the complexity of the model manageable some assumptions are necessary, thus the sent discrete signal \(s(n)\)\footnote{This is an abuse of notation. The argument \(n\) is used to mean the \(n\)-th digital sample of \(s\), whereas the \(s(t)\) is used for the analog waveform.} is assumed to have a finite single sided bandwidth \(W\). This implies that in the time-domain signal is a series of sinc-shaped pulses each shifted from the previous by a time interval \(T = 1 / (2W)\) (Nyquist rate):
+\begin{equation}
+	s(t) = \sum_n s(n) \sinc(t/T - n)
+\end{equation}
+The waveform \(s(t)\) is then convolved with the CIR function \(h(\tau, t)\) (with respect to \(\tau\)) from the continuous time model resulting in the waveform at the receiver
+\begin{align*}
+	r(t) &= \int_ \mathbb{R} \sum_n s(n) \sinc(\tau / T - n) \sum_k c_k(t) \delta(\tau - \tau_k(t)) \,d\tau \\
+	&= \sum_n s(n) \sum_k c_k(t) \sinc(t/T - \tau_k(t)/T - n),
+\end{align*}
+which is then sampled at the Nyquist rate of \(2W = 1/T\), resulting in a set of samples\footnote{Again, the abuse of notation \(r(m)\) means the \(m\)-th digital sample of \(r(t)\).}:
+\begin{equation} \label{eqn:discr-multipath-rx}
+	r(m) = \sum_n s(n) \sum_k c_k(mT) \sinc(m - \tau_k(mT)/T - n).
+\end{equation}
+Finally the substitution \(l = m - n\) eliminates the sender's sample counter \(n\) from \eqref{eqn:discr-multipath-rx} and reformulates it as a discrete convolution product with a discrete CIR function \(h_l(m)\):
+\begin{equation}
+	r(m) = \sum_l s(m - l) \sum_k c_k(mT) \sinc(l - \tau_k(mT)/T) 
+	= \sum_l s(m - l) h_l (m).
+\end{equation}
+This result is very similar to the continuous time model described by \eqref{eqn:multipath-impulse-response} in the sense that each received digital sample is the sent sample convolved with a different discrete channel response (because of time variance).
+
 \skelpar[3]{Mathematical discretization}
 
 \begin{equation}
