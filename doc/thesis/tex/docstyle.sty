@@ -43,6 +43,12 @@
 %% Font configuration
 % use roboto for sans serif
 \RequirePackage{roboto}
+% Bera for monospaced font
+\setmonofont[Path=misc/,
+	BoldFont = VeraMoBd,
+	ItalicFont = VeraMoIt,
+	BoldItalicFont = VeraMoBI,
+]{VeraMono}
 
 %% Floating captions configuration
 % set captions font
@@ -88,5 +94,36 @@
 \RequirePackage{subcaption}
 \usepackage[labelformat=simple]{subcaption}
 \renewcommand\thesubfigure{(\alph{subfigure})}
+
+%% Set up listings
+\RequirePackage{listings}
+
+%% create a lstlisting style
+\lstdefinestyle{minimalist}{
+  belowcaptionskip = \baselineskip,
+  breaklines = true,
+  inputencoding = utf8,
+	% frame
+  frame = leftline,
+	framerule = 3pt,
+	rulecolor = \color{cyan!20!white},
+  % margin
+	xleftmargin = 5mm,
+  framexleftmargin = 5mm,
+  % background
+	backgroundcolor = \color{white},
+  % default language:
+  language = TeX,
+  showstringspaces = false,
+  % font
+  basicstyle = \ttfamily\small,
+	identifierstyle = \color{black},
+	keywordstyle = \bfseries \color{blue!70!black},
+	commentstyle = \color{gray},
+	stringstyle = \color{orange!60!black},
+}
+
+% and set style
+\lstset{style=minimalist, escapechar=`}
 
 % vim: set ts=2 sw=2 noet:

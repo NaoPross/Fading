@@ -1,7 +1,7 @@
 import sys, os
 import numpy as np
 
-nsamples = 300
+nsamples = 320
 
 np.seterr(over='raise')
 
@@ -10,10 +10,10 @@ def tap(c, tau, f):
 
 
 # attenuations for frequency plot
-f_whole = np.logspace(5, 9, num=nsamples)
+f_whole = np.logspace(5, 8, num=nsamples)
 linear_whole = 1 / f_whole
 multipath_whole = tap(c=.8, tau=500e-9, f=f_whole) + tap(c=.4, tau=300e-9, f=f_whole)
-channel_whole = linear_whole * multipath_whole
+channel_whole = multipath_whole
 
 # coordinates for complex diagram
 f_tap = np.linspace(2e6, 2.5e6, num=nsamples)

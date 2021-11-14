@@ -12,11 +12,11 @@
 
 		\addplot[solid, magenta] table[x index = 0, y index = 2]
 			{figures/data/multipath_frequency_response.dat};
-		\addlegendentry{Multipath}
+		% \addlegendentry{Multipath}
 
-		\addplot[dashed, thick, black] table[x index = 0, y index = 1]
-			{figures/data/multipath_frequency_response.dat};
-		\addlegendentry{Linear}
+		% \addplot[dashed, thick, black] table[x index = 0, y index = 1]
+		% 	{figures/data/multipath_frequency_response.dat};
+		% \addlegendentry{Linear}
 
 	\end{loglogaxis}
 \end{tikzpicture}
@@ -56,7 +56,7 @@
 		\addplot[decorated, magenta] table[x index = 7, y index = 8]
 			{figures/data/multipath_frequency_response.dat}
 			node[pos = 0, circle, fill = white, draw, inner sep = 1pt] {}
-			node[pos = 0, below, font = \tiny] {2 MHz}
+			node[pos = 0, below right, font = \tiny] {2 MHz}
 			node[pos = .2, outer sep = 1pt, inner sep = 0pt] (C) {}
 			node[pos = 1, circle, fill = white, draw, inner sep = 1pt] {}
 			node[pos = 1, above left, font = \tiny] {2.5 MHz};

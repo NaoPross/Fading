@@ -42,9 +42,11 @@ all: $(PDF)
 
 %.pdf: %.tex $(SOURCES) $(DATA)
 	$(TEX) $(TEXARGS) $<
-	# TODO: makeindex
+	# bibliography
 	biber $(basename $(MAIN))
 	$(TEX) $(TEXARGS) $<
+	# embed fonts
+	gs -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dEmbedAllFonts=true -sOutputFile=$@_font_embedded.pdf -f $@
 
 .PHONY: clean cleanall
 clean:
