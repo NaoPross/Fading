@@ -248,7 +248,16 @@ This result is very similar to the continuous time model described by \eqref{eqn
 \end{equation}
 is different from \eqref{eqn:multipath-impulse-response} consider again the plot of \(h(\tau,t)\) in \figref{fig:multipath-impulse-response}. The plot of \(h_l(m)\) would have discrete axes with \(m\) replacing \(t\) and \(l\) instead of \(\tau\), and because of the finite bandwidth in the \(l\) axis instead of Dirac deltas there would be superposed sinc functions.
 
-From another perspective equation \eqref{eqn:discrete-multipath-impulse-response} is a simple tapped delay line FIR filter, which is very easy to implement. In fact multipath channels can be easily simulated with just a few lines of code. For example \figref{fig:multipath-frequency-response} is implemented in four lines of Python as shown in listing \ref{lst:two-tap-fir}.
+\begin{figure}
+	\centering
+	\input{figures/tikz/tapped-delay-line}
+	\caption{
+		Fading channel as a tapped delay line.
+		\label{fig:tapped-delay-line}
+	}
+\end{figure}
+
+From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-response} can be interpreted as a simple tapped delay line, schematically drawn in \figref{fig:tapped-delay-line}, which confirms that the presented mathematical model is indeed a FIR filter. Simple multipath channels can be simulated with just a few lines of code, for example the data for \figref{fig:multipath-frequency-response-plots} is generated in just four lines of Python shown in listing \ref{lst:two-tap-fir}. The difficulty of fading channels in practice lies in the estimation of the values for the constantly changing parmeters \(c_k(t)\) and \(\tau_k(t)\).
 
 \begin{lstlisting}[language=python, captionpos=b, caption={
 	Simulation of a multipath channel using a 2 tap FIR filter.
@@ -262,11 +271,14 @@ f = np.logspace(5, 8, num=320)
 multipath = tap(.8, 500e-9, f) + tap(.4, 300e-9, f)
 \end{lstlisting}
 
-\skelpar[3]{Discrete frequency response. Discuss bins, etc.}
+\subsection{Difficulties caused by discrete time}
+
+\skelpar{Not sampling at peaks of sincs.}
+\skelpar{Discrete frequency response. Discuss bins, etc.}
 
 \subsection{Statistical model}
 
-\skelpar[5]{Advantages of statistical model over geometric model.}
+Because as mentioned earlier it is difficult to estimate the time-dependent parameters of \(h_l(t)\) in many cases it is easier to model the components of the CIR as stochastic processes, thus greatly reducing the number of parameters. This is especially effective for channels that are constantly changing, because by the central limit theorem the cumulative effect of many small changes tend to a normal statistical distribution.
 
 \begin{figure}
 	\centering
