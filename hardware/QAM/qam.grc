@@ -291,7 +291,7 @@ blocks:
     modulus: eq_mod
     mu: eq_gain
     num_taps: eq_ntaps
-    sps: int(sps / 2)
+    sps: '1'
   states:
     bus_sink: false
     bus_source: false
@@ -398,7 +398,7 @@ blocks:
     max_dev: '1.5'
     maxoutbuf: '0'
     minoutbuf: '0'
-    osps: int(sps / 2)
+    osps: '1'
     sps: sps
     taps: rrc_taps
     type: ccf

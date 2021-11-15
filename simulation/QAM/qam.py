@@ -75,21 +75,22 @@ class qam(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.sps = sps = 2
+        self.sps = sps = 4
         self.nfilts = nfilts = 32
         self.excess_bw = excess_bw = 350e-3
         self.timing_loop_bw = timing_loop_bw = 2 * 3.141592653589793 / 100
         self.time_offset = time_offset = 1.0
         self.samp_rate = samp_rate = 32000
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), excess_bw, 45*nfilts)
+        self.qam_const = qam_const = digital.constellation_rect([(-3-3j), (-1-3j), (1-3j), (3-3j), (-3-1j), (-1-1j), (1-1j), (3-1j), (-3+1j), (-1+1j), (1+1j), (3+1j), (-3+3j), (-1+3j), (1+3j), (3+3j)], [0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10],
+        4, 1, 1, 1, 1).base()
         self.phase_bw = phase_bw = 2 * 3.141592653589793 / 100
         self.noise_volt = noise_volt = 0.0001
         self.freq_offset = freq_offset = 0
         self.eq_ntaps = eq_ntaps = 15
         self.eq_mod = eq_mod = 1
         self.eq_gain = eq_gain = .01
-        self.const = const = digital.constellation_rect([(-3-3j), 0, 0, (3-3j), (-3-1j), 0, 0, (3-1j), (-3+1j), (-1+1j), (1+1j), (3+1j), (-3+3j), 0, 0, (3+3j)], [0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10],
-        4, 1, 1, 1, 1).base()
+        self.const = const = digital.constellation_16qam().base()
         self.chn_taps = chn_taps = [1.0 + 0.0j, ]
 
         ##################################################
@@ -440,7 +441,7 @@ class qam(gr.top_block, Qt.QWidget):
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps , timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
         self.digital_map_bb_0 = digital.map_bb([0, 1, 3, 2])
         self.digital_diff_decoder_bb_0 = digital.diff_decoder_bb(4)
-        self.digital_costas_loop_cc_0 = digital.costas_loop_cc(phase_bw, 2, False)
+        self.digital_costas_loop_cc_0 = digital.costas_loop_cc(phase_bw, 4, False)
         self.digital_constellation_modulator_0 = digital.generic_mod(
             constellation=const,
             differential=True,
@@ -549,6 +550,12 @@ class qam(gr.top_block, Qt.QWidget):
     def set_rrc_taps(self, rrc_taps):
         self.rrc_taps = rrc_taps
         self.digital_pfb_clock_sync_xxx_0.update_taps(self.rrc_taps)
+
+    def get_qam_const(self):
+        return self.qam_const
+
+    def set_qam_const(self, qam_const):
+        self.qam_const = qam_const
 
     def get_phase_bw(self):
         return self.phase_bw
