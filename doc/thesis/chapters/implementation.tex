@@ -7,19 +7,36 @@
 
 For the simulation task and after for the Hardware part, the open-source Software GNU Radio has been chosen. This software uses toolboxes for signal processing systems too simulate or/and implement a software-defined radio, based on Python and some C++ implementations for some rapid-application-development environments. The toolboxes can simply, with the help of the graphical user interface, used by drag-and-drop. The Boxes are used to write applications, to receive or to transmit date for a digital system. Some blocks like different filters, channel codes or demodulator elements and a lot more are already implemented. For missing application new elements can be added by coding own block. With the help of the GNU Radio software those toolboxes can easily get connected to each other, creating data streams. 
 
-\subsection{AM Simulation}
 
-For the first Simulation we done a simple AM-simulation to learn how to work with the GNU Radio software. Without any channel effects in between. ...
+\subsection{16QAM Simulation}
+
+\paragraph{Source}
+
+\paragraph{Modulator}
+
+\paragraph{Channel Mode}
+
+\paragraph{Polyphase Clock Sync}
+
+\paragraph{Equalizer}
+
+\paragraph{Costas Loop}
+
+\paragraph{Decoder}
 
 
-\subsection{QPSK Simulation}
-
-The second Simulation was a QPSK simulation. 
-...
 
 
-\subsection{QPSK Simulation with Fading effect}
-...
+\subsection{Simulation Fading}
+%% TO DO: Quelle: 
+
+\subsubsection{FIR-Filter}
+
+For a first simple Simulation of the Fading effect. A FIR-Filter has been integrate in the Simulation Model.
+\begin{figure}
+
+ 	\includegraphics[width=10cm]{./figures/screenshots/QAM16_Fading_2.png}
+ \end{figure}
 
 
 \section{Hardware}
@@ -44,7 +61,8 @@ The second was with the antennas. 2.4GHz.
 		\hline
 		Dimensions & 9.7 x 15.5 x 1.5 cm \\
 		\hline
-		Ports &2 TX , 2 RX, Half  or Full Duplex\\
+		Ports &
+2 TX , 2 RX, Half  or Full Duplex\\
 		\hline
 		RF frequencies & from 70MHz to 6GHz\\
 		\hline

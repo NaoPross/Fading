@@ -93,6 +93,8 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.eq_gain = eq_gain = .01
         self.const = const = digital.constellation_16qam().base()
         self.chn_taps = chn_taps = [1.0 + 0.0j, ]
+        self.amp = amp = 0.2
+        self.LOS_NLOS = LOS_NLOS = 1
 
         ##################################################
         # Blocks
@@ -108,6 +110,11 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.params_grid_layout_1 = Qt.QGridLayout()
         self.params_layout_1.addLayout(self.params_grid_layout_1)
         self.params.addTab(self.params_widget_1, 'Receiver')
+        self.params_widget_2 = Qt.QWidget()
+        self.params_layout_2 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.params_widget_2)
+        self.params_grid_layout_2 = Qt.QGridLayout()
+        self.params_layout_2.addLayout(self.params_grid_layout_2)
+        self.params.addTab(self.params_widget_2, 'Fading')
         self.top_grid_layout.addWidget(self.params)
         self._timing_loop_bw_range = Range(0, 200e-3, 10e-3, 2 * 3.141592653589793 / 100, 200)
         self._timing_loop_bw_win = RangeWidget(self._timing_loop_bw_range, self.set_timing_loop_bw, 'Time Bandwidth', "counter_slider", float)
@@ -163,11 +170,11 @@ class qam_fading(gr.top_block, Qt.QWidget):
             self.params_grid_layout_0.setColumnStretch(c, 1)
         self._fading_1_range = Range(1, 30, 1, 2, 200)
         self._fading_1_win = RangeWidget(self._fading_1_range, self.set_fading_1, 'Fading', "counter_slider", int)
-        self.params_grid_layout_0.addWidget(self._fading_1_win, 2, 0, 1, 1)
-        for r in range(2, 3):
-            self.params_grid_layout_0.setRowStretch(r, 1)
+        self.params_grid_layout_2.addWidget(self._fading_1_win, 0, 0, 1, 1)
+        for r in range(0, 1):
+            self.params_grid_layout_2.setRowStretch(r, 1)
         for c in range(0, 1):
-            self.params_grid_layout_0.setColumnStretch(c, 1)
+            self.params_grid_layout_2.setColumnStretch(c, 1)
         self._eq_gain_range = Range(0, .1, .001, .01, 200)
         self._eq_gain_win = RangeWidget(self._eq_gain_range, self.set_eq_gain, 'Equalizer Rate', "counter_slider", float)
         self.params_grid_layout_1.addWidget(self._eq_gain_win, 0, 0, 1, 1)
@@ -175,6 +182,20 @@ class qam_fading(gr.top_block, Qt.QWidget):
             self.params_grid_layout_1.setRowStretch(r, 1)
         for c in range(0, 1):
             self.params_grid_layout_1.setColumnStretch(c, 1)
+        self._amp_range = Range(0, 5, 0.1, 0.2, 200)
+        self._amp_win = RangeWidget(self._amp_range, self.set_amp, 'Ampliude', "counter_slider", float)
+        self.params_grid_layout_2.addWidget(self._amp_win, 1, 0, 1, 1)
+        for r in range(1, 2):
+            self.params_grid_layout_2.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.params_grid_layout_2.setColumnStretch(c, 1)
+        self._LOS_NLOS_range = Range(0, 1, 1, 1, 200)
+        self._LOS_NLOS_win = RangeWidget(self._LOS_NLOS_range, self.set_LOS_NLOS, 'LOS_NLOS', "counter_slider", int)
+        self.params_grid_layout_2.addWidget(self._LOS_NLOS_win, 0, 1, 1, 1)
+        for r in range(0, 1):
+            self.params_grid_layout_2.setRowStretch(r, 1)
+        for c in range(1, 2):
+            self.params_grid_layout_2.setColumnStretch(c, 1)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
             1024, #size
             samp_rate, #samp_rate
@@ -491,7 +512,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
             self.plots_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 1):
             self.plots_grid_layout_0.setColumnStretch(c, 1)
-        self.interp_fir_filter_xxx_0 = filter.interp_fir_filter_ccc(1, [1]+([0]*fading_1)+[0.2])
+        self.interp_fir_filter_xxx_0 = filter.interp_fir_filter_ccc(1, [LOS_NLOS]+([0]*fading_1)+[amp])
         self.interp_fir_filter_xxx_0.declare_sample_delay(0)
         self.digital_pfb_clock_sync_xxx_0_0 = digital.pfb_clock_sync_ccf(sps , timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
@@ -661,7 +682,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
 
     def set_fading_1(self, fading_1):
         self.fading_1 = fading_1
-        self.interp_fir_filter_xxx_0.set_taps([1]+([0]*self.fading_1)+[0.2])
+        self.interp_fir_filter_xxx_0.set_taps([self.LOS_NLOS]+([0]*self.fading_1)+[self.amp])
 
     def get_eq_ntaps(self):
         return self.eq_ntaps
@@ -697,6 +718,20 @@ class qam_fading(gr.top_block, Qt.QWidget):
     def set_chn_taps(self, chn_taps):
         self.chn_taps = chn_taps
         self.channels_channel_model_0.set_taps(self.chn_taps)
+
+    def get_amp(self):
+        return self.amp
+
+    def set_amp(self, amp):
+        self.amp = amp
+        self.interp_fir_filter_xxx_0.set_taps([self.LOS_NLOS]+([0]*self.fading_1)+[self.amp])
+
+    def get_LOS_NLOS(self):
+        return self.LOS_NLOS
+
+    def set_LOS_NLOS(self, LOS_NLOS):
+        self.LOS_NLOS = LOS_NLOS
+        self.interp_fir_filter_xxx_0.set_taps([self.LOS_NLOS]+([0]*self.fading_1)+[self.amp])
 
 
 
