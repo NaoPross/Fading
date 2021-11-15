@@ -480,6 +480,8 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
+    sock_addr: udp://localhost:31415
+    ui_element_id: '0'
   states:
     bus_sink: false
     bus_source: false

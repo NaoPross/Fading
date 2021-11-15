@@ -4,7 +4,7 @@ category: '[fadingui]'
 
 templates:
   imports: import fadingui
-  make: fadingui.dearpygui_sink()
+  make: fadingui.dearpygui_sink(sock_addr=${sock_addr}, ui_element_id=${ui_element_id})
 
 #  Make one 'parameters' list entry for every parameter you want settable from the GUI.
 #     Keys include:

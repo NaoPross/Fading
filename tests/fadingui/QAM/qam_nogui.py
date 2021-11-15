@@ -52,8 +52,9 @@ class qam_nogui(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
+        self.fadingui_dearpygui_sink_0 = fadingui.dearpygui_sink(sock_addr='udp://localhost:31415', ui_element_id=0)
         self.fadingui_datasource_0 = fadingui.datasource(vec_len=2037, header_len=11, sock_addr='udp://', file_list=["./lena512color.tiff"])
-        self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps * 1.001, timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, sps)
+        self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
         self.digital_map_bb_0 = digital.map_bb([0, 1, 3, 2])
         self.digital_diff_decoder_bb_0 = digital.diff_decoder_bb(4)
         self.digital_costas_loop_cc_0 = digital.costas_loop_cc(phase_bw, 4, False)
@@ -66,7 +67,7 @@ class qam_nogui(gr.top_block):
             verbose=False,
             log=False)
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
-        self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, sps)
+        self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 1)
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=noise_volt,
             frequency_offset=freq_offset,
@@ -90,6 +91,7 @@ class qam_nogui(gr.top_block):
         self.connect((self.digital_constellation_decoder_cb_0, 0), (self.digital_diff_decoder_bb_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.digital_costas_loop_cc_0, 0), (self.digital_constellation_decoder_cb_0, 0))
+        self.connect((self.digital_costas_loop_cc_0, 0), (self.fadingui_dearpygui_sink_0, 0))
         self.connect((self.digital_diff_decoder_bb_0, 0), (self.digital_map_bb_0, 0))
         self.connect((self.digital_map_bb_0, 0), (self.blocks_null_sink_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_cma_equalizer_cc_0, 0))
