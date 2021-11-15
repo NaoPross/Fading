@@ -337,7 +337,7 @@ blocks:
     modulus: eq_mod
     mu: eq_gain
     num_taps: eq_ntaps
-    sps: sps
+    sps: '1'
   states:
     bus_sink: false
     bus_source: false
@@ -444,8 +444,8 @@ blocks:
     max_dev: '1.5'
     maxoutbuf: '0'
     minoutbuf: '0'
-    osps: sps
-    sps: sps * 1.001
+    osps: '1'
+    sps: sps
     taps: rrc_taps
     type: ccf
   states:
@@ -474,6 +474,19 @@ blocks:
     coordinate: [64, 252.0]
     rotation: 0
     state: true
+- name: fadingui_dearpygui_sink_0
+  id: fadingui_dearpygui_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2120, 200.0]
+    rotation: 0
+    state: true
 
 connections:
 - [blocks_throttle_0, '0', channels_channel_model_0, '0']
@@ -483,6 +496,7 @@ connections:
 - [digital_constellation_decoder_cb_0, '0', digital_diff_decoder_bb_0, '0']
 - [digital_constellation_modulator_0, '0', blocks_throttle_0, '0']
 - [digital_costas_loop_cc_0, '0', digital_constellation_decoder_cb_0, '0']
+- [digital_costas_loop_cc_0, '0', fadingui_dearpygui_sink_0, '0']
 - [digital_diff_decoder_bb_0, '0', digital_map_bb_0, '0']
 - [digital_map_bb_0, '0', blocks_null_sink_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', digital_cma_equalizer_cc_0, '0']

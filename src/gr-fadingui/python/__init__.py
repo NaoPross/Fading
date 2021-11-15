@@ -33,5 +33,6 @@ except ImportError:
 
 # import any pure python here
 from .datasource import datasource
+from .dearpygui_sink import dearpygui_sink
 
 #

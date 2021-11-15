@@ -33,7 +33,7 @@ GR_PYTHON_INSTALL(
     FILES
     __init__.py
     datasource.py
-    DESTINATION ${GR_PYTHON_DIR}/fadingui
+    dearpygui_sink.py DESTINATION ${GR_PYTHON_DIR}/fadingui
 )
 
 ########################################################################
@@ -43,3 +43,4 @@ include(GrTest)
 
 set(GR_TEST_TARGET_DEPS gnuradio-fadingui)
 set(GR_TEST_PYTHON_DIRS ${CMAKE_BINARY_DIR}/swig)
+GR_ADD_TEST(qa_dearpygui_sink ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_dearpygui_sink.py)
