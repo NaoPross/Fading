@@ -19,6 +19,8 @@
 # Boston, MA 02110-1301, USA.
 #
 
+import io
+
 import numpy as np
 from gnuradio import gr
 
@@ -30,9 +32,10 @@ class datasource(gr.sync_block):
         gr.sync_block.__init__(self,
             name="datasource",
             in_sig=None,
-            out_sig=[np.dtype('256b')])
+            out_sig=[np.dtype('{vec_len}b')])
 
         # parameters
+        self.header_size = 11
         self.vec_len = vec_len
         self.sock_addr = sock_addr
         self.file_list = file_list
@@ -49,15 +52,28 @@ class datasource(gr.sync_block):
         self.fdata = np.fromfile(fname, np.byte)
         self.fsize = len(self.data)
 
-        # TODO: remove
+        # TODO: remove debugging statements
         print(f"datasource: loaded file size={self.fsize}, head:")
         print(self.fdata[:10])
+
+    def make_frame(self, data_size):
+        # TODO: check that data_size is not too big
+        pilot = 0x1248
+        header = f"p{pilot:04x}s{data_size:04x}d".encode("ascii")
+        arr = np.array(bytearray(header))
+
+        assert(len(arr) == self.header_size)
+        return arr
 
     def work(self, input_items, output_items):
         out = output_items[0]
 
         if self.fpos + self.vec_len > self.fsize:
-            # TODO: implement padding with zeroes
+            rest = self.fsize - self.fpos
+
+            out[:rest] = self.fdata[self.fpos:rest]
+            out[rest:] = 0 # TODO: replace with 01010101.. seq or scramble
+
             self.fpos = 0
             return 0
 
