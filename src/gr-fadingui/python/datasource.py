@@ -19,6 +19,8 @@
 # Boston, MA 02110-1301, USA.
 #
 
+import io
+
 import numpy as np
 from gnuradio import gr
 
@@ -26,11 +28,17 @@ class datasource(gr.sync_block):
     """
     Loads data from a file choosen in the graphical user interface.
     """
-    def __init__(self, vec_len, sock_addr, file_list):
+
+    HEADER_LEN = 11;
+
+    def __init__(self, vec_len, header_len, sock_addr, file_list):
+        # FIXME: find a better solution
+        assert(header_len == datasource.HEADER_LEN)
+
         gr.sync_block.__init__(self,
             name="datasource",
             in_sig=None,
-            out_sig=[np.dtype('256b')])
+            out_sig=[np.dtype(f'{vec_len + header_len}b')])
 
         # parameters
         self.vec_len = vec_len
@@ -42,27 +50,55 @@ class datasource(gr.sync_block):
         self.fsize = None
         self.fpos = 0
 
+        # cache
+        self.header_cache = None
+
         # TODO: make it possible to choose from UI
         self.load_file(file_list[0])
 
     def load_file(self, fname):
         self.fdata = np.fromfile(fname, np.byte)
-        self.fsize = len(self.data)
+        self.fsize = len(self.fdata)
 
-        # TODO: remove
+        # TODO: remove debugging statements
         print(f"datasource: loaded file size={self.fsize}, head:")
         print(self.fdata[:10])
 
+    def make_header(self, data_size):
+        # TODO: check that data_size is not too big
+        pilot = 0x1248
+        header = f"p{pilot:04x}s{data_size:04x}d".encode("ascii")
+        arr = np.frombuffer(header, dtype=np.dtype("byte"))
+        return arr
+
     def work(self, input_items, output_items):
         out = output_items[0]
+        print(self.fpos)
 
         if self.fpos + self.vec_len > self.fsize:
-            # TODO: implement padding with zeroes
+            # FIXME: repair broken code below
             self.fpos = 0
-            return 0
+            return 0;
 
-        out[:] = self.fdata[self.fpos:self.fpos + self.vec_len]
+            rest = self.fsize - self.fpos
+
+            # cannot use cached header
+            header = self.make_header(rest)
+            data = self.fdata[self.fpos:rest]
+
+            frame_size = datasource.HEADER_LEN + rest
+            out[:] = np.concatenate([header, data])
+
+            self.fpos = 0
+            return rest
+
+        if self.header_cache == None:
+            self.header = self.make_header(self.vec_len)
+
+        data = self.fdata[self.fpos:self.fpos + self.vec_len]
+
+        out[:] = np.concatenate([self.header, data])
+
         self.fpos += self.vec_len
-
         return len(output_items[0])
 

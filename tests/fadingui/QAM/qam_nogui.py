@@ -9,19 +9,6 @@
 # Author: Pross Naoki, Halter Sara Cinzia
 # GNU Radio version: 3.8.2.0
 
-from distutils.version import StrictVersion
-
-if __name__ == '__main__':
-    import ctypes
-    import sys
-    if sys.platform.startswith('linux'):
-        try:
-            x11 = ctypes.cdll.LoadLibrary('libX11.so')
-            x11.XInitThreads()
-        except:
-            print("Warning: failed to XInitThreads()")
-
-from PyQt5 import Qt
 from gnuradio import blocks
 from gnuradio import channels
 from gnuradio.filter import firdes
@@ -32,43 +19,13 @@ import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
-from gnuradio.qtgui import Range, RangeWidget
 import fadingui
 
-from gnuradio import qtgui
 
-class qam_nogui(gr.top_block, Qt.QWidget):
+class qam_nogui(gr.top_block):
 
     def __init__(self):
         gr.top_block.__init__(self, "QAM")
-        Qt.QWidget.__init__(self)
-        self.setWindowTitle("QAM")
-        qtgui.util.check_set_qss()
-        try:
-            self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
-        except:
-            pass
-        self.top_scroll_layout = Qt.QVBoxLayout()
-        self.setLayout(self.top_scroll_layout)
-        self.top_scroll = Qt.QScrollArea()
-        self.top_scroll.setFrameStyle(Qt.QFrame.NoFrame)
-        self.top_scroll_layout.addWidget(self.top_scroll)
-        self.top_scroll.setWidgetResizable(True)
-        self.top_widget = Qt.QWidget()
-        self.top_scroll.setWidget(self.top_widget)
-        self.top_layout = Qt.QVBoxLayout(self.top_widget)
-        self.top_grid_layout = Qt.QGridLayout()
-        self.top_layout.addLayout(self.top_grid_layout)
-
-        self.settings = Qt.QSettings("GNU Radio", "qam_nogui")
-
-        try:
-            if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
-                self.restoreGeometry(self.settings.value("geometry").toByteArray())
-            else:
-                self.restoreGeometry(self.settings.value("geometry"))
-        except:
-            pass
 
         ##################################################
         # Variables
@@ -76,96 +33,26 @@ class qam_nogui(gr.top_block, Qt.QWidget):
         self.sps = sps = 4
         self.nfilts = nfilts = 32
         self.excess_bw = excess_bw = 350e-3
+        self.variable_4 = variable_4 = 0
         self.timing_loop_bw = timing_loop_bw = 2 * 3.141592653589793 / 100
-        self.time_offset = time_offset = 1.0
+        self.time_offset = time_offset = 1
         self.samp_rate = samp_rate = 32000
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), excess_bw, 45*nfilts)
         self.qam_const = qam_const = digital.constellation_rect([(-3-3j), (-1-3j), (1-3j), (3-3j), (-3-1j), (-1-1j), (1-1j), (3-1j), (-3+1j), (-1+1j), (1+1j), (3+1j), (-3+3j), (-1+3j), (1+3j), (3+3j)], [0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10],
         4, 1, 1, 1, 1).base()
         self.phase_bw = phase_bw = 2 * 3.141592653589793 / 100
-        self.noise_volt = noise_volt = 0.0001
+        self.noise_volt = noise_volt = 100e-6
         self.freq_offset = freq_offset = 0
         self.eq_ntaps = eq_ntaps = 15
         self.eq_mod = eq_mod = 1
-        self.eq_gain = eq_gain = .01
+        self.eq_gain = eq_gain = 10e-3
         self.const = const = digital.constellation_16qam().base()
         self.chn_taps = chn_taps = [1.0 + 0.0j, ]
 
         ##################################################
         # Blocks
         ##################################################
-        self.params = Qt.QTabWidget()
-        self.params_widget_0 = Qt.QWidget()
-        self.params_layout_0 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.params_widget_0)
-        self.params_grid_layout_0 = Qt.QGridLayout()
-        self.params_layout_0.addLayout(self.params_grid_layout_0)
-        self.params.addTab(self.params_widget_0, 'Channel')
-        self.params_widget_1 = Qt.QWidget()
-        self.params_layout_1 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.params_widget_1)
-        self.params_grid_layout_1 = Qt.QGridLayout()
-        self.params_layout_1.addLayout(self.params_grid_layout_1)
-        self.params.addTab(self.params_widget_1, 'Receiver')
-        self.top_grid_layout.addWidget(self.params)
-        self._timing_loop_bw_range = Range(0, 200e-3, 10e-3, 2 * 3.141592653589793 / 100, 200)
-        self._timing_loop_bw_win = RangeWidget(self._timing_loop_bw_range, self.set_timing_loop_bw, 'Time Bandwidth', "counter_slider", float)
-        self.params_grid_layout_0.addWidget(self._timing_loop_bw_win, 1, 1, 1, 1)
-        for r in range(1, 2):
-            self.params_grid_layout_0.setRowStretch(r, 1)
-        for c in range(1, 2):
-            self.params_grid_layout_0.setColumnStretch(c, 1)
-        self._time_offset_range = Range(0.999, 1.001, 0.0001, 1.0, 200)
-        self._time_offset_win = RangeWidget(self._time_offset_range, self.set_time_offset, 'Timing Offset', "counter_slider", float)
-        self.params_grid_layout_0.addWidget(self._time_offset_win, 0, 1, 1, 1)
-        for r in range(0, 1):
-            self.params_grid_layout_0.setRowStretch(r, 1)
-        for c in range(1, 2):
-            self.params_grid_layout_0.setColumnStretch(c, 1)
-        self._phase_bw_range = Range(0, 1, .01, 2 * 3.141592653589793 / 100, 200)
-        self._phase_bw_win = RangeWidget(self._phase_bw_range, self.set_phase_bw, 'Phase Bandwidth', "counter_slider", float)
-        self.params_grid_layout_1.addWidget(self._phase_bw_win, 1, 0, 1, 1)
-        for r in range(1, 2):
-            self.params_grid_layout_1.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.params_grid_layout_1.setColumnStretch(c, 1)
-        self._noise_volt_range = Range(0, 1, 0.01, 0.0001, 200)
-        self._noise_volt_win = RangeWidget(self._noise_volt_range, self.set_noise_volt, 'Noise Voltage', "counter_slider", float)
-        self.params_grid_layout_0.addWidget(self._noise_volt_win, 0, 0, 1, 1)
-        for r in range(0, 1):
-            self.params_grid_layout_0.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.params_grid_layout_0.setColumnStretch(c, 1)
-        self._freq_offset_range = Range(-100e-3, 100e-3, 1e-3, 0, 200)
-        self._freq_offset_win = RangeWidget(self._freq_offset_range, self.set_freq_offset, 'Frequency Offset', "counter_slider", float)
-        self.params_grid_layout_0.addWidget(self._freq_offset_win, 1, 0, 1, 1)
-        for r in range(1, 2):
-            self.params_grid_layout_0.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.params_grid_layout_0.setColumnStretch(c, 1)
-        self._eq_gain_range = Range(0, .1, .001, .01, 200)
-        self._eq_gain_win = RangeWidget(self._eq_gain_range, self.set_eq_gain, 'Equalizer Rate', "counter_slider", float)
-        self.params_grid_layout_1.addWidget(self._eq_gain_win, 0, 0, 1, 1)
-        for r in range(0, 1):
-            self.params_grid_layout_1.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.params_grid_layout_1.setColumnStretch(c, 1)
-        self.plots = Qt.QTabWidget()
-        self.plots_widget_0 = Qt.QWidget()
-        self.plots_layout_0 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.plots_widget_0)
-        self.plots_grid_layout_0 = Qt.QGridLayout()
-        self.plots_layout_0.addLayout(self.plots_grid_layout_0)
-        self.plots.addTab(self.plots_widget_0, 'Constellations')
-        self.plots_widget_1 = Qt.QWidget()
-        self.plots_layout_1 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.plots_widget_1)
-        self.plots_grid_layout_1 = Qt.QGridLayout()
-        self.plots_layout_1.addLayout(self.plots_grid_layout_1)
-        self.plots.addTab(self.plots_widget_1, 'Frequency')
-        self.plots_widget_2 = Qt.QWidget()
-        self.plots_layout_2 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.plots_widget_2)
-        self.plots_grid_layout_2 = Qt.QGridLayout()
-        self.plots_layout_2.addLayout(self.plots_grid_layout_2)
-        self.plots.addTab(self.plots_widget_2, 'Time')
-        self.top_grid_layout.addWidget(self.plots)
-        self.fadingui_datasource_0 = fadingui.datasource(vec_len=512, sock_addr='udp://', file_list=["./lena512color.tiff"])
+        self.fadingui_datasource_0 = fadingui.datasource(vec_len=2037, header_len=11, sock_addr='udp://', file_list=["./lena512color.tiff"])
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps * 1.001, timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, sps)
         self.digital_map_bb_0 = digital.map_bb([0, 1, 3, 2])
         self.digital_diff_decoder_bb_0 = digital.diff_decoder_bb(4)
@@ -187,7 +74,7 @@ class qam_nogui(gr.top_block, Qt.QWidget):
             taps=chn_taps,
             noise_seed=0,
             block_tags=False)
-        self.blocks_vector_to_stream_0 = blocks.vector_to_stream(gr.sizeof_char*1, 512)
+        self.blocks_vector_to_stream_0 = blocks.vector_to_stream(gr.sizeof_char*1, 2048)
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_char*1)
 
@@ -209,11 +96,6 @@ class qam_nogui(gr.top_block, Qt.QWidget):
         self.connect((self.fadingui_datasource_0, 0), (self.blocks_vector_to_stream_0, 0))
 
 
-    def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "qam_nogui")
-        self.settings.setValue("geometry", self.saveGeometry())
-        event.accept()
-
     def get_sps(self):
         return self.sps
 
@@ -234,6 +116,12 @@ class qam_nogui(gr.top_block, Qt.QWidget):
     def set_excess_bw(self, excess_bw):
         self.excess_bw = excess_bw
         self.set_rrc_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), self.excess_bw, 45*self.nfilts))
+
+    def get_variable_4(self):
+        return self.variable_4
+
+    def set_variable_4(self, variable_4):
+        self.variable_4 = variable_4
 
     def get_timing_loop_bw(self):
         return self.timing_loop_bw
@@ -330,34 +218,26 @@ class qam_nogui(gr.top_block, Qt.QWidget):
 def main(top_block_cls=qam_nogui, options=None):
     if gr.enable_realtime_scheduling() != gr.RT_OK:
         print("Error: failed to enable real-time scheduling.")
-
-    if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
-        style = gr.prefs().get_string('qtgui', 'style', 'raster')
-        Qt.QApplication.setGraphicsSystem(style)
-    qapp = Qt.QApplication(sys.argv)
-
     tb = top_block_cls()
 
-    tb.start()
-
-    tb.show()
-
     def sig_handler(sig=None, frame=None):
-        Qt.QApplication.quit()
+        tb.stop()
+        tb.wait()
+
+        sys.exit(0)
 
     signal.signal(signal.SIGINT, sig_handler)
     signal.signal(signal.SIGTERM, sig_handler)
 
-    timer = Qt.QTimer()
-    timer.start(500)
-    timer.timeout.connect(lambda: None)
+    tb.start()
 
-    def quitting():
-        tb.stop()
-        tb.wait()
+    try:
+        input('Press Enter to quit: ')
+    except EOFError:
+        pass
+    tb.stop()
+    tb.wait()
 
-    qapp.aboutToQuit.connect(quitting)
-    qapp.exec_()
 
 if __name__ == '__main__':
     main()
