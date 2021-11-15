@@ -8,7 +8,7 @@ options:
     description: ''
     gen_cmake: 'On'
     gen_linking: dynamic
-    generate_options: qt_gui
+    generate_options: no_gui
     hier_block_src_path: '.:'
     id: qam_nogui
     max_nouts: '0'
@@ -41,7 +41,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [880, 256.0]
+    coordinate: [920, 252.0]
     rotation: 0
     state: true
 - name: const
@@ -59,28 +59,19 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [464, 608.0]
+    coordinate: [440, 604.0]
     rotation: 0
     state: true
 - name: eq_gain
-  id: variable_qtgui_range
+  id: variable
   parameters:
     comment: ''
-    gui_hint: 'params@1: 0,0,1,1'
-    label: Equalizer Rate
-    min_len: '200'
-    orient: Qt.Horizontal
-    rangeType: float
-    start: '0'
-    step: '.001'
-    stop: '.1'
-    value: '.01'
-    widget: counter_slider
+    value: 10e-3
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1584, 460.0]
+    coordinate: [1504, 452.0]
     rotation: 0
     state: true
 - name: eq_mod
@@ -92,7 +83,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1584, 392.0]
+    coordinate: [1504, 388.0]
     rotation: 0
     state: true
 - name: eq_ntaps
@@ -104,7 +95,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1664, 392.0]
+    coordinate: [1584, 388.0]
     rotation: 0
     state: true
 - name: excess_bw
@@ -116,28 +107,19 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [560, 272.0]
+    coordinate: [536, 268.0]
     rotation: 0
     state: true
 - name: freq_offset
-  id: variable_qtgui_range
+  id: variable
   parameters:
     comment: ''
-    gui_hint: 'params@0: 1,0,1,1'
-    label: Frequency Offset
-    min_len: '200'
-    orient: Qt.Horizontal
-    rangeType: float
-    start: -100e-3
-    step: 1e-3
-    stop: 100e-3
     value: '0'
-    widget: counter_slider
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [880, 460.0]
+    coordinate: [1008, 252.0]
     rotation: 0
     state: true
 - name: nfilts
@@ -149,49 +131,31 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1248, 480.0]
+    coordinate: [1184, 476.0]
     rotation: 0
     state: true
 - name: noise_volt
-  id: variable_qtgui_range
+  id: variable
   parameters:
     comment: ''
-    gui_hint: 'params@0: 0,0,1,1'
-    label: Noise Voltage
-    min_len: '200'
-    orient: Qt.Horizontal
-    rangeType: float
-    start: '0'
-    step: '0.01'
-    stop: '1'
-    value: '0.0001'
-    widget: counter_slider
+    value: 100e-6
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [752, 460.0]
+    coordinate: [920, 188.0]
     rotation: 0
     state: true
 - name: phase_bw
-  id: variable_qtgui_range
+  id: variable
   parameters:
     comment: ''
-    gui_hint: 'params@1: 1,0,1,1'
-    label: Phase Bandwidth
-    min_len: '200'
-    orient: Qt.Horizontal
-    rangeType: float
-    start: '0'
-    step: '.01'
-    stop: '1'
     value: 2 * 3.141592653589793 / 100
-    widget: counter_slider
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1888, 428.0]
+    coordinate: [1792, 428.0]
     rotation: 0
     state: true
 - name: qam_const
@@ -212,7 +176,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [464, 444.0]
+    coordinate: [440, 444.0]
     rotation: 0
     state: true
 - name: rrc_taps
@@ -224,7 +188,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1328, 480.0]
+    coordinate: [1264, 476.0]
     rotation: 0
     state: true
 - name: samp_rate
@@ -248,49 +212,43 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [464, 272.0]
+    coordinate: [440, 268.0]
     rotation: 0
     state: true
 - name: time_offset
-  id: variable_qtgui_range
+  id: variable
   parameters:
     comment: ''
-    gui_hint: 'params@0: 0,1,1,1'
-    label: Timing Offset
-    min_len: '200'
-    orient: Qt.Horizontal
-    rangeType: float
-    start: '0.999'
-    step: '0.0001'
-    stop: '1.001'
-    value: '1.0'
-    widget: counter_slider
+    value: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [752, 604.0]
+    coordinate: [1008, 188.0]
     rotation: 0
     state: true
 - name: timing_loop_bw
-  id: variable_qtgui_range
+  id: variable
   parameters:
     comment: ''
-    gui_hint: 'params@0: 1,1,1,1'
-    label: Time Bandwidth
-    min_len: '200'
-    orient: Qt.Horizontal
-    rangeType: float
-    start: '0'
-    step: 10e-3
-    stop: 200e-3
     value: 2 * 3.141592653589793 / 100
-    widget: counter_slider
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1248, 556.0]
+    coordinate: [1184, 556.0]
+    rotation: 0
+    state: true
+- name: variable_4
+  id: variable
+  parameters:
+    comment: ''
+    value: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1312, 556.0]
     rotation: 0
     state: true
 - name: blocks_null_sink_0
@@ -307,7 +265,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2424, 416.0]
+    coordinate: [2336, 424.0]
     rotation: 0
     state: true
 - name: blocks_throttle_0
@@ -326,7 +284,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [704, 360.0]
+    coordinate: [688, 356.0]
     rotation: 0
     state: enabled
 - name: blocks_vector_to_stream_0
@@ -337,14 +295,14 @@ blocks:
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    num_items: '512'
+    num_items: '2048'
     type: byte
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [240, 360.0]
+    coordinate: [248, 360.0]
     rotation: 0
     state: true
 - name: channels_channel_model_0
@@ -365,7 +323,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [880, 316.0]
+    coordinate: [920, 316.0]
     rotation: 0
     state: enabled
 - name: digital_cma_equalizer_cc_0
@@ -384,7 +342,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1584, 288.0]
+    coordinate: [1504, 284.0]
     rotation: 0
     state: true
 - name: digital_constellation_decoder_cb_0
@@ -400,7 +358,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2224, 280.0]
+    coordinate: [2152, 276.0]
     rotation: 0
     state: true
 - name: digital_constellation_modulator_0
@@ -421,7 +379,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [464, 336.0]
+    coordinate: [440, 332.0]
     rotation: 0
     state: enabled
 - name: digital_costas_loop_cc_0
@@ -439,7 +397,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1888, 288.0]
+    coordinate: [1792, 280.0]
     rotation: 0
     state: true
 - name: digital_diff_decoder_bb_0
@@ -455,7 +413,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2224, 352.0]
+    coordinate: [2152, 340.0]
     rotation: 180
     state: true
 - name: digital_map_bb_0
@@ -471,7 +429,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2224, 424.0]
+    coordinate: [2152, 420.0]
     rotation: 0
     state: true
 - name: digital_pfb_clock_sync_xxx_0
@@ -494,7 +452,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1248, 308.0]
+    coordinate: [1184, 308.0]
     rotation: 0
     state: true
 - name: fadingui_datasource_0
@@ -504,83 +462,16 @@ blocks:
     alias: ''
     comment: ''
     file_list: '["./lena512color.tiff"]'
+    header_len: '11'
     maxoutbuf: '0'
     minoutbuf: '0'
     sock_addr: udp://
-    vec_len: '512'
+    vec_len: '2037'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [40, 276.0]
-    rotation: 0
-    state: true
-- name: params
-  id: qtgui_tab_widget
-  parameters:
-    alias: ''
-    comment: ''
-    gui_hint: ''
-    label0: Channel
-    label1: Receiver
-    label10: Tab 10
-    label11: Tab 11
-    label12: Tab 12
-    label13: Tab 13
-    label14: Tab 14
-    label15: Tab 15
-    label16: Tab 16
-    label17: Tab 17
-    label18: Tab 18
-    label19: Tab 19
-    label2: Tab 2
-    label3: Tab 3
-    label4: Tab 4
-    label5: Tab 5
-    label6: Tab 6
-    label7: Tab 7
-    label8: Tab 8
-    label9: Tab 9
-    num_tabs: '2'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [296, 12.0]
-    rotation: 0
-    state: true
-- name: plots
-  id: qtgui_tab_widget
-  parameters:
-    alias: ''
-    comment: ''
-    gui_hint: ''
-    label0: Constellations
-    label1: Frequency
-    label10: Tab 10
-    label11: Tab 11
-    label12: Tab 12
-    label13: Tab 13
-    label14: Tab 14
-    label15: Tab 15
-    label16: Tab 16
-    label17: Tab 17
-    label18: Tab 18
-    label19: Tab 19
-    label2: Time
-    label3: Tab 3
-    label4: Tab 4
-    label5: Tab 5
-    label6: Tab 6
-    label7: Tab 7
-    label8: Tab 8
-    label9: Tab 9
-    num_tabs: '3'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [448, 12.0]
+    coordinate: [64, 252.0]
     rotation: 0
     state: true
 

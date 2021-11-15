@@ -1,10 +1,10 @@
 id: fadingui_datasource
-label: UI Data Source 
+label: UI Framed Data Source 
 category: '[fadingui]'
 
 templates:
   imports: import fadingui
-  make: fadingui.datasource(vec_len=${vec_len}, sock_addr=${sock_addr}, file_list=${file_list})
+  make: fadingui.datasource(vec_len=${vec_len}, header_len=${header_len}, sock_addr=${sock_addr}, file_list=${file_list})
 
 #  Make one 'parameters' list entry for every parameter you want settable from the GUI.
 #     Keys include:
@@ -15,7 +15,12 @@ parameters:
 - id: vec_len
   label: Vector length
   dtype: int
-  default: 512
+  default: 501
+
+- id: header_len
+  label: Header length
+  dtype: int
+  default: 11
 
 - id: sock_addr
   label: Socket Address
@@ -40,7 +45,7 @@ outputs:
 - label: out
   domain: stream
   dtype: byte
-  vlen: ${vec_len}
+  vlen: ${ vec_len + header_len }
 
 #  'file_format' specifies the version of the GRC yml format used in the file
 #  and should usually not be changed.
