@@ -50,7 +50,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1200, 484.0]
+    coordinate: [1104, 484.0]
     rotation: 0
     state: true
 - name: amp
@@ -71,7 +71,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1136, 612.0]
+    coordinate: [1040, 612.0]
     rotation: 0
     state: true
 - name: chn_taps
@@ -122,7 +122,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1864, 480.0]
+    coordinate: [1744, 452.0]
     rotation: 0
     state: true
 - name: eq_mod
@@ -134,7 +134,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1864, 400.0]
+    coordinate: [1744, 376.0]
     rotation: 0
     state: true
 - name: eq_ntaps
@@ -146,7 +146,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1944, 400.0]
+    coordinate: [1824, 376.0]
     rotation: 0
     state: true
 - name: excess_bw
@@ -179,7 +179,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1080, 484.0]
+    coordinate: [984, 484.0]
     rotation: 0
     state: true
 - name: freq_offset
@@ -212,7 +212,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1528, 128.0]
+    coordinate: [1408, 104.0]
     rotation: 0
     state: true
 - name: noise_volt
@@ -254,7 +254,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2168, 448.0]
+    coordinate: [2048, 420.0]
     rotation: 0
     state: true
 - name: rrc_taps
@@ -266,7 +266,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1608, 128.0]
+    coordinate: [1488, 104.0]
     rotation: 0
     state: true
 - name: samp_rate
@@ -332,7 +332,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1528, 192.0]
+    coordinate: [1408, 164.0]
     rotation: 0
     state: true
 - name: analog_random_source_x_0
@@ -369,7 +369,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2808, 296.0]
+    coordinate: [2688, 272.0]
     rotation: 0
     state: true
 - name: blocks_char_to_float_0_0
@@ -403,7 +403,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2760, 696.0]
+    coordinate: [2640, 672.0]
     rotation: 0
     state: true
 - name: blocks_delay_0
@@ -422,7 +422,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2848, 1356.0]
+    coordinate: [2736, 1360.0]
     rotation: 0
     state: true
 - name: blocks_throttle_0
@@ -457,7 +457,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2728, 456.0]
+    coordinate: [2608, 432.0]
     rotation: 0
     state: true
 - name: blocks_unpack_k_bits_bb_0_0
@@ -489,7 +489,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2664, 872.0]
+    coordinate: [2544, 848.0]
     rotation: 0
     state: true
 - name: channels_channel_model_0
@@ -529,7 +529,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1864, 304.0]
+    coordinate: [1744, 276.0]
     rotation: 0
     state: true
 - name: digital_cma_equalizer_cc_0_0
@@ -548,7 +548,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1784, 956.0]
+    coordinate: [1664, 932.0]
     rotation: 0
     state: true
 - name: digital_constellation_decoder_cb_0
@@ -564,7 +564,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2504, 296.0]
+    coordinate: [2384, 272.0]
     rotation: 0
     state: true
 - name: digital_constellation_decoder_cb_0_0
@@ -580,7 +580,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2440, 680.0]
+    coordinate: [2320, 656.0]
     rotation: 0
     state: true
 - name: digital_constellation_modulator_0
@@ -619,7 +619,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2168, 288.0]
+    coordinate: [2048, 264.0]
     rotation: 0
     state: true
 - name: digital_costas_loop_cc_0_0
@@ -637,7 +637,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2096, 952.0]
+    coordinate: [1984, 928.0]
     rotation: 0
     state: true
 - name: digital_diff_decoder_bb_0
@@ -653,7 +653,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2504, 360.0]
+    coordinate: [2384, 336.0]
     rotation: 180
     state: true
 - name: digital_diff_decoder_bb_0_0
@@ -669,7 +669,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2472, 760.0]
+    coordinate: [2352, 736.0]
     rotation: 180
     state: true
 - name: digital_map_bb_0
@@ -685,7 +685,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2520, 456.0]
+    coordinate: [2400, 432.0]
     rotation: 0
     state: true
 - name: digital_map_bb_0_0
@@ -701,7 +701,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2488, 872.0]
+    coordinate: [2368, 848.0]
     rotation: 0
     state: true
 - name: digital_pfb_clock_sync_xxx_0
@@ -724,7 +724,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1528, 328.0]
+    coordinate: [1408, 300.0]
     rotation: 0
     state: true
 - name: digital_pfb_clock_sync_xxx_0_0
@@ -747,7 +747,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1248, 980.0]
+    coordinate: [1136, 956.0]
     rotation: 0
     state: true
 - name: import_0
@@ -779,9 +779,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1128, 348.0]
+    coordinate: [1032, 348.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: params
   id: qtgui_tab_widget
   parameters:
@@ -880,9 +880,9 @@ blocks:
     comment: ''
     grid: 'False'
     gui_hint: 'plots@0: 0,0,1,1'
-    label1: Fading
+    label1: fading
     label10: ''
-    label2: ''
+    label2: normal
     label3: ''
     label4: ''
     label5: ''
@@ -939,7 +939,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1348.0, -80]
+    coordinate: [1044.0, -32]
     rotation: 90
     state: enabled
 - name: qtgui_const_sink_x_0_0
@@ -972,9 +972,9 @@ blocks:
     comment: ''
     grid: 'False'
     gui_hint: 'plots@0: 0,1,1,1'
-    label1: Fading
+    label1: fading
     label10: ''
-    label2: ''
+    label2: normal
     label3: ''
     label4: ''
     label5: ''
@@ -1031,7 +1031,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1776.0, 80]
+    coordinate: [1656.0, 56]
     rotation: 90
     state: enabled
 - name: qtgui_const_sink_x_1
@@ -1064,9 +1064,9 @@ blocks:
     comment: ''
     grid: 'False'
     gui_hint: 'plots@0: 1,0,1,1'
-    label1: Fading
+    label1: fading
     label10: ''
-    label2: ''
+    label2: normal
     label3: ''
     label4: ''
     label5: ''
@@ -1123,7 +1123,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2016.0, 48]
+    coordinate: [1896.0, 24]
     rotation: 90
     state: true
 - name: qtgui_const_sink_x_2
@@ -1156,9 +1156,9 @@ blocks:
     comment: ''
     grid: 'False'
     gui_hint: 'plots@0: 1,1,1,1'
-    label1: Fading
+    label1: fading
     label10: ''
-    label2: ''
+    label2: normal
     label3: ''
     label4: ''
     label5: ''
@@ -1215,7 +1215,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2400.0, 0]
+    coordinate: [2280.0, -24]
     rotation: 90
     state: true
 - name: qtgui_freq_sink_x_0
@@ -1295,7 +1295,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1424.0, 584]
+    coordinate: [1256.0, 560]
     rotation: 270
     state: true
 - name: qtgui_freq_sink_x_2_1
@@ -1375,7 +1375,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [3064, 480.0]
+    coordinate: [2944, 456.0]
     rotation: 0
     state: true
 - name: qtgui_time_sink_x_0
@@ -1472,7 +1472,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [3032, 288.0]
+    coordinate: [2912, 260.0]
     rotation: 0
     state: true
 

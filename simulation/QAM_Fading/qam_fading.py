@@ -350,7 +350,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.qtgui_const_sink_x_2.enable_axis_labels(True)
 
 
-        labels = ['Fading', '', '', '', '',
+        labels = ['fading', 'normal', '', '', '',
             '', '', '', '', '']
         widths = [1, 1, 1, 1, 1,
             1, 1, 1, 1, 1]
@@ -394,7 +394,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.qtgui_const_sink_x_1.enable_axis_labels(True)
 
 
-        labels = ['Fading', '', '', '', '',
+        labels = ['fading', 'normal', '', '', '',
             '', '', '', '', '']
         widths = [1, 1, 1, 1, 1,
             1, 1, 1, 1, 1]
@@ -438,7 +438,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.qtgui_const_sink_x_0_0.enable_axis_labels(True)
 
 
-        labels = ['Fading', '', '', '', '',
+        labels = ['fading', 'normal', '', '', '',
             '', '', '', '', '']
         widths = [1, 1, 1, 1, 1,
             1, 1, 1, 1, 1]
@@ -482,7 +482,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.qtgui_const_sink_x_0.enable_axis_labels(True)
 
 
-        labels = ['Fading', '', '', '', '',
+        labels = ['fading', 'normal', '', '', '',
             '', '', '', '', '']
         widths = [1, 1, 1, 1, 1,
             1, 1, 1, 1, 1]
