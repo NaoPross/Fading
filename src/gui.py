@@ -5,22 +5,21 @@ import sys
 
 # Grahical libraries
 from dearpygui.dearpygui import *
+import dearpygui._dearpygui as internal_dpg
 from dearpygui.demo import show_demo
 
 # Detect (unix) signals
 import signal
 
-# GNURadio tools
-from gnuradio import gr
-
 # Mathematics
 import numpy as np
-
-# Our interface for simulation / hardware
-import qpsk
+from numpy_ringbuffer import RingBuffer
 
 # For debugging
 import logging
+
+# Remote resources
+import net
 
 #================================================
 # Debugging tools
@@ -32,57 +31,47 @@ logger = logging.getLogger(__name__)
 # Initialize DearPyGUI
 
 create_context()
-create_viewport()
+create_viewport(title="Fading Demonstrator")
 setup_dearpygui()
 
 # Show demo for dev
 show_demo()
 
 #================================================
-# Custom GNURadio blocks
+# Network classes
 
-class pygui_plot_block(gr.sync_block):
-    def __init__(self, title="Plot", xlabel="x", ylabel="y"):
-        gr.sync_block.__init__(self, name="PyGUI Plot",
-                in_sig=[np.complex64], out_sig=None)
+class network_plot(net.udpsource):
+    def __init__(self, url, nsamples, **kwargs):
+        net.udpsource.__init__(self, url)
 
-        self.title = title
-        self.xlabel = xlabel
-        self.ylabel = ylabel
+        self.nsamples = nsamples
+        self.plot = plot(**kwargs)
 
-        # TODO: parametrize with nsamples
-        self.buffer = np.linspace(0, 1, 1000)
+        # create buffer and fill with zeroes
+        self.buffer = RingBuffer(capacity=nsamples, dtype=(np.float, 2))
+        for i in range(nsamples):
+            # TODO: remove random data used for testing
+            self.buffer.append(np.array([i, 1 + np.random.rand() / 5]))
 
-    def construct_gui(self, width, height, **kwargs):
-        # Create plot
-        with plot(label=self.title, height=height, width=width, **kwargs):
-             add_plot_legend()
-             add_plot_axis(mvXAxis, label=self.xlabel)
-             add_plot_axis(mvYAxis, label=self.ylabel)
+        self.bind()
 
-    def work(self, input_items, output_items):
-        # This is a sink (no output)
-        # TODO: add samples to display buffer
-        return 0
+    def __enter__(self):
+        return self.plot.__enter__()
 
+    def __exit__(self, t, val, tb):
+        self.plot.__exit__(t, val, tb)
 
-class pygui_constellation_block(gr.sync_block):
-    def __init__(self, title="Constellation", xlabel="In-Phase", ylabel="Quadrature"):
-        gr.sync_block.__init__(self, name="PyGUI Constellation Diagram",    
-                in_sig=[np.complex64], out_sig=None)
+    @property
+    def x_data(self):
+        return np.array(self.buffer[:,0])
 
-        self.title = title
-        self.xlabel = xlabel
-        selt.ylabel = ylabel
+    @property
+    def y_data(self):
+        return np.array(self.buffer[:,1])
 
-    def construct_gui(self, width, height, **kwargs):
-        # TODO: Create a widget based ons scatter plot
+    def refresh(self, series_tag):
+        # set_value(series_tag, [self.x_data, self.y_data])
         pass
-
-    def work(self, input_items, output_items):
-        # This is a sink (no output)
-        # TODO: add samples to display buffer
-        return 0
 
 
 #================================================
@@ -98,64 +87,11 @@ def on_rx_node_delink(sender, app_data):
     delete_item(link_id)
 
 #================================================
-# Set up GNURadio simulation
-
-# Global variables, yes I know they are ugly
-sim = qpsk.qpsk_nogui()
-sim_running = False
-
-# Catch signals
-def sim_sig_handler(sig=None, frame=None):
-    sim.stop()
-    sim.wait()
-    sys.exit(0)
-
-# TODO: create GUI handlers
-signal.signal(signal.SIGINT, sim_sig_handler)
-signal.signal(signal.SIGTERM, sim_sig_handler);
-
-# Add GUI blocks
-locked_time_plot = pygui_plot_block(title="Locked signal", ylabel="Amplitude", xlabel="Time")
-sim.connect((sim.digital_costas_loop_cc_0, 0), (locked_time_plot, 0))
-
-#================================================
 # Settings Window
 
 with window(label="Settings", width=200, height=400, pos=(25, 450), tag="sim_win"):
     with child_window(autosize_x=True, height=100):
         add_button(label="Toggle Fullscreen", callback= toggle_viewport_fullscreen)
-
-    with child_window(autosize_x=True):
-        with group(horizontal=True):
-            add_text("Simulation running:")
-            add_text("false", tag="sim_running_lbl")
-
-        with group(tag="sim_grp", horizontal=True):
-            def on_sim_start_btn_clicked():
-                global sim_running
-
-                if sim_running:
-                    logger.error("Simulation is already running")
-                    return
-
-                sim.start()
-                sim_running = True
-                logger.debug("Started simulation")
-
-            def on_sim_stop_btn_clicked():
-                global sim_running
-
-                if not sim_running:
-                    logger.error("Simulation not running")
-                    return
-
-                sim.stop()
-                sim.wait()
-                sim_running = False
-                logger.debug("Stopped simulation")
-
-            add_button(label="Start", tag="sim_start_btn", callback=on_sim_start_btn_clicked)
-            add_button(label="Stop", tag="sim_stop_btn", callback=on_sim_stop_btn_clicked)
 
 #================================================
 # Flow Graph Window
@@ -197,17 +133,37 @@ with window(label="RX DSP Flow Graph", width=800, height=400, pos=(25,25), tag="
         add_node_link(get_alias_id("eq_out"), get_alias_id("pll_in"))
 
 #================================================
-# Time plots Window
+# Network plots Window
 
-with window(label="Time domain plots", width=800, height=400, pos=(850,25), tag="time_plots_win"):
-    locked_time_plot.construct_gui(width=780, height=300)
+recv_plot = network_plot(url="udp://localhost:31415", nsamples=100, label="Test", height=300, width=800)
+
+
+plots = {
+    recv_plot: "plt_ampl"
+}
+
+with window(label="Time domain plots", width=800, height=400, pos=(850,25)):
+    with recv_plot:
+        add_plot_axis(mvXAxis, label="Time")
+        add_plot_axis(mvYAxis, label="Amplitude", tag="plt_ampl")
+
+        add_line_series(recv_plot.x_data, recv_plot.y_data, parent="plt_ampl")
 
 #================================================
-# Start GUI
+# Start GUI and main loop
 
 # Start window and main loop
 show_viewport()
-start_dearpygui()
+
+# Main loop
+while is_dearpygui_running():
+    for plt, tag in plots.items():
+        plt.refresh(tag)
+
+    render_dearpygui_frame()
+
+#================================================
+# Close everything
 
 # clean up gui
 destroy_context()

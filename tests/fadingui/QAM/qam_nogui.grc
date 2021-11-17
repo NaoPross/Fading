@@ -471,7 +471,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [64, 252.0]
+    coordinate: [64, 236.0]
     rotation: 0
     state: true
 - name: fadingui_dearpygui_sink_0
@@ -486,7 +486,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2120, 200.0]
+    coordinate: [2096, 180.0]
     rotation: 0
     state: true
 
