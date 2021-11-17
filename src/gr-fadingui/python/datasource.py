@@ -1,23 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 2021 Naoki Pross, Sara Halter.
-#
-# This is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3, or (at your option)
-# any later version.
-#
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this software; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street,
-# Boston, MA 02110-1301, USA.
-#
+# Copyright 2021 Naoki Pross.
 
 import io
 
@@ -60,23 +44,27 @@ class datasource(gr.sync_block):
         self.fdata = np.fromfile(fname, np.byte)
         self.fsize = len(self.fdata)
 
-        # TODO: remove debugging statements
+        # TODO: remove debugging statements or create logger
         print(f"datasource: loaded file size={self.fsize}, head:")
         print(self.fdata[:10])
 
     def make_header(self, data_size):
         # TODO: check that data_size is not too big
         pilot = 0x1248
+
+        # TODO: implement hamming code for header
         header = f"p{pilot:04x}s{data_size:04x}d".encode("ascii")
+
         arr = np.frombuffer(header, dtype=np.dtype("byte"))
         return arr
 
     def work(self, input_items, output_items):
         out = output_items[0]
-        print(self.fpos)
 
         if self.fpos + self.vec_len > self.fsize:
             # FIXME: repair broken code below
+            # TODO: create logger
+            print(f"WARNING: the last {self.fsize - self.fpos} bytes were not sent!")
             self.fpos = 0
             return 0;
 
@@ -92,6 +80,7 @@ class datasource(gr.sync_block):
             self.fpos = 0
             return rest
 
+        # cache header if not saved
         if self.header_cache == None:
             self.header = self.make_header(self.vec_len)
 

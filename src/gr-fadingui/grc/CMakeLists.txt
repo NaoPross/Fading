@@ -19,5 +19,6 @@
 # Boston, MA 02110-1301, USA.
 install(FILES
     fadingui_datasource.block.yml
-    fadingui_dearpygui_sink.block.yml DESTINATION share/gnuradio/grc/blocks
+    fadingui_dearpygui_sink.block.yml
+    fadingui_xor_frame_sync.block.yml DESTINATION share/gnuradio/grc/blocks
 )
