@@ -425,6 +425,24 @@ blocks:
     coordinate: [2736, 1360.0]
     rotation: 0
     state: true
+- name: blocks_file_sink_0
+  id: blocks_file_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    append: 'False'
+    comment: ''
+    file: /home/sara/Documents/Fading/simulation/QAM_Fading/qam_fading_V2_output.grc
+    type: float
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2880, 84.0]
+    rotation: 0
+    state: disabled
 - name: blocks_throttle_0
   id: blocks_throttle
   parameters:
@@ -779,7 +797,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1032, 348.0]
+    coordinate: [1024, 340.0]
     rotation: 0
     state: enabled
 - name: params
@@ -1479,6 +1497,7 @@ blocks:
 connections:
 - [analog_random_source_x_0, '0', blocks_unpack_k_bits_bb_0_0, '0']
 - [analog_random_source_x_0, '0', digital_constellation_modulator_0, '0']
+- [blocks_char_to_float_0, '0', blocks_file_sink_0, '0']
 - [blocks_char_to_float_0, '0', qtgui_freq_sink_x_2_1, '0']
 - [blocks_char_to_float_0, '0', qtgui_time_sink_x_0, '0']
 - [blocks_char_to_float_0_0, '0', blocks_delay_0, '0']

@@ -850,6 +850,7 @@ class qam(gr.top_block, Qt.QWidget):
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.qtgui_freq_sink_x_1_0_1, 0))
         self.connect((self.digital_constellation_decoder_cb_0, 0), (self.digital_diff_decoder_bb_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.qtgui_const_sink_x_0, 0))
+        self.connect((self.digital_constellation_modulator_0, 0), (self.qtgui_eye_sink_x_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.qtgui_freq_sink_x_1, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.qtgui_time_sink_x_2, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.uhd_usrp_sink_0, 0))

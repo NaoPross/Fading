@@ -333,7 +333,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [920, 316.0]
+    coordinate: [912, 316.0]
     rotation: 0
     state: enabled
 - name: digital_costas_loop_cc_0
@@ -1031,7 +1031,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1400, 84.0]
+    coordinate: [1352, 172.0]
     rotation: 0
     state: true
 - name: qtgui_eye_sink_x_1

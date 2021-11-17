@@ -59,7 +59,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [224, 604.0]
+    coordinate: [224, 436.0]
     rotation: 0
     state: true
 - name: eq_gain
@@ -192,27 +192,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [1640, 428.0]
-    rotation: 0
-    state: true
-- name: qam_const
-  id: variable_constellation_rect
-  parameters:
-    comment: ''
-    const_points: '[(-3-3j), (-1-3j), (1-3j), (3-3j), (-3-1j), (-1-1j), (1-1j), (3-1j),
-      (-3+1j), (-1+1j), (1+1j), (3+1j), (-3+3j), (-1+3j), (1+3j), (3+3j)]'
-    imag_sect: '1'
-    precision: '4'
-    real_sect: '1'
-    rot_sym: '4'
-    soft_dec_lut: None
-    sym_map: '[0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10]'
-    w_imag_sect: '1'
-    w_real_sect: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [224, 436.0]
     rotation: 0
     state: true
 - name: rrc_taps
@@ -366,6 +345,24 @@ blocks:
     coordinate: [2264, 844.0]
     rotation: 0
     state: true
+- name: blocks_file_sink_0
+  id: blocks_file_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    append: 'False'
+    comment: ''
+    file: /home/sara/Documents/Fading/doc/thesis/figures/data/SImulation
+    type: float
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2432, 108.0]
+    rotation: 0
+    state: disabled
 - name: blocks_throttle_0
   id: blocks_throttle
   parameters:
@@ -1184,6 +1181,7 @@ blocks:
 connections:
 - [analog_random_source_x_0, '0', blocks_unpack_k_bits_bb_0_0, '0']
 - [analog_random_source_x_0, '0', digital_constellation_modulator_0, '0']
+- [blocks_char_to_float_0, '0', blocks_file_sink_0, '0']
 - [blocks_char_to_float_0, '0', qtgui_time_sink_x_0, '0']
 - [blocks_char_to_float_0_0, '0', blocks_delay_0, '0']
 - [blocks_delay_0, '0', qtgui_time_sink_x_0, '1']

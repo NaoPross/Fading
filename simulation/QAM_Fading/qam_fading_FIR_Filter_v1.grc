@@ -459,7 +459,7 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    fDTs: 10.0/samp_rate
+    fDTs: '0'
     maxoutbuf: '0'
     minoutbuf: '0'
     seed: '0'
@@ -467,7 +467,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [960, 332.0]
+    coordinate: [952, 332.0]
     rotation: 0
     state: true
 - name: digital_cma_equalizer_cc_0

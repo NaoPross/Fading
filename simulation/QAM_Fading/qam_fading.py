@@ -545,6 +545,8 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(2)
         self.blocks_unpack_k_bits_bb_0 = blocks.unpack_k_bits_bb(2)
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
+        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_float*1, '/home/sara/Documents/Fading/simulation/QAM_Fading/qam_fading_V2_output.grc', False)
+        self.blocks_file_sink_0.set_unbuffered(False)
         self.blocks_delay_0 = blocks.delay(gr.sizeof_float*1, 50)
         self.blocks_char_to_float_0_1 = blocks.char_to_float(1, 1)
         self.blocks_char_to_float_0_0 = blocks.char_to_float(1, 1)
@@ -558,6 +560,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         ##################################################
         self.connect((self.analog_random_source_x_0, 0), (self.blocks_unpack_k_bits_bb_0_0, 0))
         self.connect((self.analog_random_source_x_0, 0), (self.digital_constellation_modulator_0, 0))
+        self.connect((self.blocks_char_to_float_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.blocks_char_to_float_0, 0), (self.qtgui_freq_sink_x_2_1, 0))
         self.connect((self.blocks_char_to_float_0, 0), (self.qtgui_time_sink_x_0, 0))
         self.connect((self.blocks_char_to_float_0_0, 0), (self.blocks_delay_0, 0))
