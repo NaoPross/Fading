@@ -27,7 +27,7 @@ from gnuradio import gr
 
 class dearpygui_sink(gr.sync_block):
     """
-    docstring for block dearpygui_sink
+    DearPyGUI Sink
     """
     def __init__(self, sock_addr, ui_element_id):
         gr.sync_block.__init__(self,
@@ -40,7 +40,7 @@ class dearpygui_sink(gr.sync_block):
         self.srv = urlparse(sock_addr)
 
     def send(self, value):
-        data = bytes(repr(value), "ascii")
+        data = value.tobytes()
         sent = self.socket.sendto(data, (self.srv.hostname, self.srv.port))
 
         return len(data) == sent
