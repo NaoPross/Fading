@@ -8,20 +8,20 @@
 For the simulation task and after for the Hardware part, the open-source Software GNU Radio has been chosen. This software uses toolboxes for signal processing systems too simulate or/and implement a software-defined radio, based on Python and some C++ implementations for some rapid-application-development environments. The toolboxes can simply, with the help of the graphical user interface, used by drag-and-drop. The Boxes are used to write applications, to receive or to transmit date for a digital system. Some blocks like different filters, channel codes or demodulator elements and a lot more are already implemented. For missing application new elements can be added by coding own block. With the help of the GNU Radio software those toolboxes can easily get connected to each other, creating data streams. 
 
 \begin{figure}
-	\includegraphics[width=14cm]{./pdfs/qam_nogui.pdf}
+	\includegraphics[width=\linewidth]{./pdfs/qam_nogui.pdf}
 	\caption{GNU Radio Blocks}
 	\label{fig:simul16QAM_block}	
 \end{figure}
 
 
 \begin{figure}
-	\includegraphics[width=14cm]{./figures/screenshots/QAM16_Fading_2.png}
+	\includegraphics[width=\linewidth]{./figures/screenshots/QAM16_Fading_2.png}
 	\caption{Simulation results}
 	\label{fig:simul16QAM}	
 \end{figure}
 
 \begin{figure}
-	\includegraphics[width=14cm]{./figures/screenshots/QAM16_Fading_2_.png}
+	\includegraphics[width=\linewidth]{./figures/screenshots/QAM16_Fading_2_.png}
 	\caption{Simulation results}
 	\label{fig:simul16QAM_1}	
 \end{figure}
@@ -30,19 +30,17 @@ For the simulation task and after for the Hardware part, the open-source Softwar
 To get a basic line for further simulations a 16QAM has been made. The results of this simulation are shown in \figref{fig:simul16QAM} and \figref{fig:simul16QAM_1} as the red Signal. In \tabref{tab:modulation_settings} some importer Parameter settings for the Simulation Model are mentionet.
 
 \begin{table}[]
+	\centering
 	\caption{modulation settings}
-	\begin{tabular}[h]{|c|c|c|}
-		\hline
-		modulation type & Samples per Symbols & costas loop order\\
-		\hline
-		BPSK & & 2\\
-		\hline
-		QPSK & & 4\\
-		\hline
-		8PSK & & 8\\
-		\hline 
+	\begin{tabular}{ccc}
+		\toprule
+		Scheme & Samples per symbol & Costas Loop Order\\
+		\midrule
+		BPSK  & 1 & 2 \\
+		QPSK  & 2 & 4 \\
+		8PSK  & 3 & 8 \\
 		16QAM & 4 & 4 \\
-		\hline
+		\bottomrule
 	\end{tabular}
 	\label{tab:modulation_settings}
 \end{table}
