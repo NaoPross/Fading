@@ -52,6 +52,7 @@ class qam_nogui(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
+        self.fadingui_xor_frame_sync_0 = fadingui.xor_frame_sync(sync_pattern=[], buffer_size=128)
         self.fadingui_dearpygui_sink_0 = fadingui.dearpygui_sink(sock_addr='udp://localhost:31415', ui_element_id=0)
         self.fadingui_datasource_0 = fadingui.datasource(vec_len=2037, header_len=11, sock_addr='udp://', file_list=["./lena512color.tiff"])
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
@@ -93,9 +94,10 @@ class qam_nogui(gr.top_block):
         self.connect((self.digital_costas_loop_cc_0, 0), (self.digital_constellation_decoder_cb_0, 0))
         self.connect((self.digital_costas_loop_cc_0, 0), (self.fadingui_dearpygui_sink_0, 0))
         self.connect((self.digital_diff_decoder_bb_0, 0), (self.digital_map_bb_0, 0))
-        self.connect((self.digital_map_bb_0, 0), (self.blocks_null_sink_0, 0))
+        self.connect((self.digital_map_bb_0, 0), (self.fadingui_xor_frame_sync_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_cma_equalizer_cc_0, 0))
         self.connect((self.fadingui_datasource_0, 0), (self.blocks_vector_to_stream_0, 0))
+        self.connect((self.fadingui_xor_frame_sync_0, 0), (self.blocks_null_sink_0, 0))
 
 
     def get_sps(self):

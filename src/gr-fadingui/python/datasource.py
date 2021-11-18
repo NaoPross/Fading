@@ -10,7 +10,8 @@ from gnuradio import gr
 
 class datasource(gr.sync_block):
     """
-    Loads data from a file choosen in the graphical user interface.
+    Loads data from a file choosen in the graphical user interface, splits into
+    chunks and puts a preamble in front of it(frame).
     """
 
     HEADER_LEN = 11;

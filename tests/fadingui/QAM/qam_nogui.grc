@@ -265,7 +265,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2336, 424.0]
+    coordinate: [2584, 456.0]
     rotation: 0
     state: true
 - name: blocks_throttle_0
@@ -429,7 +429,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2136, 420.0]
+    coordinate: [2144, 452.0]
     rotation: 0
     state: true
 - name: digital_pfb_clock_sync_xxx_0
@@ -489,6 +489,24 @@ blocks:
     coordinate: [2096, 180.0]
     rotation: 0
     state: true
+- name: fadingui_xor_frame_sync_0
+  id: fadingui_xor_frame_sync
+  parameters:
+    affinity: ''
+    alias: ''
+    buffer_size: '128'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    pattern: '[]'
+    pattern_len: '10'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2304, 436.0]
+    rotation: 0
+    state: true
 
 connections:
 - [blocks_throttle_0, '0', channels_channel_model_0, '0']
@@ -500,9 +518,10 @@ connections:
 - [digital_costas_loop_cc_0, '0', digital_constellation_decoder_cb_0, '0']
 - [digital_costas_loop_cc_0, '0', fadingui_dearpygui_sink_0, '0']
 - [digital_diff_decoder_bb_0, '0', digital_map_bb_0, '0']
-- [digital_map_bb_0, '0', blocks_null_sink_0, '0']
+- [digital_map_bb_0, '0', fadingui_xor_frame_sync_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', digital_cma_equalizer_cc_0, '0']
 - [fadingui_datasource_0, '0', blocks_vector_to_stream_0, '0']
+- [fadingui_xor_frame_sync_0, '0', blocks_null_sink_0, '0']
 
 metadata:
   file_format: 1
