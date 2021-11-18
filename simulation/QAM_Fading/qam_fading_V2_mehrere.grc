@@ -36,7 +36,7 @@ blocks:
   id: variable_qtgui_range
   parameters:
     comment: ''
-    gui_hint: 'params@2: 0,1,1,1'
+    gui_hint: 'params@2: 0,0,1,1'
     label: LOS_NLOS
     min_len: '200'
     orient: Qt.Horizontal
@@ -50,14 +50,14 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1104, 484.0]
+    coordinate: [944, 444.0]
     rotation: 0
     state: true
 - name: amp_1
   id: variable_qtgui_range
   parameters:
     comment: ''
-    gui_hint: 'params@2: 1,0,1,1'
+    gui_hint: 'params@2: 1,1,1,1'
     label: Ampliude
     min_len: '200'
     orient: Qt.Horizontal
@@ -71,7 +71,49 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [984, 612.0]
+    coordinate: [1056, 588.0]
+    rotation: 0
+    state: true
+- name: amp_2
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 'params@2: 2,1,1,1'
+    label: Ampliude 2
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '0.1'
+    stop: '5'
+    value: '0'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1064, 716.0]
+    rotation: 0
+    state: true
+- name: amp_3
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 'params@2: 3,1,1,1'
+    label: Ampliude 3
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '0.1'
+    stop: '5'
+    value: '0'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1072, 852.0]
     rotation: 0
     state: true
 - name: chn_taps
@@ -165,7 +207,7 @@ blocks:
   id: variable_qtgui_range
   parameters:
     comment: ''
-    gui_hint: 'params@2: 0,0,1,1'
+    gui_hint: 'params@2: 1,0,1,1'
     label: Fading
     min_len: '200'
     orient: Qt.Horizontal
@@ -179,7 +221,49 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [984, 484.0]
+    coordinate: [944, 580.0]
+    rotation: 0
+    state: true
+- name: fading_2
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 'params@2: 2,0,1,1'
+    label: Fading 2
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: int
+    start: '0'
+    step: '1'
+    stop: '30'
+    value: '0'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [944, 716.0]
+    rotation: 0
+    state: true
+- name: fading_3
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 'params@2: 3,0,1,1'
+    label: Fading 3
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: int
+    start: '0'
+    step: '1'
+    stop: '30'
+    value: '0'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [944, 852.0]
     rotation: 0
     state: true
 - name: freq_offset
@@ -765,7 +849,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1136, 956.0]
+    coordinate: [1016, 1204.0]
     rotation: 0
     state: true
 - name: import_0
@@ -791,13 +875,13 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     samp_delay: '0'
-    taps: '[LOS_NLOS]+([0]*fading_1)+[amp_1]'
+    taps: '[LOS_NLOS]+(([0]*fading_1)+[amp_1])+(([0]*fading_2)+[amp_2])'
     type: ccc
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [952, 332.0]
+    coordinate: [936, 340.0]
     rotation: 0
     state: enabled
 - name: params
