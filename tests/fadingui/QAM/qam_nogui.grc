@@ -488,23 +488,23 @@ blocks:
     bus_structure: null
     coordinate: [2096, 180.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: fadingui_xor_frame_sync_0
   id: fadingui_xor_frame_sync
   parameters:
     affinity: ''
     alias: ''
-    buffer_size: '128'
+    buffer_size: '2048'
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    pattern: '[]'
-    pattern_len: '10'
+    pattern: '[0xbe, 0xef]'
+    pattern_len: '16'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2304, 436.0]
+    coordinate: [2312, 436.0]
     rotation: 0
     state: true
 

@@ -8,6 +8,7 @@ import io
 import numpy as np
 from gnuradio import gr
 
+
 class datasource(gr.sync_block):
     """
     Loads data from a file choosen in the graphical user interface, splits into
@@ -51,7 +52,7 @@ class datasource(gr.sync_block):
 
     def make_header(self, data_size):
         # TODO: check that data_size is not too big
-        pilot = 0x1248
+        pilot = 0xbeef
 
         # TODO: implement hamming code for header
         header = f"p{pilot:04x}s{data_size:04x}d".encode("ascii")

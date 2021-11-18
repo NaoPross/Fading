@@ -12,36 +12,48 @@ from gnuradio import gr
 
 class xor_frame_sync(gr.sync_block):
     """
-    docstring for block xor_frame_sync
+    Performs a frame synchronization by XOR matching a preamble bit sequence
     """
     def __init__(self, sync_pattern, buffer_size):
+        # TODO: buffer size should be in packets
         gr.sync_block.__init__(self,
             name="xor_frame_sync",
             in_sig=[np.byte],
             out_sig=[np.byte])
 
         # binary pattern to match
-        self.pattern = np.array(sync_pattern, dtype=np.dtype("uint8"))
-        self.nbits = len(sync_pattern)
+        self.pattern = np.unpackbits(np.array(sync_pattern, dtype=np.uint8))[::-1]
+        self.nbytes = len(sync_pattern)
+        self.nbits = len(self.pattern)
 
-        # buffer to delay the data
-        self.delay_fifo = RingBuffer(buffer_size, dtype=np.byte)
+        assert(self.nbits % 8 == 0)
 
-        # buffers to store cross correlation data
-        self.xcorr = RingBuffer(buffer_size, dtype=np.dtype("uint8"))
+        # packed buffer to delay the data
+        self.delaybuf = RingBuffer(buffer_size, dtype=np.uint8)
+        self.delay = 0
+
+        # unpacked buffer to compute correlation values, initially filled with zeros
+        self.corrbuf = RingBuffer(self.nbits)
+        self.corrbuf.extend(np.zeros(self.nbits))
+
+        # buffer to store correlation values
+        self.xcorrs = RingBuffer(buffer_size)
 
         # synchronization state
         self.synchronized = False
-        self.delay = 0
 
-    def xcorrelation(self):
+    def xcorrelation(self, v):
         """
-        Compute the binary correlation between the stream and the stored
-        pattern. Binary correlation between two bit vectors is just size of the
+        Compute the binary correlations between the stored pattern and
+        correlation buffer, while shifting v into the buffer.
+
+        Binary correlation between two bit vectors is just size of the
         vector(s) minus the number of bits that differ.
         """
-        unpacked = np.unpackbits(self.delay_fifo[0])
-        return self.nbits - sum(np.logical_xor(unpacked, self.pattern))
+        v_arr = np.array(v, dtype=np.uint8)
+        for b in np.unpackbits(v_arr):
+            self.corrbuf.appendleft(b)
+            yield self.nbits - np.sum(np.logical_xor(self.corrbuf, self.pattern))
 
     def work(self, input_items, output_items):
         """
@@ -51,29 +63,37 @@ class xor_frame_sync(gr.sync_block):
               pattern appears every k bits, where k is the size of the packet.
 
             - If the buffer is not synchronized, compute a binary cross
-              correlation to find how by much the stream should be delayed.
+              correlation to find how much the stream should be delayed.
+
+        Notes:
+
+            - Even though the block input is of type np.byte, inp is an array
+              of 255 bytes, probably for performance reasons.
+              TODO: block processing
         """
         inp = input_items[0]
         out = output_items[0]
 
-        # Add data to delay buffer
-        self.delay_fifo.appendleft(inp)
-
-        # TODO: check for synchronization, else compute
-
-        # Compute correlation
         if not self.synchronized:
-            self.xcorr.append(self.xcorrelation())
+            for v in inp:
+                # compute the cross correlation
+                xcs = self.xcorrelation(v)
 
-            peak = np.argmax(self.xcorr)
-            if self.xcorr[peak] != self.nbits:
-                print(f"Warning! XOR correlation is not perfect (peak value = {self.xcorr[peak]})")
+                # add cross correlations to buffer and save value
+                self.xcorrs.extend(list(xcs))
+                self.delaybuf.appendleft(v)
 
+            peak = np.argmax(self.xcorrs)
             self.delay = peak
             self.synchronized = True
 
+            if self.xcorrs[peak] != self.nbits:
+                self.synchronized = False
+                print(f"Warning! XOR correlation is not perfect (peak value = {self.xcorrs[peak]})")
+
+
         # return data with delay
-        out[:] = self.delay_fifo[self.delay]
+        out[:] = self.delaybuf[self.delay]
 
         return len(output_items[0])
 
