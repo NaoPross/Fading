@@ -89,7 +89,7 @@ class xor_frame_sync(gr.sync_block):
 
             if self.xcorrs[peak] != self.nbits:
                 self.synchronized = False
-                print(f"Warning! XOR correlation is not perfect (peak value = {self.xcorrs[peak]})")
+                print(f"Warning! XOR correlation  did not find a peak (max = {self.xcorrs[peak]} should be {self.nbits})")
 
 
         # return data with delay

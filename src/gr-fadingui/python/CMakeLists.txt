@@ -34,7 +34,9 @@ GR_PYTHON_INSTALL(
     __init__.py
     datasource.py
     dearpygui_sink.py
-    xor_frame_sync.py DESTINATION ${GR_PYTHON_DIR}/fadingui
+    xor_frame_sync.py
+    deframer.py
+    frame_obj.py DESTINATION ${GR_PYTHON_DIR}/fadingui
 )
 
 ########################################################################
