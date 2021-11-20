@@ -1,6 +1,7 @@
 id: fadingui_xor_frame_sync
 label: XOR Correlation Synchronizer
 category: '[fadingui]'
+flags: [ python ]
 
 templates:
   imports: import fadingui
@@ -15,14 +16,9 @@ parameters:
 - id: pattern
   label: Bit pattern
   dtype: raw
-
-- id: pattern_len
-  label: Pattern length
-  dtype: raw
-
 - id: buffer_size
   label: Delay buffer size
-  dtype: int
+  dtype: raw
 
 #  Make one 'inputs' list entry per input and one 'outputs' list entry per output.
 #  Keys include:

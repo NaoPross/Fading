@@ -9,6 +9,9 @@ from numpy_ringbuffer import RingBuffer
 
 from gnuradio import gr
 
+from fadingui.logger import get_logger
+log = get_logger("xor_frame_sync")
+
 
 class xor_frame_sync(gr.sync_block):
     """
@@ -26,6 +29,7 @@ class xor_frame_sync(gr.sync_block):
         self.nbytes = len(sync_pattern)
         self.nbits = len(self.pattern)
 
+        log.debug(f"Loaded pattern {self.pattern} length={self.nbits}")
         assert(self.nbits % 8 == 0)
 
         # packed buffer to delay the data
@@ -84,12 +88,14 @@ class xor_frame_sync(gr.sync_block):
                 self.delaybuf.appendleft(v)
 
             peak = np.argmax(self.xcorrs)
-            self.delay = peak
-            self.synchronized = True
+            if self.xcorrs[peak] == self.nbits:
+                self.delay = peak
+                self.synchronized = True
+                log.debug(f"Synchronized with delay={peak}")
 
-            if self.xcorrs[peak] != self.nbits:
+            else:
                 self.synchronized = False
-                print(f"Warning! XOR correlation  did not find a peak (max = {self.xcorrs[peak]} should be {self.nbits})")
+                log.warning(f"Did not find a peak (max={self.xcorrs[peak]}, should be {self.nbits})")
 
 
         # return data with delay

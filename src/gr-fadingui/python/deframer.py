@@ -8,9 +8,9 @@ from gnuradio import gr
 
 class deframer(gr.sync_block):
     """
-    docstring for block deframer
+    Check for integrity and remove frame header from packet.
     """
-    def __init__(self):
+    def __init__(self, frame_obj):
         gr.sync_block.__init__(self,
             name="deframer",
             in_sig=[np.byte],

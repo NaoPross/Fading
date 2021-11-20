@@ -32,6 +32,7 @@ endif()
 GR_PYTHON_INSTALL(
     FILES
     __init__.py
+    logger.py
     datasource.py
     dearpygui_sink.py
     xor_frame_sync.py

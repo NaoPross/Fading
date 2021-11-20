@@ -1,6 +1,7 @@
 id: fadingui_deframer
 label: Deframer
 category: '[fadingui]'
+labels: [ python ]
 
 templates:
   imports: import fadingui
