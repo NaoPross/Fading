@@ -71,7 +71,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1056, 588.0]
+    coordinate: [1056, 580.0]
     rotation: 0
     state: true
 - name: amp_2
@@ -113,7 +113,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1072, 852.0]
+    coordinate: [1064, 852.0]
     rotation: 0
     state: true
 - name: chn_taps
@@ -875,13 +875,13 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     samp_delay: '0'
-    taps: '[LOS_NLOS]+(([0]*fading_1)+[amp_1])+(([0]*fading_2)+[amp_2])'
+    taps: '[LOS_NLOS]+(([0]*fading_1)+[amp_1])+(([0]*fading_2)+[amp_2])+(([0]*fading_3)+[amp_3])'
     type: ccc
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [936, 340.0]
+    coordinate: [992, 340.0]
     rotation: 0
     state: enabled
 - name: params
