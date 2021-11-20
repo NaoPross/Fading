@@ -36,7 +36,7 @@ blocks:
   id: variable_qtgui_range
   parameters:
     comment: ''
-    gui_hint: 'params@2: 0,1,1,1'
+    gui_hint: 'params@2: 0,0,1,1'
     label: LOS_NLOS
     min_len: '200'
     orient: Qt.Horizontal
@@ -50,14 +50,14 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1104, 484.0]
+    coordinate: [944, 444.0]
     rotation: 0
     state: true
 - name: amp_1
   id: variable_qtgui_range
   parameters:
     comment: ''
-    gui_hint: 'params@2: 1,0,1,1'
+    gui_hint: 'params@2: 1,1,1,1'
     label: Ampliude
     min_len: '200'
     orient: Qt.Horizontal
@@ -71,7 +71,49 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [984, 612.0]
+    coordinate: [1056, 580.0]
+    rotation: 0
+    state: true
+- name: amp_2
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 'params@2: 2,1,1,1'
+    label: Ampliude 2
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '0.1'
+    stop: '5'
+    value: '0'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1064, 716.0]
+    rotation: 0
+    state: true
+- name: amp_3
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 'params@2: 3,1,1,1'
+    label: Ampliude 3
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '0.1'
+    stop: '5'
+    value: '0'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1064, 852.0]
     rotation: 0
     state: true
 - name: chn_taps
@@ -165,7 +207,7 @@ blocks:
   id: variable_qtgui_range
   parameters:
     comment: ''
-    gui_hint: 'params@2: 0,0,1,1'
+    gui_hint: 'params@2: 1,0,1,1'
     label: Fading
     min_len: '200'
     orient: Qt.Horizontal
@@ -179,7 +221,49 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [984, 484.0]
+    coordinate: [944, 580.0]
+    rotation: 0
+    state: true
+- name: fading_2
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 'params@2: 2,0,1,1'
+    label: Fading 2
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: int
+    start: '0'
+    step: '1'
+    stop: '30'
+    value: '0'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [944, 716.0]
+    rotation: 0
+    state: true
+- name: fading_3
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 'params@2: 3,0,1,1'
+    label: Fading 3
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: int
+    start: '0'
+    step: '1'
+    stop: '30'
+    value: '0'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [944, 852.0]
     rotation: 0
     state: true
 - name: freq_offset
@@ -765,7 +849,49 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1136, 956.0]
+    coordinate: [1016, 1204.0]
+    rotation: 0
+    state: true
+- name: epy_block_0
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\n\n\nclass blk(gr.sync_block):  # other base classes\
+      \ are basic_block, decim_block, interp_block\n    \"\"\"Embedded Python Block\
+      \ example - a simple multiply const\"\"\"\n\n    def __init__(self, amplitudes=[],\
+      \ delays=[]):  # only default arguments here\n        \"\"\"arguments to this\
+      \ function show up as parameters in GRC\"\"\"\n        gr.sync_block.__init__(\n\
+      \            self,\n            name='Embedded Python Block',   # will show\
+      \ up in GRC\n            in_sig=[np.complex64],\n            out_sig=[np.complex64]\n\
+      \        )\n        # if an attribute with the same name as a parameter is found,\n\
+      \        # a callback is registered (properties work, too).\n        self.amplitues\
+      \ = amplitudes\n        self.delays = delays\n\n        #self.fir = \n\n   \
+      \ def work(self, input_items, output_items):\n        \"\"\"example: multiply\
+      \ with constant\"\"\"\n        inp = input_items[0]\n        oup = output_items[0]\n\
+      \        amplitudes = [0.2, 0.5 ,0.8]\n        delays = [3,5,2]\n        i =\
+      \ len(amplitudes)\n\n        outp[:] = [([1]+[0 for n in range (0,delays[i])]+[amplitudes[i]])\
+      \ for i in range(0,i)]\n\n        return len(output_items[0])\n\n\nif __name__\
+      \ == '__main__':\n    ampl = [0.2, 0.5 ,0.8]\n    delays = [3,5,2]\n    i =\
+      \ len(ampl)\n    [([1]+[0 for n in range (0,delays[i])]+[ampl[i]]) for i in\
+      \ range(0,i)]\n\n\n"
+    affinity: ''
+    alias: ''
+    amplitudes: '[0.2, 0.5 ,0.8]'
+    comment: ''
+    delays: '[3,5,2]'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('Embedded Python Block', 'blk', [('amplitudes', '[]'), ('delays',
+      '[]')], [('0', 'complex', 1)], [('0', 'complex', 1)], 'Embedded Python Block
+      example - a simple multiply const', ['delays'])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [992, 340.0]
     rotation: 0
     state: true
 - name: import_0
@@ -781,25 +907,6 @@ blocks:
     coordinate: [600, 20.0]
     rotation: 0
     state: true
-- name: interp_fir_filter_xxx_0
-  id: interp_fir_filter_xxx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    interp: '1'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samp_delay: '2'
-    taps: '[amp_1]'
-    type: ccc
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1000, 340.0]
-    rotation: 0
-    state: enabled
 - name: params
   id: qtgui_tab_widget
   parameters:
@@ -957,7 +1064,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1052.0, -48]
+    coordinate: [1004.0, -96]
     rotation: 90
     state: enabled
 - name: qtgui_const_sink_x_0_0
@@ -1509,7 +1616,7 @@ connections:
 - [blocks_unpack_k_bits_bb_0_0, '0', blocks_char_to_float_0_0, '0']
 - [blocks_unpack_k_bits_bb_0_1, '0', blocks_char_to_float_0_1, '0']
 - [channels_channel_model_0, '0', digital_pfb_clock_sync_xxx_0_0, '0']
-- [channels_channel_model_0, '0', interp_fir_filter_xxx_0, '0']
+- [channels_channel_model_0, '0', epy_block_0, '0']
 - [channels_channel_model_0, '0', qtgui_const_sink_x_0, '1']
 - [channels_channel_model_0, '0', qtgui_freq_sink_x_0, '1']
 - [digital_cma_equalizer_cc_0, '0', digital_costas_loop_cc_0, '0']
@@ -1531,9 +1638,9 @@ connections:
 - [digital_pfb_clock_sync_xxx_0, '0', qtgui_const_sink_x_0_0, '0']
 - [digital_pfb_clock_sync_xxx_0_0, '0', digital_cma_equalizer_cc_0_0, '0']
 - [digital_pfb_clock_sync_xxx_0_0, '0', qtgui_const_sink_x_0_0, '1']
-- [interp_fir_filter_xxx_0, '0', digital_pfb_clock_sync_xxx_0, '0']
-- [interp_fir_filter_xxx_0, '0', qtgui_const_sink_x_0, '0']
-- [interp_fir_filter_xxx_0, '0', qtgui_freq_sink_x_0, '0']
+- [epy_block_0, '0', digital_pfb_clock_sync_xxx_0, '0']
+- [epy_block_0, '0', qtgui_const_sink_x_0, '0']
+- [epy_block_0, '0', qtgui_freq_sink_x_0, '0']
 
 metadata:
   file_format: 1
