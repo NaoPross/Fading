@@ -22,7 +22,8 @@ SOURCES := \
 	figures/tikz/multipath-sketch.tex \
 	figures/tikz/multipath-impulse-response.tex \
 	figures/tikz/multipath-frequency-response-plots.tex \
-	figures/tikz/tapped-delay-line.tex
+	figures/tikz/tapped-delay-line.tex \
+	figures/tikz/packet-frame.tex
 
 DATA := figures/data/multipath_frequency_response.dat
 

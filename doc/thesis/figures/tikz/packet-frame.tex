@@ -1,0 +1,41 @@
+% vim:ts=2 sw=2:
+\begin{tikzpicture}[
+		brace/.style = {
+			decorate,
+			decoration = {
+				calligraphic brace,
+				amplitude = 3mm,
+				raise = 1mm,
+				mirror,
+			},
+			very thick,
+			pen colour = {black} 
+		},
+	]
+	\matrix[
+		column sep = -1pt,
+		nodes = {
+			draw, rectangle, thick,
+			minimum height = 12mm,
+			text width = 20mm,
+			align = center,
+		},
+	]{
+		\node {Preamble \\ \(k\) Bytes}; &
+		\node (pad) {Padding \\ 1 Bit}; &
+		\node (id) {ID \\ 5 Bits}; &
+		\node {Length \\ 21 Bits}; &
+		\node (par) {Parity \\ 5 Bits}; &
+		\node {Payload \\ \(\ell\) Bytes}; \\
+		% \node{Padding }; \\
+	};
+
+	\draw[brace] (id.south west) --
+		node[midway, below = 5mm] {(31, 26) Hamming ECC}
+		(par.south east);
+
+	% \draw[brace] (par.north east) --
+	% 	node[midway, above = 5mm] {4 Bytes}
+	% 	(pad.north west);
+
+\end{tikzpicture}
