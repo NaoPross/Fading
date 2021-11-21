@@ -38,6 +38,30 @@ From the complex space the constellation points are decode to bits.
 
 \subsection{Frame synchronization}
 
+\begin{figure}
+	\centering
+	\skelfig[width = .8\linewidth, height = 3cm]{Frame}
+	\caption{
+		Structure of framed data packets used in the implementation.
+		\label{fig:dataframe}
+	}
+\end{figure}
+
+To compute the empirical \emph{bit error rate} (BER) of the setup, the data has to be framed on by the sender and the bitstream synchronized on the receiver side. The structure of a data packed used in the implementation is shown in \figref{fig:dataframe}. A frame begins with an user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the maximum payload size is 2 MiB, which together with \(2^5 = 32\) possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple.
+
+On the receiver side the bitstream is synchronized using a XOR correlator. To find the synchronization delay \(d\) (in samples) the XOR correlator computes the binary cross correlation
+\begin{equation} \label{eqn:binary-xcorr}
+	R_{\vec{m}\vec{p}} = N - \sum_i (\vec{m} \oplus \vec{p})_i
+\end{equation}
+between the synchronization bit pattern \(\vec{p}\) and a shift register \(\vec{m}(n)\) of the same length \(N\). Put into words \eqref{eqn:binary-xcorr} subtracts the number bits that differ between \(\vec{m}\) and \(\vec{p}\) from the length of the registers. Thus if all bits are equal, the difference is zero and the correlations has a maximum value of \(N\). The task of the correlator is then to find the delay / skip such that the pattern maches, i.e.
+\begin{equation}
+	d = \argmax_n \big( R_{\vec{m}\vec{p}}(n) \big)
+		= \argmax_n \left( N - \sum_i (\vec{m}(n) \oplus \vec{p})_i \right)
+	.
+\end{equation}
+
+Once the bit stream is synchronized, the packets are deframed and the payloads compared to a local copy of the sent data to compute the BER, again by XOR'ing the data blocks and counting the bit that are set. Further details are discussed in \S\ref{sec:ber}.
+
 \section{Channel simulations}
 
 Here its possible to add some AWGN noise in the channel line. Different parameters can be changed like the noise voltage, time or the frequency offset.
@@ -61,7 +85,8 @@ For the Hardware setup up some changes are made in the file from the 16QAM simul
 
 Instead of the channel modeling block the USRP blocks are used. The sink as transmitter and the source as resiver.  The Signal is sended on a center frequency of 2.4GHz.
 
-\subsection{Empirical BER}
+\subsection{Empirical BER} \label{sec:ber}
+
 \subsection{Measurements}
 
 %
