@@ -1,0 +1,31 @@
+id: fadingui_frame_obj
+label: Frame Object
+category: '[fadingui]'
+flags: [ show_id, python ]
+
+#  Make one 'parameters' list entry for every parameter you want settable from the GUI.
+#     Keys include:
+#     * id (makes the value accessible as \$keyname, e.g. in the make entry)
+#     * label (label shown in the GUI)
+#     * dtype (e.g. int, float, complex, byte, short, xxx_vector, ...)
+parameters:
+- id: preamble
+  label: Preamble
+  dtype: int_vector
+  default: '[0xbe, 0xef]'
+- id: payload_len
+  label: Payload length
+  dtype: int
+  default: 4096
+
+value: ${ fadingui.frame_obj }
+
+
+templates:
+  imports: import fadingui
+  var_make: |-
+      self.${id} = ${id} = fadingui.frame_obj(preamble=${preamble}, payload_len=${payload_len})
+
+#  'file_format' specifies the version of the GRC yml format used in the file
+#  and should usually not be changed.
+file_format: 1

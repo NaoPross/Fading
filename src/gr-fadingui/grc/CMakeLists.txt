@@ -20,5 +20,7 @@
 install(FILES
     fadingui_datasource.block.yml
     fadingui_dearpygui_sink.block.yml
-    fadingui_xor_frame_sync.block.yml DESTINATION share/gnuradio/grc/blocks
+    fadingui_xor_frame_sync.block.yml
+    fadingui_deframer.block.yml
+    fadingui_frame_obj.block.yml DESTINATION share/gnuradio/grc/blocks
 )

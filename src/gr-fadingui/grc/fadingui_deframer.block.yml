@@ -1,11 +1,11 @@
-id: fadingui_xor_frame_sync
-label: XOR Correlation Synchronizer
+id: fadingui_deframer
+label: Deframer
 category: '[fadingui]'
-flags: [ python ]
+labels: [ python ]
 
 templates:
   imports: import fadingui
-  make: fadingui.xor_frame_sync(sync_pattern=${pattern}, buffer_size=${buffer_size})
+  make: fadingui.deframer(frame_obj=${frame_obj})
 
 #  Make one 'parameters' list entry for every parameter you want settable from the GUI.
 #     Keys include:
@@ -13,11 +13,8 @@ templates:
 #     * label (label shown in the GUI)
 #     * dtype (e.g. int, float, complex, byte, short, xxx_vector, ...)
 parameters:
-- id: pattern
-  label: Bit pattern
-  dtype: raw
-- id: buffer_size
-  label: Delay buffer size
+- id: frame_obj
+  label: Frame Object
   dtype: raw
 
 #  Make one 'inputs' list entry per input and one 'outputs' list entry per output.

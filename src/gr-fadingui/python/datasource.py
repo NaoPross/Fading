@@ -8,86 +8,75 @@ import io
 import numpy as np
 from gnuradio import gr
 
-class datasource(gr.sync_block):
+from fadingui.logger import get_logger
+log = get_logger("datasource")
+
+
+class datasource(gr.basic_block):
     """
-    Loads data from a file choosen in the graphical user interface.
+    Loads data from a file choosen splits into chunks and pack them into
+    frames.
     """
 
-    HEADER_LEN = 11;
-
-    def __init__(self, vec_len, header_len, sock_addr, file_list):
-        # FIXME: find a better solution
-        assert(header_len == datasource.HEADER_LEN)
-
-        gr.sync_block.__init__(self,
+    def __init__(self, frame_obj, filename):
+        gr.basic_block.__init__(self,
             name="datasource",
             in_sig=None,
-            out_sig=[np.dtype(f'{vec_len + header_len}b')])
+            out_sig=[np.byte])
 
-        # parameters
-        self.vec_len = vec_len
-        self.sock_addr = sock_addr
-        self.file_list = file_list
+        # Frame object
+        self.frame = frame_obj
 
         # file members
-        self.fdata = None
-        self.fsize = None
-        self.fpos = 0
-
-        # cache
-        self.header_cache = None
-
-        # TODO: make it possible to choose from UI
-        self.load_file(file_list[0])
-
-    def load_file(self, fname):
-        self.fdata = np.fromfile(fname, np.byte)
+        self.fname = filename
+        self.fdata = np.fromfile(self.fname, np.byte)
         self.fsize = len(self.fdata)
 
-        # TODO: remove debugging statements or create logger
-        print(f"datasource: loaded file size={self.fsize}, head:")
-        print(self.fdata[:10])
+        # a frame has 5 id bits so, there can only be 2 ** 5 chunks per file
+        # see docstring of frame_obj for more details
+        nblocks = int(self.fsize / self.frame.payload_length)
+        log.debug(f"Loaded {self.fsize} bytes = {nblocks} blocks from name={self.fname}")
+        assert nblocks < 2 ** 5, "Payload size too small or file too big"
 
-    def make_header(self, data_size):
-        # TODO: check that data_size is not too big
-        pilot = 0x1248
+        self.fpos = 0
+        self.blocknr = 0
 
-        # TODO: implement hamming code for header
-        header = f"p{pilot:04x}s{data_size:04x}d".encode("ascii")
+        # would have been nice to have but does not work
+        # self.set_min_noutput_items(frame_obj.length)
 
-        arr = np.frombuffer(header, dtype=np.dtype("byte"))
-        return arr
+        # FIXME: implement buffering
+        # output buffer
+        self.outbuffer = np.array([])
 
-    def work(self, input_items, output_items):
+    def general_work(self, input_items, output_items):
         out = output_items[0]
 
-        if self.fpos + self.vec_len > self.fsize:
-            # FIXME: repair broken code below
-            # TODO: create logger
-            print(f"WARNING: the last {self.fsize - self.fpos} bytes were not sent!")
+
+        # FIXME: if there is leftover buffer add that first
+        # if self.outbuffer.size > 0:
+        #     log.debug("Frame did not fit into buffer")
+        #     out[:len(self.outbuffer)] = self.outbuffer
+
+        if self.fpos + self.frame.payload_length > self.fsize:
+            # FIXME: implement edge case
+            log.warning(f"The last {self.fsize - self.fpos} bytes were not sent!")
             self.fpos = 0
+            self.blocknr = 0
+
+            log.debug("File finished, starting over")
             return 0;
 
-            rest = self.fsize - self.fpos
+        data = self.fdata[self.fpos:self.fpos + self.frame.payload_length]
+        frame_bytes = self.frame.make(self.blocknr, self.frame.payload_length, data)
 
-            # cannot use cached header
-            header = self.make_header(rest)
-            data = self.fdata[self.fpos:rest]
+        out[:] = frame_bytes[:len(out)]
+        self.outbuffer = frame_bytes[len(out):]
 
-            frame_size = datasource.HEADER_LEN + rest
-            out[:] = np.concatenate([header, data])
+        log.debug(f"Sent frame nr={self.blocknr}")
+        log.debug(f"Set bytes {out}")
 
-            self.fpos = 0
-            return rest
+        self.fpos += self.frame.payload_length
+        self.blocknr += 1
 
-        # cache header if not saved
-        if self.header_cache == None:
-            self.header = self.make_header(self.vec_len)
-
-        data = self.fdata[self.fpos:self.fpos + self.vec_len]
-
-        out[:] = np.concatenate([self.header, data])
-
-        self.fpos += self.vec_len
-        return len(output_items[0])
+        return self.frame.length
 

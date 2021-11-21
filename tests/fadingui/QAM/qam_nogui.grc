@@ -8,7 +8,7 @@ options:
     description: ''
     gen_cmake: 'On'
     gen_linking: dynamic
-    generate_options: no_gui
+    generate_options: qt_gui
     hier_block_src_path: '.:'
     id: qam_nogui
     max_nouts: '0'
@@ -18,7 +18,7 @@ options:
     realtime_scheduling: '1'
     run: 'True'
     run_command: '{python} -u {filename}'
-    run_options: prompt
+    run_options: run
     sizing_mode: fixed
     thread_safe_setters: ''
     title: QAM
@@ -59,7 +59,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [440, 604.0]
+    coordinate: [448, 436.0]
     rotation: 0
     state: true
 - name: eq_gain
@@ -110,6 +110,20 @@ blocks:
     coordinate: [536, 268.0]
     rotation: 0
     state: true
+- name: frame
+  id: fadingui_frame_obj
+  parameters:
+    alias: ''
+    comment: ''
+    payload_len: '32768'
+    preamble: '[190, 239]'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [192, 180.0]
+    rotation: 0
+    state: true
 - name: freq_offset
   id: variable
   parameters:
@@ -138,7 +152,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 100e-6
+    value: '0'
   states:
     bus_sink: false
     bus_source: false
@@ -150,33 +164,12 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 2 * 3.141592653589793 / 100
+    value: '.002'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
     coordinate: [1792, 428.0]
-    rotation: 0
-    state: true
-- name: qam_const
-  id: variable_constellation_rect
-  parameters:
-    comment: ''
-    const_points: '[(-3-3j), (-1-3j), (1-3j), (3-3j), (-3-1j), (-1-1j), (1-1j), (3-1j),
-      (-3+1j), (-1+1j), (1+1j), (3+1j), (-3+3j), (-1+3j), (1+3j), (3+3j)]'
-    imag_sect: '1'
-    precision: '4'
-    real_sect: '1'
-    rot_sym: '4'
-    soft_dec_lut: None
-    sym_map: '[0, 4, 12, 8, 1, 5, 13, 9, 3, 7, 15, 11, 2, 6, 14, 10]'
-    w_imag_sect: '1'
-    w_real_sect: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [440, 444.0]
     rotation: 0
     state: true
 - name: rrc_taps
@@ -200,7 +193,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [192, 12.0]
+    coordinate: [232, 12.0]
     rotation: 0
     state: enabled
 - name: sps
@@ -239,18 +232,6 @@ blocks:
     coordinate: [1184, 556.0]
     rotation: 0
     state: true
-- name: variable_4
-  id: variable
-  parameters:
-    comment: ''
-    value: '0'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1312, 556.0]
-    rotation: 0
-    state: true
 - name: blocks_null_sink_0
   id: blocks_null_sink
   parameters:
@@ -265,7 +246,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2336, 424.0]
+    coordinate: [2824, 312.0]
     rotation: 0
     state: true
 - name: blocks_throttle_0
@@ -284,27 +265,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [688, 356.0]
+    coordinate: [720, 356.0]
     rotation: 0
     state: enabled
-- name: blocks_vector_to_stream_0
-  id: blocks_vector_to_stream
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    num_items: '2048'
-    type: byte
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [248, 360.0]
-    rotation: 0
-    state: true
 - name: channels_channel_model_0
   id: channels_channel_model
   parameters:
@@ -429,7 +392,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2136, 420.0]
+    coordinate: [2144, 452.0]
     rotation: 0
     state: true
 - name: digital_pfb_clock_sync_xxx_0
@@ -461,17 +424,15 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    file_list: '["./lena512color.tiff"]'
-    header_len: '11'
+    fname: /home/god/Documents/Fading/tests/fadingui/QAM/lena512color.tiff
+    frame_obj: frame
     maxoutbuf: '0'
     minoutbuf: '0'
-    sock_addr: udp://
-    vec_len: '2037'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [72, 212.0]
+    coordinate: [144, 284.0]
     rotation: 0
     state: true
 - name: fadingui_dearpygui_sink_0
@@ -488,21 +449,150 @@ blocks:
     bus_structure: null
     coordinate: [2096, 180.0]
     rotation: 0
+    state: disabled
+- name: fadingui_deframer_0
+  id: fadingui_deframer
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    frame_obj: frame
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2592, 452.0]
+    rotation: 0
     state: true
+- name: fadingui_xor_frame_sync_0
+  id: fadingui_xor_frame_sync
+  parameters:
+    affinity: ''
+    alias: ''
+    buffer_size: frame.length * 4
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    pattern: frame.preamble
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2312, 444.0]
+    rotation: 0
+    state: true
+- name: qtgui_const_sink_x_0
+  id: qtgui_const_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'False'
+    axislabels: 'True'
+    color1: '"blue"'
+    color10: '"red"'
+    color2: '"red"'
+    color3: '"red"'
+    color4: '"red"'
+    color5: '"red"'
+    color6: '"red"'
+    color7: '"red"'
+    color8: '"red"'
+    color9: '"red"'
+    comment: ''
+    grid: 'False'
+    gui_hint: ''
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    marker1: '0'
+    marker10: '0'
+    marker2: '0'
+    marker3: '0'
+    marker4: '0'
+    marker5: '0'
+    marker6: '0'
+    marker7: '0'
+    marker8: '0'
+    marker9: '0'
+    name: '""'
+    nconnections: '3'
+    size: '1024'
+    style1: '0'
+    style10: '0'
+    style2: '0'
+    style3: '0'
+    style4: '0'
+    style5: '0'
+    style6: '0'
+    style7: '0'
+    style8: '0'
+    style9: '0'
+    tr_chan: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_slope: qtgui.TRIG_SLOPE_POS
+    tr_tag: '""'
+    type: complex
+    update_time: '0.10'
+    width1: '1'
+    width10: '1'
+    width2: '1'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    xmax: '2'
+    xmin: '-2'
+    ymax: '2'
+    ymin: '-2'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2040, 32.0]
+    rotation: 0
+    state: enabled
 
 connections:
 - [blocks_throttle_0, '0', channels_channel_model_0, '0']
-- [blocks_vector_to_stream_0, '0', digital_constellation_modulator_0, '0']
 - [channels_channel_model_0, '0', digital_pfb_clock_sync_xxx_0, '0']
 - [digital_cma_equalizer_cc_0, '0', digital_costas_loop_cc_0, '0']
+- [digital_cma_equalizer_cc_0, '0', qtgui_const_sink_x_0, '1']
 - [digital_constellation_decoder_cb_0, '0', digital_diff_decoder_bb_0, '0']
 - [digital_constellation_modulator_0, '0', blocks_throttle_0, '0']
 - [digital_costas_loop_cc_0, '0', digital_constellation_decoder_cb_0, '0']
 - [digital_costas_loop_cc_0, '0', fadingui_dearpygui_sink_0, '0']
+- [digital_costas_loop_cc_0, '0', qtgui_const_sink_x_0, '2']
 - [digital_diff_decoder_bb_0, '0', digital_map_bb_0, '0']
-- [digital_map_bb_0, '0', blocks_null_sink_0, '0']
+- [digital_map_bb_0, '0', fadingui_xor_frame_sync_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', digital_cma_equalizer_cc_0, '0']
-- [fadingui_datasource_0, '0', blocks_vector_to_stream_0, '0']
+- [digital_pfb_clock_sync_xxx_0, '0', qtgui_const_sink_x_0, '0']
+- [fadingui_datasource_0, '0', digital_constellation_modulator_0, '0']
+- [fadingui_deframer_0, '0', blocks_null_sink_0, '0']
+- [fadingui_xor_frame_sync_0, '0', fadingui_deframer_0, '0']
 
 metadata:
   file_format: 1
