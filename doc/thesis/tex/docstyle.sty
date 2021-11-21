@@ -41,6 +41,8 @@
 \fi
 
 %% Font configuration
+% Use libertine for serif fonts
+% \RequirePackage{libertine}
 % use roboto for sans serif
 \RequirePackage{roboto}
 % Bera for monospaced font
@@ -125,5 +127,17 @@
 
 % and set style
 \lstset{style=minimalist, escapechar=`}
+
+%% Change style of headings etc.
+\RedeclareSectionCommand[beforeskip=0pt,afterskip=3\baselineskip]{chapter}
+\renewcommand*{\chapterformat}{%
+	\chapappifchapterprefix{\nobreakspace}
+	{%
+		\bfseries\slshape\sffamily\color{blue!30!white}%
+		\fontsize{3em}{0em}\selectfont%
+		\thechapter\autodot%
+	}
+	\normalfont\enskip
+}
 
 % vim: set ts=2 sw=2 noet:
