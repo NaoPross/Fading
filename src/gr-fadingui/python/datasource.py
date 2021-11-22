@@ -35,7 +35,7 @@ class datasource(gr.basic_block):
         # a frame has 5 id bits so, there can only be 2 ** 5 chunks per file
         # see docstring of frame_obj for more details
         nblocks = int(self.fsize / self.frame.payload_length)
-        log.debug(f"Loaded {self.fsize} bytes = {nblocks} blocks from {self.fname}")
+        log.debug(f"Loaded {self.fsize} bytes == {nblocks} blocks from {self.fname}")
         assert nblocks < 2 ** 5, "Payload size too small or file too big"
 
         self.fpos = 0
@@ -73,7 +73,7 @@ class datasource(gr.basic_block):
         self.outbuffer = frame_bytes[len(out):]
 
         log.debug(f"Sent frame nr={self.blocknr}")
-        log.debug(f"Set bytes {out}")
+        log.debug(f"Sent bytes {out}")
 
         self.fpos += self.frame.payload_length
         self.blocknr += 1

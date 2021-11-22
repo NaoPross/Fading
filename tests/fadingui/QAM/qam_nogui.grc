@@ -66,7 +66,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 10e-3
+    value: '.002'
   states:
     bus_sink: false
     bus_source: false
@@ -164,7 +164,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '.002'
+    value: '.01'
   states:
     bus_sink: false
     bus_source: false
@@ -246,7 +246,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2824, 312.0]
+    coordinate: [3056, 280.0]
     rotation: 0
     state: true
 - name: blocks_throttle_0
@@ -268,6 +268,25 @@ blocks:
     coordinate: [720, 356.0]
     rotation: 0
     state: enabled
+- name: blocks_throttle_1
+  id: blocks_throttle
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    ignoretag: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1448, 772.0]
+    rotation: 0
+    state: disabled
 - name: channels_channel_model_0
   id: channels_channel_model
   parameters:
@@ -307,7 +326,7 @@ blocks:
     bus_structure: null
     coordinate: [1504, 284.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: digital_constellation_decoder_cb_0
   id: digital_constellation_decoder_cb
   parameters:
@@ -323,7 +342,7 @@ blocks:
     bus_structure: null
     coordinate: [2152, 276.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: digital_constellation_modulator_0
   id: digital_constellation_modulator
   parameters:
@@ -362,7 +381,7 @@ blocks:
     bus_structure: null
     coordinate: [1792, 280.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: digital_diff_decoder_bb_0
   id: digital_diff_decoder_bb
   parameters:
@@ -376,9 +395,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2192, 348.0]
-    rotation: 180
-    state: true
+    coordinate: [2408, 276.0]
+    rotation: 0
+    state: enabled
 - name: digital_map_bb_0
   id: digital_map_bb
   parameters:
@@ -392,9 +411,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2144, 452.0]
+    coordinate: [2304, 372.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: digital_pfb_clock_sync_xxx_0
   id: digital_pfb_clock_sync_xxx
   parameters:
@@ -417,7 +436,7 @@ blocks:
     bus_structure: null
     coordinate: [1184, 308.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: fadingui_datasource_0
   id: fadingui_datasource
   parameters:
@@ -463,7 +482,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2592, 452.0]
+    coordinate: [2728, 276.0]
     rotation: 0
     state: true
 - name: fadingui_xor_frame_sync_0
@@ -471,7 +490,7 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    buffer_size: frame.length * 4
+    buffer_size: frame.length * 5
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -480,7 +499,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2312, 444.0]
+    coordinate: [2512, 364.0]
     rotation: 0
     state: true
 - name: qtgui_const_sink_x_0
@@ -578,6 +597,7 @@ blocks:
 
 connections:
 - [blocks_throttle_0, '0', channels_channel_model_0, '0']
+- [blocks_throttle_1, '0', fadingui_xor_frame_sync_0, '0']
 - [channels_channel_model_0, '0', digital_pfb_clock_sync_xxx_0, '0']
 - [digital_cma_equalizer_cc_0, '0', digital_costas_loop_cc_0, '0']
 - [digital_cma_equalizer_cc_0, '0', qtgui_const_sink_x_0, '1']
@@ -587,9 +607,11 @@ connections:
 - [digital_costas_loop_cc_0, '0', fadingui_dearpygui_sink_0, '0']
 - [digital_costas_loop_cc_0, '0', qtgui_const_sink_x_0, '2']
 - [digital_diff_decoder_bb_0, '0', digital_map_bb_0, '0']
+- [digital_diff_decoder_bb_0, '0', fadingui_xor_frame_sync_0, '0']
 - [digital_map_bb_0, '0', fadingui_xor_frame_sync_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', digital_cma_equalizer_cc_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', qtgui_const_sink_x_0, '0']
+- [fadingui_datasource_0, '0', blocks_throttle_1, '0']
 - [fadingui_datasource_0, '0', digital_constellation_modulator_0, '0']
 - [fadingui_deframer_0, '0', blocks_null_sink_0, '0']
 - [fadingui_xor_frame_sync_0, '0', fadingui_deframer_0, '0']

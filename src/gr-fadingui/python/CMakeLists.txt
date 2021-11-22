@@ -47,4 +47,4 @@ include(GrTest)
 
 set(GR_TEST_TARGET_DEPS gnuradio-fadingui)
 set(GR_TEST_PYTHON_DIRS ${CMAKE_BINARY_DIR}/swig)
-GR_ADD_TEST(qa_dearpygui_sink ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_dearpygui_sink.py)
+GR_ADD_TEST(qa_xor_frame_sync ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_xor_frame_sync.py)

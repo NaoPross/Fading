@@ -25,23 +25,24 @@ class xor_frame_sync(gr.sync_block):
             out_sig=[np.byte])
 
         # binary pattern to match
-        self.pattern = np.unpackbits(np.array(sync_pattern, dtype=np.uint8))[::-1]
-        self.nbytes = len(sync_pattern)
-        self.nbits = len(self.pattern)
+        self.pattern = sync_pattern
+        self.nbytes = len(self.pattern)
 
-        log.debug(f"Loaded pattern {self.pattern} length={self.nbits}")
+        self.pattern_bits = np.unpackbits(np.array(self.pattern, dtype=np.uint8))[::-1]
+        self.nbits = len(self.pattern_bits)
+
+        log.debug(f"Loaded pattern {self.pattern_bits} length={self.nbits}")
         assert(self.nbits % 8 == 0)
 
         # packed buffer to delay the data
         self.delaybuf = RingBuffer(buffer_size, dtype=np.uint8)
         self.delay = 0
 
-        # unpacked buffer to compute correlation values, initially filled with zeros
-        self.corrbuf = RingBuffer(self.nbits)
-        self.corrbuf.extend(np.zeros(self.nbits))
+        log.debug(f"Created delay ring buffer of size {self.delaybuf.maxlen}")
 
-        # buffer to store correlation values
-        self.xcorrs = RingBuffer(buffer_size)
+        # unpacked buffer to compute correlation values, initially filled with zeros
+        self.corrbuf = RingBuffer(self.nbits, dtype=np.uint8)
+        self.corrbuf.extend(np.zeros(self.corrbuf.maxlen))
 
         # synchronization state
         self.synchronized = False
@@ -53,11 +54,21 @@ class xor_frame_sync(gr.sync_block):
 
         Binary correlation between two bit vectors is just size of the
         vector(s) minus the number of bits that differ.
+
+        @return: Number of bits of v that were shifted into the buffer
+                 when the correlation matched. If no match is found
+                 the return value is None.
         """
-        v_arr = np.array(v, dtype=np.uint8)
-        for b in np.unpackbits(v_arr):
+        # this could be much faster with shifts, bitwise or and xor
+        # but this should do alright for the moment
+        v_bits = np.unpackbits(np.array(v, dtype=np.uint8))
+        for bitnr, b in enumerate(v_bits):
             self.corrbuf.appendleft(b)
-            yield self.nbits - np.sum(np.logical_xor(self.corrbuf, self.pattern))
+            if (np.bitwise_xor(self.corrbuf, self.pattern_bits) == 0).all():
+                return bitnr
+
+        # no cross correlation found
+        return None
 
     def work(self, input_items, output_items):
         """
@@ -68,35 +79,59 @@ class xor_frame_sync(gr.sync_block):
 
             - If the buffer is not synchronized, compute a binary cross
               correlation to find how much the stream should be delayed.
-
-        Notes:
-
-            - Even though the block input is of type np.byte, inp is an array
-              of 255 bytes, probably for performance reasons.
-              TODO: block processing
         """
         inp = input_items[0]
         out = output_items[0]
 
+        inp_len = len(inp)
+
         if not self.synchronized:
-            for v in inp:
+            if inp_len > self.delaybuf.maxlen:
+                log.error("Input is bigger than delay buffer")
+
+                # FIXME: Makes the QA hang for some reason
+                # raise NotImplemented
+
+            for bytenr, value in enumerate(inp):
+                # save value in the buffer
+                self.delaybuf.appendleft(value)
+
                 # compute the cross correlation
-                xcs = self.xcorrelation(v)
+                bitnr = self.xcorrelation(value)
+                if bitnr is not None:
+                    # correlation was found
+                    delay_bits = 8 * bytenr + bitnr
 
-                # add cross correlations to buffer and save value
-                self.xcorrs.extend(list(xcs))
-                self.delaybuf.appendleft(v)
+                    # FIXME: add bit delay
+                    self.delay = bytenr
+                    self.synchronized = True
+                    log.debug(f"Synchronized with delay={self.delay} delay_bits={delay_bits}")
 
-            peak = np.argmax(self.xcorrs)
-            if self.xcorrs[peak] == self.nbits:
-                self.delay = peak
-                self.synchronized = True
-                log.debug(f"Synchronized with delay={peak}")
+                    # Not aligned to bytes
+                    if bitnr != 7:
+                        log.error("Not implemented: byte unaligned delay")
+                        self.synchronized = False
+                        self.delay = 0
 
-            else:
-                self.synchronized = False
-                log.warning(f"Did not find a peak (max={self.xcorrs[peak]}, should be {self.nbits})")
+                        # FIXME: Makes the QA hang for some reason
+                        # raise NotImplemented
 
+                    # bigger than buffer
+                    if bytenr > self.delaybuf.maxlen:
+                        log.error("Too too long to synchronize, ran out of buffer memory")
+                        self.synchronized = False
+                        self.delay = 0
+
+                        # FIXME: Makes the QA hang for some reason
+                        # raise NotImplemented
+
+                    # stop processing inputs
+                    break
+
+            if not self.synchronized:
+                log.warning(f"Processed {inp_len} samples but could not synchronize")
+        else:
+            self.delaybuf.extendleft(inp)
 
         # return data with delay
         out[:] = self.delaybuf[self.delay]
