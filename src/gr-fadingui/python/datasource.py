@@ -35,27 +35,27 @@ class datasource(gr.basic_block):
         # a frame has 5 id bits so, there can only be 2 ** 5 chunks per file
         # see docstring of frame_obj for more details
         nblocks = int(self.fsize / self.frame.payload_length)
-        log.debug(f"Loaded {self.fsize} bytes = {nblocks} blocks from name={self.fname}")
+        log.debug(f"Loaded {self.fsize} bytes = {nblocks} blocks from {self.fname}")
         assert nblocks < 2 ** 5, "Payload size too small or file too big"
 
         self.fpos = 0
         self.blocknr = 0
 
-        # would have been nice to have but does not work
-        # self.set_min_noutput_items(frame_obj.length)
+        # Ensure that output buffer is always at least as big a one frame
+        # This probably hits the performance of the simulation quite badly,
+        # it would be better to implement buffering (see below)
+        self.set_output_multiple(self.frame.length)
 
-        # FIXME: implement buffering
-        # output buffer
+        # FIXME: Implement buffering if the GR algorithm gives a smaller output
+        #        buffer. This is partially solved with the previous line.
         self.outbuffer = np.array([])
 
     def general_work(self, input_items, output_items):
         out = output_items[0]
 
-
         # FIXME: if there is leftover buffer add that first
-        # if self.outbuffer.size > 0:
-        #     log.debug("Frame did not fit into buffer")
-        #     out[:len(self.outbuffer)] = self.outbuffer
+        if self.outbuffer.size > 0:
+            log.warning("Frame did not fit into buffer")
 
         if self.fpos + self.frame.payload_length > self.fsize:
             # FIXME: implement edge case
