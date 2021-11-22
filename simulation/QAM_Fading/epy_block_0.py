@@ -7,13 +7,14 @@ be the parameters. All of them are required to have default values!
 """
 
 import numpy as np
+from numpy.fft import fft,ifft,fftshift
 from gnuradio import gr
 
 
 class blk(gr.sync_block):  # other base classes are basic_block, decim_block, interp_block
     """Embedded Python Block example - a simple multiply const"""
 
-    def __init__(self, amplitudes=[], delays=[]):  # only default arguments here
+    def __init__(self, amplitudes=[], delays=[], los=True):  # only default arguments here
         """arguments to this function show up as parameters in GRC"""
         gr.sync_block.__init__(
             self,
@@ -23,28 +24,45 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         )
         # if an attribute with the same name as a parameter is found,
         # a callback is registered (properties work, too).
-        self.amplitues = amplitudes
+        self.amplitudes = amplitudes
         self.delays = delays
-
+        self.temp = [0]
+        if los:
+            self.amplitudes.append(1)
+            self.delays.append(0)
         #self.fir = 
 
     def work(self, input_items, output_items):
         """example: multiply with constant"""
         inp = input_items[0]
         oup = output_items[0]
-        amplitudes = [0.2, 0.5 ,0.8]
-        delays = [3,5,2]
-        i = len(amplitudes)
+        
+        if len(self.amplitudes) != len(self.delays):
+            raise Exception("Amplitudes and Delay length dont match")
 
-        outp[:] = [([1]+[0 for n in range (0,delays[i])]+[amplitudes[i]]) for i in range(0,i)]
+        #    raise Exception("Delay length can't be one")
+        #if np.min(self.delays)<=1:
+        #    raise Exception("Delay length can't be one")
+        max_len = np.max(self.delays)
+        sum_x = np.zeros(max_len)
+        for(a,d) in zip(self.amplitudes,self.delays):
+            if d-1 <= 0:
+                x = np.concatenate([[a], np.zeros(max_len-1)])
+            else:                
+                x = np.concatenate([np.zeros(d-1), [a], np.zeros(max_len-d)])
+            sum_x += x
+        
 
-        return len(output_items[0])
+        H_int = fft(sum_x)
+        h = ifft(H_int)
 
 
-if __name__ == '__main__':
-    ampl = [0.2, 0.5 ,0.8]
-    delays = [3,5,2]
-    i = len(ampl)
-    [([1]+[0 for n in range (0,delays[i])]+[ampl[i]]) for i in range(0,i)]
 
+        y = np.convolve(inp, h)
+        y+=np.concatenate([self.temp,np.zeros(len(y)-len(self.temp))])
 
+        oup[:] = y[:len(inp)]
+        self.temp = y[len(inp):]        
+        
+
+        return len(oup)

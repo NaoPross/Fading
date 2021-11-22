@@ -797,7 +797,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1000, 340.0]
+    coordinate: [1000, 348.0]
     rotation: 0
     state: enabled
 - name: params

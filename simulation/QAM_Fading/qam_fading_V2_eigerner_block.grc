@@ -10,7 +10,7 @@ options:
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: qam_fading
+    id: qam_fading_block
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -859,41 +859,85 @@ blocks:
       \ GRC will instantiate the first class it finds\nto get ports and parameters\
       \ of your block. The arguments to __init__  will\nbe the parameters. All of\
       \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
-      from gnuradio import gr\n\n\nclass blk(gr.sync_block):  # other base classes\
-      \ are basic_block, decim_block, interp_block\n    \"\"\"Embedded Python Block\
-      \ example - a simple multiply const\"\"\"\n\n    def __init__(self, amplitudes=[],\
-      \ delays=[]):  # only default arguments here\n        \"\"\"arguments to this\
-      \ function show up as parameters in GRC\"\"\"\n        gr.sync_block.__init__(\n\
-      \            self,\n            name='Embedded Python Block',   # will show\
-      \ up in GRC\n            in_sig=[np.complex64],\n            out_sig=[np.complex64]\n\
-      \        )\n        # if an attribute with the same name as a parameter is found,\n\
-      \        # a callback is registered (properties work, too).\n        self.amplitues\
-      \ = amplitudes\n        self.delays = delays\n\n        #self.fir = \n\n   \
-      \ def work(self, input_items, output_items):\n        \"\"\"example: multiply\
-      \ with constant\"\"\"\n        inp = input_items[0]\n        oup = output_items[0]\n\
-      \        amplitudes = [0.2, 0.5 ,0.8]\n        delays = [3,5,2]\n        i =\
-      \ len(amplitudes)\n\n        outp[:] = [([1]+[0 for n in range (0,delays[i])]+[amplitudes[i]])\
-      \ for i in range(0,i)]\n\n        return len(output_items[0])\n\n\nif __name__\
-      \ == '__main__':\n    ampl = [0.2, 0.5 ,0.8]\n    delays = [3,5,2]\n    i =\
-      \ len(ampl)\n    [([1]+[0 for n in range (0,delays[i])]+[ampl[i]]) for i in\
-      \ range(0,i)]\n\n\n"
+      from numpy.fft import fft,ifft,fftshift\nfrom gnuradio import gr\n\n\nclass\
+      \ blk(gr.sync_block):  # other base classes are basic_block, decim_block, interp_block\n\
+      \    \"\"\"Embedded Python Block example - a simple multiply const\"\"\"\n\n\
+      \    def __init__(self, amplitudes=[], delays=[], los=True):  # only default\
+      \ arguments here\n        \"\"\"arguments to this function show up as parameters\
+      \ in GRC\"\"\"\n        gr.sync_block.__init__(\n            self,\n       \
+      \     name='Embedded Python Block',   # will show up in GRC\n            in_sig=[np.complex64],\n\
+      \            out_sig=[np.complex64]\n        )\n        # if an attribute with\
+      \ the same name as a parameter is found,\n        # a callback is registered\
+      \ (properties work, too).\n        self.amplitudes = amplitudes\n        self.delays\
+      \ = delays\n        self.temp = [0]\n        if los:\n            self.amplitudes.append(1)\n\
+      \            self.delays.append(0)\n        #self.fir = \n\n    def work(self,\
+      \ input_items, output_items):\n        \"\"\"example: multiply with constant\"\
+      \"\"\n        inp = input_items[0]\n        oup = output_items[0]\n        \n\
+      \        if len(self.amplitudes) != len(self.delays):\n            raise Exception(\"\
+      Amplitudes and Delay length dont match\")\n\n        #    raise Exception(\"\
+      Delay length can't be one\")\n        #if np.min(self.delays)<=1:\n        #\
+      \    raise Exception(\"Delay length can't be one\")\n        max_len = np.max(self.delays)\n\
+      \        sum_x = np.zeros(max_len)\n        for(a,d) in zip(self.amplitudes,self.delays):\n\
+      \            if d-1 <= 0:\n                x = np.concatenate([[a], np.zeros(max_len-1)])\n\
+      \            else:                \n                x = np.concatenate([np.zeros(d-1),\
+      \ [a], np.zeros(max_len-d)])\n            sum_x += x\n        \n\n        H_int\
+      \ = fft(sum_x)\n        h = ifft(H_int)\n\n\n\n        y = np.convolve(inp,\
+      \ h)\n        y+=np.concatenate([self.temp,np.zeros(len(y)-len(self.temp))])\n\
+      \n        oup[:] = y[:len(inp)]\n        self.temp = y[len(inp):]        \n\
+      \        \n\n        return len(oup)"
     affinity: ''
     alias: ''
-    amplitudes: '[0.2, 0.5 ,0.8]'
+    amplitudes: '[0.3]'
     comment: ''
-    delays: '[3,5,2]'
+    delays: '[3]'
+    los: 'True'
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
     _io_cache: ('Embedded Python Block', 'blk', [('amplitudes', '[]'), ('delays',
-      '[]')], [('0', 'complex', 1)], [('0', 'complex', 1)], 'Embedded Python Block
-      example - a simple multiply const', ['delays'])
+      '[]'), ('los', 'True')], [('0', 'complex', 1)], [('0', 'complex', 1)], 'Embedded
+      Python Block example - a simple multiply const', ['amplitudes', 'delays'])
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [992, 340.0]
+    coordinate: [960, 308.0]
     rotation: 0
     state: true
+- name: epy_block_1
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\n\n\nclass blk(gr.sync_block):  # other base classes\
+      \ are basic_block, decim_block, interp_block\n    \"\"\"Embedded Python Block\
+      \ example - a simple multiply const\"\"\"\n\n    def __init__(self, example_param=1.0):\
+      \  # only default arguments here\n        \"\"\"arguments to this function show\
+      \ up as parameters in GRC\"\"\"\n        gr.sync_block.__init__(\n         \
+      \   self,\n            name='Embedded Python Block',   # will show up in GRC\n\
+      \            in_sig=[np.complex64],\n            out_sig=[np.complex64]\n  \
+      \      )\n        # if an attribute with the same name as a parameter is found,\n\
+      \        # a callback is registered (properties work, too).\n        self.example_param\
+      \ = example_param\n\n    def work(self, input_items, output_items):\n      \
+      \  \"\"\"example: multiply with constant\"\"\"\n        output_items[0][:] =\
+      \ input_items[0] * self.example_param\n        return len(output_items[0])\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    example_param: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('Embedded Python Block', 'blk', [('example_param', '1.0')], [('0',
+      'complex', 1)], [('0', 'complex', 1)], 'Embedded Python Block example - a simple
+      multiply const', ['example_param'])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [984, 284.0]
+    rotation: 0
+    state: disabled
 - name: import_0
   id: import
   parameters:
