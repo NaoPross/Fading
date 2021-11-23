@@ -16,10 +16,11 @@ class test_xor_frame_sync(gr_unittest.TestCase):
 
     def test_001(self):
         """Test a byte aligned delay"""
-        pattern = np.array([0xbe, 0xef], dtype=np.uint8)
+        pattern = np.array([0xc0, 0xff, 0xee], dtype=np.uint8)
         testdata = np.packbits(np.concatenate([
-            np.unpackbits(np.arange(0, 10, dtype=np.uint8)),
-            np.random.randint(0, 2, size = 8 * 5), np.unpackbits(pattern),
+            np.unpackbits(np.arange(0, 5, dtype=np.uint8)),
+            # np.random.randint(0, 2, size = 8 * 5),
+            np.unpackbits(pattern),
             np.random.randint(0, 2, size = 64)
         ]))
 

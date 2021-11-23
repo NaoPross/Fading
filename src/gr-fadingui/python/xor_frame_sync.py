@@ -80,9 +80,8 @@ class xor_frame_sync(gr.sync_block):
             - If the buffer is not synchronized, compute a binary cross
               correlation to find how much the stream should be delayed.
         """
+        # array of samples, growing index = forward in time
         inp = input_items[0]
-        out = output_items[0]
-
         inp_len = len(inp)
 
         if not self.synchronized:
@@ -90,35 +89,33 @@ class xor_frame_sync(gr.sync_block):
                 log.error("Input is bigger than delay buffer")
 
                 # FIXME: Makes the QA hang for some reason
-                # raise NotImplemented
+                raise NotImplemented
 
+            # create space for new samples in the delay buffer
+            self.delaybuf.extendleft(np.zeros(inp_len))
+
+            # Add values and while processing
             for bytenr, value in enumerate(inp):
                 # save value in the buffer
+                # FIXME: this is wrong, it should be in reverse order
                 self.delaybuf.appendleft(value)
 
                 # compute the cross correlation
                 bitnr = self.xcorrelation(value)
                 if bitnr is not None:
                     # correlation was found
-                    delay_bits = 8 * bytenr + bitnr
+                    delay_bits = (bitnr - 7)
+                    delay_bytes = 8 * (bytenr -1)
+
+                    log.debug(f"Synchronized with delay_bytes={delay_bytes} delay_bits={delay_bits}")
 
                     # FIXME: add bit delay
-                    self.delay = bytenr
+                    self.delay = delay_bytes
                     self.synchronized = True
-                    log.debug(f"Synchronized with delay={self.delay} delay_bits={delay_bits}")
 
                     # Not aligned to bytes
-                    if bitnr != 7:
+                    if delay_bits != 0:
                         log.error("Not implemented: byte unaligned delay")
-                        self.synchronized = False
-                        self.delay = 0
-
-                        # FIXME: Makes the QA hang for some reason
-                        # raise NotImplemented
-
-                    # bigger than buffer
-                    if bytenr > self.delaybuf.maxlen:
-                        log.error("Too too long to synchronize, ran out of buffer memory")
                         self.synchronized = False
                         self.delay = 0
 
@@ -134,7 +131,18 @@ class xor_frame_sync(gr.sync_block):
             self.delaybuf.extendleft(inp)
 
         # return data with delay
-        out[:] = self.delaybuf[self.delay]
+        out = output_items[0]
+        # FIXME: this is also wrong
+        out[:] = self.delaybuf[:len(out)]
 
-        return len(output_items[0])
+
+        inptmp = np.array(inp[:12], dtype=np.uint8)
+        inphex = np.array(list(map(hex, inptmp)))
+        log.debug(f"inp={inptmp}")
+        log.debug(f"inp={inphex}")
+
+        # outtmp = np.array(out[:12], dtype=np.uint8)
+        # log.debug(f"out={outtmp}")
+
+        return len(out)
 
