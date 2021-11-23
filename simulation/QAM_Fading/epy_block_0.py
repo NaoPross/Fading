@@ -27,9 +27,10 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.amplitudes = amplitudes
         self.delays = delays
         self.temp = [0]
-        if los:
-            self.amplitudes.append(1)
-            self.delays.append(0)
+        # if los:
+        #     self.amplitudes.append(1)
+        #     self.delays.append(0)
+        self.los= 1
         #self.fir = 
 
     def work(self, input_items, output_items):
@@ -46,20 +47,25 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         max_len = np.max(self.delays)
         sum_x = np.zeros(max_len)
         for(a,d) in zip(self.amplitudes,self.delays):
-            if d-1 <= 0:
-                x = np.concatenate([[a], np.zeros(max_len-1)])
-            else:                
-                x = np.concatenate([np.zeros(d-1), [a], np.zeros(max_len-d)])
+            # if d-1 <= 0:
+            #     x = np.concatenate([[a], np.zeros(max_len-1)])
+            # else:                
+            x = np.concatenate([np.zeros(d-1), [a], np.zeros(max_len-d)])
             sum_x += x
         
-
+        #sum_x[0] = self.los
+        print(sum_x)
+        
         H_int = fft(sum_x)
+
         h = ifft(H_int)
 
+        #h[0]=1
 
-
-        y = np.convolve(inp, h)
+        y = np.convolve(inp, sum_x)
+        
         y+=np.concatenate([self.temp,np.zeros(len(y)-len(self.temp))])
+        
 
         oup[:] = y[:len(inp)]
         self.temp = y[len(inp):]        

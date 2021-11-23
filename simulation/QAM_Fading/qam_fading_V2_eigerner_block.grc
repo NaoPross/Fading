@@ -869,34 +869,35 @@ blocks:
       \            out_sig=[np.complex64]\n        )\n        # if an attribute with\
       \ the same name as a parameter is found,\n        # a callback is registered\
       \ (properties work, too).\n        self.amplitudes = amplitudes\n        self.delays\
-      \ = delays\n        self.temp = [0]\n        if los:\n            self.amplitudes.append(1)\n\
-      \            self.delays.append(0)\n        #self.fir = \n\n    def work(self,\
-      \ input_items, output_items):\n        \"\"\"example: multiply with constant\"\
-      \"\"\n        inp = input_items[0]\n        oup = output_items[0]\n        \n\
-      \        if len(self.amplitudes) != len(self.delays):\n            raise Exception(\"\
-      Amplitudes and Delay length dont match\")\n\n        #    raise Exception(\"\
-      Delay length can't be one\")\n        #if np.min(self.delays)<=1:\n        #\
-      \    raise Exception(\"Delay length can't be one\")\n        max_len = np.max(self.delays)\n\
-      \        sum_x = np.zeros(max_len)\n        for(a,d) in zip(self.amplitudes,self.delays):\n\
-      \            if d-1 <= 0:\n                x = np.concatenate([[a], np.zeros(max_len-1)])\n\
-      \            else:                \n                x = np.concatenate([np.zeros(d-1),\
-      \ [a], np.zeros(max_len-d)])\n            sum_x += x\n        \n\n        H_int\
-      \ = fft(sum_x)\n        h = ifft(H_int)\n\n\n\n        y = np.convolve(inp,\
-      \ h)\n        y+=np.concatenate([self.temp,np.zeros(len(y)-len(self.temp))])\n\
-      \n        oup[:] = y[:len(inp)]\n        self.temp = y[len(inp):]        \n\
-      \        \n\n        return len(oup)"
+      \ = delays\n        self.temp = [0]\n        # if los:\n        #     self.amplitudes.append(1)\n\
+      \        #     self.delays.append(0)\n        self.los= 1\n        #self.fir\
+      \ = \n\n    def work(self, input_items, output_items):\n        \"\"\"example:\
+      \ multiply with constant\"\"\"\n        inp = input_items[0]\n        oup =\
+      \ output_items[0]\n        \n        if len(self.amplitudes) != len(self.delays):\n\
+      \            raise Exception(\"Amplitudes and Delay length dont match\")\n\n\
+      \        #    raise Exception(\"Delay length can't be one\")\n        #if np.min(self.delays)<=1:\n\
+      \        #    raise Exception(\"Delay length can't be one\")\n        max_len\
+      \ = np.max(self.delays)\n        sum_x = np.zeros(max_len)\n        for(a,d)\
+      \ in zip(self.amplitudes,self.delays):\n            # if d-1 <= 0:\n       \
+      \     #     x = np.concatenate([[a], np.zeros(max_len-1)])\n            # else:\
+      \                \n            x = np.concatenate([np.zeros(d-1), [a], np.zeros(max_len-d)])\n\
+      \            sum_x += x\n        \n        #sum_x[0] = self.los\n        print(sum_x)\n\
+      \        \n        H_int = fft(sum_x)\n\n        h = ifft(H_int)\n\n       \
+      \ #h[0]=1\n\n        y = np.convolve(inp, sum_x)\n        \n        y+=np.concatenate([self.temp,np.zeros(len(y)-len(self.temp))])\n\
+      \        \n\n        oup[:] = y[:len(inp)]\n        self.temp = y[len(inp):]\
+      \        \n        \n\n        return len(oup)"
     affinity: ''
     alias: ''
-    amplitudes: '[0.3]'
+    amplitudes: '[0.2,0.2,0.2,0.2,0.2]'
     comment: ''
-    delays: '[3]'
+    delays: '[sps+1,sps+1,sps+1,sps+1,sps+1]'
     los: 'True'
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
     _io_cache: ('Embedded Python Block', 'blk', [('amplitudes', '[]'), ('delays',
       '[]'), ('los', 'True')], [('0', 'complex', 1)], [('0', 'complex', 1)], 'Embedded
-      Python Block example - a simple multiply const', ['amplitudes', 'delays'])
+      Python Block example - a simple multiply const', ['amplitudes', 'delays', 'los'])
     bus_sink: false
     bus_source: false
     bus_structure: null

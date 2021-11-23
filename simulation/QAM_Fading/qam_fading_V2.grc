@@ -790,8 +790,8 @@ blocks:
     interp: '1'
     maxoutbuf: '0'
     minoutbuf: '0'
-    samp_delay: '2'
-    taps: '[amp_1]'
+    samp_delay: '0'
+    taps: '[LOS_NLOS]+(([0]*fading_1)+[amp_1])'
     type: ccc
   states:
     bus_sink: false
