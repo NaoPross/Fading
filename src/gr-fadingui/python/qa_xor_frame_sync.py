@@ -19,7 +19,7 @@ class test_xor_frame_sync(gr_unittest.TestCase):
         pattern = np.array([0xc0, 0xff, 0xee], dtype=np.uint8)
         testdata = np.packbits(np.concatenate([
             np.unpackbits(np.arange(0, 5, dtype=np.uint8)),
-            # np.random.randint(0, 2, size = 8 * 5),
+            np.random.randint(0, 2, size = 8 * 5),
             np.unpackbits(pattern),
             np.random.randint(0, 2, size = 64)
         ]))

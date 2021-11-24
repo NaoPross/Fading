@@ -6,7 +6,7 @@
 #
 # GNU Radio Python Flow Graph
 # Title: QAM
-# Author: Pross Naoki, Halter Sara Cinzia
+# Author: Pross Naoki
 # GNU Radio version: 3.8.2.0
 
 from distutils.version import StrictVersion
@@ -21,14 +21,16 @@ if __name__ == '__main__':
         except:
             print("Warning: failed to XInitThreads()")
 
+from PyQt5 import Qt
+from gnuradio import qtgui
+from gnuradio.filter import firdes
+import sip
 from gnuradio import blocks
 from gnuradio import channels
-from gnuradio.filter import firdes
 from gnuradio import digital
 from gnuradio import gr
 import sys
 import signal
-from PyQt5 import Qt
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
@@ -79,28 +81,75 @@ class qam_nogui(gr.top_block, Qt.QWidget):
         self.time_offset = time_offset = 1
         self.samp_rate = samp_rate = 32000
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), excess_bw, 45*nfilts)
-        self.phase_bw = phase_bw = .01
+        self.phase_bw = phase_bw = 0.02
         self.noise_volt = noise_volt = 0
         self.freq_offset = freq_offset = 0
-        self.frame = frame = fadingui.frame_obj(preamble=[190, 239], payload_len=32768)
+        self.frame = frame = fadingui.frame_obj(preamble=[0xc0, 0xff, 0xee], payload_len=32768)
         self.eq_ntaps = eq_ntaps = 15
         self.eq_mod = eq_mod = 1
         self.eq_gain = eq_gain = .002
-        self.const = const = digital.constellation_16qam().base()
+        self.const = const = digital.constellation_qpsk().base()
         self.chn_taps = chn_taps = [1.0 + 0.0j, ]
 
         ##################################################
         # Blocks
         ##################################################
+        self.qtgui_time_sink_x_0 = qtgui.time_sink_c(
+            1024, #size
+            samp_rate, #samp_rate
+            "", #name
+            1 #number of inputs
+        )
+        self.qtgui_time_sink_x_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_0.set_y_axis(-2, 2)
+
+        self.qtgui_time_sink_x_0.set_y_label('Amplitude', "")
+
+        self.qtgui_time_sink_x_0.enable_tags(True)
+        self.qtgui_time_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
+        self.qtgui_time_sink_x_0.enable_autoscale(False)
+        self.qtgui_time_sink_x_0.enable_grid(False)
+        self.qtgui_time_sink_x_0.enable_axis_labels(True)
+        self.qtgui_time_sink_x_0.enable_control_panel(True)
+        self.qtgui_time_sink_x_0.enable_stem_plot(False)
+
+
+        labels = ['Signal 1', 'Signal 2', 'Signal 3', 'Signal 4', 'Signal 5',
+            'Signal 6', 'Signal 7', 'Signal 8', 'Signal 9', 'Signal 10']
+        widths = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        colors = ['blue', 'red', 'green', 'black', 'cyan',
+            'magenta', 'yellow', 'dark red', 'dark green', 'dark blue']
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0, 1.0, 1.0]
+        styles = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        markers = [-1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1]
+
+
+        for i in range(2):
+            if len(labels[i]) == 0:
+                if (i % 2 == 0):
+                    self.qtgui_time_sink_x_0.set_line_label(i, "Re{{Data {0}}}".format(i/2))
+                else:
+                    self.qtgui_time_sink_x_0.set_line_label(i, "Im{{Data {0}}}".format(i/2))
+            else:
+                self.qtgui_time_sink_x_0.set_line_label(i, labels[i])
+            self.qtgui_time_sink_x_0.set_line_width(i, widths[i])
+            self.qtgui_time_sink_x_0.set_line_color(i, colors[i])
+            self.qtgui_time_sink_x_0.set_line_style(i, styles[i])
+            self.qtgui_time_sink_x_0.set_line_marker(i, markers[i])
+            self.qtgui_time_sink_x_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_win)
         self.fadingui_xor_frame_sync_0 = fadingui.xor_frame_sync(sync_pattern=frame.preamble, buffer_size=frame.length * 5)
-        self.fadingui_deframer_0 = fadingui.deframer(frame_obj=frame)
-        self.fadingui_datasource_0 = fadingui.datasource(frame_obj=frame, filename='/home/god/Documents/Fading/tests/fadingui/QAM/lena512color.tiff')
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
-        self.digital_diff_decoder_bb_0 = digital.diff_decoder_bb(4)
         self.digital_costas_loop_cc_0 = digital.costas_loop_cc(phase_bw, 4, False)
         self.digital_constellation_modulator_0 = digital.generic_mod(
             constellation=const,
-            differential=True,
+            differential=False,
             samples_per_symbol=sps,
             pre_diff_code=True,
             excess_bw=excess_bw,
@@ -108,32 +157,29 @@ class qam_nogui(gr.top_block, Qt.QWidget):
             log=False)
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 1)
-        self.channels_channel_model_0 = channels.channel_model(
-            noise_voltage=noise_volt,
-            frequency_offset=freq_offset,
-            epsilon=time_offset,
-            taps=chn_taps,
-            noise_seed=0,
-            block_tags=False)
+        self.blocks_vector_source_x_0 = blocks.vector_source_b([0xc0, 0xff, 0xee, 0x00, 0x00], True, 1, [])
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
+        self.blocks_pack_k_bits_bb_0 = blocks.pack_k_bits_bb(8)
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_char*1)
+        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_gr_complex*1, '/home/god/Documents/Fading/tests/fadingui/QAM/modulated_nodiff.dat', False)
+        self.blocks_file_sink_0.set_unbuffered(False)
 
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_throttle_0, 0), (self.channels_channel_model_0, 0))
-        self.connect((self.channels_channel_model_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
+        self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.fadingui_xor_frame_sync_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
+        self.connect((self.blocks_vector_source_x_0, 0), (self.digital_constellation_modulator_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.digital_costas_loop_cc_0, 0))
-        self.connect((self.digital_constellation_decoder_cb_0, 0), (self.digital_diff_decoder_bb_0, 0))
+        self.connect((self.digital_constellation_decoder_cb_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
+        self.connect((self.digital_constellation_modulator_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.digital_constellation_modulator_0, 0), (self.qtgui_time_sink_x_0, 0))
         self.connect((self.digital_costas_loop_cc_0, 0), (self.digital_constellation_decoder_cb_0, 0))
-        self.connect((self.digital_diff_decoder_bb_0, 0), (self.fadingui_xor_frame_sync_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_cma_equalizer_cc_0, 0))
-        self.connect((self.fadingui_datasource_0, 0), (self.digital_constellation_modulator_0, 0))
-        self.connect((self.fadingui_deframer_0, 0), (self.blocks_null_sink_0, 0))
-        self.connect((self.fadingui_xor_frame_sync_0, 0), (self.fadingui_deframer_0, 0))
+        self.connect((self.fadingui_xor_frame_sync_0, 0), (self.blocks_null_sink_0, 0))
 
 
     def closeEvent(self, event):
@@ -182,6 +228,7 @@ class qam_nogui(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
+        self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
 
     def get_rrc_taps(self):
         return self.rrc_taps

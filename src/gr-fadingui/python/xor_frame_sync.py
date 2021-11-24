@@ -133,16 +133,20 @@ class xor_frame_sync(gr.sync_block):
         # return data with delay
         out = output_items[0]
         # FIXME: this is also wrong
-        out[:] = self.delaybuf[:len(out)]
+        # out[:] = self.delaybuf[:len(out)]
+        out[:] = inp[:]
 
 
         inptmp = np.array(inp[:12], dtype=np.uint8)
         inphex = np.array(list(map(hex, inptmp)))
+        inpbits = np.array(list(map("{:08b}".format, inptmp)))
+
         log.debug(f"inp={inptmp}")
         log.debug(f"inp={inphex}")
+        log.debug(f"inp={inpbits}")
 
         # outtmp = np.array(out[:12], dtype=np.uint8)
         # log.debug(f"out={outtmp}")
 
-        return len(out)
+        return inp_len
 
