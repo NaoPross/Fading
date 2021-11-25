@@ -87,16 +87,12 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
         self.phase_bw = phase_bw = 2 * 3.141592653589793 / 100
         self.noise_volt = noise_volt = 0.0001
         self.freq_offset = freq_offset = 0
-        self.fading_3 = fading_3 = 0
-        self.fading_2 = fading_2 = 0
         self.fading_1 = fading_1 = 2
         self.eq_ntaps = eq_ntaps = 15
         self.eq_mod = eq_mod = 1
         self.eq_gain = eq_gain = .01
         self.const = const = digital.constellation_16qam().base()
         self.chn_taps = chn_taps = [1.0 + 0.0j, ]
-        self.amp_3 = amp_3 = 0
-        self.amp_2 = amp_2 = 0
         self.amp_1 = amp_1 = 0.2
         self.LOS_NLOS = LOS_NLOS = 1
 
@@ -495,20 +491,6 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
             self.plots_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 1):
             self.plots_grid_layout_0.setColumnStretch(c, 1)
-        self._fading_3_range = Range(0, 30, 1, 0, 200)
-        self._fading_3_win = RangeWidget(self._fading_3_range, self.set_fading_3, 'Fading 3', "counter_slider", int)
-        self.params_grid_layout_2.addWidget(self._fading_3_win, 3, 0, 1, 1)
-        for r in range(3, 4):
-            self.params_grid_layout_2.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.params_grid_layout_2.setColumnStretch(c, 1)
-        self._fading_2_range = Range(0, 30, 1, 0, 200)
-        self._fading_2_win = RangeWidget(self._fading_2_range, self.set_fading_2, 'Fading 2', "counter_slider", int)
-        self.params_grid_layout_2.addWidget(self._fading_2_win, 2, 0, 1, 1)
-        for r in range(2, 3):
-            self.params_grid_layout_2.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.params_grid_layout_2.setColumnStretch(c, 1)
         self._fading_1_range = Range(1, 30, 1, 2, 200)
         self._fading_1_win = RangeWidget(self._fading_1_range, self.set_fading_1, 'Fading', "counter_slider", int)
         self.params_grid_layout_2.addWidget(self._fading_1_win, 1, 0, 1, 1)
@@ -516,7 +498,7 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
             self.params_grid_layout_2.setRowStretch(r, 1)
         for c in range(0, 1):
             self.params_grid_layout_2.setColumnStretch(c, 1)
-        self.epy_block_0 = epy_block_0.blk(amplitudes=[0.2,0.2,0.2,0.2,0.2], delays=[sps+1,sps+1,sps+1,sps+1,sps+1], los=True)
+        self.epy_block_0 = epy_block_0.blk(amplitudes=[0.2,0.2], delays=[sps+1,sps+1], los=True)
         self.digital_pfb_clock_sync_xxx_0_0 = digital.pfb_clock_sync_ccf(sps , timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
         self.digital_map_bb_0_0 = digital.map_bb([0, 1, 3, 2])
@@ -553,20 +535,6 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
         self.blocks_char_to_float_0_0 = blocks.char_to_float(1, 1)
         self.blocks_char_to_float_0 = blocks.char_to_float(1, 1)
         self.analog_random_source_x_0 = blocks.vector_source_b(list(map(int, numpy.random.randint(0, 256, 1000))), True)
-        self._amp_3_range = Range(0, 5, 0.1, 0, 200)
-        self._amp_3_win = RangeWidget(self._amp_3_range, self.set_amp_3, 'Ampliude 3', "counter_slider", float)
-        self.params_grid_layout_2.addWidget(self._amp_3_win, 3, 1, 1, 1)
-        for r in range(3, 4):
-            self.params_grid_layout_2.setRowStretch(r, 1)
-        for c in range(1, 2):
-            self.params_grid_layout_2.setColumnStretch(c, 1)
-        self._amp_2_range = Range(0, 5, 0.1, 0, 200)
-        self._amp_2_win = RangeWidget(self._amp_2_range, self.set_amp_2, 'Ampliude 2', "counter_slider", float)
-        self.params_grid_layout_2.addWidget(self._amp_2_win, 2, 1, 1, 1)
-        for r in range(2, 3):
-            self.params_grid_layout_2.setRowStretch(r, 1)
-        for c in range(1, 2):
-            self.params_grid_layout_2.setColumnStretch(c, 1)
         self._amp_1_range = Range(0, 5, 0.1, 0.2, 200)
         self._amp_1_win = RangeWidget(self._amp_1_range, self.set_amp_1, 'Ampliude', "counter_slider", float)
         self.params_grid_layout_2.addWidget(self._amp_1_win, 1, 1, 1, 1)
@@ -638,7 +606,7 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
     def set_sps(self, sps):
         self.sps = sps
         self.set_rrc_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), self.excess_bw, 45*self.nfilts))
-        self.epy_block_0.delays = [self.sps+1,self.sps+1,self.sps+1,self.sps+1,self.sps+1]
+        self.epy_block_0.delays = [self.sps+1,self.sps+1]
 
     def get_nfilts(self):
         return self.nfilts
@@ -709,18 +677,6 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
         self.freq_offset = freq_offset
         self.channels_channel_model_0.set_frequency_offset(self.freq_offset)
 
-    def get_fading_3(self):
-        return self.fading_3
-
-    def set_fading_3(self, fading_3):
-        self.fading_3 = fading_3
-
-    def get_fading_2(self):
-        return self.fading_2
-
-    def set_fading_2(self, fading_2):
-        self.fading_2 = fading_2
-
     def get_fading_1(self):
         return self.fading_1
 
@@ -761,18 +717,6 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
     def set_chn_taps(self, chn_taps):
         self.chn_taps = chn_taps
         self.channels_channel_model_0.set_taps(self.chn_taps)
-
-    def get_amp_3(self):
-        return self.amp_3
-
-    def set_amp_3(self, amp_3):
-        self.amp_3 = amp_3
-
-    def get_amp_2(self):
-        return self.amp_2
-
-    def set_amp_2(self, amp_2):
-        self.amp_2 = amp_2
 
     def get_amp_1(self):
         return self.amp_1

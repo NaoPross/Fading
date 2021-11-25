@@ -53,12 +53,12 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
             x = np.concatenate([np.zeros(d-1), [a], np.zeros(max_len-d)])
             sum_x += x
         
-        #sum_x[0] = self.los
+        sum_x[0] = self.los
         print(sum_x)
         
-        H_int = fft(sum_x)
+        #H_int = fft(sum_x)
 
-        h = ifft(H_int)
+        #h = ifft(H_int)
 
         #h[0]=1
 

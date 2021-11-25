@@ -74,48 +74,6 @@ blocks:
     coordinate: [1056, 580.0]
     rotation: 0
     state: true
-- name: amp_2
-  id: variable_qtgui_range
-  parameters:
-    comment: ''
-    gui_hint: 'params@2: 2,1,1,1'
-    label: Ampliude 2
-    min_len: '200'
-    orient: Qt.Horizontal
-    rangeType: float
-    start: '0'
-    step: '0.1'
-    stop: '5'
-    value: '0'
-    widget: counter_slider
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1064, 716.0]
-    rotation: 0
-    state: true
-- name: amp_3
-  id: variable_qtgui_range
-  parameters:
-    comment: ''
-    gui_hint: 'params@2: 3,1,1,1'
-    label: Ampliude 3
-    min_len: '200'
-    orient: Qt.Horizontal
-    rangeType: float
-    start: '0'
-    step: '0.1'
-    stop: '5'
-    value: '0'
-    widget: counter_slider
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1064, 852.0]
-    rotation: 0
-    state: true
 - name: chn_taps
   id: variable
   parameters:
@@ -222,48 +180,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [944, 580.0]
-    rotation: 0
-    state: true
-- name: fading_2
-  id: variable_qtgui_range
-  parameters:
-    comment: ''
-    gui_hint: 'params@2: 2,0,1,1'
-    label: Fading 2
-    min_len: '200'
-    orient: Qt.Horizontal
-    rangeType: int
-    start: '0'
-    step: '1'
-    stop: '30'
-    value: '0'
-    widget: counter_slider
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [944, 716.0]
-    rotation: 0
-    state: true
-- name: fading_3
-  id: variable_qtgui_range
-  parameters:
-    comment: ''
-    gui_hint: 'params@2: 3,0,1,1'
-    label: Fading 3
-    min_len: '200'
-    orient: Qt.Horizontal
-    rangeType: int
-    start: '0'
-    step: '1'
-    stop: '30'
-    value: '0'
-    widget: counter_slider
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [944, 852.0]
     rotation: 0
     state: true
 - name: freq_offset
@@ -881,16 +797,16 @@ blocks:
       \ in zip(self.amplitudes,self.delays):\n            # if d-1 <= 0:\n       \
       \     #     x = np.concatenate([[a], np.zeros(max_len-1)])\n            # else:\
       \                \n            x = np.concatenate([np.zeros(d-1), [a], np.zeros(max_len-d)])\n\
-      \            sum_x += x\n        \n        #sum_x[0] = self.los\n        print(sum_x)\n\
-      \        \n        H_int = fft(sum_x)\n\n        h = ifft(H_int)\n\n       \
-      \ #h[0]=1\n\n        y = np.convolve(inp, sum_x)\n        \n        y+=np.concatenate([self.temp,np.zeros(len(y)-len(self.temp))])\n\
+      \            sum_x += x\n        \n        sum_x[0] = self.los\n        print(sum_x)\n\
+      \        \n        #H_int = fft(sum_x)\n\n        #h = ifft(H_int)\n\n     \
+      \   #h[0]=1\n\n        y = np.convolve(inp, sum_x)\n        \n        y+=np.concatenate([self.temp,np.zeros(len(y)-len(self.temp))])\n\
       \        \n\n        oup[:] = y[:len(inp)]\n        self.temp = y[len(inp):]\
       \        \n        \n\n        return len(oup)"
     affinity: ''
     alias: ''
-    amplitudes: '[0.2,0.2,0.2,0.2,0.2]'
+    amplitudes: '[0.2,0.2]'
     comment: ''
-    delays: '[sps+1,sps+1,sps+1,sps+1,sps+1]'
+    delays: '[sps+1,sps+1]'
     los: 'True'
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -901,7 +817,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [960, 308.0]
+    coordinate: [968, 324.0]
     rotation: 0
     state: true
 - name: epy_block_1
@@ -949,7 +865,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [600, 20.0]
+    coordinate: [592, 12.0]
     rotation: 0
     state: true
 - name: params
