@@ -491,7 +491,7 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
             self.plots_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 1):
             self.plots_grid_layout_0.setColumnStretch(c, 1)
-        self.fadingui_multipath_fading_0 = fadingui.multipath_fading(amplitudes=[0.2,0.2], delays=[sps+1,sps+1])
+        self.fadingui_multipath_fading_0 = fadingui.multipath_fading(amplitudes=[0.2, 0.2], delays=[4,4])
         self._fading_1_range = Range(1, 30, 1, 2, 200)
         self._fading_1_win = RangeWidget(self._fading_1_range, self.set_fading_1, 'Fading', "counter_slider", int)
         self.params_grid_layout_2.addWidget(self._fading_1_win, 1, 0, 1, 1)

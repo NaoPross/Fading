@@ -12,12 +12,19 @@ templates:
 #     * label (label shown in the GUI)
 #     * dtype (e.g. int, float, complex, byte, short, xxx_vector, ...)
 parameters:
+- id: delays
+  label: Delays
+  dtype: complex_vector
 - id: amplitudes
   label: Amplitudes
   dtype: raw
-- id: delays
-  label: Delays
-  dtype: raw
+- id: los
+  label: LOS/NLOS
+  options: ['True', 'False']
+  option_labels: ['LOS', 'NLOS']
+  #default: 'False'
+  dtype: bool
+  #hide: ${ 'none' if los == 'False' else 'part' }
 
 #  Make one 'inputs' list entry per input and one 'outputs' list entry per output.
 #  Keys include:
