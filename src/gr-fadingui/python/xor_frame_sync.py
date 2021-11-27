@@ -9,7 +9,7 @@ from numpy_ringbuffer import RingBuffer
 
 from gnuradio import gr
 
-from logger import get_logger
+from fadingui.logger import get_logger
 log = get_logger("xor_frame_sync")
 
 

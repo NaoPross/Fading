@@ -36,7 +36,7 @@ from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio.qtgui import Range, RangeWidget
-import epy_block_0
+import fadingui
 import numpy as np
 
 from gnuradio import qtgui
@@ -491,6 +491,7 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
             self.plots_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 1):
             self.plots_grid_layout_0.setColumnStretch(c, 1)
+        self.fadingui_multipath_fading_0 = fadingui.multipath_fading(amplitudes=[0.2,0.2], delays=[sps+1,sps+1])
         self._fading_1_range = Range(1, 30, 1, 2, 200)
         self._fading_1_win = RangeWidget(self._fading_1_range, self.set_fading_1, 'Fading', "counter_slider", int)
         self.params_grid_layout_2.addWidget(self._fading_1_win, 1, 0, 1, 1)
@@ -498,7 +499,6 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
             self.params_grid_layout_2.setRowStretch(r, 1)
         for c in range(0, 1):
             self.params_grid_layout_2.setColumnStretch(c, 1)
-        self.epy_block_0 = epy_block_0.blk(amplitudes=[0.2,0.2], delays=[sps+1,sps+1], los=True)
         self.digital_pfb_clock_sync_xxx_0_0 = digital.pfb_clock_sync_ccf(sps , timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
         self.digital_map_bb_0_0 = digital.map_bb([0, 1, 3, 2])
@@ -568,7 +568,7 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_char_to_float_0_0, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_1, 0), (self.blocks_char_to_float_0_1, 0))
         self.connect((self.channels_channel_model_0, 0), (self.digital_pfb_clock_sync_xxx_0_0, 0))
-        self.connect((self.channels_channel_model_0, 0), (self.epy_block_0, 0))
+        self.connect((self.channels_channel_model_0, 0), (self.fadingui_multipath_fading_0, 0))
         self.connect((self.channels_channel_model_0, 0), (self.qtgui_const_sink_x_0, 1))
         self.connect((self.channels_channel_model_0, 0), (self.qtgui_freq_sink_x_0, 1))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.digital_costas_loop_cc_0, 0))
@@ -590,9 +590,9 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.qtgui_const_sink_x_0_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0_0, 0), (self.digital_cma_equalizer_cc_0_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0_0, 0), (self.qtgui_const_sink_x_0_0, 1))
-        self.connect((self.epy_block_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
-        self.connect((self.epy_block_0, 0), (self.qtgui_const_sink_x_0, 0))
-        self.connect((self.epy_block_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.fadingui_multipath_fading_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
+        self.connect((self.fadingui_multipath_fading_0, 0), (self.qtgui_const_sink_x_0, 0))
+        self.connect((self.fadingui_multipath_fading_0, 0), (self.qtgui_freq_sink_x_0, 0))
 
 
     def closeEvent(self, event):
@@ -606,7 +606,6 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
     def set_sps(self, sps):
         self.sps = sps
         self.set_rrc_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), self.excess_bw, 45*self.nfilts))
-        self.epy_block_0.delays = [self.sps+1,self.sps+1]
 
     def get_nfilts(self):
         return self.nfilts
