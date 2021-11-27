@@ -1,6 +1,7 @@
 options:
   parameters:
     author: Naoki Pross
+    catch_exceptions: 'True'
     category: '[GRC Hier Blocks]'
     cmake_opt: ''
     comment: ''
@@ -22,7 +23,6 @@ options:
     sizing_mode: fixed
     thread_safe_setters: ''
     title: Access Code Symbols Generator
-    window_size: ''
   states:
     bus_sink: false
     bus_source: false
@@ -36,7 +36,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '[ 0xaa, 0xff, 0xff ]'
+    value: '[ 0xaa, 0xff, 0x0a ]'
   states:
     bus_sink: false
     bus_source: false
@@ -50,6 +50,7 @@ blocks:
     comment: ''
     const_points: '[-1-1j, -1+1j, 1+1j, 1-1j]'
     dims: '1'
+    normalization: digital.constellation.AMPLITUDE_NORMALIZATION
     precision: '8'
     rot_sym: '4'
     soft_dec_lut: None
@@ -168,6 +169,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     samples_per_symbol: sps
+    truncate: 'False'
     verbose: 'False'
   states:
     bus_sink: false

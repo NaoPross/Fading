@@ -7,12 +7,13 @@
 # GNU Radio Python Flow Graph
 # Title: Access Code Symbols Generator
 # Author: Naoki Pross
-# GNU Radio version: 3.8.2.0
+# GNU Radio version: 3.9.2.0
 
 from gnuradio import blocks
 from gnuradio import digital
 from gnuradio import gr
 from gnuradio.filter import firdes
+from gnuradio.fft import window
 import sys
 import signal
 from argparse import ArgumentParser
@@ -20,10 +21,12 @@ from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 
 
+
+
 class acgen(gr.top_block):
 
     def __init__(self):
-        gr.top_block.__init__(self, "Access Code Symbols Generator")
+        gr.top_block.__init__(self, "Access Code Symbols Generator", catch_exceptions=True)
 
         ##################################################
         # Variables
@@ -32,7 +35,7 @@ class acgen(gr.top_block):
         self.samp_rate = samp_rate = 32000
         self.excess_bw = excess_bw = 1
         self.const = const = digital.constellation_qpsk().base()
-        self.access_code = access_code = [ 0xaa, 0xff, 0xff ]
+        self.access_code = access_code = [ 0xaa, 0xff, 0x0a ]
 
         ##################################################
         # Blocks
@@ -44,7 +47,8 @@ class acgen(gr.top_block):
             pre_diff_code=True,
             excess_bw=excess_bw,
             verbose=False,
-            log=False)
+            log=False,
+            truncate=False)
         self.blocks_vector_source_x_0 = blocks.vector_source_b([0x00] * 10 + access_code * 10, False, 1, [])
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, samp_rate,True)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_gr_complex*1, 'acgen.dat', False)
@@ -91,7 +95,6 @@ class acgen(gr.top_block):
     def set_access_code(self, access_code):
         self.access_code = access_code
         self.blocks_vector_source_x_0.set_data([0x00] * 10 + self.access_code * 10, [])
-
 
 
 

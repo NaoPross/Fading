@@ -1,6 +1,7 @@
 options:
   parameters:
     author: Naoki Pross
+    catch_exceptions: 'True'
     category: '[GRC Hier Blocks]'
     cmake_opt: ''
     comment: ''
@@ -22,7 +23,6 @@ options:
     sizing_mode: fixed
     thread_safe_setters: ''
     title: Correlator Test
-    window_size: ''
   states:
     bus_sink: false
     bus_source: false
@@ -38,6 +38,7 @@ blocks:
     comment: ''
     const_points: '[-1-1j, -1+1j, 1+1j, 1-1j]'
     dims: '1'
+    normalization: digital.constellation.AMPLITUDE_NORMALIZATION
     precision: '8'
     rot_sym: '4'
     soft_dec_lut: None
@@ -122,6 +123,22 @@ blocks:
     coordinate: [696, 420.0]
     rotation: 0
     state: true
+- name: blocks_complex_to_mag_0
+  id: blocks_complex_to_mag
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1584, 80.0]
+    rotation: 0
+    state: true
 - name: blocks_null_sink_0
   id: blocks_null_sink
   parameters:
@@ -169,7 +186,7 @@ blocks:
     repeat: 'False'
     tags: '[]'
     type: byte
-    vector: '[0x00] * 10 + [0xaa, 0xff, 0xff] + [0x00] * 10'
+    vector: ([0x00] * 10 + [0xaa, 0xff, 0x0a] + [0x00] * 10) * 20
     vlen: '1'
   states:
     bus_sink: false
@@ -196,7 +213,7 @@ blocks:
     bus_structure: null
     coordinate: [992, 188.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: digital_constellation_decoder_cb_0
   id: digital_constellation_decoder_cb
   parameters:
@@ -226,6 +243,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     samples_per_symbol: sps
+    truncate: 'False'
     verbose: 'False'
   states:
     bus_sink: false
@@ -267,17 +285,17 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     samp_delay: '0'
-    taps: '[(1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j),
-      (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (-1.4142197+1.4142197j),
-      (-1.4142197+1.4142197j), (-1.4142197+1.4142197j), (-1.4142197+1.4142197j), (1.4142197+1.4142197j),
-      (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j),
-      (1.4142197+1.4142197j)]'
+    taps: '[(-1.4142197+1.4142197j), (-1.4142197+1.4142197j), (1.4142197-1.4142197j),
+      (1.4142197-1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (-1.4142197-1.4142197j),
+      (-1.4142197-1.4142197j), (-1.4142197-1.4142197j), (-1.4142197-1.4142197j), (-1.4142197-1.4142197j),
+      (-1.4142197-1.4142197j), (-1.4142197+1.4142197j), (-1.4142197+1.4142197j), (1.4142197-1.4142197j),
+      (1.4142197-1.4142197j)]'
     type: ccc
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1240, 76.0]
+    coordinate: [1328, 68.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0
@@ -354,7 +372,7 @@ blocks:
     tr_mode: qtgui.TRIG_MODE_FREE
     tr_slope: qtgui.TRIG_SLOPE_POS
     tr_tag: '""'
-    type: complex
+    type: float
     update_time: '0.10'
     width1: '1'
     width10: '1'
@@ -367,14 +385,14 @@ blocks:
     width8: '1'
     width9: '1'
     ylabel: Amplitude
-    ymax: '2'
-    ymin: '-2'
+    ymax: '50'
+    ymin: '0'
     yunit: '""'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1488, 68.0]
+    coordinate: [1792, 60.0]
     rotation: 0
     state: true
 - name: qtgui_time_sink_x_1
@@ -476,6 +494,7 @@ blocks:
     state: true
 
 connections:
+- [blocks_complex_to_mag_0, '0', qtgui_time_sink_x_0, '0']
 - [blocks_throttle_0, '0', digital_constellation_modulator_0, '0']
 - [blocks_vector_source_x_0, '0', blocks_throttle_0, '0']
 - [digital_cma_equalizer_cc_0, '0', digital_constellation_decoder_cb_0, '0']
@@ -484,7 +503,7 @@ connections:
 - [digital_constellation_modulator_0, '0', digital_pfb_clock_sync_xxx_0, '0']
 - [digital_constellation_modulator_0, '0', qtgui_time_sink_x_1, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', digital_cma_equalizer_cc_0, '0']
-- [fir_filter_xxx_1, '0', qtgui_time_sink_x_0, '0']
+- [fir_filter_xxx_1, '0', blocks_complex_to_mag_0, '0']
 
 metadata:
   file_format: 1

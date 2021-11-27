@@ -13,7 +13,6 @@ import signal
 
 # Mathematics
 import numpy as np
-from numpy_ringbuffer import RingBuffer
 
 # For debugging
 import logging
@@ -36,42 +35,6 @@ setup_dearpygui()
 
 # Show demo for dev
 show_demo()
-
-#================================================
-# Network classes
-
-class network_plot(net.udpsource):
-    def __init__(self, url, nsamples, **kwargs):
-        net.udpsource.__init__(self, url)
-
-        self.nsamples = nsamples
-        self.plot = plot(**kwargs)
-
-        # create buffer and fill with zeroes
-        self.buffer = RingBuffer(capacity=nsamples, dtype=(np.float, 2))
-        for i in range(nsamples):
-            # TODO: remove random data used for testing
-            self.buffer.append(np.array([i, 1 + np.random.rand() / 5]))
-
-        self.bind()
-
-    def __enter__(self):
-        return self.plot.__enter__()
-
-    def __exit__(self, t, val, tb):
-        self.plot.__exit__(t, val, tb)
-
-    @property
-    def x_data(self):
-        return np.array(self.buffer[:,0])
-
-    @property
-    def y_data(self):
-        return np.array(self.buffer[:,1])
-
-    def refresh(self, series_tag):
-        # set_value(series_tag, [self.x_data, self.y_data])
-        pass
 
 
 #================================================
@@ -135,8 +98,7 @@ with window(label="RX DSP Flow Graph", width=800, height=400, pos=(25,25), tag="
 #================================================
 # Network plots Window
 
-recv_plot = network_plot(url="udp://localhost:31415", nsamples=100, label="Test", height=300, width=800)
-
+recv_plot = net.network_plot(url="udp://localhost:31415", nsamples=100, label="Test", height=300, width=800)
 
 plots = {
     recv_plot: "plt_ampl"
@@ -158,7 +120,7 @@ show_viewport()
 # Main loop
 while is_dearpygui_running():
     for plt, tag in plots.items():
-        plt.refresh(tag)
+        plt.refresh_series(tag)
 
     render_dearpygui_frame()
 

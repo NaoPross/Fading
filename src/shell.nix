@@ -7,10 +7,18 @@ let
     isPy38 = pkgs.python38Packages.isPy38;
   };
 
+  numpy-ringbuffer = callPackage ./nix/numpy-ringbuffer.nix {
+    buildPythonPackage = pkgs.python38Packages.buildPythonPackage;
+    fetchPypi = pkgs.python38Packages.fetchPypi;
+    isPy38 = pkgs.python38Packages.isPy38;
+  };
+
 in mkShell {
-  buildInputs = [ dearpygui ] ++ (with pkgs; [
+  buildInputs = [ dearpygui numpy-ringbuffer ] ++ (with pkgs; [
     gnuradio
     python38Packages.setuptools
+    python38Packages.matplotlib
+    python38Packages.numpy
     # gnuradio block dev dependencies
     cmake ninja pkg-config log4cpp mpir boost175 gmp volk doxygen
     python38Packages.pybind11
