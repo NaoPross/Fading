@@ -1,7 +1,6 @@
 options:
   parameters:
     author: Naoki Pross
-    catch_exceptions: 'True'
     category: '[GRC Hier Blocks]'
     cmake_opt: ''
     comment: ''
@@ -23,6 +22,7 @@ options:
     sizing_mode: fixed
     thread_safe_setters: ''
     title: Access Code Symbols Generator
+    window_size: ''
   states:
     bus_sink: false
     bus_source: false
@@ -36,7 +36,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '[ 0xaa, 0xff, 0x0a ]'
+    value: '[ 0xaa, 0xff, 0xff ]'
   states:
     bus_sink: false
     bus_source: false
@@ -50,7 +50,6 @@ blocks:
     comment: ''
     const_points: '[-1-1j, -1+1j, 1+1j, 1-1j]'
     dims: '1'
-    normalization: digital.constellation.AMPLITUDE_NORMALIZATION
     precision: '8'
     rot_sym: '4'
     soft_dec_lut: None
@@ -75,6 +74,18 @@ blocks:
     coordinate: [464, 308.0]
     rotation: 0
     state: true
+- name: padding_zeros
+  id: variable
+  parameters:
+    comment: ''
+    value: '10'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [40, 364.0]
+    rotation: 0
+    state: true
 - name: samp_rate
   id: variable
   parameters:
@@ -84,7 +95,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [200, 44.0]
+    coordinate: [208, 12.0]
     rotation: 0
     state: enabled
 - name: sps
@@ -96,7 +107,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [312, 44.0]
+    coordinate: [304, 12.0]
     rotation: 0
     state: true
 - name: blocks_file_sink_0
@@ -147,7 +158,7 @@ blocks:
     repeat: 'False'
     tags: '[]'
     type: byte
-    vector: '[0x00] * 10 + access_code * 10'
+    vector: '[0x00] * padding_zeros + access_code * 10'
     vlen: '1'
   states:
     bus_sink: false
@@ -169,7 +180,6 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     samples_per_symbol: sps
-    truncate: 'False'
     verbose: 'False'
   states:
     bus_sink: false
