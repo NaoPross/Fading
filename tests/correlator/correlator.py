@@ -7,7 +7,7 @@
 # GNU Radio Python Flow Graph
 # Title: Correlator Test
 # Author: Naoki Pross
-# GNU Radio version: 3.8.2.0
+# GNU Radio version: 3.9.2.0
 
 from distutils.version import StrictVersion
 
@@ -29,18 +29,21 @@ from gnuradio import blocks
 from gnuradio import digital
 from gnuradio import filter
 from gnuradio import gr
+from gnuradio.fft import window
 import sys
 import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 
+
+
 from gnuradio import qtgui
 
 class correlator(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "Correlator Test")
+        gr.top_block.__init__(self, "Correlator Test", catch_exceptions=True)
         Qt.QWidget.__init__(self)
         self.setWindowTitle("Correlator Test")
         qtgui.util.check_set_qss()
@@ -88,7 +91,8 @@ class correlator(gr.top_block, Qt.QWidget):
             1024, #size
             samp_rate, #samp_rate
             "", #name
-            1 #number of inputs
+            1, #number of inputs
+            None # parent
         )
         self.qtgui_time_sink_x_1.set_update_time(0.10)
         self.qtgui_time_sink_x_1.set_y_axis(-2, 2)
@@ -133,15 +137,16 @@ class correlator(gr.top_block, Qt.QWidget):
             self.qtgui_time_sink_x_1.set_line_alpha(i, alphas[i])
 
         self._qtgui_time_sink_x_1_win = sip.wrapinstance(self.qtgui_time_sink_x_1.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_1_win)
-        self.qtgui_time_sink_x_0 = qtgui.time_sink_c(
+        self.top_layout.addWidget(self._qtgui_time_sink_x_1_win)
+        self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
             1024, #size
             samp_rate, #samp_rate
             "", #name
-            1 #number of inputs
+            1, #number of inputs
+            None # parent
         )
         self.qtgui_time_sink_x_0.set_update_time(0.10)
-        self.qtgui_time_sink_x_0.set_y_axis(-2, 2)
+        self.qtgui_time_sink_x_0.set_y_axis(0, 50)
 
         self.qtgui_time_sink_x_0.set_y_label('Amplitude', "")
 
@@ -168,12 +173,9 @@ class correlator(gr.top_block, Qt.QWidget):
             -1, -1, -1, -1, -1]
 
 
-        for i in range(2):
+        for i in range(1):
             if len(labels[i]) == 0:
-                if (i % 2 == 0):
-                    self.qtgui_time_sink_x_0.set_line_label(i, "Re{{Data {0}}}".format(i/2))
-                else:
-                    self.qtgui_time_sink_x_0.set_line_label(i, "Im{{Data {0}}}".format(i/2))
+                self.qtgui_time_sink_x_0.set_line_label(i, "Data {0}".format(i))
             else:
                 self.qtgui_time_sink_x_0.set_line_label(i, labels[i])
             self.qtgui_time_sink_x_0.set_line_width(i, widths[i])
@@ -183,8 +185,8 @@ class correlator(gr.top_block, Qt.QWidget):
             self.qtgui_time_sink_x_0.set_line_alpha(i, alphas[i])
 
         self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_win)
-        self.fir_filter_xxx_1 = filter.fir_filter_ccc(1, [(1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (-1.4142197+1.4142197j), (-1.4142197+1.4142197j), (-1.4142197+1.4142197j), (-1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j)])
+        self.top_layout.addWidget(self._qtgui_time_sink_x_0_win)
+        self.fir_filter_xxx_1 = filter.fir_filter_ccc(1, [(-1.4142197+1.4142197j), (-1.4142197+1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (-1.4142197-1.4142197j), (-1.4142197-1.4142197j), (-1.4142197-1.4142197j), (-1.4142197-1.4142197j), (-1.4142197-1.4142197j), (-1.4142197-1.4142197j), (-1.4142197+1.4142197j), (-1.4142197+1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j)])
         self.fir_filter_xxx_1.declare_sample_delay(0)
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, 16, 1.5, 1)
         self.digital_constellation_modulator_0 = digital.generic_mod(
@@ -194,18 +196,21 @@ class correlator(gr.top_block, Qt.QWidget):
             pre_diff_code=True,
             excess_bw=excess_bw,
             verbose=False,
-            log=False)
+            log=False,
+            truncate=False)
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(15, 1, .002, 1)
-        self.blocks_vector_source_x_0 = blocks.vector_source_b([0x00] * 10 + [0xaa, 0xff, 0xff] + [0x00] * 10, False, 1, [])
+        self.blocks_vector_source_x_0 = blocks.vector_source_b(([0x00] * 10 + [0xaa, 0xff, 0x0a] + [0x00] * 10) * 20, False, 1, [])
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, samp_rate,True)
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_char*1)
+        self.blocks_complex_to_mag_0 = blocks.complex_to_mag(1)
 
 
 
         ##################################################
         # Connections
         ##################################################
+        self.connect((self.blocks_complex_to_mag_0, 0), (self.qtgui_time_sink_x_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.digital_constellation_modulator_0, 0))
         self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.digital_constellation_decoder_cb_0, 0))
@@ -214,12 +219,15 @@ class correlator(gr.top_block, Qt.QWidget):
         self.connect((self.digital_constellation_modulator_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.qtgui_time_sink_x_1, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_cma_equalizer_cc_0, 0))
-        self.connect((self.fir_filter_xxx_1, 0), (self.qtgui_time_sink_x_0, 0))
+        self.connect((self.fir_filter_xxx_1, 0), (self.blocks_complex_to_mag_0, 0))
 
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "correlator")
         self.settings.setValue("geometry", self.saveGeometry())
+        self.stop()
+        self.wait()
+
         event.accept()
 
     def get_sps(self):
@@ -275,7 +283,6 @@ class correlator(gr.top_block, Qt.QWidget):
 
 
 
-
 def main(top_block_cls=correlator, options=None):
 
     if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
@@ -290,6 +297,9 @@ def main(top_block_cls=correlator, options=None):
     tb.show()
 
     def sig_handler(sig=None, frame=None):
+        tb.stop()
+        tb.wait()
+
         Qt.QApplication.quit()
 
     signal.signal(signal.SIGINT, sig_handler)
@@ -299,11 +309,6 @@ def main(top_block_cls=correlator, options=None):
     timer.start(500)
     timer.timeout.connect(lambda: None)
 
-    def quitting():
-        tb.stop()
-        tb.wait()
-
-    qapp.aboutToQuit.connect(quitting)
     qapp.exec_()
 
 if __name__ == '__main__':

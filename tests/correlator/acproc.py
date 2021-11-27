@@ -49,8 +49,9 @@ ax2.plot(ac.imag, ".-")
 ax2.set_title("Symbols of Access Code (time)")
 plt.show()
 
+fir = list(np.conj(ac[::-1]))
+
 # print the symbols
 print(f"Generated {len(ac)} symbols from a {aclen} byte sequence")
-print(list(ac))
-print("Reversed symbols (for FIR filter)")
-print(list(ac[::-1]))
+print("Reversed symbols (for FIR filter):")
+print(fir)
