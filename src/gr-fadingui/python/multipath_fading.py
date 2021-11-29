@@ -31,7 +31,7 @@ class multipath_fading(gr.sync_block):
     """
     docstring for block multipath_fading
     """
-    def __init__(self, amplitudes=[], delays=[], los=True):  # only default arguments here
+    def __init__(self, amplitudes, delays, los):  # only default arguments here
         """arguments to this function show up as parameters in GRC"""
         gr.sync_block.__init__(
             self,
@@ -61,22 +61,20 @@ class multipath_fading(gr.sync_block):
         inp = input_items[0]
         oup = output_items[0]
         
+
         if len(self.amplitudes) != len(self.delays):    # Test: Es muss gleich viele Werte für Delays und Amplituden haben.
             raise Exception("Amplitudes and Delay length dont match")
-
-
-        #TO DO negativ check 
+        if np.min(self.delays)<0:   #Negativ Check
+            raise Exception("Delay can't be negativ")
 
         
-
         #    raise Exception("Delay length can't be one")
         #if np.min(self.delays)<=1:
         #    raise Exception("Delay length can't be one")
 
-        #max_len = np.max(self.delays) #Max Werte herausfinden für länge 
-        #sum_x = np.zeros(max_len)
 
-        max_order = 2 * np.floor(np.max(self.delays)) + 1
+
+        max_order = 2 * np.floor(np.max(self.delays)) + 1 #Max Werte herausfinden für länge 
         max_samples = np.arange(0, max_order +1) 
         max_len = len(max_samples) #Für Filter
 
@@ -110,7 +108,6 @@ class multipath_fading(gr.sync_block):
         # signal_shifted = np.convolve(h, inp, mode='full')
         # y = signal_shifted
 
-        #y+=np.concatenate([self.temp,np.zeros(len(y)-len(self.temp))])
         y+=np.concatenate([self.temp,np.zeros(len(y)-len(self.temp))])
 
         oup[:] = y[:len(inp)]
