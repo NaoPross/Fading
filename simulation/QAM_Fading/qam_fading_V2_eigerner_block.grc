@@ -808,9 +808,10 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    amplitudes: '[0.2,0.2]'
+    amplitudes: '[0.2, 0.2]'
     comment: ''
-    delays: '[sps+1,sps+1]'
+    delays: '[4,4]'
+    los: 'True'
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
