@@ -4,7 +4,9 @@ category: '[fadingui]'
 
 templates:
   imports: import fadingui
-  make: fadingui.multipath_fading(amplitudes=${amplitudes}, delays=${delays})
+  make: fadingui.multipath_fading(amplitudes=${amplitudes}, delays=${delays}, los =${los})
+
+
 
 #  Make one 'parameters' list entry for every parameter you want settable from the GUI.
 #     Keys include:
@@ -20,7 +22,7 @@ parameters:
   dtype: raw
 - id: los
   label: LOS/NLOS
-  options: ['True', 'False']
+  options: [True, False]
   option_labels: ['LOS', 'NLOS']
   #default: 'False'
   dtype: bool

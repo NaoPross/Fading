@@ -464,7 +464,7 @@ blocks:
     mags: (1,0.2)
     maxoutbuf: '0'
     minoutbuf: '0'
-    ntaps: '1'
+    ntaps: '2'
     seed: '0'
   states:
     bus_sink: false
