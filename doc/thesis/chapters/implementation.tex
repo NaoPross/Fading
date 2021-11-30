@@ -78,11 +78,10 @@ Here its possible to add some AWGN noise in the channel line. Different paramete
 
 \subsection{Fading}
 %TO DO: übersetzen 
-Für das veranschaulichen des Fading effekts wurde ein eigener Block kreaiert und in den Channel implementiert. Dieser Block basiert auf einem FIR Filter. Es kann mit direcktem Pfad oder ohne dargestellt werden ( Line of Side ). Mit Hilfe dieses Filters wird die Verspätung der nebenpfaden dargestellt. Es ist möglich beliebig viele dieser Pfade mit unterschiedlicher stärke zu simulieren.
+Für die statische implementation und veranschaulichen des Fading effekts wurde ein eigener Block kreaiert und in den Channel implementiert. Dieser Block basiert auf einem FIR Filter. Es kann mit direcktem Pfad oder ohne dargestellt werden (Line of Side). Mit Hilfe dieses Filters wird die Verspätung der nebenpfaden dargestellt. Es ist möglich beliebig viele dieser Pfade mit unterschiedlicher stärke zu simulieren. Dieser Block wurde zusätzlich mit der methode in \ref{sec:fractional-delay} beschriben implementiert um nichtganzahlige delay werte zu erlauben.
 
 % Bild einfügen 
-\subsubsection{Fractional Delay}
-Problem Werte nur auf dem Sample übermitelt und keine dazwischen.
+
 
 
 
