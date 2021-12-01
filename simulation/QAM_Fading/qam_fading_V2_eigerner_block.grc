@@ -811,7 +811,7 @@ blocks:
     amplitudes: '[amp_1]'
     comment: ''
     delays: '[fading_1]'
-    los: 'False'
+    los: 'True'
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
