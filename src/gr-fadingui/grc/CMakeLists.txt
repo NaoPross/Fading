@@ -22,5 +22,6 @@ install(FILES
     fadingui_dearpygui_sink.block.yml
     fadingui_deframer.block.yml
     fadingui_frame_obj.block.yml
-    fadingui_multipath_fading.block.yml DESTINATION share/gnuradio/grc/blocks
+    fadingui_multipath_fading.block.yml
+    fadingui_ber.block.yml DESTINATION share/gnuradio/grc/blocks
 )

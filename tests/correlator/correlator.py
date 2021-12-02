@@ -329,6 +329,7 @@ class correlator(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(1, 2):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self.fadingui_deframer_0 = fadingui.deframer(frame_obj=)
         self.epy_block_0 = epy_block_0.blk()
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, 16, 1.5, 1)
         self.digital_corr_est_cc_0 = digital.corr_est_cc(access_code_symbols, 1, 0, .8, digital.THRESHOLD_DYNAMIC)
@@ -371,7 +372,7 @@ class correlator(gr.top_block, Qt.QWidget):
         self.connect((self.channels_channel_model_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.digital_corr_est_cc_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.qtgui_const_sink_x_0, 0))
-        self.connect((self.digital_constellation_decoder_cb_0, 0), (self.blocks_vector_sink_x_0, 0))
+        self.connect((self.digital_constellation_decoder_cb_0, 0), (self.fadingui_deframer_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.channels_channel_model_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.qtgui_time_sink_x_1_0, 0))
         self.connect((self.digital_corr_est_cc_0, 1), (self.blocks_complex_to_magphase_0_0, 0))
@@ -380,6 +381,7 @@ class correlator(gr.top_block, Qt.QWidget):
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_cma_equalizer_cc_0, 0))
         self.connect((self.epy_block_0, 0), (self.digital_constellation_decoder_cb_0, 0))
         self.connect((self.epy_block_0, 0), (self.qtgui_const_sink_x_0_0, 0))
+        self.connect((self.fadingui_deframer_0, 0), (self.blocks_vector_sink_x_0, 0))
 
 
     def closeEvent(self, event):
