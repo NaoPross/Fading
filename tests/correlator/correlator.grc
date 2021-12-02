@@ -357,7 +357,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [840, 1392.0]
+    coordinate: [536, 1392.0]
     rotation: 0
     state: true
 - name: blocks_vector_source_x_0
@@ -583,22 +583,6 @@ blocks:
     coordinate: [1088, 1040.0]
     rotation: 0
     state: enabled
-- name: fadingui_deframer_0
-  id: fadingui_deframer
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    frame_obj: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [552, 1388.0]
-    rotation: 0
-    state: bypassed
 - name: fir_filter_xxx_1
   id: fir_filter_xxx
   parameters:
@@ -1668,7 +1652,7 @@ connections:
 - [digital_cma_equalizer_cc_0, '0', fir_filter_xxx_1, '0']
 - [digital_cma_equalizer_cc_0, '0', qtgui_const_sink_x_0, '0']
 - [digital_cma_equalizer_cc_0, '0', qtgui_time_sink_x_1_1, '0']
-- [digital_constellation_decoder_cb_0, '0', fadingui_deframer_0, '0']
+- [digital_constellation_decoder_cb_0, '0', blocks_vector_sink_x_0, '0']
 - [digital_constellation_modulator_0, '0', blocks_stream_mux_1, '1']
 - [digital_constellation_modulator_0, '0', channels_channel_model_0, '0']
 - [digital_constellation_modulator_0, '0', qtgui_time_sink_x_1_0, '0']
@@ -1678,7 +1662,6 @@ connections:
 - [digital_pfb_clock_sync_xxx_0, '0', digital_cma_equalizer_cc_0, '0']
 - [epy_block_0, '0', qtgui_const_sink_x_0_0, '0']
 - [epy_block_0, '0', virtual_sink_3, '0']
-- [fadingui_deframer_0, '0', blocks_vector_sink_x_0, '0']
 - [fir_filter_xxx_1, '0', blocks_complex_to_magphase_0, '0']
 - [fir_filter_xxx_1, '0', qtgui_const_sink_x_1, '0']
 - [root_raised_cosine_filter_0, '0', blocks_stream_mux_1, '0']
