@@ -408,7 +408,7 @@ blocks:
     block_tags: 'False'
     comment: ''
     epsilon: '1.0'
-    freq_offset: '0.00001'
+    freq_offset: '0.0001'
     maxoutbuf: '0'
     minoutbuf: '0'
     noise_voltage: '0.2'
@@ -530,30 +530,45 @@ blocks:
       \ many samples were processed,\n        # because tags have an absolute offset\n\
       \        self.sampnr: np.complex64 = 0\n\n        # because of block processing\
       \ a tagged block could\n        # be split in half so we need to keep track\
-      \ of the\n        # \"previous\" values\n        self.last_phase = 0\n\n   \
-      \ def work(self, input_items, output_items):\n        # TODO: interpolate phase\
-      \ values for frequency correction\n\n        out = output_items[0]\n       \
-      \ inp = input_items[0]\n\n        # create a phase correction vector\n     \
-      \   phase = np.zeros(len(inp), dtype=np.float64)\n\n        # read tags\n  \
-      \      tags = self.get_tags_in_window(0, 0, len(inp))\n\n        # get only\
-      \ phase tags\n        is_phase = lambda tag: pmt.to_python(tag.key) == \"phase_est\"\
-      \n        phase_tags = list(filter(is_phase, tags))\n\n        print(f\"Processing\
-      \ {len(inp)} samples, with {len(phase_tags)} tags\")\n\n        # compute correction\
-      \ from previous block\n        first_tag = phase_tags[0]\n        first_idx\
-      \ = first_tag.offset - self.sampnr\n        phase[:first_idx] = self.last_phase\n\
-      \n        # iterate phase tags \"in the middle\"\n        for prev_tag, next_tag\
-      \ in zip(phase_tags, phase_tags[1:]):\n            # unpack pmt values\n   \
-      \         pval = pmt.to_python(prev_tag.value)\n\n            # compute indexes\
+      \ of the\n        # \"previous\" values\n        self.last_tag = None\n\n  \
+      \  def work(self, input_items, output_items):\n        # nicer aliases\n   \
+      \     out = output_items[0]\n        inp = input_items[0]\n\n        def print_phase_correction(start,\
+      \ end, phase, freq):\n            print(f\"Correction for block {start:3d} to\
+      \ {end:3d} is phase = {phase: 2.4f} rad, freq = {freq * 1e3: 2.4f} milli rad/samp\"\
+      )\n\n        # read only phase tags\n        tags = self.get_tags_in_window(0,\
+      \ 0, len(inp))\n\n        is_phase = lambda tag: pmt.to_python(tag.key) == \"\
+      phase_est\"\n        phase_tags = list(filter(is_phase, tags))\n\n        #\
+      \ FIXME: what if there are no tags? check that!\n\n        print(f\"Processing\
+      \ {len(inp)} samples, with {len(phase_tags)} tags\")\n\n        # create a phase\
+      \ correction vector\n        phase = np.zeros(len(inp), dtype=np.float64)\n\n\
+      \        # compute correction from previous block (if present)\n        if self.last_tag:\n\
+      \            # variables for first and last phase values\n            lval =\
+      \ pmt.to_python(self.last_tag.value)\n            fval = pmt.to_python(phase_tags[0].value)\n\
+      \n            # compute index for phase vector\n            fidx = phase_tags[0].offset\
+      \ - self.sampnr\n\n            # compute frequency offset\n            nsamples\
+      \ = phase_tags[0].offset - self.last_tag.offset\n            freq = (fval -\
+      \ lval) / nsamples\n\n            # total phase correction is: phase + freq\
+      \ * time\n            phase[:fidx] = lval * np.ones(fidx) + freq * np.arange(0,\
+      \ fidx)\n\n            # compute correction\n            print_phase_correction(0,\
+      \ fidx, lval, freq)\n\n        # iterate phase tags \"in the middle\"\n    \
+      \    # FIXME: what if there are less than 2 tags?\n        #        the code\
+      \ below will probably crash\n        for prev_tag, next_tag in zip(phase_tags,\
+      \ phase_tags[1:]):\n            # unpack pmt values\n            pval = pmt.to_python(prev_tag.value)\n\
+      \            nval = pmt.to_python(next_tag.value)\n\n            # compute indexes\
       \ in phase vector\n            pidx = prev_tag.offset - self.sampnr\n      \
-      \      idx = next_tag.offset - self.sampnr\n\n            # compute phase correction\
-      \ for block\n            phase[pidx:idx] = pval\n            print(f\"Correction\
-      \ for block {pidx} to {idx} is {pval}\")\n\n        # compute the remaining\
-      \ part of the block\n        last_tag = phase_tags[-1]\n        last_val = pmt.to_python(last_tag.value)\n\
-      \        last_idx = last_tag.offset - self.sampnr\n\n        phase[last_idx:]\
-      \ = last_val\n\n        # save values for next call\n        self.last_phase\
-      \ = last_val\n\n        # mark samples as processed and compute to output\n\
-      \        self.sampnr += len(inp)\n        out[:] = inp * np.exp(-1j * phase)\n\
-      \n        return len(out)\n"
+      \      nidx = next_tag.offset - self.sampnr\n\n            # compute frquency\
+      \ correction for block by linearly interpolating\n            # frame values\n\
+      \            nsamples = nidx - pidx\n            freq = (nval - pval) / nsamples\n\
+      \n            # total correction is: phase + freq * time\n            phase[pidx:nidx]\
+      \ = pval * np.ones(nsamples) + freq * np.arange(0, nsamples)\n            print_phase_correction(pidx,\
+      \ nidx, pval, freq)\n\n        # for the last block because the next tag is\
+      \ unknown (in the future) we\n        # cannot predict the frequency offset.\
+      \ Thus we save the last tag for\n        # the next call.\n        self.last_tag\
+      \ = phase_tags[-1]\n        val = pmt.to_python(self.last_tag.value)\n     \
+      \   idx = self.last_tag.offset - self.sampnr\n\n        phase[idx:] = val\n\n\
+      \        # compute correction\n        out[:] = inp * np.exp(-1j * phase)\n\n\
+      \        # increment processed samples counter\n        self.sampnr += len(inp)\n\
+      \        return len(phase)\n"
     affinity: ''
     alias: ''
     comment: ''
@@ -583,7 +598,7 @@ blocks:
     bus_structure: null
     coordinate: [552, 1388.0]
     rotation: 0
-    state: true
+    state: bypassed
 - name: fir_filter_xxx_1
   id: fir_filter_xxx
   parameters:
