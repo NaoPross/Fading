@@ -41,7 +41,7 @@ class blk(gr.sync_block):
 
     def work(self, input_items, output_items):
         # FIXME: replace class counter with local variable
-        # self.counter = self.nitems_written(0)
+        self.counter = self.nitems_written(0)
 
         # nicer aliases
         inp = input_items[0]
@@ -65,7 +65,7 @@ class blk(gr.sync_block):
         nfront = tags[0].offset - self.counter
         print(f"Processing {nfront} samples at the front of the buffer")
         start = self.block_phase(self.last, tags[0])[-nfront:] \
-                if self.last else np.zeros(nfront)
+                if self.last and nfront else np.zeros(nfront)
 
         # compute values at the end
         nback = len(inp) - (tags[-1].offset - self.counter)

@@ -343,7 +343,7 @@ class correlator(gr.top_block, Qt.QWidget):
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(15, 1, .002, 1)
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=0.2,
-            frequency_offset=0.0001,
+            frequency_offset=0.0002,
             epsilon=1.0,
             taps=[-1.4 + .4j],
             noise_seed=243,

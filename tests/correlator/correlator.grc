@@ -408,7 +408,7 @@ blocks:
     block_tags: 'False'
     comment: ''
     epsilon: '1.0'
-    freq_offset: '0.0001'
+    freq_offset: '0.0002'
     maxoutbuf: '0'
     minoutbuf: '0'
     noise_voltage: '0.2'
@@ -541,7 +541,7 @@ blocks:
       \ rad and freq={freq*1e3: .4f} milli rad / sample\")\n\n        # compute block\
       \ values\n        return sphase * np.ones(nsamples) + freq * np.arange(0, nsamples)\n\
       \n    def work(self, input_items, output_items):\n        # FIXME: replace class\
-      \ counter with local variable\n        # self.counter = self.nitems_written(0)\n\
+      \ counter with local variable\n        self.counter = self.nitems_written(0)\n\
       \n        # nicer aliases\n        inp = input_items[0]\n        out = output_items[0]\n\
       \n        # read phase tags\n        is_phase = lambda tag: pmt.to_python(tag.key)\
       \ == \"phase_est\"\n        tags = list(filter(is_phase, self.get_tags_in_window(0,\
@@ -555,10 +555,10 @@ blocks:
       \ the remainder from the previous call\n        nfront = tags[0].offset - self.counter\n\
       \        print(f\"Processing {nfront} samples at the front of the buffer\")\n\
       \        start = self.block_phase(self.last, tags[0])[-nfront:] \\\n       \
-      \         if self.last else np.zeros(nfront)\n\n        # compute values at\
-      \ the end\n        nback = len(inp) - (tags[-1].offset - self.counter)\n   \
-      \     print(f\"Processing {nback} samples at the back of the buffer\")\n   \
-      \     end = np.ones(nback) * pmt.to_python(tags[-1].value)\n\n        # compute\
+      \         if self.last and nfront else np.zeros(nfront)\n\n        # compute\
+      \ values at the end\n        nback = len(inp) - (tags[-1].offset - self.counter)\n\
+      \        print(f\"Processing {nback} samples at the back of the buffer\")\n\
+      \        end = np.ones(nback) * pmt.to_python(tags[-1].value)\n\n        # compute\
       \ correction\n        correction = np.exp(-1j * np.concatenate([start, middle,\
       \ end]))\n        length = len(correction)\n\n        # write outputs\n    \
       \    out[:length] = inp[:length] * correction\n        self.counter += len(inp)\n\
