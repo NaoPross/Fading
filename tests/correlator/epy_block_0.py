@@ -21,6 +21,10 @@ class blk(gr.sync_block):
         # of the previous block to correct the first values of the next block
         self.last = None
 
+        # to compute the values that are at the end we need to know the frequency
+        # of the last block
+        self.freq = 1
+
     def block_phase(self, start, end):
         # compute number of samples in block
         nsamples = end.offset - start.offset
@@ -31,6 +35,15 @@ class blk(gr.sync_block):
 
         # compute frequency offset between start and end
         freq = (sphase - ephase) / nsamples
+
+        # save this frequency values to compute the end block, unless frequency
+        # has changed too fast, in that case replace the current values with
+        # the previous one . This is effectively like a low pass filter.
+        if abs(freq / self.freq) > 4:
+            freq = self.freq
+        else:
+            self.freq = freq
+
 
         # debugging
         print(f"Correction for block of {nsamples:2d} samples is " \
@@ -61,16 +74,17 @@ class blk(gr.sync_block):
         blocks = [ self.block_phase(start, end) for (start, end) in pairs ]
         middle = np.concatenate(blocks) if blocks else []
 
-        # compute the remainder from the previous call
+        # compute values at the end, we do not have informations about the future
+        # but we can use the frequency of the last block to approximate
+        nback = len(inp) - (tags[-1].offset - self.counter)
+        print(f"Processing {nback} samples at the back of the buffer")
+        end = np.ones(nback) * pmt.to_python(tags[-1].value) + self.freq * np.arange(0, nback)
+
+        # compute the "start", using the last tag from the previous call
         nfront = tags[0].offset - self.counter
         print(f"Processing {nfront} samples at the front of the buffer")
         start = self.block_phase(self.last, tags[0])[-nfront:] \
                 if self.last and nfront else np.zeros(nfront)
-
-        # compute values at the end
-        nback = len(inp) - (tags[-1].offset - self.counter)
-        print(f"Processing {nback} samples at the back of the buffer")
-        end = np.ones(nback) * pmt.to_python(tags[-1].value)
 
         # compute correction
         correction = np.exp(-1j * np.concatenate([start, middle, end]))

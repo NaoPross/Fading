@@ -78,7 +78,7 @@ class correlator(gr.top_block, Qt.QWidget):
         self.nfilts = nfilts = 32
         self.excess_bw = excess_bw = .35
         self.timing_loop_bw = timing_loop_bw = 2 * 3.141592653589793 / 100
-        self.testvec = testvec = [31, 53] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3]
+        self.testvec = testvec = [31, 53] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3] * 2
         self.samp_rate = samp_rate = 32000
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), excess_bw, 45*nfilts)
         self.revconj_access_code_symbols = revconj_access_code_symbols = [(1.4142135623730951+1.4142135623730951j), (1.4142135623730951+1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (-1.4142135623730951+1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (1.4142135623730951+1.4142135623730951j), (-1.4142135623730951+1.4142135623730951j)]

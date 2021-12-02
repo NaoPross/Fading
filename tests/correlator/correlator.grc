@@ -163,7 +163,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '[31, 53] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3]'
+    value: '[31, 53] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3] * 2'
   states:
     bus_sink: false
     bus_source: false
@@ -531,17 +531,23 @@ blocks:
       \ because tags have an absolute offset\n        self.counter: np.uint64 = 0\n\
       \n        # because we do block processing, we need to keep track of the last\
       \ tag\n        # of the previous block to correct the first values of the next\
-      \ block\n        self.last = None\n\n    def block_phase(self, start, end):\n\
-      \        # compute number of samples in block\n        nsamples = end.offset\
-      \ - start.offset\n\n        # unpack pmt values into start and end phase\n \
-      \       sphase = pmt.to_python(start.value)\n        ephase = pmt.to_python(end.value)\n\
-      \n        # compute frequency offset between start and end\n        freq = (sphase\
-      \ - ephase) / nsamples\n\n        # debugging\n        print(f\"Correction for\
-      \ block of {nsamples:2d} samples is \" \\\n              f\"phase={sphase: .4f}\
-      \ rad and freq={freq*1e3: .4f} milli rad / sample\")\n\n        # compute block\
-      \ values\n        return sphase * np.ones(nsamples) + freq * np.arange(0, nsamples)\n\
-      \n    def work(self, input_items, output_items):\n        # FIXME: replace class\
-      \ counter with local variable\n        self.counter = self.nitems_written(0)\n\
+      \ block\n        self.last = None\n\n        # to compute the values that are\
+      \ at the end we need to know the frequency\n        # of the last block\n  \
+      \      self.freq = 1\n\n    def block_phase(self, start, end):\n        # compute\
+      \ number of samples in block\n        nsamples = end.offset - start.offset\n\
+      \n        # unpack pmt values into start and end phase\n        sphase = pmt.to_python(start.value)\n\
+      \        ephase = pmt.to_python(end.value)\n\n        # compute frequency offset\
+      \ between start and end\n        freq = (sphase - ephase) / nsamples\n\n   \
+      \     # save this frequency values to compute the end block, unless frequency\n\
+      \        # has changed too fast, in that case replace the current values with\n\
+      \        # the previous one . This is effectively like a low pass filter.\n\
+      \        if abs(freq / self.freq) > 4:\n            freq = self.freq\n     \
+      \   else:\n            self.freq = freq\n\n\n        # debugging\n        print(f\"\
+      Correction for block of {nsamples:2d} samples is \" \\\n              f\"phase={sphase:\
+      \ .4f} rad and freq={freq*1e3: .4f} milli rad / sample\")\n\n        # compute\
+      \ block values\n        return sphase * np.ones(nsamples) + freq * np.arange(0,\
+      \ nsamples)\n\n    def work(self, input_items, output_items):\n        # FIXME:\
+      \ replace class counter with local variable\n        self.counter = self.nitems_written(0)\n\
       \n        # nicer aliases\n        inp = input_items[0]\n        out = output_items[0]\n\
       \n        # read phase tags\n        is_phase = lambda tag: pmt.to_python(tag.key)\
       \ == \"phase_est\"\n        tags = list(filter(is_phase, self.get_tags_in_window(0,\
@@ -552,16 +558,18 @@ blocks:
       \        pairs = list(filter(enough_samples, zip(tags, tags[1:])))\n       \
       \ blocks = [ self.block_phase(start, end) for (start, end) in pairs ]\n    \
       \    middle = np.concatenate(blocks) if blocks else []\n\n        # compute\
-      \ the remainder from the previous call\n        nfront = tags[0].offset - self.counter\n\
-      \        print(f\"Processing {nfront} samples at the front of the buffer\")\n\
-      \        start = self.block_phase(self.last, tags[0])[-nfront:] \\\n       \
-      \         if self.last and nfront else np.zeros(nfront)\n\n        # compute\
-      \ values at the end\n        nback = len(inp) - (tags[-1].offset - self.counter)\n\
-      \        print(f\"Processing {nback} samples at the back of the buffer\")\n\
-      \        end = np.ones(nback) * pmt.to_python(tags[-1].value)\n\n        # compute\
-      \ correction\n        correction = np.exp(-1j * np.concatenate([start, middle,\
-      \ end]))\n        length = len(correction)\n\n        # write outputs\n    \
-      \    out[:length] = inp[:length] * correction\n        self.counter += len(inp)\n\
+      \ values at the end, we do not have informations about the future\n        #\
+      \ but we can use the frequency of the last block to approximate\n        nback\
+      \ = len(inp) - (tags[-1].offset - self.counter)\n        print(f\"Processing\
+      \ {nback} samples at the back of the buffer\")\n        end = np.ones(nback)\
+      \ * pmt.to_python(tags[-1].value) + self.freq * np.arange(0, nback)\n\n    \
+      \    # compute the \"start\", using the last tag from the previous call\n  \
+      \      nfront = tags[0].offset - self.counter\n        print(f\"Processing {nfront}\
+      \ samples at the front of the buffer\")\n        start = self.block_phase(self.last,\
+      \ tags[0])[-nfront:] \\\n                if self.last and nfront else np.zeros(nfront)\n\
+      \n        # compute correction\n        correction = np.exp(-1j * np.concatenate([start,\
+      \ middle, end]))\n        length = len(correction)\n\n        # write outputs\n\
+      \        out[:length] = inp[:length] * correction\n        self.counter += len(inp)\n\
       \n        # save last tag for next call\n        self.last = tags[-1]\n\n  \
       \      # FIXME: should return `length' but then the last sample is not\n   \
       \     #        included and self.last does something weird\n        return len(out)\n"
