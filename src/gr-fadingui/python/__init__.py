@@ -38,5 +38,6 @@ from .dearpygui_sink import dearpygui_sink
 from .deframer import deframer
 from .frame_obj import frame_obj
 from .multipath_fading import multipath_fading
+from .ber import ber
 
 #
