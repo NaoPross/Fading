@@ -34,7 +34,7 @@ except ImportError:
 # import any pure python here
 from .datasource import datasource
 from .dearpygui_sink import dearpygui_sink
-from .xor_frame_sync import xor_frame_sync
+
 from .deframer import deframer
 from .frame_obj import frame_obj
 from .multipath_fading import multipath_fading
