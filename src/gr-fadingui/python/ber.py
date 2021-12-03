@@ -30,26 +30,29 @@ class ber(gr.sync_block):
     """
     docstring for block ber
     """
-    def __init__(self, vgl):
+    def __init__(self, vgl, vlen):
         gr.sync_block.__init__(self,
             name="ber",
-            in_sig=[np.byte, ],
+            in_sig=[np.dtype(str(vlen) + "b")],
             out_sig=None)
         self.vgl=vgl
-
-
+        self.vlen=vlen
 
     def work(self, input_items, output_items):
+        
         inp = input_items[0]
-        # <+signal processing here+>
-
-        v = self.vgl^inp
-        v_array= np.array(v,dtype = np.uint8)
-
-        ber = sum(np.unpackbits(v_array))
-
-
-        log.debug(ber)
+        ber_tot = 0
+        log.debug(f"Length: {len(inp)}")
+        log.debug(f"Inp_vector:{inp}")
+        
+        for i in inp:
+            log.debug(f"In Schlaufe{i}")
+            v = np.array(self.vgl, dtype=np.uint8)^np.array(i, dtype=np.uint8)
+            ber = sum(np.unpackbits(v))
+            log.debug(f"BER {ber} in Paket {i}")
+            ber_tot+=ber
+            log.debug(f"BER Total{ber_tot}")
+        
 
         return len(input_items[0])
 

@@ -31,6 +31,7 @@ from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 import fadingui
+import numpy as np
 
 from gnuradio import qtgui
 
@@ -70,21 +71,25 @@ class Test_Bit_Errorrate(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
+        self.wrong = wrong = list(np.random.randint(0, 255, dtype=np.uint8, size=10))
+        self.vlen = vlen = 10
         self.testvec = testvec = [31, 53] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3]
         self.samp_rate = samp_rate = 32000
 
         ##################################################
         # Blocks
         ##################################################
-        self.fadingui_ber_0 = fadingui.ber(vgl=testvec)
-        self.blocks_vector_source_x_0 = blocks.vector_source_b(testvec * 1600, True, 1, [])
+        self.fadingui_ber_0 = fadingui.ber(vgl=testvec, vlen=vlen)
+        self.blocks_vector_source_x_0 = blocks.vector_source_b(testvec + list(np.random.randint(0, 255, dtype=np.uint8, size=10)), True, vlen, [])
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*vlen, samp_rate,True)
 
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_vector_source_x_0, 0), (self.fadingui_ber_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.fadingui_ber_0, 0))
+        self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_throttle_0, 0))
 
 
     def closeEvent(self, event):
@@ -92,18 +97,31 @@ class Test_Bit_Errorrate(gr.top_block, Qt.QWidget):
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
+    def get_wrong(self):
+        return self.wrong
+
+    def set_wrong(self, wrong):
+        self.wrong = wrong
+
+    def get_vlen(self):
+        return self.vlen
+
+    def set_vlen(self, vlen):
+        self.vlen = vlen
+
     def get_testvec(self):
         return self.testvec
 
     def set_testvec(self, testvec):
         self.testvec = testvec
-        self.blocks_vector_source_x_0.set_data(self.testvec * 1600, [])
+        self.blocks_vector_source_x_0.set_data(self.testvec + list(np.random.randint(0, 255, dtype=np.uint8, size=10)), [])
 
     def get_samp_rate(self):
         return self.samp_rate
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
+        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
 
 
 

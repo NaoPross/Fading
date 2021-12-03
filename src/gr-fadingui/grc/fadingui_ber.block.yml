@@ -4,7 +4,7 @@ category: '[fadingui]'
 
 templates:
   imports: import fadingui
-  make: fadingui.ber(vgl=${vgl})
+  make: fadingui.ber(vgl=${vgl}, vlen=${vlen})
 
 #  Make one 'parameters' list entry for every parameter you want settable from the GUI.
 #     Keys include:
@@ -12,12 +12,12 @@ templates:
 #     * label (label shown in the GUI)
 #     * dtype (e.g. int, float, complex, byte, short, xxx_vector, ...)
 parameters:
- - id: vgl
-   label: Vergleichsparameter
-   dtype: raw
-# - id: ...
-#   label: ...
-#   dtype: ...
+- id: vgl
+  label: Vergleichsparameter
+  dtype: raw
+- id: vlen
+  label: Vec Length
+  dtype: int
 
 #  Make one 'inputs' list entry per input and one 'outputs' list entry per output.
 #  Keys include:
@@ -30,7 +30,7 @@ inputs:
 - label: in
   domain: stream
   dtype: byte
-
+  vlen: ${vlen}
 
 #  'file_format' specifies the version of the GRC yml format used in the file
 #  and should usually not be changed.
