@@ -8,33 +8,18 @@ class blk(gr.sync_block):
     def __init__(self):
         gr.sync_block.__init__(
             self,
-            name='Phase Lock',
+            name='Phase and Frequency Correction',
             in_sig=[np.complex64],
             out_sig=[np.complex64]
         )
 
-        # we need to keep track of the aboslute number of samples that have
-        # been processed, because tags have an absolute offset
-        self.counter: np.uint64 = 0
+        # tags should not be propagated, we then output our own tags
+        self.set_tag_propagation_policy(gr.TPP_DONT)
 
         # because we do block processing, we need to keep track of the last tag
         # of the previous block to correct the first values of the next block
         self.last = None
-
-        # both the phase and frequency corrections should go through a low pass
-        # filter to avoid werid jumps in the correction. to do that, there are
-        # two buffers with an index
-        self.index = 0
-        self.length = 5
-        self.freq = np.zeros(self.length)
-
-    def lpf_freq(self, new_sample):
-        # save new sample
-        self.freq[self.index] = new_sample
-        # increment index
-        self.index = (self.index + 1) % self.length
-
-        return np.sum(self.freq) / self.length
+        self.lastfreq = 0
 
     def block_phase(self, start, end):
         # compute number of samples in block
@@ -45,7 +30,6 @@ class blk(gr.sync_block):
         ephase = pmt.to_python(end.value)
 
         # compute frequency offset between start and end
-        # and run it through a low pass filter (mean)
         phasediff = ephase - sphase
 
         if phasediff > np.pi:
@@ -55,7 +39,9 @@ class blk(gr.sync_block):
             phasediff += 2*np.pi
 
         freq = phasediff / nsamples
-        # freq = self.lpf_freq(freq)
+
+        # save this one for the last block (see variable `end' in self.work)
+        self.lastfreq = freq
 
         # debugging
         print(f"Correction for block of {nsamples:2d} samples is " \
@@ -65,8 +51,7 @@ class blk(gr.sync_block):
         return sphase * np.ones(nsamples) + freq * np.arange(0, nsamples)
 
     def work(self, input_items, output_items):
-        # FIXME: replace class counter with local variable
-        self.counter = self.nitems_written(0)
+        counter = self.nitems_written(0)
 
         # nicer aliases
         inp = input_items[0]
@@ -93,13 +78,13 @@ class blk(gr.sync_block):
 
         # compute values at the end, we do not have informations about the future
         # but we can use the frequency of the last block to approximate
-        nback = len(inp) - (tags[-1].offset - self.counter)
+        nback = len(inp) - (tags[-1].offset - counter)
         print(f"Processing {nback} samples at the back of the buffer")
-        endfreq = self.lpf_freq(self.freq[-1])
-        end = np.ones(nback) * pmt.to_python(tags[-1].value) + endfreq * np.arange(0, nback)
+        end = np.ones(nback) * pmt.to_python(tags[-1].value) \
+                + self.lastfreq * np.arange(0, nback)
 
         # compute the "start", using the last tag from the previous call
-        nfront = tags[0].offset - self.counter
+        nfront = tags[0].offset - counter
         print(f"Processing {nfront} samples at the front of the buffer")
         start = self.block_phase(self.last, tags[0])[-nfront:] \
                 if self.last and nfront else np.zeros(nfront)
@@ -110,7 +95,6 @@ class blk(gr.sync_block):
 
         # write outputs
         out[:length] = inp[:length] * correction
-        self.counter += len(inp)
 
         # save last tag for next call
         self.last = tags[-1]
