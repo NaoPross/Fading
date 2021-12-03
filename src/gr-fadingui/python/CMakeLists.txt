@@ -34,11 +34,11 @@ GR_PYTHON_INSTALL(
     __init__.py
     logger.py
     datasource.py
-    dearpygui_sink.py
     deframer.py
     frame_obj.py
     multipath_fading.py
-    ber.py DESTINATION ${GR_PYTHON_DIR}/fadingui
+    ber.py
+    netsink.py DESTINATION ${GR_PYTHON_DIR}/fadingui
 )
 
 ########################################################################
