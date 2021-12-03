@@ -15,15 +15,18 @@ class netsink(gr.sync_block):
     Keep in mind that is quite slow.
     """
     def __init__(self, address, dtype, vlen):
+        dt = np.dtype(dtype, (vlen,)) if vlen > 1 else dtype
+        print(dt)
+
         gr.sync_block.__init__(self,
             name="Network Sink",
-            in_sig=[],
+            in_sig=[dt],
             out_sig=None)
 
         # Create a socket and parse remote machine url
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.url = urlparse(sock_addr)
-        self.srv = (self.srv.hostname, self.srv.port)
+        self.url = urlparse(address)
+        self.srv = (self.url.hostname, self.url.port)
 
     def send(self, data):
         """
@@ -42,18 +45,30 @@ class netsink(gr.sync_block):
         @param data Array like type
         @return Bytes of ASCII encoded comma separated string of numbers
         """
-        # no data (what are you doing?)
-        if not data:
-            return bytes()
-
+        # FIXME: this could be (very) slow, is there a faster way with numpy?
         values = "[" + ",".join(map(str, data)) + "]"
         return bytes(values, "ascii")
 
     def work(self, input_items, output_items):
+        # FIXME: it is probably better NOT to send *every* sample
         inp = input_items[0]
+        inp_len = len(inp)
+        blocksize = 1024
 
-        # TODO: Check that inp has a reasonable size
-        self.send(self.encode(inp))
+        # Check that the packet is not huge
+        if len(inp) < blocksize:
+            self.send(self.encode(inp))
+        else:
+            # compute how to split inp into blocks
+            nblocks = inp_len // blocksize
+            index = blocksize * nblocks
 
-        return len(input_items[0])
+            # send blocks
+            blocks = np.array(inp[:index]).reshape((blocksize, nblocks))
+            for block in blocks:
+                self.send(self.encode(block))
 
+            # sent the rest
+            self.send(self.encode(inp[index:]))
+
+        return len(inp)

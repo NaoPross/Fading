@@ -4,8 +4,10 @@ category: '[fadingui]'
 flags: [ python ]
 
 templates:
-  imports: import fadingui
-  make: fadingui.netsink(${address}, ${dtype}, ${vlen})
+  imports: |-
+    import fadingui
+    import numpy as np
+  make: fadingui.netsink(address=${address}, dtype=${type}, vlen=${veclen})
 
 #  Make one 'parameters' list entry for every parameter you want settable from the GUI.
 #     Keys include:
@@ -13,18 +15,19 @@ templates:
 #     * label (label shown in the GUI)
 #     * dtype (e.g. int, float, complex, byte, short, xxx_vector, ...)
 parameters:
-- id: dtype
+- id: type
   label: Type
   dtype: enum
-  options: [complex, float, int, short, byte]
+  options: [complex, float, int, np.short, np.byte]
+  option_labels: [complex, float, int, short, byte]
   option_attributes:
-      size: [gr.sizeof_gr_complex, gr.sizeof_floar, gr.sizeof_int, gr.sizeof_short, gr.sizeof_char ]
+      size: [gr.sizeof_gr_complex, gr.sizeof_float, gr.sizeof_int, gr.sizeof_short, gr.sizeof_char]
   hide: part
-- id: vlen
+- id: veclen
   label: Vec Length
   dtype: int
-  default: 1
-  hide: ${ 'part' if vlen == 1 else 'none' }
+  default: '1'
+  hide: ${ 'part' if veclen == 1 else 'none' }
 - id: address
   label: Address
   dtype: string
@@ -40,8 +43,8 @@ parameters:
 inputs:
 - label: in
   domain: stream
-  dtype: ${dtype}
-  vlen: ${vlen}
+  dtype: ${type}
+  vlen: ${veclen}
 
 #  'file_format' specifies the version of the GRC yml format used in the file
 #  and should usually not be changed.
