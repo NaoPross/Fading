@@ -163,7 +163,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '[31, 53] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3] * 2'
+    value: '[31, 53] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3] '
   states:
     bus_sink: false
     bus_source: false
@@ -212,7 +212,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1048, 1128.0]
+    coordinate: [1088, 1304.0]
     rotation: 0
     state: enabled
 - name: blocks_multiply_const_vxx_0
@@ -248,7 +248,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1336, 1204.0]
+    coordinate: [1376, 1380.0]
     rotation: 0
     state: disabled
 - name: blocks_null_sink_3
@@ -265,7 +265,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1336, 1256.0]
+    coordinate: [1376, 1432.0]
     rotation: 0
     state: true
 - name: blocks_null_source_0
@@ -408,7 +408,7 @@ blocks:
     block_tags: 'False'
     comment: ''
     epsilon: '1.0'
-    freq_offset: '0.0002'
+    freq_offset: '0.0001'
     maxoutbuf: '0'
     minoutbuf: '0'
     noise_voltage: '0.2'
@@ -497,6 +497,24 @@ blocks:
     coordinate: [776, 1020.0]
     rotation: 0
     state: enabled
+- name: digital_costas_loop_cc_0
+  id: digital_costas_loop_cc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    order: '4'
+    use_snr: 'False'
+    w: 2 * 3.141592653589793 / 100
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1088, 1128.0]
+    rotation: 0
+    state: true
 - name: digital_pfb_clock_sync_xxx_0
   id: digital_pfb_clock_sync_xxx
   parameters:
@@ -531,18 +549,20 @@ blocks:
       \ because tags have an absolute offset\n        self.counter: np.uint64 = 0\n\
       \n        # because we do block processing, we need to keep track of the last\
       \ tag\n        # of the previous block to correct the first values of the next\
-      \ block\n        self.last = None\n\n        # to compute the values that are\
-      \ at the end we need to know the frequency\n        # of the last block\n  \
-      \      self.freq = 1\n\n    def block_phase(self, start, end):\n        # compute\
-      \ number of samples in block\n        nsamples = end.offset - start.offset\n\
-      \n        # unpack pmt values into start and end phase\n        sphase = pmt.to_python(start.value)\n\
-      \        ephase = pmt.to_python(end.value)\n\n        # compute frequency offset\
-      \ between start and end\n        freq = (sphase - ephase) / nsamples\n\n   \
-      \     # save this frequency values to compute the end block, unless frequency\n\
-      \        # has changed too fast, in that case replace the current values with\n\
-      \        # the previous one . This is effectively like a low pass filter.\n\
-      \        if abs(freq / self.freq) > 4:\n            freq = self.freq\n     \
-      \   else:\n            self.freq = freq\n\n\n        # debugging\n        print(f\"\
+      \ block\n        self.last = None\n\n        # both the phase and frequency\
+      \ corrections should go through a low pass\n        # filter to avoid werid\
+      \ jumps in the correction. to do that, there are\n        # two buffers with\
+      \ an index\n        self.index = 0\n        self.length = 7\n        self.freq\
+      \ = np.zeros(self.length)\n\n    def lpf_freq(self, new_sample):\n        #\
+      \ save new sample\n        self.freq[self.index] = new_sample\n        # increment\
+      \ index\n        self.index = (self.index + 1) % self.length\n\n        return\
+      \ np.sum(self.freq) / self.length\n\n    def block_phase(self, start, end):\n\
+      \        # compute number of samples in block\n        nsamples = end.offset\
+      \ - start.offset\n\n        # unpack pmt values into start and end phase\n \
+      \       sphase = pmt.to_python(start.value)\n        ephase = pmt.to_python(end.value)\n\
+      \n        # compute frequency offset between start and end\n        # and run\
+      \ it through a low pass filter (mean)\n        freq = (sphase - ephase) / nsamples\n\
+      \        freq = self.lpf_freq(freq)\n\n        # debugging\n        print(f\"\
       Correction for block of {nsamples:2d} samples is \" \\\n              f\"phase={sphase:\
       \ .4f} rad and freq={freq*1e3: .4f} milli rad / sample\")\n\n        # compute\
       \ block values\n        return sphase * np.ones(nsamples) + freq * np.arange(0,\
@@ -551,20 +571,22 @@ blocks:
       \n        # nicer aliases\n        inp = input_items[0]\n        out = output_items[0]\n\
       \n        # read phase tags\n        is_phase = lambda tag: pmt.to_python(tag.key)\
       \ == \"phase_est\"\n        tags = list(filter(is_phase, self.get_tags_in_window(0,\
-      \ 0, len(inp))))\n\n        # debugging\n        print(f\"Processing {len(tags)}\
-      \ tags = {tags[-1].offset - tags[0].offset} \" \\\n              f\"samples\
-      \ out of {len(inp)} input samples\")\n\n        # compute \"the middle\"\n \
-      \       enough_samples = lambda pair: ((pair[1].offset - pair[0].offset) > 0)\n\
-      \        pairs = list(filter(enough_samples, zip(tags, tags[1:])))\n       \
-      \ blocks = [ self.block_phase(start, end) for (start, end) in pairs ]\n    \
-      \    middle = np.concatenate(blocks) if blocks else []\n\n        # compute\
-      \ values at the end, we do not have informations about the future\n        #\
-      \ but we can use the frequency of the last block to approximate\n        nback\
-      \ = len(inp) - (tags[-1].offset - self.counter)\n        print(f\"Processing\
-      \ {nback} samples at the back of the buffer\")\n        end = np.ones(nback)\
-      \ * pmt.to_python(tags[-1].value) + self.freq * np.arange(0, nback)\n\n    \
-      \    # compute the \"start\", using the last tag from the previous call\n  \
-      \      nfront = tags[0].offset - self.counter\n        print(f\"Processing {nfront}\
+      \ 0, len(inp))))\n\n        if not tags:\n            print(f\"There were no\
+      \ tags in {len(inp)} samples!\")\n            out[:] = inp\n            return\
+      \ len(out)\n\n        # debugging\n        print(f\"Processing {len(tags)} tags\
+      \ = {tags[-1].offset - tags[0].offset} \" \\\n              f\"samples out of\
+      \ {len(inp)} input samples\")\n\n        # compute \"the middle\"\n        enough_samples\
+      \ = lambda pair: ((pair[1].offset - pair[0].offset) > 0)\n        pairs = list(filter(enough_samples,\
+      \ zip(tags, tags[1:])))\n        blocks = [ self.block_phase(start, end) for\
+      \ (start, end) in pairs ]\n        middle = np.concatenate(blocks) if blocks\
+      \ else []\n\n        # compute values at the end, we do not have informations\
+      \ about the future\n        # but we can use the frequency of the last block\
+      \ to approximate\n        nback = len(inp) - (tags[-1].offset - self.counter)\n\
+      \        print(f\"Processing {nback} samples at the back of the buffer\")\n\
+      \        endfreq = self.lpf_freq(self.freq[-1])\n        end = np.ones(nback)\
+      \ * pmt.to_python(tags[-1].value) + endfreq * np.arange(0, nback)\n\n      \
+      \  # compute the \"start\", using the last tag from the previous call\n    \
+      \    nfront = tags[0].offset - self.counter\n        print(f\"Processing {nfront}\
       \ samples at the front of the buffer\")\n        start = self.block_phase(self.last,\
       \ tags[0])[-nfront:] \\\n                if self.last and nfront else np.zeros(nfront)\n\
       \n        # compute correction\n        correction = np.exp(-1j * np.concatenate([start,\
@@ -728,9 +750,9 @@ blocks:
     comment: ''
     grid: 'False'
     gui_hint: 2,1,2,1
-    label1: ''
+    label1: Custom Block
     label10: ''
-    label2: ''
+    label2: Costas Loop
     label3: ''
     label4: ''
     label5: ''
@@ -750,7 +772,7 @@ blocks:
     marker8: '0'
     marker9: '0'
     name: '"Phase Locked Signal"'
-    nconnections: '1'
+    nconnections: '2'
     size: '1024'
     style1: '0'
     style10: '0'
@@ -787,7 +809,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1288, 940.0]
+    coordinate: [1368, 1092.0]
     rotation: 0
     state: enabled
 - name: qtgui_const_sink_x_1
@@ -1073,7 +1095,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1336, 1108.0]
+    coordinate: [1376, 1284.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0_0_0
@@ -1558,7 +1580,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1512, 1188.0]
+    coordinate: [1552, 1364.0]
     rotation: 0
     state: disabled
 - name: root_raised_cosine_filter_0
@@ -1607,7 +1629,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1336, 1036.0]
+    coordinate: [1368, 1036.0]
     rotation: 0
     state: true
 - name: virtual_source_0
@@ -1660,9 +1682,11 @@ connections:
 - [digital_constellation_modulator_0, '0', blocks_stream_mux_1, '1']
 - [digital_constellation_modulator_0, '0', channels_channel_model_0, '0']
 - [digital_constellation_modulator_0, '0', qtgui_time_sink_x_1_0, '0']
+- [digital_corr_est_cc_0, '0', digital_costas_loop_cc_0, '0']
 - [digital_corr_est_cc_0, '0', epy_block_0, '0']
 - [digital_corr_est_cc_0, '0', qtgui_time_sink_x_0_0_0, '0']
 - [digital_corr_est_cc_0, '1', blocks_complex_to_magphase_0_0, '0']
+- [digital_costas_loop_cc_0, '0', qtgui_const_sink_x_0_0, '1']
 - [digital_pfb_clock_sync_xxx_0, '0', digital_cma_equalizer_cc_0, '0']
 - [epy_block_0, '0', qtgui_const_sink_x_0_0, '0']
 - [epy_block_0, '0', virtual_sink_3, '0']

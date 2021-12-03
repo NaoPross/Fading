@@ -78,7 +78,7 @@ class correlator(gr.top_block, Qt.QWidget):
         self.nfilts = nfilts = 32
         self.excess_bw = excess_bw = .35
         self.timing_loop_bw = timing_loop_bw = 2 * 3.141592653589793 / 100
-        self.testvec = testvec = [31, 53] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3] * 2
+        self.testvec = testvec = [31, 53] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3]
         self.samp_rate = samp_rate = 32000
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), excess_bw, 45*nfilts)
         self.revconj_access_code_symbols = revconj_access_code_symbols = [(1.4142135623730951+1.4142135623730951j), (1.4142135623730951+1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (-1.4142135623730951+1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (1.4142135623730951+1.4142135623730951j), (-1.4142135623730951+1.4142135623730951j)]
@@ -243,7 +243,7 @@ class correlator(gr.top_block, Qt.QWidget):
         self.qtgui_const_sink_x_0_0 = qtgui.const_sink_c(
             1024, #size
             "Phase Locked Signal", #name
-            1 #number of inputs
+            2 #number of inputs
         )
         self.qtgui_const_sink_x_0_0.set_update_time(0.10)
         self.qtgui_const_sink_x_0_0.set_y_axis(-2, 2)
@@ -254,7 +254,7 @@ class correlator(gr.top_block, Qt.QWidget):
         self.qtgui_const_sink_x_0_0.enable_axis_labels(True)
 
 
-        labels = ['', '', '', '', '',
+        labels = ['Custom Block', 'Costas Loop', '', '', '',
             '', '', '', '', '']
         widths = [1, 1, 1, 1, 1,
             1, 1, 1, 1, 1]
@@ -267,7 +267,7 @@ class correlator(gr.top_block, Qt.QWidget):
         alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
             1.0, 1.0, 1.0, 1.0, 1.0]
 
-        for i in range(1):
+        for i in range(2):
             if len(labels[i]) == 0:
                 self.qtgui_const_sink_x_0_0.set_line_label(i, "Data {0}".format(i))
             else:
@@ -330,6 +330,7 @@ class correlator(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.epy_block_0 = epy_block_0.blk()
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, 16, 1.5, 1)
+        self.digital_costas_loop_cc_0 = digital.costas_loop_cc(2 * 3.141592653589793 / 100, 4, False)
         self.digital_corr_est_cc_0 = digital.corr_est_cc(access_code_symbols, 1, 0, .8, digital.THRESHOLD_DYNAMIC)
         self.digital_constellation_modulator_0 = digital.generic_mod(
             constellation=const,
@@ -343,7 +344,7 @@ class correlator(gr.top_block, Qt.QWidget):
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(15, 1, .002, 1)
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=0.2,
-            frequency_offset=0.0002,
+            frequency_offset=0.0001,
             epsilon=1.0,
             taps=[-1.4 + .4j],
             noise_seed=243,
@@ -374,8 +375,10 @@ class correlator(gr.top_block, Qt.QWidget):
         self.connect((self.digital_constellation_modulator_0, 0), (self.channels_channel_model_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.qtgui_time_sink_x_1_0, 0))
         self.connect((self.digital_corr_est_cc_0, 1), (self.blocks_complex_to_magphase_0_0, 0))
+        self.connect((self.digital_corr_est_cc_0, 0), (self.digital_costas_loop_cc_0, 0))
         self.connect((self.digital_corr_est_cc_0, 0), (self.epy_block_0, 0))
         self.connect((self.digital_corr_est_cc_0, 0), (self.qtgui_time_sink_x_0_0_0, 0))
+        self.connect((self.digital_costas_loop_cc_0, 0), (self.qtgui_const_sink_x_0_0, 1))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_cma_equalizer_cc_0, 0))
         self.connect((self.epy_block_0, 0), (self.digital_constellation_decoder_cb_0, 0))
         self.connect((self.epy_block_0, 0), (self.qtgui_const_sink_x_0_0, 0))
