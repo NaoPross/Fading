@@ -5,6 +5,12 @@ from gnuradio import gr
 
 
 class blk(gr.sync_block):
+    """
+    Apply phase and frequency correction where there is a correlation peak tag.
+
+    The correlation peak tags are NOT propagated, and instead replaced with a
+    frame_start tag.
+    """
     def __init__(self):
         gr.sync_block.__init__(
             self,
@@ -22,7 +28,17 @@ class blk(gr.sync_block):
         self.lastfreq = 0
 
     def block_phase(self, start, end):
-        # compute number of samples in block
+        """
+        Compute a vector for the phase and frequency correction for the samples
+        between two tags (start and end).
+
+        @param start Tag where the samples should start to be corrected
+        @param end   Tag where to stop correcting
+
+        @return A vector of phase values for each sample. To correct the samples
+                the data should be multiplied with np.exp(-1j * phase)
+        """
+        # compute number of samples between tags
         nsamples = end.offset - start.offset
 
         # unpack pmt values into start and end phase
@@ -44,10 +60,10 @@ class blk(gr.sync_block):
         self.lastfreq = freq
 
         # debugging
-        print(f"Correction for block of {nsamples:2d} samples is " \
+        print(f"Correction for chunk of {nsamples:2d} samples is " \
               f"sphase={sphase: .4f} rad and freq={freq*1e3: .4f} milli rad / sample")
 
-        # compute block values
+        # compute chunk values
         return sphase * np.ones(nsamples) + freq * np.arange(0, nsamples)
 
     def work(self, input_items, output_items):
@@ -73,11 +89,11 @@ class blk(gr.sync_block):
         # compute "the middle"
         enough_samples = lambda pair: ((pair[1].offset - pair[0].offset) > 0)
         pairs = list(filter(enough_samples, zip(tags, tags[1:])))
-        blocks = [ self.block_phase(start, end) for (start, end) in pairs ]
-        middle = np.concatenate(blocks) if blocks else []
+        chunks = [ self.block_phase(start, end) for (start, end) in pairs ]
+        middle = np.concatenate(chunks) if chunks else []
 
         # compute values at the end, we do not have informations about the future
-        # but we can use the frequency of the last block to approximate
+        # but we can use the frequency of the last tag to approximate
         nback = len(inp) - (tags[-1].offset - counter)
         print(f"Processing {nback} samples at the back of the buffer")
         end = np.ones(nback) * pmt.to_python(tags[-1].value) \
@@ -98,6 +114,10 @@ class blk(gr.sync_block):
 
         # save last tag for next call
         self.last = tags[-1]
+
+        # add tags
+        for tag in tags:
+            self.add_item_tag(0, tag.offset, pmt.intern("frame_start"), pmt.PMT_T)
 
         # FIXME: should return `length' but then the last sample is not
         #        included and self.last does something weird
