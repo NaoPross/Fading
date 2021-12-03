@@ -453,24 +453,24 @@ blocks:
 - name: channels_selective_fading_model_0
   id: channels_selective_fading_model
   parameters:
-    K: '4.0'
-    LOS: 'False'
+    K: '4'
+    LOS: 'True'
     N: '8'
     affinity: ''
     alias: ''
     comment: ''
-    delays: (0.0,0.1,1.3)
+    delays: (0,0.3e-6)
     fDTs: '0'
-    mags: (1,0.99,0.97)
+    mags: (1,0.39)
     maxoutbuf: '0'
     minoutbuf: '0'
-    ntaps: '4'
+    ntaps: '3'
     seed: '0'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [944, 316.0]
+    coordinate: [976, 308.0]
     rotation: 0
     state: true
 - name: digital_cma_equalizer_cc_0
@@ -700,7 +700,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     osps: '1'
-    sps: sps * 1.001
+    sps: 'sps '
     taps: rrc_taps
     type: ccf
   states:
@@ -867,7 +867,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1044.0, -48]
+    coordinate: [1036.0, -64]
     rotation: 90
     state: enabled
 - name: qtgui_const_sink_x_0_0
@@ -1223,7 +1223,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1024.0, 624]
+    coordinate: [1080.0, 656]
     rotation: 270
     state: true
 - name: qtgui_freq_sink_x_2_1
@@ -1305,7 +1305,7 @@ blocks:
     bus_structure: null
     coordinate: [2848, 488.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: qtgui_time_sink_x_0
   id: qtgui_time_sink_x
   parameters:

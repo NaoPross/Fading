@@ -22,6 +22,7 @@
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
 from ber import ber
+import numpy as np
 
 class qa_ber(gr_unittest.TestCase):
 
@@ -32,9 +33,15 @@ class qa_ber(gr_unittest.TestCase):
         self.tb = None
 
     def test_001_t(self):
-        # set up fg
-        self.tb.run()
-        # check data
+        # pattern = np.array([0xaa], dtype=np.uint8)
+        # testdata = np.array([0xc0, 0xfa, 0xae] * 4, dtype=np.uint8)
+
+        # src = blocks.vector_source_b(testdata)
+        # op = ber(pattern)
+
+        # self.tb.connect(src, op)
+        # self.tb.run()
+        pass
 
 
 if __name__ == '__main__':
