@@ -25,7 +25,7 @@ class blk(gr.sync_block):
         # filter to avoid werid jumps in the correction. to do that, there are
         # two buffers with an index
         self.index = 0
-        self.length = 7
+        self.length = 5
         self.freq = np.zeros(self.length)
 
     def lpf_freq(self, new_sample):
@@ -46,12 +46,20 @@ class blk(gr.sync_block):
 
         # compute frequency offset between start and end
         # and run it through a low pass filter (mean)
-        freq = (sphase - ephase) / nsamples
-        freq = self.lpf_freq(freq)
+        phasediff = ephase - sphase
+
+        if phasediff > np.pi:
+            phasediff -= 2*np.pi
+
+        elif phasediff < -np.pi:
+            phasediff += 2*np.pi
+
+        freq = phasediff / nsamples
+        # freq = self.lpf_freq(freq)
 
         # debugging
         print(f"Correction for block of {nsamples:2d} samples is " \
-              f"phase={sphase: .4f} rad and freq={freq*1e3: .4f} milli rad / sample")
+              f"sphase={sphase: .4f} rad and freq={freq*1e3: .4f} milli rad / sample")
 
         # compute block values
         return sphase * np.ones(nsamples) + freq * np.arange(0, nsamples)

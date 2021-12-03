@@ -35,6 +35,8 @@ from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 import epy_block_0
+import epy_block_1
+import numpy as np
 
 from gnuradio import qtgui
 
@@ -77,13 +79,12 @@ class correlator(gr.top_block, Qt.QWidget):
         self.sps = sps = 4
         self.nfilts = nfilts = 32
         self.excess_bw = excess_bw = .35
-        self.timing_loop_bw = timing_loop_bw = 2 * 3.141592653589793 / 100
-        self.testvec = testvec = [31, 53] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3]
-        self.samp_rate = samp_rate = 32000
+        self.timing_loop_bw = timing_loop_bw = 2 * np.pi / 100
+        self.testvec = testvec = [0x1f, 0x35] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3]
+        self.samp_rate = samp_rate = int(1.5e6)
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), excess_bw, 45*nfilts)
         self.revconj_access_code_symbols = revconj_access_code_symbols = [(1.4142135623730951+1.4142135623730951j), (1.4142135623730951+1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (-1.4142135623730951+1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (1.4142135623730951+1.4142135623730951j), (-1.4142135623730951+1.4142135623730951j)]
         self.const = const = digital.constellation_qpsk().base()
-        self.access_code_symbols_sps = access_code_symbols_sps = [(1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (-1.4142197-1.4142197j), (-1.4142197-1.4142197j), (-1.4142197-1.4142197j), (-1.4142197-1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (1.4142197-1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j), (1.4142197+1.4142197j)]
         self.access_code_symbols = access_code_symbols = [(-1.4142135623730951-1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (1.4142135623730951+1.4142135623730951j), (1.4142135623730951+1.4142135623730951j), (-1.4142135623730951-1.4142135623730951j), (1.4142135623730951+1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (1.4142135623730951-1.4142135623730951j)]
 
         ##################################################
@@ -145,7 +146,7 @@ class correlator(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.qtgui_time_sink_x_0_0_0 = qtgui.time_sink_c(
             1024, #size
-            samp_rate, #samp_rate
+            samp_rate / sps, #samp_rate
             "", #name
             1 #number of inputs
         )
@@ -195,7 +196,7 @@ class correlator(gr.top_block, Qt.QWidget):
         self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_0_0_win)
         self.qtgui_time_sink_x_0_0 = qtgui.time_sink_f(
             1024, #size
-            samp_rate, #samp_rate
+            samp_rate / sps, #samp_rate
             "", #name
             1 #number of inputs
         )
@@ -328,6 +329,7 @@ class correlator(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(1, 2):
             self.top_grid_layout.setColumnStretch(c, 1)
+        self.epy_block_1 = epy_block_1.blk()
         self.epy_block_0 = epy_block_0.blk()
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, 16, 1.5, 1)
         self.digital_costas_loop_cc_0 = digital.costas_loop_cc(2 * 3.141592653589793 / 100, 4, False)
@@ -343,16 +345,16 @@ class correlator(gr.top_block, Qt.QWidget):
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(15, 1, .002, 1)
         self.channels_channel_model_0 = channels.channel_model(
-            noise_voltage=0.2,
+            noise_voltage=0.01,
             frequency_offset=0.0001,
             epsilon=1.0,
-            taps=[-1.4 + .4j],
+            taps=[np.exp(1j * 30 / 180 * np.pi)],
             noise_seed=243,
             block_tags=False)
-        self.blocks_vector_source_x_0 = blocks.vector_source_b(testvec * 1600, True, 1, [])
-        self.blocks_vector_sink_x_0 = blocks.vector_sink_b(1, 1024)
+        self.blocks_vector_source_x_0 = blocks.vector_source_b(testvec * 500, True, 1, [])
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
-        self.blocks_stream_mux_0 = blocks.stream_mux(gr.sizeof_char*1, [10, len(testvec)])
+        self.blocks_stream_mux_0 = blocks.stream_mux(gr.sizeof_char*1, [5, len(testvec)])
+        self.blocks_repack_bits_bb_0 = blocks.repack_bits_bb(2, 8, "", False, gr.GR_MSB_FIRST)
         self.blocks_null_source_0 = blocks.null_source(gr.sizeof_char*1)
         self.blocks_null_sink_3 = blocks.null_sink(gr.sizeof_float*1)
         self.blocks_complex_to_magphase_0_0 = blocks.complex_to_magphase(1)
@@ -365,13 +367,14 @@ class correlator(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_complex_to_magphase_0_0, 1), (self.blocks_null_sink_3, 0))
         self.connect((self.blocks_complex_to_magphase_0_0, 0), (self.qtgui_time_sink_x_0_0, 0))
         self.connect((self.blocks_null_source_0, 0), (self.blocks_stream_mux_0, 0))
+        self.connect((self.blocks_repack_bits_bb_0, 0), (self.epy_block_1, 0))
         self.connect((self.blocks_stream_mux_0, 0), (self.digital_constellation_modulator_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
         self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_stream_mux_0, 1))
         self.connect((self.channels_channel_model_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.digital_corr_est_cc_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.qtgui_const_sink_x_0, 0))
-        self.connect((self.digital_constellation_decoder_cb_0, 0), (self.blocks_vector_sink_x_0, 0))
+        self.connect((self.digital_constellation_decoder_cb_0, 0), (self.blocks_repack_bits_bb_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.channels_channel_model_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.qtgui_time_sink_x_1_0, 0))
         self.connect((self.digital_corr_est_cc_0, 1), (self.blocks_complex_to_magphase_0_0, 0))
@@ -395,6 +398,8 @@ class correlator(gr.top_block, Qt.QWidget):
     def set_sps(self, sps):
         self.sps = sps
         self.set_rrc_taps(firdes.root_raised_cosine(self.nfilts, self.nfilts, 1.0/float(self.sps), self.excess_bw, 45*self.nfilts))
+        self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate / self.sps)
+        self.qtgui_time_sink_x_0_0_0.set_samp_rate(self.samp_rate / self.sps)
 
     def get_nfilts(self):
         return self.nfilts
@@ -422,7 +427,7 @@ class correlator(gr.top_block, Qt.QWidget):
 
     def set_testvec(self, testvec):
         self.testvec = testvec
-        self.blocks_vector_source_x_0.set_data(self.testvec * 1600, [])
+        self.blocks_vector_source_x_0.set_data(self.testvec * 500, [])
 
     def get_samp_rate(self):
         return self.samp_rate
@@ -430,8 +435,8 @@ class correlator(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
-        self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate)
-        self.qtgui_time_sink_x_0_0_0.set_samp_rate(self.samp_rate)
+        self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate / self.sps)
+        self.qtgui_time_sink_x_0_0_0.set_samp_rate(self.samp_rate / self.sps)
         self.qtgui_time_sink_x_1_0.set_samp_rate(self.samp_rate)
 
     def get_rrc_taps(self):
@@ -452,12 +457,6 @@ class correlator(gr.top_block, Qt.QWidget):
 
     def set_const(self, const):
         self.const = const
-
-    def get_access_code_symbols_sps(self):
-        return self.access_code_symbols_sps
-
-    def set_access_code_symbols_sps(self, access_code_symbols_sps):
-        self.access_code_symbols_sps = access_code_symbols_sps
 
     def get_access_code_symbols(self):
         return self.access_code_symbols
