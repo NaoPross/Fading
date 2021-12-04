@@ -31,19 +31,21 @@ logger = logging.getLogger(__name__)
 # Initialize DearPyGUI
 
 
-
 create_context()
-create_viewport(title="Fading Demonstrator")
+create_viewport(title="Fading Demonstrator",width=1200, height=800)
 setup_dearpygui()
-
 
 # Show demo for dev
 show_demo()
-show_documentation()
+
 
 
 #================================================
 # GUI Callback functions
+
+# Menu Bar 
+def exit(sender, data):
+    stop_dearpygui()
 
 # Flow graph window
 def on_rx_node_link(sender, app_data):
@@ -55,74 +57,24 @@ def on_rx_node_delink(sender, app_data):
     delete_item(link_id)
 
 #================================================
-#Setting Window Test 
-# with window(label="Dear", width=800, height=800, on_close=_on_demo_close, pos=(100, 100)):
-    
+#Setting Primary Window
+
+with window(tag="Primary Window"):
+
+#================================================
+#Setting Window in Menu 
     with menu_bar():
         with menu(label="Settings"):
-            add_menu_item(label="Option 1", callback=_log)
-            add_menu_item(label="Option 2", check=True, callback=_log)
-            add_menu_item(label="Option 3", check=True, default_value=True, callback=_log)
 
-
-
-
-
-# Settings Window
-def exit(sender, data):
-    stop_dearpygui()
-
-# def _hsv_to_rgb(h, s, v):
-#     if s == 0.0: return (v, v, v)
-#     i = int(h*6.) # XXX assume int() truncates!
-#     f = (h*6.)-i; p,q,t = v*(1.-s), v*(1.-s*f), v*(1.-s*(1.-f)); i%=6
-#     if i == 0: return (255*v, 255*t, 255*p)
-#     if i == 1: return (255*q, 255*v, 255*p)
-#     if i == 2: return (255*p, 255*v, 255*t)
-#     if i == 3: return (255*p, 255*q, 255*v)
-#     if i == 4: return (255*t, 255*p, 255*v)
-#     if i == 5: return (255*v, 255*p, 255*q)
-
-with window(label="Settings", width=200, height=400, pos=(25, 25), tag="sim_win",
- no_close=True,no_background= True):
-    with menu_bar():
-        with menu(label="Settings"):
-            add_menu_item(label="Option 1")
-            add_menu_item(label="Option 2", check=True)
-            add_menu_item(label="Option 3", check=True, default_value=True)
-
-    #Farbwahl in schleife und mit def?
-    with theme(tag= "button_window"):
-        with theme_component(mvButton):
-            add_theme_color(mvThemeCol_Button,(135, 206, 255))#Blau
-            add_theme_color(mvThemeCol_Text,(0,0,0))#Schwarz
-            add_theme_style(mvStyleVar_FrameRounding, 5)
-
-    add_button(label="Toggle Fullscreen", height=50, width=150,callback= toggle_viewport_fullscreen)
-    bind_item_theme(last_item(),"button_window")
-
-    with theme(tag= "button_minimize"):
-        with theme_component(mvButton):
-            #add_theme_color(mvThemeCol_Button,(135, 206, 255))#Blau
-            #add_theme_color(mvThemeCol_Text,(0,0,0))#Schwarz
-            add_theme_style(mvStyleVar_FrameRounding, 5)
-    add_button(label="Minimize",height=50, width=150, callback= minimize_viewport)
-    bind_item_theme(last_item(),"button_minimize")
-    
-    #with child_window(autosize_x=True, height=100)as close:
-    add_button(label="Maximize",height=50, width=150, callback= maximize_viewport) #Befehl nötig ? 
-    
-    with theme(tag= "button_close"):
-        with theme_component(mvButton):
-            add_theme_color(mvThemeCol_Button,(255, 64, 64))#Rot
-            add_theme_color(mvThemeCol_Text,(0,0,0))#Schwarz
-            add_theme_style(mvStyleVar_FrameRounding, 5)
-
-    add_button(label="Close", height=50, width=150, callback= exit) 
-    bind_item_theme(last_item(),"button_close")
-
-        
-
+            with theme(tag= "close"):
+                with theme_component():
+                    add_theme_color(mvThemeCol_Text,(255, 64, 64))#Rot
+                    add_theme_style(mvStyleVar_Alpha, 5)
+                    
+            add_menu_item(label="Toggle Fullscreen",callback= toggle_viewport_fullscreen)
+            add_menu_item(label="Minimize",callback= minimize_viewport)
+            add_menu_item(label="Close", callback= exit)
+            bind_item_theme(last_item(),"close")
 
 # #================================================
 # # Flow Graph Window
@@ -173,19 +125,39 @@ plots = {
     # recv_plot: "plt_ampl"
 }
 
-with window(label="Time domain plots", width=800, height=350, pos=(25,450)):
-    with recv_plot:
-        add_plot_axis(mvXAxis, label="Time")
-        add_plot_axis(mvYAxis, label="Amplitude", tag="axis")
+# with window(label="Time domain plots", width=800, height=350, pos=(25,450)):
+#     with recv_plot:
+#         add_plot_axis(mvXAxis, label="Time")
+#         add_plot_axis(mvYAxis, label="Amplitude", tag="axis")
 
-        add_line_series(recv_plot.xdata, recv_plot.ydata, parent="axis", tag="plt_ampl")
+#         add_line_series(recv_plot.xdata, recv_plot.ydata, parent="axis", tag="plt_ampl")
 
 #================================================
 # Byte Error Rate Window
-#TO DO:
 
-with window(label="Byte Error Rate ", width=300, height=150, pos=(850,25),tag="__ber_id",no_move=True, no_collapse= True):
-     add_text("The Byte Error Rate is:")    
+#TO DO:BER von GNU Radio anzeigen 
+
+with theme(tag= "ber_window"):
+        with theme_component(mvAll):
+            add_theme_style(mvStyleVar_WindowTitleAlign, 0.5)
+            add_theme_style(mvStyleVar_WindowRounding, 5)
+            add_theme_style(mvStyleVar_WindowBorderSize, 1)#Rad ein und aus Schalten 
+
+with window(label="Byte Error Rate ", width=300, height=150, pos=(850,25),
+    tag="__ber_id",no_title_bar = True, no_move=True, no_collapse= True) as ber_window : 
+    add_text("The Byte Error Rate is:")    
+
+    with theme(tag= "button_ber"):
+        with theme_component(mvButton):
+            add_theme_color(mvThemeCol_Button,(135, 206, 255))#Blau
+            add_theme_color(mvThemeCol_Text,(0,0,0))#Schwarz
+            add_theme_style(mvStyleVar_FrameRounding, 5)
+
+    add_button(label="BER", height=50, width=150)
+    bind_item_theme(last_item(),"button_ber")
+
+bind_item_theme(ber_window,"ber_window")
+
 
 
 #================================================
@@ -235,6 +207,7 @@ with window(label="Byte Error Rate ", width=300, height=150, pos=(850,25),tag="_
 
 # Start window and main loop
 show_viewport()
+set_primary_window("Primary Window", True)
 
 # Main loop
 while is_dearpygui_running():
