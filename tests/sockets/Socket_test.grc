@@ -8,7 +8,7 @@ options:
     description: ''
     gen_cmake: 'On'
     gen_linking: dynamic
-    generate_options: qt_gui
+    generate_options: no_gui
     hier_block_src_path: '.:'
     id: Test_Bit_Errorrate
     max_nouts: '0'
@@ -18,7 +18,7 @@ options:
     realtime_scheduling: ''
     run: 'True'
     run_command: '{python} -u {filename}'
-    run_options: prompt
+    run_options: run
     sizing_mode: fixed
     thread_safe_setters: ''
     title: 'Bit Error Rate test '
@@ -41,7 +41,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [184, 12]
+    coordinate: [216, 20.0]
     rotation: 0
     state: enabled
 - name: analog_noise_source_x_0
@@ -60,9 +60,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [528, 108.0]
+    coordinate: [32, 148.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: blocks_null_source_0
   id: blocks_null_source
   parameters:
@@ -73,15 +73,15 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     num_outputs: '1'
-    type: byte
+    type: complex
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [552, 224.0]
+    coordinate: [64, 264.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: blocks_throttle_1
   id: blocks_throttle
   parameters:
@@ -92,13 +92,13 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     samples_per_second: samp_rate
-    type: byte
+    type: float
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [800, 156.0]
+    coordinate: [280, 164.0]
     rotation: 0
     state: true
 - name: fadingui_netsink_0
@@ -108,13 +108,13 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    type: byte
+    type: float
     veclen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1016, 156.0]
+    coordinate: [504, 164.0]
     rotation: 0
     state: true
 - name: import_0
