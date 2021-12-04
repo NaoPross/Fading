@@ -8,10 +8,19 @@
 For the simulation task and after for the Hardware part, the open-source Software GNU Radio has been chosen. This software uses toolboxes for signal processing systems too simulate or/and implement a software-defined radio, based on Python and some C++ implementations for some rapid-application-development environments. The toolboxes can simply, with the help of the graphical user interface, used by drag-and-drop. The Boxes are used to write applications, to receive or to transmit date for a digital system. Some blocks like different filters, channel codes or demodulator elements and a lot more are already implemented. For missing application new elements can be added by coding own blocks. With the help of the GNU Radio software those toolboxes can easily get connected to each other, creating data streams. 
 
 \section{Sender chain}
-\subsection{Data source}
+\subsection{Data frame}
 
-%% TODO: replace with file file
-In this simulation a random source has been chosen.
+\begin{figure}
+	\centering
+	\input{figures/tikz/packet-frame}
+	\caption{
+		Structure of framed data packets used in the implementation.
+		\label{fig:dataframe}
+	}
+\end{figure}
+
+To compute the empirical \emph{bit error rate} (BER) of the setup, the data has to be framed on by the sender and the bitstream synchronized on the receiver side. The structure of a data packed used in the implementation is shown in \figref{fig:dataframe}. A frame begins with an user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple.
+
 
 \subsection{Modulation}
 
@@ -28,39 +37,40 @@ With the the polyphase clock sync the symbols can be synchronized by preforming 
 
 \paragraph{Equalizer}
 
-\paragraph{Costas Loop}
+\skelpar[2]{CMA equalizer.}
 
-The Costas Loop is used for frequency and phase adjustment it locks the center frequency of the signal additional it converts it back to de baseband.  For different modulation types different orders of the loop had to be chosen 
+\subsection{Frame synchronization and phase correction}
 
-\paragraph{Constellation decoder}
+Once the envelope's clock is synchronized in the processing chain the data stream has one sample per symbol. At this point it is necessary to find where each data frame starts or end in order to correctly decode their payloads. For such purpose a special sequence of samples called \emph{access code} is put in front of each frame. Access codes are sequences of samples that are specially chosen to have autocorrelation values with a high peak at zero, and that rapidly descend for other shifted value. In other words, the autocorrelation of an access code high only when the sequence is perfectly aligned. Thus by cross correlating an envelope signal \(r(t)\), that periodically contains an access code \(a(t)\) with the access code itself, and looking for peaks in the result, it is possible to determine where each frames begin. Furthermore by analyzing the values of the peaks it is possible to extract informations about the phase and frequency offsets.
 
-From the complex space the constellation points are decode to bits.
-
-\subsection{Frame synchronization}
-
-\begin{figure}
-	\centering
-	\input{figures/tikz/packet-frame}
-	\caption{
-		Structure of framed data packets used in the implementation.
-		\label{fig:dataframe}
-	}
-\end{figure}
-
-To compute the empirical \emph{bit error rate} (BER) of the setup, the data has to be framed on by the sender and the bitstream synchronized on the receiver side. The structure of a data packed used in the implementation is shown in \figref{fig:dataframe}. A frame begins with an user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple.
-
-On the receiver side the bitstream is synchronized using a XOR correlator. To find the synchronization delay \(d\) (in samples) the XOR correlator computes the binary cross correlation
-\begin{equation} \label{eqn:binary-xcorr}
-	R_{\vec{m}\vec{p}} = N - \sum_i (\vec{m} \oplus \vec{p})_i
-\end{equation}
-between the synchronization bit pattern \(\vec{p}\) and a shift register \(\vec{m}(n)\) of the same length \(N\). Put into words \eqref{eqn:binary-xcorr} subtracts the number bits that differ between \(\vec{m}\) and \(\vec{p}\) from the length of the registers. Thus if all bits are equal, the difference is zero and the correlations has a maximum value of \(N\). The task of the correlator is then to find the delay / skip such that the pattern maches, i.e.
+To actually see how that is possible, recall that mathematically the cross correlation (denoted here by \(\star\)) of two values complex signals is
 \begin{equation}
-	d = \argmax_n \big( R_{\vec{m}\vec{p}}(n) \big)
-		= \argmax_n \left( N - \sum_i (\vec{m}(n) \oplus \vec{p})_i \right)
-	.
+	R_{ra}
+	= r(t) \star a(t)
+	= \int_\mathbb{R} r(\tau) a^*(\tau - t) \,d\tau
+	= r(t) * a^*(-t),
 \end{equation}
-
-Once the bit stream is synchronized, the packets are deframed and the payloads compared to a local copy of the sent data to compute the BER, again by XOR'ing the data blocks and counting the bit that are set. Further details are discussed in \S\ref{sec:ber}.
+which is equivalent to a convolution, where the left term being time-reversed complex conjugated \cite{Gallager}. This last property is especially useful because it makes possible to implement cross correlation using FIR filters. Some interesting properties of the cross correlation are that correlation with itself (also called autocorrelation) at \(t = 0\) is
+\begin{equation}
+	R_{aa} = (a \star a)(0)
+	= \int_\mathbb{R} a(\tau) a^*(\tau - 0) \,d\tau
+	= \int_\mathbb{R} |a(\tau)|^2 \,d\tau \in \mathbb{R},
+\end{equation}
+which is a real number. And the correlation with an out of phase copy \(a'(t) = a(t) e^{j\varphi}\) is
+\begin{equation}
+	% R_{a'a} =
+	(a' \star a)(0) 
+	= \int_\mathbb{R} a(\tau)e^{j\varphi}  a^*(\tau) \,d\tau
+	= R_{aa} e^{j\varphi}.
+\end{equation}
+The important thing to notice in the previous expression is that since \(R_{aa}\) is a real number, the phase of the cross correlation at \(t = 0\) is the phase of \(a'(t)\). This fact is used to implement a fine phase correction for the received envelope in relatively few steps as follows:
+\begin{itemize}
+	\item Compute the cross correlation of the envelope \(r(t)\) with the access code \(a(t)\), i.e. \(R_{ra}(t) = (r \star a)(t)\).
+	\item Find the maximum value of \(\hat{R}_{ra} = \max R_{ra}(t)\) (correlation peak).
+	\item Extract the phase offset \(\varphi = \angle \hat{R}_{ra}\).
+	\item Remove the phase offset in the envelope by multiplying with the complex conjugate of the offset, that is \(\hat{r}(t) = r(t) e^{-j\varphi}\)
+\end{itemize}
+%% TODO: frequency correction using linear interpolation
 
 \section{Channel simulations}
 
