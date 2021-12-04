@@ -225,6 +225,8 @@ Equation \eqref{eqn:multipath-frequency-response} shows that the frequency respo
 
 \subsection{Discrete-time model}
 
+% TODO: discuss the "bins" of discrete time
+
 Since in practice signal processing is done digitally, it is meaningful to discuss the properties of a discrete-time model. To keep the complexity of the model manageable some assumptions are necessary, thus the sent discrete signal \(s(n)\)\footnote{This is an abuse of notation. The argument \(n\) is used to mean the \(n\)-th digital sample of \(s\), whereas \(s(t)\) is used for the analog waveform.} is assumed to have a finite single sided bandwidth \(W\). This implies that in the time-domain signal is a series of sinc-shaped pulses each shifted from the previous by a time interval \(T = 1 / (2W)\) (Nyquist rate):
 \begin{equation}
 	s(t) = \sum_n s(n) \sinc(t/T - n)
@@ -234,7 +236,7 @@ The waveform \(s(t)\) is then convolved with the CIR function \(h(\tau, t)\) (wi
 	r(t) &= \int_ \mathbb{R} \sum_n s(n) \sinc(\tau / T - n) \sum_k c_k(t) \delta(\tau - \tau_k(t)) \,d\tau \\
 	&= \sum_n s(n) \sum_k c_k(t) \sinc(t/T - \tau_k(t)/T - n),
 \end{align*}
-which is then sampled at the Nyquist rate of \(2W = 1/T\), resulting in a set of samples\footnote{Again, the abusing notation \(r(m)\) means the \(m\)-th digital sample of \(r(t)\).}:
+which is then sampled at the Nyquist rate of \(2W = 1/T\), resulting in a set of samples\footnote{Again, the abusing notation \(r(m)\) means the \(m\)-th digital sample of \(r(t)\), i.e. \(r(mT)\).}:
 \[
 	r(m) = \sum_n s(n) \sum_k c_k(mT) \sinc(m - \tau_k(mT)/T - n).
 \]
@@ -258,30 +260,32 @@ is different from \eqref{eqn:multipath-impulse-response} consider again the plot
 	}
 \end{figure}
 
-From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-response} can be interpreted as a simple tapped delay line, schematically drawn in \figref{fig:tapped-delay-line}, which confirms that the presented mathematical model is indeed a FIR filter. Simple multipath channels can be simulated with just a few lines of code, for example the data for \figref{fig:multipath-frequency-response-plots} is generated in just four lines of Python shown in listing \ref{lst:two-tap-fir}. The difficulty of fading channels in practice lies in the estimation of the values for the constantly changing parmeters \(c_k(t)\) and \(\tau_k(t)\).
+From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-response} can be interpreted as a simple tapped delay line, schematically drawn in \figref{fig:tapped-delay-line}, which confirms that the presented mathematical model is indeed a FIR filter. Simple multipath channels can be simulated with just a few lines of code, for example the data for the static fading channel in \figref{fig:multipath-frequency-response-plots} is generated in just four lines of Python. The difficulty of fading channels in practice lies in the estimation of the constantly changing parameters \(c_k(t)\) and \(\tau_k(t)\).
 
-\begin{lstlisting}[language=python, captionpos=b, caption={
-	Simulation of a multipath channel using a 2 tap FIR filter.
-}, label={lst:two-tap-fir}]
-import numpy as np
-
-def tap(c, tau, f):
-    return np.exp(2j * np.pi * f * tau)
-
-f = np.logspace(5, 8, num=320)
-multipath = tap(.8, 500e-9, f) + tap(.4, 300e-9, f)
-\end{lstlisting}
 
 \subsection{Difficulties caused by discrete time}
-
-
 
 \skelpar{Not sampling at peaks of sincs.}
 \skelpar{Discrete frequency response. Discuss bins, etc.}
 
 \subsection{Statistical model}
 
-Because as mentioned earlier it is difficult to estimate the time-dependent parameters of \(h_l(t)\) in many cases it is easier to model the components of the CIR as stochastic processes, thus greatly reducing the number of parameters. This is especially effective for channels that are constantly changing, because by the central limit theorem the cumulative effect of many small changes tend to a normal statistical distribution.
+Because as mentioned earlier it is difficult to estimate the time-dependent parameters of \(h_l(m)\) in many cases it is easier to model the components of the CIR as stochastic processes, thus greatly reducing the number of parameters. This is especially effective for channels that are constantly changing, because by the central limit theorem the cumulative effect of many small changes tends to a normal statistical distribution.
+
+Recall that \(h_l(m)\) is a function of time because \(c_k\) and \(\tau_k\) change over time. The idea of the statistical model is to replace the cumulative change caused by \(c_k\) and \(\tau_k\) (which are difficult to estimate) by picking the next CIR sample \(h_l(m +1)\) from a \emph{circularly symmetric complex Gaussian distribution}, written as
+\begin{equation}
+	h_l \sim \mathcal{CN}(0, \sigma^2)
+\end{equation} 
+for some parameter \(\sigma\). Loosely speaking, the distribution needs to be ``circular'' because \(h_l\) is a complex number, which is two dimensional, it can however be understood as \(\Re{h_l} \sim \mathcal{N}(0, \sigma^2)\) and \(\Im{h_l} \sim \mathcal{N}(\mu, \sigma^2)\), i.e. having each component being normally distributed.
+
+
+
+\begin{subequations}
+	\begin{align}
+		R_{l} (k) &= \E{h_l(m) h_l^*(m+k)}, \\
+		0 &= \E{h_l(m) h_k^*(m)} \text { for } l \neq k
+	\end{align}
+\end{subequations}
 
 \begin{figure}
 	\centering
