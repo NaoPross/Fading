@@ -505,7 +505,7 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
             self.plots_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 1):
             self.plots_grid_layout_0.setColumnStretch(c, 1)
-        self.fadingui_multipath_fading_0 = fadingui.multipath_fading(amplitudes=[amp_1], delays=[fading_1], los =False)
+        self.fadingui_multipath_fading_0 = fadingui.multipath_fading(amplitudes=[amp_1], delays=[fading_1], los =True)
         self.digital_pfb_clock_sync_xxx_0_0 = digital.pfb_clock_sync_ccf(sps , timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
         self.digital_map_bb_0_0 = digital.map_bb([0, 1, 3, 2])

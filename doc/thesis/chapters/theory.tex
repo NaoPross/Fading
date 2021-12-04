@@ -223,7 +223,7 @@ Equation \eqref{eqn:multipath-frequency-response} shows that the frequency respo
 	}
 \end{figure}
 
-\subsection{Discrete-time model}
+\subsection{Discrete-time model}\label{sec:Discrete-time-model}
 
 % TODO: discuss the "bins" of discrete time
 
@@ -263,9 +263,62 @@ is different from \eqref{eqn:multipath-impulse-response} consider again the plot
 From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-response} can be interpreted as a simple tapped delay line, schematically drawn in \figref{fig:tapped-delay-line}, which confirms that the presented mathematical model is indeed a FIR filter. Simple multipath channels can be simulated with just a few lines of code, for example the data for the static fading channel in \figref{fig:multipath-frequency-response-plots} is generated in just four lines of Python. The difficulty of fading channels in practice lies in the estimation of the constantly changing parameters \(c_k(t)\) and \(\tau_k(t)\).
 
 
-\subsection{Difficulties caused by discrete time}
+\subsection{Fractional Delay}\label{sec:fractional-delay}
+% TO Do quelle:  http://users.spa.aalto.fi/vpv/publications/vesan_vaitos/ch3_pt1_fir.pdf
 
-\skelpar{Not sampling at peaks of sincs.}
+\begin{figure}
+	\centering
+	\begin{subfigure}{.45\linewidth}
+		\includegraphics[width=\linewidth]{./figures/screenshots/Fractional_delay_6}
+		\caption{sinc function shifted by the delay = 6.0, with the sample points}
+	\end{subfigure}
+	\hskip 5mm
+	\begin{subfigure}{.45\linewidth}
+		\includegraphics[width=\linewidth]{./figures/screenshots/Fractional_delay_637}
+		\caption{sinc function shifted by the delay = 6.37, with the sample points}
+	\end{subfigure}
+	\label{fig:fractional-delay-sinc-plot}	
+\end{figure}
+
+As in \ref{sec:Discrete-time-model} mentioned a FIR filter can be used to cheat a discrete time model of multiparty fading. But with a FIR filter, the delays are set at the sample rate, so the delays are integer. When the delays are noninteger a approximation had to be done. 
+
+In the example shown in \figref{fig:fractional-delay-sinc-plot}. For a integer delays in the sinc function all sample values are zero except the one by the delayed sample, which is the amplitude value, here one. When the delay is a fractional number all samples are non-zero. In theory this filter is notrealizable because its noncasual and the impulse respond is infinity long. This problem can't be solve by adding them because of the imaginary part.
+
+To desing a noninteger digital delay FIR Filter a least square integral error design approximation could be chosen.  
+
+\begin{equation} \label{eqn:transfer-function-FIR}
+	H(z)=\sum_{n=0}^{N} h(n) z^{-n}
+\end{equation}
+
+The transfare function is given in \eqref{eqn:transfer-function-FIR}, where \(N\) is the order of the filter given in integer coefficients. To be mention for the approximation is that the error decreases with a higher filter order.
+
+The error function between the ideal frequency respond an the approximation should be minimized, for the best possible approximation. 
+  
+\begin{equation} \label{eqn:error-function}
+		E\left(e^{j \omega}\right)=H\left(e^{j \omega}\right)-H_{\mathrm{id}}\left(e^{j \omega}\right)
+\end{equation}
+
+The impulse respond of such least squared fractional delay filter in \eqref{eqn:impuls-respond}. Only positive values are used to make the sinc-function casual. 
+
+\begin{equation} \label{eqn:impuls-respond}
+	h(n)= \begin{cases}\operatorname{sinc}(n-D), & 0 \leq n \leq N \\ 0, & \text { otherwise }\end{cases}
+\end{equation}
+
+To simplify the calculation, the assumption was made that the filter order is an odd number. With this assumption the exact order for the filter can be found out with \eqref{eqn:filter-order} and the integer delay \(D_{\text {int }}\).
+\begin{equation} \label{eqn:filter-order}
+	N = 2 D_{\text {int }} + 1
+\end{equation}
+
+
+The first non-zero sample can be find out with the help of the index M in \eqref{eqn: M first non-zero sample}.With the help of this index it can also be said whether the FIR filter is causal or not. For \(M \geq 0\) casual and if  \(M < 0\) noncasual, an so notrealizable. With the assumption that \(N\) is an odd number \(M \) should always be \( 0\) else something went wrong.
+
+\begin{equation}\label{eqn: M first non-zero sample}
+	M = \lfloor D\rfloor-\frac{N-1}{2} \quad \text { for odd } N
+\end{equation}
+
+
+%% TO DO : Mention windowing or not ?
+
 \skelpar{Discrete frequency response. Discuss bins, etc.}
 
 \subsection{Statistical model}

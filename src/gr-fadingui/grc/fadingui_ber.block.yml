@@ -1,11 +1,10 @@
-id: fadingui_xor_frame_sync
-label: XOR Correlation Synchronizer
+id: fadingui_ber
+label: BER
 category: '[fadingui]'
-flags: [ python ]
 
 templates:
   imports: import fadingui
-  make: fadingui.xor_frame_sync(sync_pattern=${pattern}, buffer_size=${buffer_size})
+  make: fadingui.ber(vgl=${vgl}, vlen=${vlen})
 
 #  Make one 'parameters' list entry for every parameter you want settable from the GUI.
 #     Keys include:
@@ -13,12 +12,12 @@ templates:
 #     * label (label shown in the GUI)
 #     * dtype (e.g. int, float, complex, byte, short, xxx_vector, ...)
 parameters:
-- id: pattern
-  label: Bit pattern
+- id: vgl
+  label: Vergleichsparameter
   dtype: raw
-- id: buffer_size
-  label: Delay buffer size
-  dtype: raw
+- id: vlen
+  label: Vec Length
+  dtype: int
 
 #  Make one 'inputs' list entry per input and one 'outputs' list entry per output.
 #  Keys include:
@@ -31,11 +30,7 @@ inputs:
 - label: in
   domain: stream
   dtype: byte
-
-outputs:
-- label: out
-  domain: stream
-  dtype: byte
+  vlen: ${vlen}
 
 #  'file_format' specifies the version of the GRC yml format used in the file
 #  and should usually not be changed.

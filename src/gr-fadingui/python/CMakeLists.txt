@@ -34,11 +34,11 @@ GR_PYTHON_INSTALL(
     __init__.py
     logger.py
     datasource.py
-    dearpygui_sink.py
-    xor_frame_sync.py
     deframer.py
     frame_obj.py
-    multipath_fading.py DESTINATION ${GR_PYTHON_DIR}/fadingui
+    multipath_fading.py
+    ber.py
+    netsink.py DESTINATION ${GR_PYTHON_DIR}/fadingui
 )
 
 ########################################################################
@@ -48,5 +48,5 @@ include(GrTest)
 
 set(GR_TEST_TARGET_DEPS gnuradio-fadingui)
 set(GR_TEST_PYTHON_DIRS ${CMAKE_BINARY_DIR}/swig)
-GR_ADD_TEST(qa_xor_frame_sync ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_xor_frame_sync.py)
 GR_ADD_TEST(qa_multipath_fading ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_multipath_fading.py)
+GR_ADD_TEST(qa_ber ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_ber.py)

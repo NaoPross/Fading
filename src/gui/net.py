@@ -1,6 +1,7 @@
 import select
 import socket
 from urllib.parse import urlparse
+import re
 
 import numpy as np
 from numpy_ringbuffer import RingBuffer
@@ -11,9 +12,10 @@ class udpsource:
     """
     Creates an UDP listening socket
     """
-    def __init__(self, url):
+    def __init__(self, url, dtype):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.url = urlparse(url)
+        self.dtype = dtype
 
     def __del__(self):
         self.sock.close()
@@ -23,32 +25,46 @@ class udpsource:
         self.sock.bind((self.url.hostname, self.url.port))
         # self.sock.listen()
 
-    def read(self, nbytes):
-        ready_to_read, ready_to_write, in_err = \
-                select.select([self.sock], [], [], 1)
-
-        if ready_to_read:
-            data = sock.recv(nbytes)
-            print(data)
-        else:
+    def read(self, nblocks):
+        ready, _, _ = select.select([self.sock], [], [])
+        if not ready:
             return None
 
+        # read from socket
+        blocksize = 1024 * 4
+        string = ready[0].recv(nblocks * blocksize).decode("ascii")
+
+        # decode string, remove empty values
+        chunks = filter(None, re.split(r"\[(.+?)\]", string))
+
+        def chunk_to_samples(chunk):
+            samples = chunk.split(",")
+            if samples:
+                return list(map(self.dtype, samples))
+
+        # convert each chunk into a list of samples
+        chunk_values = map(chunk_to_samples, chunks)
+
+        # flatten list of lists into a single list
+        values = sum(chunk_values, [])
+
+        return values
 
 class network_plot(udpsource):
-    def __init__(self, url, nsamples, **kwargs):
-        udpsource.__init__(self, url)
+    def __init__(self, url, dtype, nsamples, **kwargs):
+        udpsource.__init__(self, url, dtype)
 
+        # create buffers for x and y values
         self.nsamples = nsamples
+        self.xvalues = np.arange(0, self.nsamples)
+        self.yvalues = RingBuffer(capacity=self.nsamples, dtype=np.dtype(dtype))
+        self.yvalues.extend(np.zeros(self.nsamples))
+
+        # create a plot
         self.plot = dpg.plot(**kwargs)
-
-        # create buffer and fill with zeroes
-        self.buffer = RingBuffer(capacity=nsamples, dtype=(float, 2))
-        for i in range(nsamples):
-            # TODO: remove random data used for testing
-            self.buffer.append(np.array([i, 1 + np.random.rand() / 5]))
-
         self.bind()
 
+    # Map `with' expressions to the underlying plot
     def __enter__(self):
         return self.plot.__enter__()
 
@@ -56,13 +72,16 @@ class network_plot(udpsource):
         self.plot.__exit__(t, val, tb)
 
     @property
-    def x_data(self):
-        return np.array(self.buffer[:,0])
+    def xdata(self):
+        return self.xvalues
 
     @property
-    def y_data(self):
-        return np.array(self.buffer[:,1])
+    def ydata(self):
+        return np.array(self.yvalues)
 
     def refresh_series(self, tag):
-        dpg.set_value(tag, [self.x_data, self.y_data])
-        pass
+        new_values = self.read(1)
+
+        if new_values:
+            self.yvalues.extendleft(new_values)
+            dpg.set_value(tag, [self.xdata, self.ydata])

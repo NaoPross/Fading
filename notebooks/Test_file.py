@@ -8,7 +8,7 @@ Created on Sat Nov 27 16:05:59 2021
 import numpy as np
 import matplotlib.pyplot as plt
 
-delay = 5.33
+delay = 6.37
 ampl = 1
 print(f"Tap with amplitude={ampl}, delay={delay}")
 
@@ -29,10 +29,17 @@ signal = np.sin(2 * np.pi * t * 0.05)
 signal_shifted = np.convolve(h, signal, mode='full')
 
 #Time PLot
+# plt.xlabel('Delay')
+# plt.ylabel('Amplitude')
+# #plt.title('')
+# plt.plot(t, signal)
+# plt.grid(True)
+# plt.show()
+# plt.plot(signal_shifted)
+t1 =np.arange(0.0,order, 0.01)
+plt.grid(True)
+plt.stem(samples, h,linefmt='C0-')
+plt.plot(t1,np.sinc(t1-delay),'b--')
 plt.xlabel('Delay')
 plt.ylabel('Amplitude')
-#plt.title('')
-plt.plot(t, signal)
-plt.grid(True)
 plt.show()
-plt.plot(signal_shifted)

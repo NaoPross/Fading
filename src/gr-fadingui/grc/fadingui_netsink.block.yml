@@ -1,10 +1,13 @@
-id: fadingui_dearpygui_sink
-label: UI Sink
+id: fadingui_netsink
+label: Network Sink
 category: '[fadingui]'
+flags: [ python ]
 
 templates:
-  imports: import fadingui
-  make: fadingui.dearpygui_sink(sock_addr=${sock_addr}, ui_element_id=${ui_element_id})
+  imports: |-
+    import fadingui
+    import numpy as np
+  make: fadingui.netsink(address=${address}, dtype="${type}", vlen=${veclen})
 
 #  Make one 'parameters' list entry for every parameter you want settable from the GUI.
 #     Keys include:
@@ -12,15 +15,22 @@ templates:
 #     * label (label shown in the GUI)
 #     * dtype (e.g. int, float, complex, byte, short, xxx_vector, ...)
 parameters:
-- id: sock_addr
-  label: Socket address
+- id: type
+  label: Type
+  dtype: enum
+  options: [complex, float, int, short, byte]
+  option_attributes:
+      size: [gr.sizeof_gr_complex, gr.sizeof_float, gr.sizeof_int, gr.sizeof_short, gr.sizeof_char]
+  hide: part
+- id: veclen
+  label: Vec Length
+  dtype: int
+  default: '1'
+  hide: ${ 'part' if veclen == 1 else 'none' }
+- id: address
+  label: Address
   dtype: string
-  default: udp://
-
-- id: ui_element_id
-  label: UI element ID
-  dtype: raw
-
+  default: "udp://localhost:31415"
 
 #  Make one 'inputs' list entry per input and one 'outputs' list entry per output.
 #  Keys include:
@@ -31,7 +41,9 @@ parameters:
 #      * optional (optional - set to 1 for optional inputs. Default is 0)
 inputs:
 - label: in
-  dtype: complex
+  domain: stream
+  dtype: ${type}
+  vlen: ${veclen}
 
 #  'file_format' specifies the version of the GRC yml format used in the file
 #  and should usually not be changed.

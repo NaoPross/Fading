@@ -98,7 +98,8 @@ with window(label="RX DSP Flow Graph", width=800, height=400, pos=(25,25), tag="
 #================================================
 # Network plots Window
 
-recv_plot = net.network_plot(url="udp://localhost:31415", nsamples=100, label="Test", height=300, width=800)
+recv_plot = net.network_plot(url="udp://localhost:31415", dtype=float, nsamples=100, \
+        label="Test", height=300, width=800)
 
 plots = {
     recv_plot: "plt_ampl"
@@ -107,9 +108,9 @@ plots = {
 with window(label="Time domain plots", width=800, height=400, pos=(850,25)):
     with recv_plot:
         add_plot_axis(mvXAxis, label="Time")
-        add_plot_axis(mvYAxis, label="Amplitude", tag="plt_ampl")
+        add_plot_axis(mvYAxis, label="Amplitude", tag="axis")
 
-        add_line_series(recv_plot.x_data, recv_plot.y_data, parent="plt_ampl")
+        add_line_series(recv_plot.xdata, recv_plot.ydata, parent="axis", tag="plt_ampl")
 
 #================================================
 # Start GUI and main loop
