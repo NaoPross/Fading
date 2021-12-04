@@ -15,7 +15,17 @@ class netsink(gr.sync_block):
     Keep in mind that is quite slow.
     """
     def __init__(self, address, dtype, vlen):
-        dt = np.dtype(dtype, (vlen,)) if vlen > 1 else dtype
+        to_numpy = {
+            "complex": np.complex64,
+            "float": np.float32,
+            "int": np.int32,
+            "short": np.short,
+            "byte": np.byte,
+        }
+
+        dt = to_numpy[dtype]
+        if vlen > 1:
+            dt = np.dtype(dt, (vlen,))
         print(dt)
 
         gr.sync_block.__init__(self,

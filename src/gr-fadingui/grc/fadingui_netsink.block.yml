@@ -7,7 +7,7 @@ templates:
   imports: |-
     import fadingui
     import numpy as np
-  make: fadingui.netsink(address=${address}, dtype=${type}, vlen=${veclen})
+  make: fadingui.netsink(address=${address}, dtype="${type}", vlen=${veclen})
 
 #  Make one 'parameters' list entry for every parameter you want settable from the GUI.
 #     Keys include:
@@ -18,8 +18,7 @@ parameters:
 - id: type
   label: Type
   dtype: enum
-  options: [complex, float, int, np.short, np.byte]
-  option_labels: [complex, float, int, short, byte]
+  options: [complex, float, int, short, byte]
   option_attributes:
       size: [gr.sizeof_gr_complex, gr.sizeof_float, gr.sizeof_int, gr.sizeof_short, gr.sizeof_char]
   hide: part
