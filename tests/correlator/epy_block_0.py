@@ -46,14 +46,7 @@ class blk(gr.sync_block):
         ephase = pmt.to_python(end.value)
 
         # compute frequency offset between start and end
-        phasediff = ephase - sphase
-
-        if phasediff > np.pi:
-            phasediff -= 2*np.pi
-
-        elif phasediff < -np.pi:
-            phasediff += 2*np.pi
-
+        phasediff = (ephase - sphase) % (2 * np.pi)
         freq = phasediff / nsamples
 
         # save this one for the last block (see variable `end' in self.work)

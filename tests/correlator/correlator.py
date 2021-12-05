@@ -7,7 +7,7 @@
 # GNU Radio Python Flow Graph
 # Title: Correlator Test
 # Author: Naoki Pross
-# GNU Radio version: 3.8.2.0
+# GNU Radio version: 3.8.1.0
 
 from distutils.version import StrictVersion
 
@@ -37,7 +37,6 @@ from gnuradio import eng_notation
 import epy_block_0
 import epy_block_1
 import numpy as np
-
 from gnuradio import qtgui
 
 class correlator(gr.top_block, Qt.QWidget):
@@ -390,7 +389,6 @@ class correlator(gr.top_block, Qt.QWidget):
         self.connect((self.epy_block_0, 0), (self.digital_constellation_decoder_cb_0, 0))
         self.connect((self.epy_block_0, 0), (self.qtgui_const_sink_x_0_0, 0))
 
-
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "correlator")
         self.settings.setValue("geometry", self.saveGeometry())
@@ -471,8 +469,6 @@ class correlator(gr.top_block, Qt.QWidget):
 
 
 
-
-
 def main(top_block_cls=correlator, options=None):
 
     if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
@@ -481,9 +477,7 @@ def main(top_block_cls=correlator, options=None):
     qapp = Qt.QApplication(sys.argv)
 
     tb = top_block_cls()
-
     tb.start()
-
     tb.show()
 
     def sig_handler(sig=None, frame=None):
@@ -499,9 +493,9 @@ def main(top_block_cls=correlator, options=None):
     def quitting():
         tb.stop()
         tb.wait()
-
     qapp.aboutToQuit.connect(quitting)
     qapp.exec_()
+
 
 if __name__ == '__main__':
     main()
