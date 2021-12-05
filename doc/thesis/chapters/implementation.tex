@@ -4,15 +4,71 @@
 
 \section{Overview}
 
-% TODO: quelle https://wiki.gnuradio.org/
-For the simulation task and after for the Hardware part, the open-source Software GNU Radio has been chosen. This software uses toolboxes for signal processing systems too simulate or/and implement a software-defined radio, based on Python and some C++ implementations for some rapid-application-development environments. The toolboxes can simply, with the help of the graphical user interface, used by drag-and-drop. The Boxes are used to write applications, to receive or to transmit date for a digital system. Some blocks like different filters, channel codes or demodulator elements and a lot more are already implemented. For missing application new elements can be added by coding own blocks. With the help of the GNU Radio software those toolboxes can easily get connected to each other, creating data streams. 
+\section{Software Stack}
+
+\subsection{GNU Radio}
+For both the signal processing and the simulations the GNU Radio (GR) toolkit was chosen, as it already had drivers for the USRP hardware. GR is an open-source free software framework that can be used to build signal processing chains and software defined radios (SDR). GR is composed of two parts: a C\texttt{++} library with Python bindings to write signal processing code, and GNU Radio Companion (GRC), a graphical user interface to more easily construct signal processing chains by representing signal processing algorithms as ``blocks'' that are connected together with arrows, essentially drawing a diagram called ``flow graph''. An example of a flow graph is shown in \figref{fig:flowgraph}.
+
+Internally GR works by keeping multiple memory buffers of samples, that are passed as pointers to the signal processing algorithms' ``work functions''. When the signal processing is complete, the output buffer of one block is given to the next block as input according to how they were connected in the flow graph. The structure of a block is shown in the Python listing \ref{lst:gr-block-py}. To improve performance GR creates a thread for each work function to parallelize the workload of the concurrently running signal processing blocks. For more details see the GNU Radio Wiki and User Manual in \cite{GRWiki}.
+
+{\newcommand{\placeholder}[1]{\textit{\(\langle\)\,\textrm{#1}\,\(\rangle\)}}
+\begin{lstlisting}[
+	language = python, escapechar = {`}, float,
+	caption = {A minimal GNU Radio block in Python.},
+	captionpos = b, label = {lst:gr-block-py}
+]
+class myblock(gr.sync_block):
+	# there are also other types of blocks such as interpolators 
+	# (more outputs that inputs), decimators (more inputs than 
+	# outputs) sync blocks have a 1-to-1 input to output ratio
+	def __init__(self, `\placeholder{parameters}`):
+		gr.sync_block.__init__(self, name="My Block",
+			# this block as one input port and one output port
+			# with samples that are 64 bit complex numbers
+			in_sig=[np.complex64], out_sig=[np.complex64]
+		)
+
+	def work(self, inputs, outputs):
+		# signal processing goes here
+		# inputs and outputs are k x n arrays, where each
+		# of the k rows is a port that contains n samples
+		return `\placeholder{N of inputs that were processed}`
+\end{lstlisting}}
+
+\subsection{Dear PyGUI}
+
+To construct a graphical interface that would serve demonstrative purposes the Dear IMGUI (immediate graphical user interface) library was chosen, mainly for its ease of use and high refresh rate. Dear PyGUI (DPG) are the Python bindings for the Dear IMGUI library.
+
+The DPG GUI communicates with the GR flow graphs using UDP packets. This decision to separate the project into two parts that communicate over the IP network was made because it is not very easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configure flow graph on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time.
+
+Also as a side effect, in theory this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph.
+
+\section{Hardware}
+
+\begin{table}[b]
+	%To DO sepzifikationen ampssen / genauer? https://www.ettus.com/wp-content/uploads/2019/01/b200-b210_spec_sheet.pdf
+	% https://kb.ettus.com/B200/B210/B200mini/B205mini#FAQ
+	\centering
+	\begin{tabular}{ll}
+		\toprule
+		Dimensions               & \(9.7 \times 15.5 \times 1.5\) cm \\
+		Ports                    & 2 TX, 2 RX, Half or Full Duplex   \\
+		RF frequencies           & 70MHz to 6GHz                     \\
+		Bandwidth                & 200kHz -- 56MHz                   \\
+		External reference input & 10 MHz                            \\
+		\bottomrule
+	\end{tabular}
+	\caption{USRP B210 specifications.\label{tab:usrp-specs}}
+\end{table}
+
+As receivers and transmitter devices for the SDR setup 2 USRP B210 devices from Ettus Research were used. Some technical specifications are shown in \tabref{tab:usrp-specs}. GR has off the shelf blocks that interface with the official API provided from Ettus Research.
 
 \section{Sender chain}
 \subsection{Data frame}
 
 \begin{figure}
-	\centering
-	\input{figures/tikz/packet-frame}
+\centering
+\input{figures/tikz/packet-frame}
 	\caption{
 		Structure of framed data packets used in the implementation.
 		\label{fig:dataframe}
@@ -31,6 +87,8 @@ Further more it's possible to chose the modulation type here, in this example it
 
 \subsection{Envelope detector}
 
+What is here referred to as envelope detector has the purpose of synchronizing the symbols and equalizing the input signal amplitude. This is accomplished in GRC using two blocks: a polyphase clock sync and a CMA equalizer. The input signal for the envelope detector has 4 samples per symbol, whereas the output has only one sample per symbol.
+
 \paragraph{Polyphase Clock Sync}
 %% To Do : nochmals anschauen ob dieese erklärung verständlich ist und richtig interpretiert wurde.
 With the the polyphase clock sync the symbols can be synchronized by preforming a time synchronization with the help of multiple filterbanks. For that the derivation of the filtered signal should be minimized whish turns to a better SNR. This works with the help of two filterbanks, one of them contains the filters of the signal adapted to the pulse shaping with several phases. The other contains its derivative. So in the time domain it has a sinc shape, for the output Signal the sinc peak should be on a sample, with the fact that sinc(0) = 1 and sinc(0)' = 0 an error signal can be generated which tells how far away from the peak it is. This error Signal should be zero this is possible with the help of a loop second order whish constants the number of the filterbank and the rate. This rate is generated because of the clock difference between the transmitter and reviver to synchronies the receiver the filter goes through the phases. For the output one sample per symbol is enough.
@@ -39,14 +97,14 @@ With the the polyphase clock sync the symbols can be synchronized by preforming 
 
 \skelpar[2]{CMA equalizer.}
 
-\subsection{Frame synchronization and phase correction}
+\subsection{Frame synchronization and phase correction} \label{sec:phasecorr}
 
-Once the envelope's clock is synchronized in the processing chain the data stream has one sample per symbol. At this point it is necessary to find where each data frame starts or end in order to correctly decode their payloads. For such purpose a special sequence of samples called \emph{access code} is put in front of each frame. Access codes are sequences of samples that are specially chosen to have autocorrelation values with a high peak at zero, and that rapidly descend for other shifted value. In other words, the autocorrelation of an access code high only when the sequence is perfectly aligned. Thus by cross correlating an envelope signal \(r(t)\), that periodically contains an access code \(a(t)\) with the access code itself, and looking for peaks in the result, it is possible to determine where each frames begin. Furthermore by analyzing the values of the peaks it is possible to extract informations about the phase and frequency offsets.
+Once the envelope's clock is synchronized in the processing chain the data stream has one sample per symbol. At this point it is necessary to find where each data frame starts or end in order to correctly decode their payloads. For such purpose a special sequence called \emph{access code} is put in front of each frame. Access codes are sequences of samples that are carefully constructed to have an autocorrelation with a high peak at zero, and that rapidly decreases for increasing shifts. In other words, the autocorrelation of an access code high only when the sequence is perfectly aligned. Thus by cross correlating an envelope signal \(r(t)\), that periodically contains an access code \(a(t)\) with the access code itself, and looking for peaks in the result, it is possible to determine where each frames begin. Furthermore by analyzing the values of the peaks it is possible to extract informations about the phase and frequency offsets.
 
-To actually see how that is possible, recall that mathematically the cross correlation (denoted here by \(\star\)) of two values complex signals is
+To understand how correlation peaks allow for fine phase correction, recall that mathematically the cross correlation (denoted here by \(\star\)) of two complex valued signals is
 \begin{equation}
 	R_{ra}
-	= r(t) \star a(t)
+	= (r \star a)(t)
 	= \int_\mathbb{R} r(\tau) a^*(\tau - t) \,d\tau
 	= r(t) * a^*(-t),
 \end{equation}
@@ -56,21 +114,127 @@ which is equivalent to a convolution, where the left term being time-reversed co
 	= \int_\mathbb{R} a(\tau) a^*(\tau - 0) \,d\tau
 	= \int_\mathbb{R} |a(\tau)|^2 \,d\tau \in \mathbb{R},
 \end{equation}
-which is a real number. And the correlation with an out of phase copy \(a'(t) = a(t) e^{j\varphi}\) is
-\begin{equation}
+which is a real number. And more importantly the correlation with an out of phase copy \(a'(t) = a(t) e^{j\varphi}\) at 0 is
+\begin{equation} \label{eqn:xc-oop-copy}
 	% R_{a'a} =
 	(a' \star a)(0) 
 	= \int_\mathbb{R} a(\tau)e^{j\varphi}  a^*(\tau) \,d\tau
 	= R_{aa} e^{j\varphi}.
 \end{equation}
-The important thing to notice in the previous expression is that since \(R_{aa}\) is a real number, the phase of the cross correlation at \(t = 0\) is the phase of \(a'(t)\). This fact is used to implement a fine phase correction for the received envelope in relatively few steps as follows:
-\begin{itemize}
-	\item Compute the cross correlation of the envelope \(r(t)\) with the access code \(a(t)\), i.e. \(R_{ra}(t) = (r \star a)(t)\).
-	\item Find the maximum value of \(\hat{R}_{ra} = \max R_{ra}(t)\) (correlation peak).
-	\item Extract the phase offset \(\varphi = \angle \hat{R}_{ra}\).
-	\item Remove the phase offset in the envelope by multiplying with the complex conjugate of the offset, that is \(\hat{r}(t) = r(t) e^{-j\varphi}\)
-\end{itemize}
-%% TODO: frequency correction using linear interpolation
+The relevant observation to notice in \eqref{eqn:xc-oop-copy} that since \(R_{aa}\) is a real number, the phase of the cross correlation at \(t = 0\) is the phase of \(a'(t)\). This fact can be exploited to implement fine phase correction for the received envelope in relatively few steps as follows:
+\begin{enumerate}
+	\item Compute the cross correlation \(R_{ra}\) of the envelope \(r(t)\) with the access code \(a(t)\),
+	\item Find the maximum value of \(\hat{R}_{ra} = \max R_{ra}(t)\) (correlation peak),
+	\item Extract the phase offset \(\varphi = \arg \hat{R}_{ra}\),
+	\item Remove the phase offset in the envelope by multiplying it with the complex conjugate of the offset, that is \(\hat{r}(t) = r(t) e^{-j\varphi}\).
+\end{enumerate}
+
+\subsection{Implementing fine phase and frequency correction}
+
+To implement in GR what was discussed in \S\ref{sec:phasecorr} two blocks shown in \figref{fig:phasecorr-blocks} were used: a correlator estimator block, and a custom block. The former essentially implements the first 3 of the steps discussed at the end of \S\ref{sec:phasecorr}. The correlator estimator block is given a sequence of samples, and when the cross correlation between them and the input stream is higher than a certain threshold (90\% of the amplitude of a perfect autocorrelation), it produces a ``tag'' in the output stream, that contains the phase estimate.
+
+Tags are GR's way of working with metadata that is attached to a sample. Internally tags are just polymorphic data structures containing a number indicating the absolute offset (in samples), and a pair of arbitrary values called ``key'' and ``value''. Tags are passed on from one block to the next like sample streams (unless the block specifies to do otherwise).
+
+Thus the tagged stream is processed with a custom block, of which a simplified version of its work function shown in listing \ref{lst:phasecorr-work}. The custom block also implements fine frequency correction by linearly interpolating the phase estimates between each pair of tags (called chunk). Mathematically this can be rather trivially be formulated for a chunk of \(N\) samples with the
+\begin{subequations}
+	\begin{align}
+		k\text{-th chunk digital frequency} \quad  & \omega_k = (\varphi_{k+1} - \varphi_k) / N, \text{ and the }\\
+		k\text{-th chunk phase estimate} \quad & \phi_k(n) = \varphi_k - \omega_k n/N.
+	\end{align}
+\end{subequations}
+
+% TODO: discuss performance of implementation
+
+\begin{lstlisting}[
+	texcl = true, language = python, escapechar = {`},
+	float, captionpos = b, label = {lst:phasecorr-work},
+	caption = {
+		Simplified work function of fine phase correction block that corrects only samples `in the middle'. The version that is actually used does handle edge cases that have been removed here for readability. See also \figref{fig:phasecorr-chunks} for a graphical representation of the inputs and listing \ref{lst:phasecorr-blockphase} for the definition of the \texttt{block\_phase} function.
+	},
+]
+def work(self, inputs, outputs):
+	# alias for inputs of the first port
+	inp = inputs[0]
+	# read phase tags from stream
+	is_phase = lambda tag: pmt.to_python(tag.key) == "phase_est"
+	tags = filter(is_phase, self.get_tags_in_window(0, 0, len(inp)))
+	# create a list of pairs \(((\varphi_0,\varphi_1), (\varphi_1, \varphi_2), \ldots, (\varphi_{k-1}, \varphi_k)))\)
+	pairs = zip(tags, tags[1:])
+	# compute phase correction between each pair of tags
+	chunks = [self.block_phase(start, end) for (start, end) in pairs]
+	# flatten array to get \(\phi(n)\) and compute the correction
+	phases = np.concatenate(chunks)
+	correction = np.exp(-1j * phases) 
+	# write to the first output port
+	left = tags[0].offset - self.nitems_written(0)
+	right = tags[-1].offset - self.nitems_written(0)
+	outputs[0][left:right] = inp * correction
+	# return how many samples were processed
+	return len(outputs[0])
+\end{lstlisting}
+
+\begin{figure}
+	\centering
+	%% TODO: move code into separate file
+	\begin{tikzpicture}[
+			blk/.style = {
+				draw, rectangle, thick, black,
+				minimum width = 15mm,
+				minimum height = 3mm,
+				outer sep = 1mm,
+				pattern = vertical lines,
+				pattern color = lightgray,
+			},
+		]
+
+		\foreach \i in {0,1,...,4}{
+			\coordinate (blkC\i) at (15mm*\i,0);
+			\node[blk] (blk\i) at (blkC\i) {};
+			\node[below] (phi\i) at (blk\i.south west) {\(\varphi_{\i}\)};
+		}
+		% last phase 
+		\node[below] (phi5) at (blk4.south east) {\(\varphi_{5}\)};
+
+		% first block
+		\node[blk, minimum width = 10mm, xshift = 2.5mm, fill = red!30] (S) at (-15mm,0) {};
+		\node[anchor = east] at (S.west) {Input};
+
+		% last block
+		\node[blk, minimum width = 9mm, xshift = -3mm, fill = blue!30] (E) at ($(blk4)+(15mm,0)$) {};
+
+		% labels
+		\draw[thick, latex-] (blk3.north) to[out = 90, in = 180] ++(5mm,6mm)
+			node[right] {Chunk of \(N\) samples};
+
+		\draw[thick, latex-] (blk0.north east) ++(-1mm,0) to[out = 90, in = 0] ++(-5mm,6mm)
+			node[left] (tags) {Phase tags};
+	\end{tikzpicture}
+	\caption{
+		Graphical representation of the input samples for the work function of the fine phase and frequency correction block (shown in listing \ref{lst:phasecorr-work}). Roughly every \(N\) samples there is a tag containing the information of the phase error (computed using the cross correlation peak). The white `chunks' of samples can be corrected using their respective left and right tag values. The samples in the red chunk need phase information from the previous block processing. The samples in the blue chunk need a phase information from the future, which is not attainable. Thus for the blue chunk the frequency estimate of the previous chunk is used.
+		\label{fig:phasecorr-chunks}
+	}
+\end{figure}
+
+\begin{lstlisting}[
+	texcl = true, language = python, escapechar = {`},
+	float, captionpos = b, label = {lst:phasecorr-blockphase},
+	caption = {
+		Block phase function referenced in listing \ref{lst:phasecorr-work}.
+	},
+]
+def block_phase(self, start, end):
+	# compute number of samples between tags
+	nsamples = end.offset - start.offset
+	# unpack pmt values into start and end phase
+	sphase = pmt.to_python(start.value)
+	ephase = pmt.to_python(end.value)
+	# compute frequency offset between start and end
+	phasediff = (ephase - sphase) % (2 * np.pi)
+	freq = phasediff / nsamples
+	# compute chunk values
+	return sphase * np.ones(nsamples) + freq * np.arange(0, nsamples)
+\end{lstlisting}
+
 
 \section{Channel simulations}
 
@@ -92,21 +256,9 @@ Für die statische implementation und veranschaulichen des Fading effekts wurde 
 
 % Bild einfügen 
 
-
-
-
-
-\section{Hardware}
-
-As Hardware we chosen the USRP B210 from Ettus Research, with the following specifications shown in \tabref{tab:USRP B210 specifications}. Because this SDR is more than enough for our requires.
-
-For the Hardware setup up some changes are made in the file from the 16QAM simulation to fit with the SDRs. For the first test a coaxial cable was used as transmission line, after the cabel were been replaced with two antennas. The gnu radio block scheme is shown in \figref{fig:simul16QAM_Hardware_Aufbau}. The results for s anntena set uo with a transmission line of 20cm  are plotted in \figref{fig:simul16QAM__Hardware}.
-
-Instead of the channel modeling block the USRP blocks are used. The sink as transmitter and the source as resiver.  The Signal is sended on a center frequency of 2.4GHz.
+\subsection{Measurements}
 
 \subsection{Empirical BER} \label{sec:ber}
-
-\subsection{Measurements}
 
 %
 %
@@ -130,22 +282,6 @@ Instead of the channel modeling block the USRP blocks are used. The sink as tran
 	\label{fig:simul16QAM_1}	
 \end{figure}
 
-\begin{table}[]
-	\centering
-	\caption{Modulation settings for different scheme}
-	\begin{tabular}{ccc}
-		\toprule
-		Modulation Scheme & Samples per Symbol & Costas Loop Order\\
-		\midrule
-		BPSK  & 1 & 2 \\
-		QPSK  & 2 & 4 \\
-		8PSK  & 3 & 8 \\
-		16QAM & 4 & 4 \\
-		\bottomrule
-	\end{tabular}
-	\label{tab:modulation_settings}
-\end{table}
-
 \begin{figure}
 	\includegraphics[width=\linewidth]{./figures/pdfs/qam_Hardware_1711.pdf}
 	\caption{GNU Radio Blocks Hardware}
@@ -159,20 +295,3 @@ Instead of the channel modeling block the USRP blocks are used. The sink as tran
 \end{figure}
 
 % To Do: Picture of the setup
-
-\begin{table}[]
-	%To DO sepzifikationen ampssen / genauer? https://www.ettus.com/wp-content/uploads/2019/01/b200-b210_spec_sheet.pdf
-	%https://kb.ettus.com/B200/B210/B200mini/B205mini#FAQ
-	\centering
-	\caption{USRP B210 specifications}
-	\begin{tabular}{ll}
-		\toprule
-		Dimensions               & \(9.7 \times 15.5 \times 1.5\) cm \\
-		Ports                    & 2 TX, 2 RX, Half or Full Duplex     \\
-		RF frequencies           & from 70MHz to 6GHz                    \\
-		Bandwidth                & 200kHz -- 56MHz                       \\
-		External reference input & 10 MHz                                \\
-		\bottomrule
-	\end{tabular}
-\label{tab:USRP B210 specifications}
-\end{table}
