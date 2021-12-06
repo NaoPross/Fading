@@ -56,6 +56,7 @@ class netsink(gr.sync_block):
         @return Bytes of ASCII encoded comma separated string of numbers
         """
         # FIXME: this could be (very) slow, is there a faster way with numpy?
+        # Maybe numpy.array2string
         values = "[" + ",".join(map(str, data)) + "]"
         return bytes(values, "ascii")
 
