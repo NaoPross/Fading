@@ -36,6 +36,7 @@ from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio.qtgui import Range, RangeWidget
+import numpy as np
 
 from gnuradio import qtgui
 
@@ -80,6 +81,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.excess_bw = excess_bw = 350e-3
         self.timing_loop_bw = timing_loop_bw = 2 * 3.141592653589793 / 100
         self.time_offset = time_offset = 1.0
+        self.test = test = 1
         self.samp_rate = samp_rate = 32000
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), excess_bw, 45*nfilts)
         self.phase_bw = phase_bw = 2 * 3.141592653589793 / 100
@@ -88,7 +90,8 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.eq_ntaps = eq_ntaps = 15
         self.eq_mod = eq_mod = 1
         self.eq_gain = eq_gain = .01
-        self.const = const = digital.constellation_qpsk().base()
+        self.const = const = digital.constellation_calcdist([-1-1j, -1+1j, 1+1j, 1-1j], [0, 1, 3, 2],
+        4, 1).base()
         self.chn_taps = chn_taps = [1.0 + 0.0j, ]
 
         ##################################################
@@ -165,6 +168,13 @@ class qam_fading(gr.top_block, Qt.QWidget):
             self.params_grid_layout_1.setRowStretch(r, 1)
         for c in range(0, 1):
             self.params_grid_layout_1.setColumnStretch(c, 1)
+        self._test_range = Range(1, 30, 1, 1, 200)
+        self._test_win = RangeWidget(self._test_range, self.set_test, 'test', "counter_slider", int)
+        self.params_grid_layout_0.addWidget(self._test_win, 1, 2, 1, 1)
+        for r in range(1, 2):
+            self.params_grid_layout_0.setRowStretch(r, 1)
+        for c in range(2, 3):
+            self.params_grid_layout_0.setColumnStretch(c, 1)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
             1024, #size
             samp_rate, #samp_rate
@@ -456,7 +466,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
         self.digital_cma_equalizer_cc_0_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
-        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, 0, True, 4, 0, (0,0.3e-6), (1,0.39), 3 )
+        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, 0, False, 4, 0, [(np.pi)], [(1)], 8 )
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=noise_volt,
             frequency_offset=freq_offset,
@@ -557,6 +567,12 @@ class qam_fading(gr.top_block, Qt.QWidget):
     def set_time_offset(self, time_offset):
         self.time_offset = time_offset
         self.channels_channel_model_0.set_timing_offset(self.time_offset)
+
+    def get_test(self):
+        return self.test
+
+    def set_test(self, test):
+        self.test = test
 
     def get_samp_rate(self):
         return self.samp_rate

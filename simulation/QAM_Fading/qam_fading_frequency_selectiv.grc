@@ -54,7 +54,7 @@ blocks:
     rot_sym: '4'
     soft_dec_lut: None
     sym_map: '[0, 1, 3, 2]'
-    type: qpsk
+    type: calcdist
   states:
     bus_sink: false
     bus_source: false
@@ -228,6 +228,27 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [224, 268.0]
+    rotation: 0
+    state: true
+- name: test
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 'params@0: 1,2,1,1'
+    label: test
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: int
+    start: '1'
+    step: '1'
+    stop: '30'
+    value: '1'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [768, 44.0]
     rotation: 0
     state: true
 - name: time_offset
@@ -450,29 +471,77 @@ blocks:
     coordinate: [648, 316.0]
     rotation: 0
     state: enabled
-- name: channels_selective_fading_model_0
-  id: channels_selective_fading_model
+- name: channels_selective_fading_model2_0
+  id: channels_selective_fading_model2
   parameters:
-    K: '4'
-    LOS: 'True'
-    N: '8'
+    K: '5.1'
+    LOS: 'False'
+    N: '20'
     affinity: ''
     alias: ''
     comment: ''
-    delays: (0,0.3e-6)
+    delay_maxdev: (0.5,0.7,0.9)
+    delay_std: (1e-4,1e-4,1e-4)
+    delays: (1.0,1.9,2.7)
     fDTs: '0'
-    mags: (1,0.39)
+    mags: (1,0.95,0.8)
     maxoutbuf: '0'
     minoutbuf: '0'
-    ntaps: '3'
+    ntaps: '8'
     seed: '0'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [976, 308.0]
+    coordinate: [904, 292.0]
     rotation: 0
-    state: true
+    state: disabled
+- name: channels_selective_fading_model_0
+  id: channels_selective_fading_model
+  parameters:
+    K: '4'
+    LOS: 'False'
+    N: '8'
+    affinity: ''
+    alias: ''
+    comment: ''
+    delays: (np.pi)
+    fDTs: '0'
+    mags: (1)
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    ntaps: '8'
+    seed: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [968, 476.0]
+    rotation: 0
+    state: enabled
+- name: channels_selective_fading_model_2
+  id: channels_selective_fading_model
+  parameters:
+    K: '4.0'
+    LOS: 'False'
+    N: '30'
+    affinity: ''
+    alias: ''
+    comment: ''
+    delays: (0.0,0.1,1.3)
+    fDTs: '0'
+    mags: (1,0.99,0.97)
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    ntaps: '8'
+    seed: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [928, 140.0]
+    rotation: 0
+    state: disabled
 - name: digital_cma_equalizer_cc_0
   id: digital_cma_equalizer_cc
   parameters:
@@ -710,6 +779,19 @@ blocks:
     coordinate: [1088, 868.0]
     rotation: 0
     state: true
+- name: import_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: import numpy as np
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [536, 156.0]
+    rotation: 0
+    state: true
 - name: params
   id: qtgui_tab_widget
   parameters:
@@ -867,7 +949,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1036.0, -64]
+    coordinate: [1084.0, -104]
     rotation: 90
     state: enabled
 - name: qtgui_const_sink_x_0_0
@@ -1223,7 +1305,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1080.0, 656]
+    coordinate: [1080.0, 680]
     rotation: 270
     state: true
 - name: qtgui_freq_sink_x_2_1
@@ -1417,13 +1499,21 @@ connections:
 - [blocks_unpack_k_bits_bb_0, '0', blocks_char_to_float_0, '0']
 - [blocks_unpack_k_bits_bb_0_0, '0', blocks_char_to_float_0_0, '0']
 - [blocks_unpack_k_bits_bb_0_1, '0', blocks_char_to_float_0_1, '0']
+- [channels_channel_model_0, '0', channels_selective_fading_model2_0, '0']
 - [channels_channel_model_0, '0', channels_selective_fading_model_0, '0']
+- [channels_channel_model_0, '0', channels_selective_fading_model_2, '0']
 - [channels_channel_model_0, '0', digital_pfb_clock_sync_xxx_0_0, '0']
 - [channels_channel_model_0, '0', qtgui_const_sink_x_0, '1']
 - [channels_channel_model_0, '0', qtgui_freq_sink_x_0, '1']
+- [channels_selective_fading_model2_0, '0', digital_pfb_clock_sync_xxx_0, '0']
+- [channels_selective_fading_model2_0, '0', qtgui_const_sink_x_0, '0']
+- [channels_selective_fading_model2_0, '0', qtgui_freq_sink_x_0, '0']
 - [channels_selective_fading_model_0, '0', digital_pfb_clock_sync_xxx_0, '0']
 - [channels_selective_fading_model_0, '0', qtgui_const_sink_x_0, '0']
 - [channels_selective_fading_model_0, '0', qtgui_freq_sink_x_0, '0']
+- [channels_selective_fading_model_2, '0', digital_pfb_clock_sync_xxx_0, '0']
+- [channels_selective_fading_model_2, '0', qtgui_const_sink_x_0, '0']
+- [channels_selective_fading_model_2, '0', qtgui_freq_sink_x_0, '0']
 - [digital_cma_equalizer_cc_0, '0', digital_costas_loop_cc_0, '0']
 - [digital_cma_equalizer_cc_0, '0', qtgui_const_sink_x_1, '0']
 - [digital_cma_equalizer_cc_0_0, '0', digital_costas_loop_cc_0_0, '0']
