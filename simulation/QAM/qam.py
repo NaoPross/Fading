@@ -88,7 +88,7 @@ class qam(gr.top_block, Qt.QWidget):
         self.eq_ntaps = eq_ntaps = 15
         self.eq_mod = eq_mod = 1
         self.eq_gain = eq_gain = .01
-        self.const = const = digital.constellation_16qam().base()
+        self.const = const = digital.constellation_qpsk().base()
         self.chn_taps = chn_taps = [1.0 + 0.0j, ]
 
         ##################################################
