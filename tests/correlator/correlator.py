@@ -36,6 +36,7 @@ from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 import epy_block_0
 import epy_block_1
+import epy_block_2
 import numpy as np
 
 from gnuradio import qtgui
@@ -329,7 +330,8 @@ class correlator(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(1, 2):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self.epy_block_1 = epy_block_1.blk()
+        self.epy_block_2 = epy_block_2.blk(tag='frame_start', vlen=20)
+        self.epy_block_1 = epy_block_1.blk(vlen=20)
         self.epy_block_0 = epy_block_0.blk()
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, 16, 1.5, 1)
         self.digital_costas_loop_cc_0 = digital.costas_loop_cc(2 * 3.141592653589793 / 100, 4, False)
@@ -353,7 +355,6 @@ class correlator(gr.top_block, Qt.QWidget):
             block_tags=False)
         self.blocks_vector_source_x_0 = blocks.vector_source_b(testvec * 500, True, 1, [])
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
-        self.blocks_tagged_stream_align_0 = blocks.tagged_stream_align(gr.sizeof_char*1, 'frame_start')
         self.blocks_stream_mux_0 = blocks.stream_mux(gr.sizeof_char*1, [0, len(testvec)])
         self.blocks_repack_bits_bb_0 = blocks.repack_bits_bb(2, 8, "", False, gr.GR_MSB_FIRST)
         self.blocks_null_source_0 = blocks.null_source(gr.sizeof_char*1)
@@ -368,9 +369,8 @@ class correlator(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_complex_to_magphase_0_0, 1), (self.blocks_null_sink_3, 0))
         self.connect((self.blocks_complex_to_magphase_0_0, 0), (self.qtgui_time_sink_x_0_0, 0))
         self.connect((self.blocks_null_source_0, 0), (self.blocks_stream_mux_0, 0))
-        self.connect((self.blocks_repack_bits_bb_0, 0), (self.blocks_tagged_stream_align_0, 0))
+        self.connect((self.blocks_repack_bits_bb_0, 0), (self.epy_block_2, 0))
         self.connect((self.blocks_stream_mux_0, 0), (self.digital_constellation_modulator_0, 0))
-        self.connect((self.blocks_tagged_stream_align_0, 0), (self.epy_block_1, 0))
         self.connect((self.blocks_throttle_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
         self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_stream_mux_0, 1))
         self.connect((self.channels_channel_model_0, 0), (self.blocks_throttle_0, 0))
@@ -387,6 +387,7 @@ class correlator(gr.top_block, Qt.QWidget):
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_cma_equalizer_cc_0, 0))
         self.connect((self.epy_block_0, 0), (self.digital_constellation_decoder_cb_0, 0))
         self.connect((self.epy_block_0, 0), (self.qtgui_const_sink_x_0_0, 0))
+        self.connect((self.epy_block_2, 0), (self.epy_block_1, 0))
 
 
     def closeEvent(self, event):

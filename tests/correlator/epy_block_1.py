@@ -1,22 +1,16 @@
-"""
-Embedded Python Blocks:
-
-Each time this file is saved, GRC will instantiate the first class it finds
-to get ports and parameters of your block. The arguments to __init__  will
-be the parameters. All of them are required to have default values!
-"""
-
 import numpy as np
 from gnuradio import gr
 
 np.set_printoptions(formatter={'int':hex})
 
 class blk(gr.sync_block):
-    def __init__(self):
+    def __init__(self, vlen=1):
+        dt = np.byte if vlen == 1 else (np.byte, vlen)
+
         gr.sync_block.__init__(
             self,
             name='Printer',
-            in_sig=[np.byte],
+            in_sig=[(np.byte, vlen)],
             out_sig=[]
         )
 
