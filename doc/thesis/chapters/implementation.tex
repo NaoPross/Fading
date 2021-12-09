@@ -7,7 +7,7 @@
 \section{Software Stack}
 
 \subsection{GNU Radio}
-For both the signal processing and the simulations the GNU Radio (GR) toolkit was chosen, as it already had drivers for the USRP hardware. GR is an open-source free software framework that can be used to build signal processing chains and software defined radios (SDR). GR is composed of two parts: a C\texttt{++} library with Python bindings to write signal processing code, and GNU Radio Companion (GRC), a graphical user interface to more easily construct signal processing chains by representing signal processing algorithms as ``blocks'' that are connected together with arrows, essentially drawing a diagram called ``flow graph''. An example of a flow graph is shown in \figref{fig:flowgraph}.
+For both the signal processing and the simulations the GNU Radio (GR) toolkit was chosen, as it already had drivers for the USRP hardware. GR is an open-source free software framework that can be used to build signal processing chains and software defined radios (SDR). GR is composed of two parts: a C\texttt{++} library with Python bindings to write signal processing code, and GNU Radio Companion (GRC), a graphical user interface to more easily construct signal processing chains by representing signal processing algorithms as ``blocks'' that are chained together with arrows, essentially drawing a diagram called ``flow graph''. An example of a flow graph is shown in \figref{fig:flowgraph}.
 
 Internally GR works by keeping multiple memory buffers of samples, that are passed as pointers to the signal processing algorithms' ``work functions''. When the signal processing is complete, the output buffer of one block is given to the next block as input according to how they were connected in the flow graph. The structure of a block is shown in the Python listing \ref{lst:gr-block-py}. To improve performance GR creates a thread for each work function to parallelize the workload of the concurrently running signal processing blocks. For more details see the GNU Radio Wiki and User Manual in \cite{GRWiki}.
 
@@ -37,9 +37,9 @@ class myblock(gr.sync_block):
 
 \subsection{Dear PyGUI}
 
-To construct a graphical interface that would serve demonstrative purposes the Dear IMGUI (immediate graphical user interface) library was chosen, mainly for its ease of use and high refresh rate. Dear PyGUI (DPG) are the Python bindings for the Dear IMGUI library.
+To construct a graphical interface for a demonstration platform the Dear IMGUI (immediate graphical user interface) library was chosen, mainly for its ease of use, wide range of techincal capabilites and high refresh rate. Dear PyGUI (DPG) are the Python bindings for the Dear IMGUI library.
 
-The DPG GUI communicates with the GR flow graphs using UDP packets. This decision to separate the project into two parts that communicate over the IP network was made because it is not very easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configure flow graph on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time.
+The DPG GUI communicates with the GR flow graphs using the IP/UDP protocol. This decision to separate the project into two parts that communicate over the IP network was made because it is not very easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configure flow graph on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time.
 
 Also as a side effect, in theory this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph.
 
@@ -61,7 +61,7 @@ Also as a side effect, in theory this setup allows to have one computer running 
 	\caption{USRP B210 specifications.\label{tab:usrp-specs}}
 \end{table}
 
-As receivers and transmitter devices for the SDR setup 2 USRP B210 devices from Ettus Research were used. Some technical specifications are shown in \tabref{tab:usrp-specs}. GR has off the shelf blocks that interface with the official API provided from Ettus Research.
+As receivers and transmitter devices for the SDR setup two USRP B210 devices from Ettus Research were used. Some technical specifications are shown in \tabref{tab:usrp-specs}. GR provides off the shelf blocks that interface with the official API provided from Ettus Research.
 
 \section{Sender chain}
 \subsection{Data frame}
@@ -75,24 +75,23 @@ As receivers and transmitter devices for the SDR setup 2 USRP B210 devices from 
 	}
 \end{figure}
 
-To compute the empirical \emph{bit error rate} (BER) of the setup, the data has to be framed on by the sender and the bitstream synchronized on the receiver side. The structure of a data packed used in the implementation is shown in \figref{fig:dataframe}. A frame begins with an user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple.
+To compute the empirical \emph{bit error rate} (BER) of the setup, the data has to be framed by the sender and the bitstream synchronized on the receiver side. The structure of a data packet used in the implementation is shown in \figref{fig:dataframe}. A frame begins with an user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple.
 
 
 \subsection{Modulation}
 
-The constellation modulator block is used for a root-raised-cosine-filtered basis modulation. The block gives an input of a byte stream as complex modulated signal in the baseband back. 
-Further more it's possible to chose the modulation type here, in this example it is 16QAM, but QPSK, 8PSK and BPSK would also be possible.
+GR provides a constellation modulator block, that already implements several standard constellations (QPSK and 16ary-QAM being of interest for us). The block also already integrates a root raised cosine filter, whose phase bandwidth (roll-off factor) can be given as parameter.
 
 \section{Receiver chain}
 
 \subsection{Envelope detector}
 
-What is here referred to as envelope detector has the purpose of synchronizing the symbols and equalizing the input signal amplitude. This is accomplished in GRC using two blocks: a polyphase clock sync and a CMA equalizer. The input signal for the envelope detector has 4 samples per symbol, whereas the output has only one sample per symbol.
+What is here referred to as envelope detector has the purpose of synchronizing the symbols and equalizing the input signal amplitude. This is accomplished in GRC using two blocks: a polyphase clock sync and a CMA equalizer. The input signal for the envelope detector has 4 samples per symbol, while the output has only one sample per symbol.
 
 \paragraph{Polyphase Clock Sync}
 %% To Do : nochmals anschauen ob dieese erklärung verständlich ist und richtig interpretiert wurde.
-With the the polyphase clock sync the symbols can be synchronized by preforming a time synchronization with the help of multiple filterbanks. For that the derivation of the filtered signal should be minimized whish turns to a better SNR. 
-%This works with the help of two filterbanks, one of them contains the filters of the signal adapted to the pulse shaping with several phases. The other contains its derivative. So in the time domain it has a sinc shape, for the output Signal the sinc peak should be on a sample, with the fact that sinc(0) = 1 and sinc(0)' = 0 an error signal can be generated which tells how far away from the peak it is. This error Signal should be zero this is possible with the help of a loop second order whish constants the number of the filterbank and the rate. This rate is generated because of the clock difference between the transmitter and reviver to synchronies the receiver the filter goes through the phases. For the output one sample per symbol is enough.
+With the the polyphase clock sync the symbols can be synchronized by preforming a time synchronization with the help of multiple filterbanks. For that the derivative of the filtered signal should be minimized which turns to a better SNR. 
+% This works with the help of two filterbanks, one of them contains the filters of the signal adapted to the pulse shaping with several phases. The other contains its derivative. So in the time domain it has a sinc shape, for the output Signal the sinc peak should be on a sample, with the fact that sinc(0) = 1 and sinc(0)' = 0 an error signal can be generated which tells how far away from the peak it is. This error Signal should be zero this is possible with the help of a loop second order whish constants the number of the filterbank and the rate. This rate is generated because of the clock difference between the transmitter and receiver to synchronized the receiver the filter goes through the phases. For the output one sample per symbol is enough.
 
 \paragraph{Equalizer}
 
@@ -100,7 +99,7 @@ With the the polyphase clock sync the symbols can be synchronized by preforming 
 
 \subsection{Frame synchronization and phase correction} \label{sec:phasecorr}
 
-Once the envelope's clock is synchronized in the processing chain the data stream has one sample per symbol. At this point it is necessary to find where each data frame starts or end in order to correctly decode their payloads. For such purpose a special sequence called \emph{access code} is put in front of each frame. Access codes are sequences of samples that are carefully constructed to have an autocorrelation with a high peak at zero, and that rapidly decreases for increasing shifts. In other words, the autocorrelation of an access code high only when the sequence is perfectly aligned. Thus by cross correlating an envelope signal \(r(t)\), that periodically contains an access code \(a(t)\) with the access code itself, and looking for peaks in the result, it is possible to determine where each frames begin. Furthermore by analyzing the values of the peaks it is possible to extract informations about the phase and frequency offsets.
+Once the envelope's clock is synchronized in the processing chain the data stream has one sample per symbol. At this point it is necessary to find where each data frame starts or end in order to correctly decode their payloads. For such purpose a special sequence called \emph{access code} is put in front of each frame. Access codes are sequences of samples that are carefully constructed to have an autocorrelation with a high peak at zero, and that rapidly decreases for increasing shifts. In other words, the autocorrelation of an access code high only when the sequence is perfectly aligned. Thus by cross correlating an envelope signal \(r(t)\), that periodically contains an access code \(a(t)\) with the access code itself, and looking for peaks in the result, it is possible to determine where each frame begin. Furthermore by analyzing the values of the peaks it is possible to extract information about the phase and frequency offsets.
 
 To understand how correlation peaks allow for fine phase correction, recall that mathematically the cross correlation (denoted here by \(\star\)) of two complex valued signals is
 \begin{equation}
@@ -109,7 +108,7 @@ To understand how correlation peaks allow for fine phase correction, recall that
 	= \int_\mathbb{R} r(\tau) a^*(\tau - t) \,d\tau
 	= r(t) * a^*(-t),
 \end{equation}
-which is equivalent to a convolution, where the left term being time-reversed complex conjugated \cite{Gallager}. This last property is especially useful because it makes possible to implement cross correlation using FIR filters. Some interesting properties of the cross correlation are that correlation with itself (also called autocorrelation) at \(t = 0\) is
+which is equivalent to a convolution, with the left term being time-reversed complex conjugated \cite{Gallager}. This last property is especially useful because it makes possible to implement cross correlation using FIR filters. Some interesting properties of the cross correlation are that correlation with itself (autocorrelation) at \(t = 0\) is
 \begin{equation}
 	R_{aa} = (a \star a)(0)
 	= \int_\mathbb{R} a(\tau) a^*(\tau - 0) \,d\tau
@@ -122,7 +121,7 @@ which is a real number. And more importantly the correlation with an out of phas
 	= \int_\mathbb{R} a(\tau)e^{j\varphi}  a^*(\tau) \,d\tau
 	= R_{aa} e^{j\varphi}.
 \end{equation}
-The relevant observation to notice in \eqref{eqn:xc-oop-copy} that since \(R_{aa}\) is a real number, the phase of the cross correlation at \(t = 0\) is the phase of \(a'(t)\). This fact can be exploited to implement fine phase correction for the received envelope in relatively few steps as follows:
+The relevant observation to make in \eqref{eqn:xc-oop-copy} that since \(R_{aa}\) is a real number, the phase of the cross correlation at \(t = 0\) is the phase of \(a'(t)\). This fact can be exploited to implement fine phase correction for the received envelope in relatively few steps as follows:
 \begin{enumerate}
 	\item Compute the cross correlation \(R_{ra}\) of the envelope \(r(t)\) with the access code \(a(t)\),
 	\item Find the maximum value of \(\hat{R}_{ra} = \max R_{ra}(t)\) (correlation peak),
@@ -252,9 +251,10 @@ Here its possible to add some AWGN noise in the channel line. Different paramete
 %For the a first simulation with some fading the 16QAM simulation model has been extended with a FIR-Filter in the Chanel. The results of this simulation are shown in \figref{fig:simul16QAM} and \figref{fig:simul16QAM_1} as the blue Signal.
 
 \subsection{Fading with Discrete-time model}
+\begin{german}
 %TO DO: übersetzen 
-
 Für die statische gemäss \ref{sec:Discrete-time-model} implementation und veranschaulichen des Fading effekts wurde ein eigener Block kreaiert und in den Channel implementiert. Dieser Block basiert auf einem FIR Filter. Es kann mit direcktem Pfad oder ohne dargestellt werden (Line of Side). Mit Hilfe dieses Filters wird die Verspätung der nebenpfaden dargestellt. Es ist möglich beliebig viele dieser Pfade mit unterschiedlicher stärke zu simulieren. Dieser Block wurde zusätzlich mit der methode in \ref{sec:fractional-delay} beschriben implementiert um nichtganzahlige delay werte zu erlauben.
+\end{german}
 
 % Bild einfügen 
 \subsection{Fading with Statistical model}

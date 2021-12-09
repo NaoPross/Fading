@@ -276,8 +276,8 @@ is different from \eqref{eqn:multipath-impulse-response} consider again the plot
 From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-response} can be interpreted as a simple tapped delay line, schematically drawn in \figref{fig:tapped-delay-line}, which confirms that the presented mathematical model is indeed a FIR filter. Simple multipath channels can be simulated with just a few lines of code, for example the data for the static fading channel in \figref{fig:multipath-frequency-response-plots} is generated in just four lines of Python. The difficulty of fading channels in practice lies in the estimation of the constantly changing parameters \(c_k(t)\) and \(\tau_k(t)\).
 
 
-\subsection{Fractional Delay} \label{sec:fractional-delay}
-% TO Do quelle:  http://users.spa.aalto.fi/vpv/publications/vesan_vaitos/ch3_pt1_fir.pdf
+\subsection{FIR filter simulation with fractional delays} \label{sec:fractional-delay}
+% TO Do quelle: http://users.spa.aalto.fi/vpv/publications/vesan_vaitos/ch3_pt1_fir.pdf
 
 \begin{figure}
 	\centering
@@ -293,7 +293,7 @@ From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-respo
 	\caption{\label{fig:fractional-delay-sinc-plot}}
 \end{figure}
 
-As in \ref{sec:discrete-time-model} mentioned a FIR filter can be used to cheat a discrete time model of multiparty fading. But with a FIR filter, the delays are set at the sample rate, so the delays are integer. When the delays are noninteger a approximation had to be done. 
+As in \ref{sec:discrete-time-model} mentioned a FIR filter can be used to simulate a discrete time model of multipath fading. But with a FIR filter the delays can only be an integer multiple of the the sample rate. When the delays are noninteger an approximation has to be done. 
 
 In the example shown in \figref{fig:fractional-delay-sinc-plot}. For a integer delays in the sinc function all sample values are zero except the one by the delayed sample, which is the amplitude value, here one. When the delay is a fractional number all samples are non-zero. In theory this filter is notrealizable because its noncasual and the impulse respond is infinity long. This problem can't be solve by adding them because of the imaginary part.
 
