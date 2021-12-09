@@ -299,35 +299,40 @@ In the example shown in \figref{fig:fractional-delay-sinc-plot}. For a integer d
 
 To desing a noninteger digital delay FIR Filter a least square integral error design approximation could be chosen.  
 
+Where the transfare function is given as:
+
 \begin{equation} \label{eqn:transfer-function-FIR}
 	H(z)=\sum_{n=0}^{N} h(n) z^{-n}
 \end{equation}
+The Order of the filter is given with the help of \(N\), this value only contains integer coefficients.
+To be mention for the approximation is that the error decreases with a higher filter order.
 
-The transfare function is given in \eqref{eqn:transfer-function-FIR}, where \(N\) is the order of the filter given in integer coefficients. To be mention for the approximation is that the error decreases with a higher filter order.
 
-The error function between the ideal frequency respond an the approximation should be minimized, for the best possible approximation. 
+The error function between the ideal frequency respond an the approximation should be minimized, for the best possible approximation:
   
 \begin{equation} \label{eqn:error-function}
 		E\left(e^{j \omega}\right)=H\left(e^{j \omega}\right)-H_{\mathrm{id}}\left(e^{j \omega}\right)
 \end{equation}
 
-The impulse respond of such least squared fractional delay filter in \eqref{eqn:impuls-respond}. Only positive values are used to make the sinc-function casual. 
+The impulse respond of such a least squared fractional delay filter in \eqref{eqn:impuls-respond}. Only positive values are used to make the sinc-function casual. 
 
 \begin{equation} \label{eqn:impuls-respond}
 	h(n)= \begin{cases}\operatorname{sinc}(n-D), & 0 \leq n \leq N \\ 0, & \text { otherwise }\end{cases}
 \end{equation}
 
-To simplify the calculation, the assumption was made that the filter order is an odd number. With this assumption the exact order for the filter can be found out with \eqref{eqn:filter-order} and the integer delay \(D_{\text {int }}\).
+To simplify the calculation, the assumption was made that the filter order is an odd number. With this assumption the exact order for the filter can be found out with the help of the integer delay \(D_{\text {int }}\):
 \begin{equation} \label{eqn:filter-order}
 	N = 2 D_{\text {int }} + 1
 \end{equation}
 
 
-The first non-zero sample can be find out with the help of the index M in \eqref{eqn: M first non-zero sample}.With the help of this index it can also be said whether the FIR filter is causal or not. For \(M \geq 0\) casual and if  \(M < 0\) noncasual, an so notrealizable. With the assumption that \(N\) is an odd number \(M \) should always be \( 0\) else something went wrong.
-
+The first non-zero sample can be find out with the help of the index M:
 \begin{equation}\label{eqn: M first non-zero sample}
 	M = \lfloor D\rfloor-\frac{N-1}{2} \quad \text { for odd } N
 \end{equation}
+
+With the help of this index it can also be said whether the FIR filter is causal or not. For \(M \geq 0\) casual and if  \(M < 0\) noncasual, an so notrealizable. With the assumption that \(N\) is an odd number \(M \) should always be \( 0\) else something went wrong.
+
 
 
 %% TO DO : Mention windowing or not ?
@@ -345,7 +350,7 @@ Recall that \(h_l(m)\) is a function of time because \(c_k\) and \(\tau_k\) chan
 for some parameter \(\sigma\). Loosely speaking, the distribution needs to be ``circular'' because \(h_l\) is a complex number, which is two dimensional, it can however be understood as \(\Re{h_l} \sim \mathcal{N}(0, \sigma^2)\) and \(\Im{h_l} \sim \mathcal{N}(\mu, \sigma^2)\), i.e. having each component being normally distributed.
 
 
-
+% TO DO : Picture of gaussian distribution
 \begin{subequations}
 	\begin{align}
 		R_{l} (k) &= \E{h_l(m) h_l^*(m+k)}, \\
