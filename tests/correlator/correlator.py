@@ -80,7 +80,7 @@ class correlator(gr.top_block, Qt.QWidget):
         self.nfilts = nfilts = 32
         self.excess_bw = excess_bw = .35
         self.timing_loop_bw = timing_loop_bw = 2 * np.pi / 100
-        self.testvec = testvec = [0x1f, 0x35] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3]
+        self.testvec = testvec = [0x1f, 0x35] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3, 0x21]
         self.samp_rate = samp_rate = int(1.5e6)
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), excess_bw, 45*nfilts)
         self.revconj_access_code_symbols = revconj_access_code_symbols = [(1.4142135623730951+1.4142135623730951j), (1.4142135623730951+1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (-1.4142135623730951+1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (1.4142135623730951-1.4142135623730951j), (1.4142135623730951+1.4142135623730951j), (-1.4142135623730951+1.4142135623730951j)]
@@ -332,7 +332,6 @@ class correlator(gr.top_block, Qt.QWidget):
         self.epy_block_1 = epy_block_1.blk()
         self.epy_block_0 = epy_block_0.blk()
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, 16, 1.5, 1)
-        self.digital_map_bb_0 = digital.map_bb([0, 1, 3, 2])
         self.digital_costas_loop_cc_0 = digital.costas_loop_cc(2 * 3.141592653589793 / 100, 4, False)
         self.digital_corr_est_cc_0 = digital.corr_est_cc(access_code_symbols, 1, len(access_code_symbols) // 2, .9, digital.THRESHOLD_ABSOLUTE)
         self.digital_constellation_modulator_0 = digital.generic_mod(
@@ -377,7 +376,7 @@ class correlator(gr.top_block, Qt.QWidget):
         self.connect((self.channels_channel_model_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.digital_corr_est_cc_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.qtgui_const_sink_x_0, 0))
-        self.connect((self.digital_constellation_decoder_cb_0, 0), (self.digital_map_bb_0, 0))
+        self.connect((self.digital_constellation_decoder_cb_0, 0), (self.blocks_repack_bits_bb_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.channels_channel_model_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.qtgui_time_sink_x_1_0, 0))
         self.connect((self.digital_corr_est_cc_0, 1), (self.blocks_complex_to_magphase_0_0, 0))
@@ -385,7 +384,6 @@ class correlator(gr.top_block, Qt.QWidget):
         self.connect((self.digital_corr_est_cc_0, 0), (self.epy_block_0, 0))
         self.connect((self.digital_corr_est_cc_0, 0), (self.qtgui_time_sink_x_0_0_0, 0))
         self.connect((self.digital_costas_loop_cc_0, 0), (self.qtgui_const_sink_x_0_0, 1))
-        self.connect((self.digital_map_bb_0, 0), (self.blocks_repack_bits_bb_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_cma_equalizer_cc_0, 0))
         self.connect((self.epy_block_0, 0), (self.digital_constellation_decoder_cb_0, 0))
         self.connect((self.epy_block_0, 0), (self.qtgui_const_sink_x_0_0, 0))

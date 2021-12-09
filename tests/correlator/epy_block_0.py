@@ -26,6 +26,8 @@ class blk(gr.sync_block):
         # of the previous block to correct the first values of the next block
         self.last = None
         self.lastfreq = 0
+        self.lastnback = 0
+        self.lastnsamples = 0
 
     def block_phase(self, start, end):
         """
@@ -41,6 +43,9 @@ class blk(gr.sync_block):
         # compute number of samples between tags
         nsamples = end.offset - start.offset
 
+        # debugging, see last lines of self.work()
+        self.lastnsamples = nsamples
+
         # unpack pmt values into start and end phase
         sphase = pmt.to_python(start.value)
         ephase = pmt.to_python(end.value)
@@ -54,7 +59,7 @@ class blk(gr.sync_block):
 
         # debugging
         print(f"Correction for chunk of {nsamples:2d} samples is " \
-              f"sphase={sphase: .4f} rad and freq={freq*1e3: .4f} milli rad / sample")
+              f"sphase={sphase: .4f} rad and freq={freq*1e3: .4f}e-3 rad / sample")
 
         # compute chunk values
         return sphase * np.ones(nsamples) + freq * np.arange(0, nsamples)
@@ -92,11 +97,17 @@ class blk(gr.sync_block):
         end = np.ones(nback) * pmt.to_python(tags[-1].value) \
                 + self.lastfreq * np.arange(0, nback)
 
+
         # compute the "start", using the last tag from the previous call
         nfront = tags[0].offset - counter
         print(f"Processing {nfront} samples at the front of the buffer")
         start = self.block_phase(self.last, tags[0])[-nfront:] \
                 if self.last and nfront else np.zeros(nfront)
+
+        # debugging
+        if nfront + self.lastnback != self.lastnsamples:
+            print(f"Something went wrong: {self.lastnback + nfront} != self.lastnsamples")
+        self.lastnback = nback
 
         # compute correction
         correction = np.exp(-1j * np.concatenate([start, middle, end]))
@@ -112,6 +123,4 @@ class blk(gr.sync_block):
         for tag in tags:
             self.add_item_tag(0, tag.offset, pmt.intern("frame_start"), pmt.PMT_T)
 
-        # FIXME: should return `length' but then the last sample is not
-        #        included and self.last does something weird
         return len(out)

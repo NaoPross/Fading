@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+# Copyright 2021 Naoki Pross.
 
 import pmt
 
@@ -34,6 +36,10 @@ class phasecorrection(gr.sync_block):
         self.last = None
         self.lastfreq = 0
 
+        # debugging variables to check if an error happened in block processing
+        self.lastnsamples = 0
+        self.lastnback = 0
+
     def block_phase(self, start, end):
         """
         Compute a vector for the phase and frequency correction for the samples
@@ -62,6 +68,7 @@ class phasecorrection(gr.sync_block):
         # debugging
         log.debug(f"Correction for chunk of {nsamples:2d} samples is " \
               f"sphase={sphase: .4f} rad and freq={freq*1e3: .4f}e-3 rad / sample")
+        self.lastnsamples = nsamples
 
         # compute chunk values
         return sphase * np.ones(nsamples) + freq * np.arange(0, nsamples)
@@ -105,6 +112,14 @@ class phasecorrection(gr.sync_block):
         start = self.block_phase(self.last, tags[0])[-nfront:] \
                 if self.last and nfront else np.zeros(nfront)
 
+        # debugging
+        if self.lastnback + self.nfront != self.lastnsamples:
+            log.warn("Something went wrong during block processing!\n" \
+                    f"Last block finished with nback = {self.lastnback} samples, " \
+                    f"current block starts with nstart = {self.nstart}, but their sum" \
+                    f"is not {self.latnsamples} = size of last chunk")
+        self.lastnback = nback
+
         # compute correction
         correction = np.exp(-1j * np.concatenate([start, middle, end]))
         length = len(correction)
@@ -119,6 +134,4 @@ class phasecorrection(gr.sync_block):
         for tag in tags:
             self.add_item_tag(0, tag.offset, pmt.intern("frame_start"), pmt.PMT_T)
 
-        # FIXME: should return `length' but then the last sample is not
-        #        included and self.last does something weird
         return len(out)
