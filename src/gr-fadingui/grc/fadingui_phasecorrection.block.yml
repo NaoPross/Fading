@@ -1,0 +1,25 @@
+id: fadingui_phasecorrection
+label: Fine Phase and Freq Correction 
+category: '[fadingui]'
+
+parameters:
+
+templates:
+  imports: import fadingui
+  make: fadingui.phasecorrection()
+
+inputs:
+- label: in
+  domain: stream
+  dtype: complex
+  vlen: 1
+
+outputs:
+- label: out
+  domain: stream
+  dtype: complex
+  vlen: 1
+
+#  'file_format' specifies the version of the GRC yml format used in the file
+#  and should usually not be changed.
+file_format: 1

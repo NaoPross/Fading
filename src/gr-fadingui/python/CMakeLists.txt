@@ -38,7 +38,8 @@ GR_PYTHON_INSTALL(
     frame_obj.py
     multipath_fading.py
     ber.py
-    netsink.py DESTINATION ${GR_PYTHON_DIR}/fadingui
+    netsink.py
+    phasecorrection.py DESTINATION ${GR_PYTHON_DIR}/fadingui
 )
 
 ########################################################################

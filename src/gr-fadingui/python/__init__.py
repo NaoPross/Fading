@@ -40,5 +40,6 @@ from .frame_obj import frame_obj
 from .multipath_fading import multipath_fading
 from .ber import ber
 from .netsink import netsink
+from .phasecorrection import phasecorrection
 
 #

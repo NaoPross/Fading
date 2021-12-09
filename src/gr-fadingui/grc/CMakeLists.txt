@@ -23,5 +23,6 @@ install(FILES
     fadingui_frame_obj.block.yml
     fadingui_multipath_fading.block.yml
     fadingui_ber.block.yml
-    fadingui_netsink.block.yml DESTINATION share/gnuradio/grc/blocks
+    fadingui_netsink.block.yml
+    fadingui_phasecorrection.block.yml DESTINATION share/gnuradio/grc/blocks
 )
