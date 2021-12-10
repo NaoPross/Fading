@@ -551,7 +551,8 @@ blocks:
 - name: epy_block_1
   id: epy_block
   parameters:
-    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nnp.set_printoptions(formatter={'int':hex})\n\
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\n# remove print for\
+      \ now\nprint = lambda x: None\n\nnp.set_printoptions(formatter={'int':hex})\n\
       \nclass blk(gr.sync_block):\n    def __init__(self, vlen=1):\n        dt = np.byte\
       \ if vlen == 1 else (np.byte, vlen)\n\n        gr.sync_block.__init__(\n   \
       \         self,\n            name='Printer',\n            in_sig=[(np.byte,\
@@ -563,7 +564,7 @@ blocks:
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    vlen: '20'
+    vlen: len(testvec)
   states:
     _io_cache: ('Printer', 'blk', [('vlen', '1')], [('0', 'byte', 1)], [], '', [])
     bus_sink: false
@@ -575,24 +576,46 @@ blocks:
 - name: epy_block_2
   id: epy_block
   parameters:
-    _source_code: "import pmt\nimport numpy as np\nfrom gnuradio import gr\n\n\nclass\
-      \ blk(gr.sync_block):\n\n    def __init__(self, tag=\"frame_start\", vlen=1):\n\
-      \        dt = np.byte if vlen == 1 else (np.byte, vlen)\n\n        gr.sync_block.__init__(\n\
+    _source_code: "import pmt\nimport functools\n\nimport numpy as np\nfrom gnuradio\
+      \ import gr\n\n\nclass blk(gr.decim_block):\n\n    def __init__(self, tag=\"\
+      frame_start\", vlen=1):\n        decim = vlen\n\n        gr.decim_block.__init__(\n\
       \            self,\n            name='Split at tag',\n            in_sig=[np.byte],\n\
-      \            out_sig=[(np.byte, vlen)]\n        )\n\n        self.tag = tag\n\
-      \        self.vlen = vlen\n\n    def work(self, input_items, output_items):\n\
-      \        inp = input_items[0]\n\n        is_frame_start = lambda tag: pmt.to_python(tag.key)\
-      \ == self.tag\n        tags = filter(is_frame_start, self.get_tags_in_window(0,\
-      \ 0, len(inp)))\n\n        counter = self.nitems_written(0)\n        offsets\
-      \ = map(lambda t: t.offset - counter, tags)\n\n        print(list(offsets))\n\
-      \n        output_items[0][:] = inp.reshape(())\n        return len(output_items[0])\n"
+      \            out_sig=[(np.byte, vlen)],\n            decim = decim -1\n    \
+      \    )\n\n        if decim > 1:\n            self.set_relative_rate(1. / (decim\
+      \ -1))\n\n        self.tag = tag\n        self.vlen = vlen\n\n    def work(self,\
+      \ input_items, output_items):\n        # nicer aliases\n        inp = input_items[0]\n\
+      \        inplen = len(inp)\n        oup = output_items[0]\n        ouplen =\
+      \ len(oup)\n\n        is_frame_start = lambda tag: pmt.to_python(tag.key) ==\
+      \ self.tag\n        tags = list(filter(is_frame_start, self.get_tags_in_window(0,\
+      \ 0, inplen)))\n\n        if len(tags) == 0:\n            print(\"There are\
+      \ not tags!\")\n\n        # get indices of where the frames are\n        counter\
+      \ = self.nitems_written(0) # * self.vlen\n        offsets = list(map(lambda\
+      \ t: t.offset - counter, tags))\n        indices = list(zip(offsets, offsets[1:]))\n\
+      \n        print(list(map(lambda t: t.offset, tags)))\n        print(offsets)\n\
+      \        print(indices)\n\n        # Get chunks\n        def get_inp_chunk(index_pair):\
+      \ \n            # read a chunk from the inp array\n            # if there are\
+      \ not enough values the rest is padded with zeros,\n            # if there are\
+      \ too many values, they get cut off\n            start = index_pair[0]\n   \
+      \         end = index_pair[1]\n            length = end - start\n\n        \
+      \    assert start != end\n\n            print(f\"getting chunk from {start}\
+      \ to {end} of length {length}\")\n\n            # not enough values\n      \
+      \      if length < self.vlen:\n                pad = self.vlen - length\n  \
+      \              print(f\"Chunk was too short! Adding {pad} zeros to pad\")\n\
+      \                return np.concatenate([inp[start:end], np.zeros(pad)])\n\n\
+      \            # too many values\n            if length > self.vlen:\n       \
+      \         print(f\"Chunk was too long! Cutting off {length - self.vlen} values\"\
+      )\n                end = start + self.vlen\n                return inp[start:end]\n\
+      \n            # okay\n            rv = inp[start:end]\n            print(rv)\n\
+      \            return rv\n\n        chunks = list(map(get_inp_chunk, indices))\n\
+      \n        assert len(chunks) != 0\n\n        print(chunks)\n        oup[:] =\
+      \ np.concatenate(chunks).reshape((-1, self.vlen))\n\n        return len(oup)\n"
     affinity: ''
     alias: ''
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
     tag: '''frame_start'''
-    vlen: '20'
+    vlen: len(testvec)
   states:
     _io_cache: ('Split at tag', 'blk', [('tag', "'frame_start'"), ('vlen', '1')],
       [('0', 'byte', 1)], [('0', 'byte', 1)], '', ['tag', 'vlen'])

@@ -1,6 +1,9 @@
 import numpy as np
 from gnuradio import gr
 
+# remove print for now
+print = lambda x: None
+
 np.set_printoptions(formatter={'int':hex})
 
 class blk(gr.sync_block):

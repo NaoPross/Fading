@@ -3,6 +3,7 @@ import pmt
 import numpy as np
 from gnuradio import gr
 
+# hide debugging print statements for the moment
 print = lambda x: None
 
 class blk(gr.sync_block):

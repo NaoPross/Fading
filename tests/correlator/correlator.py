@@ -330,8 +330,8 @@ class correlator(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(1, 2):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self.epy_block_2 = epy_block_2.blk(tag='frame_start', vlen=20)
-        self.epy_block_1 = epy_block_1.blk(vlen=20)
+        self.epy_block_2 = epy_block_2.blk(tag='frame_start', vlen=len(testvec))
+        self.epy_block_1 = epy_block_1.blk(vlen=len(testvec))
         self.epy_block_0 = epy_block_0.blk()
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, timing_loop_bw, rrc_taps, nfilts, 16, 1.5, 1)
         self.digital_costas_loop_cc_0 = digital.costas_loop_cc(2 * 3.141592653589793 / 100, 4, False)
@@ -431,6 +431,7 @@ class correlator(gr.top_block, Qt.QWidget):
     def set_testvec(self, testvec):
         self.testvec = testvec
         self.blocks_vector_source_x_0.set_data(self.testvec * 500, [])
+        self.epy_block_2.vlen = len(self.testvec)
 
     def get_samp_rate(self):
         return self.samp_rate
