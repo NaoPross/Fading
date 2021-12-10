@@ -32,54 +32,6 @@ options:
     state: enabled
 
 blocks:
-- name: a0
-  id: variable
-  parameters:
-    comment: ''
-    value: 3.162277660168379-3.162277660168379j
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [552, 52.0]
-    rotation: 0
-    state: enabled
-- name: a1
-  id: variable
-  parameters:
-    comment: ''
-    value: -3.162277660168379-3.162277660168379j
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [552, 116.0]
-    rotation: 0
-    state: enabled
-- name: a2
-  id: variable
-  parameters:
-    comment: ''
-    value: 9.486832980505138-9.486832980505138j
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [552, 180.0]
-    rotation: 0
-    state: enabled
-- name: a3
-  id: variable
-  parameters:
-    comment: ''
-    value: -9.486832980505138-9.486832980505138j
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [552, 244.0]
-    rotation: 0
-    state: enabled
 - name: const
   id: variable_constellation
   parameters:
@@ -95,7 +47,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [264, 420.0]
+    coordinate: [984, 388.0]
     rotation: 0
     state: enabled
 - name: samp_rate
@@ -119,7 +71,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [712, 428.0]
+    coordinate: [712, 404.0]
     rotation: 0
     state: enabled
 - name: v1
@@ -131,7 +83,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [712, 492.0]
+    coordinate: [712, 468.0]
     rotation: 0
     state: enabled
 - name: v2
@@ -143,7 +95,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [712, 556.0]
+    coordinate: [712, 532.0]
     rotation: 0
     state: enabled
 - name: v3
@@ -155,7 +107,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [712, 620.0]
+    coordinate: [712, 596.0]
     rotation: 0
     state: enabled
 - name: blocks_repack_bits_bb_0
@@ -166,7 +118,7 @@ blocks:
     align_output: 'False'
     comment: ''
     endianness: gr.GR_MSB_FIRST
-    k: '2'
+    k: '4'
     l: '8'
     len_tag_key: '""'
     maxoutbuf: '0'
@@ -189,7 +141,7 @@ blocks:
     repeat: 'True'
     tags: '[]'
     type: complex
-    vector: '[(-0.9486832980505138-0.31622776601683794j), (-0.9486832980505138-0.31622776601683794j)]'
+    vector: '[(-0.9486832980505138-0.9486832980505138j), (0.9486832980505138+0.9486832980505138j)]'
     vlen: '1'
   states:
     bus_sink: false
@@ -253,7 +205,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1664, 336.0]
+    coordinate: [1632, 336.0]
     rotation: 0
     state: enabled
 - name: import_0

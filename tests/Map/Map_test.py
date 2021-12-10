@@ -36,18 +36,14 @@ class Map_test(gr.top_block):
         self.v0 = v0 = -0.7071067811865475-0.7071067811865475j
         self.samp_rate = samp_rate = 32000
         self.const = const = digital.constellation_16qam().base()
-        self.a3 = a3 = -9.486832980505138-9.486832980505138j
-        self.a2 = a2 = 9.486832980505138-9.486832980505138j
-        self.a1 = a1 = -3.162277660168379-3.162277660168379j
-        self.a0 = a0 = 3.162277660168379-3.162277660168379j
 
         ##################################################
         # Blocks
         ##################################################
         self.epy_block_1 = epy_block_1.blk()
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
-        self.blocks_vector_source_x_1_0 = blocks.vector_source_c([(-0.9486832980505138-0.31622776601683794j), (-0.9486832980505138-0.31622776601683794j)], True, 1, [])
-        self.blocks_repack_bits_bb_0 = blocks.repack_bits_bb(2, 8, "", False, gr.GR_MSB_FIRST)
+        self.blocks_vector_source_x_1_0 = blocks.vector_source_c([(-0.9486832980505138-0.9486832980505138j), (0.9486832980505138+0.9486832980505138j)], True, 1, [])
+        self.blocks_repack_bits_bb_0 = blocks.repack_bits_bb(4, 8, "", False, gr.GR_MSB_FIRST)
 
 
 
@@ -94,30 +90,6 @@ class Map_test(gr.top_block):
 
     def set_const(self, const):
         self.const = const
-
-    def get_a3(self):
-        return self.a3
-
-    def set_a3(self, a3):
-        self.a3 = a3
-
-    def get_a2(self):
-        return self.a2
-
-    def set_a2(self, a2):
-        self.a2 = a2
-
-    def get_a1(self):
-        return self.a1
-
-    def set_a1(self, a1):
-        self.a1 = a1
-
-    def get_a0(self):
-        return self.a0
-
-    def set_a0(self, a0):
-        self.a0 = a0
 
 
 
