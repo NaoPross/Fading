@@ -6,7 +6,11 @@ parameters:
 
 templates:
   imports: import fadingui
-  make: fadingui.phasecorrection()
+  make: fadingui.phasecorrection(${frame_len})
+
+parameters:
+- id: frame_len
+  type: int
 
 inputs:
 - label: in

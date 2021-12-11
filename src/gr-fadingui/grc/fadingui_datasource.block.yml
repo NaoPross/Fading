@@ -16,7 +16,7 @@ parameters:
   label: Frame Object
   type: raw
 - id: fname 
-  label: List of files
+  label: File
   dtype: file_open
 
 #  Make one 'inputs' list entry per input and one 'outputs' list entry per output.

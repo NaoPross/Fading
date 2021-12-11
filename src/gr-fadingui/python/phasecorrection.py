@@ -20,7 +20,7 @@ class phasecorrection(gr.sync_block):
     The correlation peak tags are NOT propagated, and instead replaced with a
     frame_start tag.
     """
-    def __init__(self):
+    def __init__(self, frame_len):
         gr.sync_block.__init__(
             self,
             name='Phase and Frequency Correction',
@@ -30,6 +30,9 @@ class phasecorrection(gr.sync_block):
 
         # tags should not be propagated, we then output our own tags
         self.set_tag_propagation_policy(gr.TPP_DONT)
+
+        # save frame length
+        self.frame_len = frame_len
 
         # because we do block processing, we need to keep track of the last tag
         # of the previous block to correct the first values of the next block
@@ -54,6 +57,9 @@ class phasecorrection(gr.sync_block):
         # compute number of samples between tags
         nsamples = end.offset - start.offset
 
+        # debugging, see last lines of self.work()
+        self.lastnsamples = nsamples
+
         # unpack pmt values into start and end phase
         sphase = pmt.to_python(start.value)
         ephase = pmt.to_python(end.value)
@@ -75,6 +81,7 @@ class phasecorrection(gr.sync_block):
 
     def work(self, input_items, output_items):
         counter = self.nitems_written(0)
+        log.debug(f"Counter is at {counter} (nitems_written)")
 
         # nicer aliases
         inp = input_items[0]
@@ -82,7 +89,8 @@ class phasecorrection(gr.sync_block):
 
         # read phase tags
         is_phase = lambda tag: pmt.to_python(tag.key) == "phase_est"
-        tags = list(filter(is_phase, self.get_tags_in_window(0, 0, len(inp))))
+        tags = list(filter(is_phase, self.get_tags_in_range( \
+                0, counter, counter + len(inp))))
 
         if not tags:
             log.warning(f"There were no tags in {len(inp)} samples!")
@@ -113,11 +121,11 @@ class phasecorrection(gr.sync_block):
                 if self.last and nfront else np.zeros(nfront)
 
         # debugging
-        if self.lastnback + self.nfront != self.lastnsamples:
-            log.warn("Something went wrong during block processing!\n" \
+        if self.lastnback + nfront != self.lastnsamples:
+            log.warn("Something went wrong during block processing! " \
                     f"Last block finished with nback = {self.lastnback} samples, " \
-                    f"current block starts with nstart = {self.nstart}, but their sum" \
-                    f"is not {self.latnsamples} = size of last chunk")
+                    f"current block starts with nfront = {nfront}, but their sum " \
+                    f"is not {self.lastnsamples} = size of last chunk")
         self.lastnback = nback
 
         # compute correction
@@ -125,13 +133,17 @@ class phasecorrection(gr.sync_block):
         length = len(correction)
 
         # write outputs
-        out[:length] = inp[:length] * correction
+        out[:] = inp * correction
 
         # save last tag for next call
         self.last = tags[-1]
 
-        # add tags
-        for tag in tags:
-            self.add_item_tag(0, tag.offset, pmt.intern("frame_start"), pmt.PMT_T)
+        # add frame_start tags
+        is_start = lambda tag: pmt.to_python(tag.key) == "corr_start"
+        start_tags = list(filter(is_start, \
+                self.get_tags_in_range(0, counter, counter + len(inp))))
+        for tag in start_tags:
+            self.add_item_tag(0, tag.offset +1, pmt.intern("frame_start"), \
+                    pmt.from_long(self.frame_len))
 
         return len(out)
