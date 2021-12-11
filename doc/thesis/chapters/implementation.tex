@@ -253,13 +253,25 @@ Here its possible to add some AWGN noise in the channel line. Different paramete
 \subsection{Fading with Discrete-time model}
 \begin{german}
 %TO DO: übersetzen 
-Für die statische gemäss \ref{sec:Discrete-time-model} implementation und veranschaulichen des Fading effekts wurde ein eigener Block kreaiert und in den Channel implementiert. Dieser Block basiert auf einem FIR Filter. Es kann mit direcktem Pfad oder ohne dargestellt werden (Line of Side). Mit Hilfe dieses Filters wird die Verspätung der nebenpfaden dargestellt. Es ist möglich beliebig viele dieser Pfade mit unterschiedlicher stärke zu simulieren. Dieser Block wurde zusätzlich mit der methode in \ref{sec:fractional-delay} beschriben implementiert um nichtganzahlige delay werte zu erlauben.
+Für die statische gemäss \ref{sec:discrete-time-model} implementation und veranschaulichen des Fading effekts wurde ein eigener Block kreaiert und in den Channel implementiert. Dieser Block basiert auf einem FIR Filter. Es kann mit direcktem Pfad oder ohne dargestellt werden (Line of Sight). Mit Hilfe dieses Filters wird die Verspätung, anhand Zeitlicher delay, der nebenpfaden dargestellt. Es ist möglich beliebig viele dieser Pfade mit unterschiedlicher stärke zu simulieren, solange das für jeden verspäteten Pfad eine dazugehörige Amplute angegeben wird. Leider werden diese simulationswerte nicht mit der Wircklichkeit übereinstien, da zuviele unkalkulierbaren nebeneffekte auftretten.
+Dieser Block wurde zusätzlich mit der methode in \ref{sec:fractional-delay} beschriben implementiert um nichtganzahlige delay Werte zuzulassen, im vergleich zu den sampels zu erlauben, welche in \figref{fig:fractional-delay-sinc-plot} dargestellt sind. Bei dem die sinc-funktion auf kein ganzzahliges sample fählt. Was widerum bedeutet das bei den anderen abgetasteten Werten nicht null ergeben.
 \end{german}
 
 % Bild einfügen 
 \subsection{Fading with Statistical model}
 
+% TO DO quellen  %Compact Rayleigh and Rician fading simulator based on random walk processes A. Alimohammad S.F. Fard B.F. Cockburn C. Schlegel26th November 2008  		
+
+
 \ref{statistical_model}
+Whit the help 
+
+\begin{german}
+	Um den effect des multipaht fadinngs nicht nur statisch dar zu stellen, wurde ein zweites model kreiert mit hilfe des Frequency Selective Fading Models von Gnu Radio.
+	Welcher nach dem Algorthmus aud dem paper  \cite{Alimohammad2009}
+	
+	
+\end{german}
 
 
 \subsection{Measurements}
