@@ -28,6 +28,7 @@ class blk(gr.sync_block):
         # of the previous block to correct the first values of the next block
         self.last = None
         self.lastfreq = 0
+
         self.lastnback = 0
         self.lastnsamples = 0
 
@@ -68,6 +69,7 @@ class blk(gr.sync_block):
 
     def work(self, input_items, output_items):
         counter = self.nitems_written(0)
+        print(f"Counter is at {counter} (nitems_written)")
 
         # nicer aliases
         inp = input_items[0]
@@ -75,7 +77,7 @@ class blk(gr.sync_block):
 
         # read phase tags
         is_phase = lambda tag: pmt.to_python(tag.key) == "phase_est"
-        tags = list(filter(is_phase, self.get_tags_in_window(0, 0, len(inp))))
+        tags = list(filter(is_phase, self.get_tags_in_range(0, counter, counter + len(inp))))
 
         if not tags:
             print(f"There were no tags in {len(inp)} samples!")
@@ -105,10 +107,12 @@ class blk(gr.sync_block):
         print(f"Processing {nfront} samples at the front of the buffer")
         start = self.block_phase(self.last, tags[0])[-nfront:] \
                 if self.last and nfront else np.zeros(nfront)
+        # start = np.zeros(nfront)
 
         # debugging
         if nfront + self.lastnback != self.lastnsamples:
-            print(f"Something went wrong: {self.lastnback + nfront} != self.lastnsamples")
+            print("Something went wrong: last back + front != chunk size,"\
+                 f" {self.lastnback} + {nfront} != {self.lastnsamples}")
         self.lastnback = nback
 
         # compute correction
@@ -116,13 +120,19 @@ class blk(gr.sync_block):
         length = len(correction)
 
         # write outputs
-        out[:length] = inp[:length] * correction
+        out[:] = inp * correction
 
         # save last tag for next call
         self.last = tags[-1]
 
-        # add tags
-        for tag in tags:
-            self.add_item_tag(0, tag.offset, pmt.intern("frame_start"), pmt.PMT_T)
+        # corr_start phase tags
+        is_start = lambda tag: pmt.to_python(tag.key) == "corr_start"
+        start_tags = list(filter(is_start, \
+            self.get_tags_in_range(0, counter, counter + len(inp))))
 
+        for tag in start_tags:
+            self.add_item_tag(0, tag.offset +1, \
+                    pmt.intern("frame_start"), pmt.from_long(8))
+
+        print(f"Writing {len(out)} samples")
         return len(out)

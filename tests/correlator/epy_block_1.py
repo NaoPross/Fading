@@ -2,14 +2,12 @@ import numpy as np
 from gnuradio import gr
 
 # remove print for now
-print = lambda x: None
+# print = lambda x: None
 
 np.set_printoptions(formatter={'int':hex})
 
 class blk(gr.sync_block):
-    def __init__(self, vlen=1):
-        dt = np.byte if vlen == 1 else (np.byte, vlen)
-
+    def __init__(self, vlen=8):
         gr.sync_block.__init__(
             self,
             name='Printer',
