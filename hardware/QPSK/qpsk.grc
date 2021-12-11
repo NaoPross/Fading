@@ -158,7 +158,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: .4e6
+    value: 1e6
   states:
     bus_sink: false
     bus_source: false
@@ -215,7 +215,7 @@ blocks:
     alias: ''
     begin_tag: pmt.PMT_NIL
     comment: ''
-    file: /home/god/Documents/Fading/hardware/QPSK/lena512color.tiff
+    file: /home/sara/Documents/Fading/hardware/QPSK/lena512color.tiff
     length: '0'
     maxoutbuf: '0'
     minoutbuf: '0'

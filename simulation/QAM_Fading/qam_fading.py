@@ -29,7 +29,6 @@ from gnuradio import blocks
 import numpy
 from gnuradio import channels
 from gnuradio import digital
-from gnuradio import filter
 from gnuradio import gr
 import sys
 import signal
@@ -88,7 +87,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.phase_bw = phase_bw = 2 * 3.141592653589793 / 100
         self.noise_volt = noise_volt = 0.0001
         self.freq_offset = freq_offset = 0
-        self.fc = fc = 1
+        self.fc = fc = 2.4
         self.eq_ntaps = eq_ntaps = 15
         self.eq_mod = eq_mod = 1
         self.eq_gain = eq_gain = .01
@@ -163,8 +162,8 @@ class qam_fading(gr.top_block, Qt.QWidget):
             self.params_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 1):
             self.params_grid_layout_0.setColumnStretch(c, 1)
-        self._fc_range = Range(0, 1000000000, 1, 1, 200)
-        self._fc_win = RangeWidget(self._fc_range, self.set_fc, 'fc', "counter_slider", int)
+        self._fc_range = Range(0, 10, 1, 2.4, 200)
+        self._fc_win = RangeWidget(self._fc_range, self.set_fc, 'fc', "counter_slider", float)
         self.params_grid_layout_0.addWidget(self._fc_win, 1, 2, 1, 1)
         for r in range(1, 2):
             self.params_grid_layout_0.setRowStretch(r, 1)
@@ -272,46 +271,6 @@ class qam_fading(gr.top_block, Qt.QWidget):
             self.plots_grid_layout_1.setRowStretch(r, 1)
         for c in range(0, 1):
             self.plots_grid_layout_1.setColumnStretch(c, 1)
-        self.qtgui_const_sink_x_3 = qtgui.const_sink_c(
-            1024, #size
-            "", #name
-            1 #number of inputs
-        )
-        self.qtgui_const_sink_x_3.set_update_time(0.10)
-        self.qtgui_const_sink_x_3.set_y_axis(-2, 2)
-        self.qtgui_const_sink_x_3.set_x_axis(-2, 2)
-        self.qtgui_const_sink_x_3.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, "")
-        self.qtgui_const_sink_x_3.enable_autoscale(False)
-        self.qtgui_const_sink_x_3.enable_grid(False)
-        self.qtgui_const_sink_x_3.enable_axis_labels(True)
-
-
-        labels = ['', '', '', '', '',
-            '', '', '', '', '']
-        widths = [1, 1, 1, 1, 1,
-            1, 1, 1, 1, 1]
-        colors = ["blue", "red", "red", "red", "red",
-            "red", "red", "red", "red", "red"]
-        styles = [0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0]
-        markers = [0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0, 1.0, 1.0]
-
-        for i in range(1):
-            if len(labels[i]) == 0:
-                self.qtgui_const_sink_x_3.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_const_sink_x_3.set_line_label(i, labels[i])
-            self.qtgui_const_sink_x_3.set_line_width(i, widths[i])
-            self.qtgui_const_sink_x_3.set_line_color(i, colors[i])
-            self.qtgui_const_sink_x_3.set_line_style(i, styles[i])
-            self.qtgui_const_sink_x_3.set_line_marker(i, markers[i])
-            self.qtgui_const_sink_x_3.set_line_alpha(i, alphas[i])
-
-        self._qtgui_const_sink_x_3_win = sip.wrapinstance(self.qtgui_const_sink_x_3.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_const_sink_x_3_win)
         self.qtgui_const_sink_x_2 = qtgui.const_sink_c(
             1024, #size
             "Locked", #name
@@ -508,7 +467,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
         self.digital_cma_equalizer_cc_0_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
-        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, ((4*fc)/(3*10e8))/samp_rate, False, 4, 0, (0,2e-5/samp_rate), (1,0.12), 8 )
+        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, ((2*fc*1e9)/(3*10e8))/samp_rate, False, 4, 0, (0,1.8), (1,0.12), 8 )
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=noise_volt,
             frequency_offset=freq_offset,
@@ -555,7 +514,6 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.connect((self.digital_constellation_decoder_cb_0, 0), (self.digital_diff_decoder_bb_0, 0))
         self.connect((self.digital_constellation_decoder_cb_0_0, 0), (self.digital_diff_decoder_bb_0_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.blocks_throttle_0, 0))
-        self.connect((self.digital_constellation_modulator_0, 0), (self.qtgui_const_sink_x_3, 0))
         self.connect((self.digital_costas_loop_cc_0, 0), (self.digital_constellation_decoder_cb_0, 0))
         self.connect((self.digital_costas_loop_cc_0, 0), (self.qtgui_const_sink_x_2, 0))
         self.connect((self.digital_costas_loop_cc_0_0, 0), (self.digital_constellation_decoder_cb_0_0, 0))
@@ -623,8 +581,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
-        self.blocks_throttle_0_0.set_sample_rate(self.samp_rate)
-        self.channels_selective_fading_model_0.set_fDTs(((4*self.fc)/(3*10e8))/self.samp_rate)
+        self.channels_selective_fading_model_0.set_fDTs(((2*self.fc*1e9)/(3*10e8))/self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
 
@@ -635,7 +592,6 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.rrc_taps = rrc_taps
         self.digital_pfb_clock_sync_xxx_0.update_taps(self.rrc_taps)
         self.digital_pfb_clock_sync_xxx_0_0.update_taps(self.rrc_taps)
-        self.fir_filter_xxx_0.set_taps(self.rrc_taps)
 
     def get_phase_bw(self):
         return self.phase_bw
@@ -664,7 +620,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
 
     def set_fc(self, fc):
         self.fc = fc
-        self.channels_selective_fading_model_0.set_fDTs(((4*self.fc)/(3*10e8))/self.samp_rate)
+        self.channels_selective_fading_model_0.set_fDTs(((2*self.fc*1e9)/(3*10e8))/self.samp_rate)
 
     def get_eq_ntaps(self):
         return self.eq_ntaps
