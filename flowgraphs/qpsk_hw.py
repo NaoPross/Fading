@@ -81,7 +81,7 @@ class qpsk_hw(gr.top_block, Qt.QWidget):
         self.sps = sps = 4
         self.nfilts = nfilts = 32
         self.excess_bw = excess_bw = 0.35
-        self.samp_rate = samp_rate = 1e6
+        self.samp_rate = samp_rate = 1.5e6
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), excess_bw, 45*nfilts)
         self.qpsk_const = qpsk_const = digital.constellation_qpsk().base()
         self.frame_len = frame_len = len(testvec) +4
@@ -91,20 +91,20 @@ class qpsk_hw(gr.top_block, Qt.QWidget):
         # Blocks
         ##################################################
         self.uhd_usrp_source_0 = uhd.usrp_source(
-            ",".join(("", "")),
+            ",".join(("serial=309AF6A  ", "")),
             uhd.stream_args(
                 cpu_format="fc32",
                 args='',
                 channels=list(range(0,1)),
             ),
         )
-        self.uhd_usrp_source_0.set_center_freq(0, 0)
-        self.uhd_usrp_source_0.set_gain(0, 0)
+        self.uhd_usrp_source_0.set_center_freq(2.4e9, 0)
+        self.uhd_usrp_source_0.set_normalized_gain(1, 0)
         self.uhd_usrp_source_0.set_antenna('RX2', 0)
         self.uhd_usrp_source_0.set_samp_rate(samp_rate)
         self.uhd_usrp_source_0.set_time_unknown_pps(uhd.time_spec())
         self.uhd_usrp_sink_0 = uhd.usrp_sink(
-            ",".join(("", "")),
+            ",".join(("serial=309AF59  ", "")),
             uhd.stream_args(
                 cpu_format="fc32",
                 args='',
@@ -112,8 +112,9 @@ class qpsk_hw(gr.top_block, Qt.QWidget):
             ),
             '',
         )
-        self.uhd_usrp_sink_0.set_center_freq(0, 0)
-        self.uhd_usrp_sink_0.set_gain(0, 0)
+        self.uhd_usrp_sink_0.set_clock_source('internal', 0)
+        self.uhd_usrp_sink_0.set_center_freq(2.4e9, 0)
+        self.uhd_usrp_sink_0.set_normalized_gain(0.4, 0)
         self.uhd_usrp_sink_0.set_antenna('TX/RX', 0)
         self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
         self.uhd_usrp_sink_0.set_time_unknown_pps(uhd.time_spec())
@@ -164,18 +165,18 @@ class qpsk_hw(gr.top_block, Qt.QWidget):
 
         self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_win)
-        self.qtgui_const_sink_x_0 = qtgui.const_sink_c(
+        self.qtgui_const_sink_x_0_0 = qtgui.const_sink_c(
             1024, #size
             "", #name
-            1 #number of inputs
+            2 #number of inputs
         )
-        self.qtgui_const_sink_x_0.set_update_time(0.10)
-        self.qtgui_const_sink_x_0.set_y_axis(-2, 2)
-        self.qtgui_const_sink_x_0.set_x_axis(-2, 2)
-        self.qtgui_const_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, "")
-        self.qtgui_const_sink_x_0.enable_autoscale(False)
-        self.qtgui_const_sink_x_0.enable_grid(False)
-        self.qtgui_const_sink_x_0.enable_axis_labels(True)
+        self.qtgui_const_sink_x_0_0.set_update_time(0.10)
+        self.qtgui_const_sink_x_0_0.set_y_axis(-2, 2)
+        self.qtgui_const_sink_x_0_0.set_x_axis(-2, 2)
+        self.qtgui_const_sink_x_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, "")
+        self.qtgui_const_sink_x_0_0.enable_autoscale(False)
+        self.qtgui_const_sink_x_0_0.enable_grid(False)
+        self.qtgui_const_sink_x_0_0.enable_axis_labels(True)
 
 
         labels = ['', '', '', '', '',
@@ -191,19 +192,19 @@ class qpsk_hw(gr.top_block, Qt.QWidget):
         alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
             1.0, 1.0, 1.0, 1.0, 1.0]
 
-        for i in range(1):
+        for i in range(2):
             if len(labels[i]) == 0:
-                self.qtgui_const_sink_x_0.set_line_label(i, "Data {0}".format(i))
+                self.qtgui_const_sink_x_0_0.set_line_label(i, "Data {0}".format(i))
             else:
-                self.qtgui_const_sink_x_0.set_line_label(i, labels[i])
-            self.qtgui_const_sink_x_0.set_line_width(i, widths[i])
-            self.qtgui_const_sink_x_0.set_line_color(i, colors[i])
-            self.qtgui_const_sink_x_0.set_line_style(i, styles[i])
-            self.qtgui_const_sink_x_0.set_line_marker(i, markers[i])
-            self.qtgui_const_sink_x_0.set_line_alpha(i, alphas[i])
+                self.qtgui_const_sink_x_0_0.set_line_label(i, labels[i])
+            self.qtgui_const_sink_x_0_0.set_line_width(i, widths[i])
+            self.qtgui_const_sink_x_0_0.set_line_color(i, colors[i])
+            self.qtgui_const_sink_x_0_0.set_line_style(i, styles[i])
+            self.qtgui_const_sink_x_0_0.set_line_marker(i, markers[i])
+            self.qtgui_const_sink_x_0_0.set_line_alpha(i, alphas[i])
 
-        self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_const_sink_x_0_win)
+        self._qtgui_const_sink_x_0_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_const_sink_x_0_0_win)
         self.fadingui_phasecorrection_0 = fadingui.phasecorrection(frame_len)
         self.fadingui_ber_0 = fadingui.ber(vgl=testvec + list(np.zeros(4)), vlen=frame_len)
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, 2 * np.pi / 100, rrc_taps, 32, 16, 1.5, 1)
@@ -246,8 +247,9 @@ class qpsk_hw(gr.top_block, Qt.QWidget):
         self.connect((self.digital_corr_est_cc_0, 1), (self.blocks_complex_to_mag_0, 0))
         self.connect((self.digital_corr_est_cc_0, 0), (self.fadingui_phasecorrection_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_cma_equalizer_cc_0, 0))
+        self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.qtgui_const_sink_x_0_0, 0))
         self.connect((self.fadingui_phasecorrection_0, 0), (self.digital_constellation_decoder_cb_0, 0))
-        self.connect((self.fadingui_phasecorrection_0, 0), (self.qtgui_const_sink_x_0, 0))
+        self.connect((self.fadingui_phasecorrection_0, 0), (self.qtgui_const_sink_x_0_0, 1))
         self.connect((self.uhd_usrp_source_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
 
 

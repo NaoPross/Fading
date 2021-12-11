@@ -80,7 +80,7 @@ class qpks(gr.top_block, Qt.QWidget):
         self.nfilts = nfilts = 32
         self.excess_bw = excess_bw = .35
         self.timing_loop_bw = timing_loop_bw = 2 * 3.141592653589793 / 100
-        self.samp_rate = samp_rate = .4e6
+        self.samp_rate = samp_rate = 1e6
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), excess_bw, 45*nfilts)
         self.qpsk_const = qpsk_const = digital.constellation_rect([0.707+0.707j, -0.707+0.707j, -0.707-0.707j, 0.707-0.707j], [0, 1, 3, 2],
         4, 2, 2, 1, 1).base()
@@ -837,7 +837,7 @@ class qpks(gr.top_block, Qt.QWidget):
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(qpsk_const)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, int(sps / 2))
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_char*1)
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, '/home/god/Documents/Fading/hardware/QPSK/lena512color.tiff', True, 0, 0)
+        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, '/home/sara/Documents/Fading/hardware/QPSK/lena512color.tiff', True, 0, 0)
         self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
 
 

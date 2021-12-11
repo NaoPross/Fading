@@ -537,7 +537,7 @@ blocks:
     coordinate: [224, 12.0]
     rotation: 0
     state: enabled
-- name: qtgui_const_sink_x_0
+- name: qtgui_const_sink_x_0_0
   id: qtgui_const_sink_x
   parameters:
     affinity: ''
@@ -589,7 +589,7 @@ blocks:
     marker8: '0'
     marker9: '0'
     name: '""'
-    nconnections: '1'
+    nconnections: '2'
     size: '1024'
     style1: '0'
     style10: '0'
@@ -626,7 +626,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1240, 828.0]
+    coordinate: [1208, 804.0]
     rotation: 0
     state: true
 - name: qtgui_time_sink_x_0
@@ -795,7 +795,7 @@ blocks:
     bw7: '0'
     bw8: '0'
     bw9: '0'
-    center_freq0: '0'
+    center_freq0: 2.4e9
     center_freq1: '0'
     center_freq10: '0'
     center_freq11: '0'
@@ -828,7 +828,7 @@ blocks:
     center_freq8: '0'
     center_freq9: '0'
     clock_rate: 0e0
-    clock_source0: ''
+    clock_source0: internal
     clock_source1: ''
     clock_source2: ''
     clock_source3: ''
@@ -837,9 +837,9 @@ blocks:
     clock_source6: ''
     clock_source7: ''
     comment: ''
-    dev_addr: '""'
+    dev_addr: '"serial=309AF59  "'
     dev_args: '""'
-    gain0: '0'
+    gain0: '0.4'
     gain1: '0'
     gain10: '0'
     gain11: '0'
@@ -939,7 +939,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     nchan: '1'
-    norm_gain0: 'False'
+    norm_gain0: 'True'
     norm_gain1: 'False'
     norm_gain10: 'False'
     norm_gain11: 'False'
@@ -1000,7 +1000,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [320, 700.0]
+    coordinate: [312, 692.0]
     rotation: 0
     state: true
 - name: uhd_usrp_source_0
@@ -1072,7 +1072,7 @@ blocks:
     bw7: '0'
     bw8: '0'
     bw9: '0'
-    center_freq0: '0'
+    center_freq0: 2.4e9
     center_freq1: '0'
     center_freq10: '0'
     center_freq11: '0'
@@ -1146,9 +1146,9 @@ blocks:
     dc_offs_enb7: '""'
     dc_offs_enb8: '""'
     dc_offs_enb9: '""'
-    dev_addr: '""'
+    dev_addr: '"serial=309AF6A  "'
     dev_args: '""'
-    gain0: '0'
+    gain0: '1'
     gain1: '0'
     gain10: '0'
     gain11: '0'
@@ -1279,7 +1279,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     nchan: '1'
-    norm_gain0: 'False'
+    norm_gain0: 'True'
     norm_gain1: 'False'
     norm_gain10: 'False'
     norm_gain11: 'False'
@@ -1372,7 +1372,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [696, 692.0]
+    coordinate: [696, 684.0]
     rotation: 0
     state: true
 - name: virtual_sink_0
@@ -1472,9 +1472,10 @@ connections:
 - [digital_corr_est_cc_0, '1', blocks_complex_to_mag_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', digital_cma_equalizer_cc_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', fadingui_netsink_4, '0']
+- [digital_pfb_clock_sync_xxx_0, '0', qtgui_const_sink_x_0_0, '0']
 - [fadingui_datasource_0, '0', digital_constellation_modulator_0, '0']
 - [fadingui_phasecorrection_0, '0', fadingui_netsink_3, '0']
-- [fadingui_phasecorrection_0, '0', qtgui_const_sink_x_0, '0']
+- [fadingui_phasecorrection_0, '0', qtgui_const_sink_x_0_0, '1']
 - [fadingui_phasecorrection_0, '0', virtual_sink_2, '0']
 - [uhd_usrp_source_0, '0', virtual_sink_1, '0']
 - [virtual_source_0, '0', digital_constellation_decoder_cb_0, '0']
