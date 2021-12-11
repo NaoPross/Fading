@@ -1,6 +1,7 @@
 options:
   parameters:
     author: Naoki Pross
+    catch_exceptions: 'True'
     category: '[GRC Hier Blocks]'
     cmake_opt: ''
     comment: ''
@@ -22,7 +23,6 @@ options:
     sizing_mode: fixed
     thread_safe_setters: ''
     title: Correlator Test
-    window_size: ''
   states:
     bus_sink: false
     bus_source: false
@@ -53,6 +53,7 @@ blocks:
     comment: ''
     const_points: '[-1-1j, -1+1j, 1+1j, 1-1j]'
     dims: '1'
+    normalization: digital.constellation.AMPLITUDE_NORMALIZATION
     precision: '8'
     rot_sym: '4'
     soft_dec_lut: None
@@ -120,7 +121,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: int(1.5e6)
+    value: int(1e6)
   states:
     bus_sink: false
     bus_source: false
@@ -144,7 +145,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '[0x1f, 0x35] + [0x12, 0xe3, 0x9b, 0xee, 0x84, 0x23, 0x41, 0xf3, 0x21] '
+    value: '[0x1f, 0x35] + [0x12, 0x48] '
   states:
     bus_sink: false
     bus_source: false
@@ -241,9 +242,9 @@ blocks:
     alias: ''
     align_output: 'False'
     comment: ''
-    endianness: gr.GR_MSB_FIRST
+    endianness: gr.GR_LSB_FIRST
     k: '2'
-    l: '8'
+    l: '4'
     len_tag_key: '""'
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -251,9 +252,29 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [496, 1252.0]
+    coordinate: [656, 1252.0]
     rotation: 0
-    state: true
+    state: enabled
+- name: blocks_socket_pdu_0
+  id: blocks_socket_pdu
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    host: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    mtu: '10000'
+    port: '52001'
+    tcp_no_delay: 'False'
+    type: TCP_SERVER
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [680, 1420.0]
+    rotation: 0
+    state: disabled
 - name: blocks_stream_mux_0
   id: blocks_stream_mux
   parameters:
@@ -273,23 +294,57 @@ blocks:
     coordinate: [288, 256.0]
     rotation: 0
     state: enabled
-- name: blocks_tag_debug_0
-  id: blocks_tag_debug
+- name: blocks_stream_to_vector_0
+  id: blocks_stream_to_vector
   parameters:
     affinity: ''
     alias: ''
     comment: ''
-    display: 'True'
-    filter: '""'
-    name: ''
-    num_inputs: '1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: len(testvec)
     type: byte
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [744, 1164.0]
+    coordinate: [1208, 1264.0]
+    rotation: 0
+    state: true
+- name: blocks_tagged_stream_align_0
+  id: blocks_tagged_stream_align
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    lengthtagname: frame_start
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [912, 1260.0]
+    rotation: 0
+    state: true
+- name: blocks_tagged_stream_to_pdu_1
+  id: blocks_tagged_stream_to_pdu
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    tag: frame_start
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [352, 1452.0]
     rotation: 0
     state: disabled
 - name: blocks_throttle_0
@@ -322,7 +377,7 @@ blocks:
     repeat: 'True'
     tags: '[]'
     type: byte
-    vector: testvec * 500
+    vector: testvec * 10000
     vlen: '1'
   states:
     bus_sink: false
@@ -339,7 +394,7 @@ blocks:
     block_tags: 'False'
     comment: ''
     epsilon: '1.0'
-    freq_offset: '0.002'
+    freq_offset: '0.0005'
     maxoutbuf: '0'
     minoutbuf: '0'
     noise_voltage: '0.01'
@@ -400,6 +455,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     samples_per_symbol: sps
+    truncate: 'False'
     verbose: 'False'
   states:
     bus_sink: false
@@ -483,7 +539,7 @@ blocks:
       \ be propagated, we then output our own tags\n        self.set_tag_propagation_policy(gr.TPP_DONT)\n\
       \n        # because we do block processing, we need to keep track of the last\
       \ tag\n        # of the previous block to correct the first values of the next\
-      \ block\n        self.last = None\n        self.lastfreq = 0\n        self.lastnback\
+      \ block\n        self.last = None\n        self.lastfreq = 0\n\n        self.lastnback\
       \ = 0\n        self.lastnsamples = 0\n\n    def block_phase(self, start, end):\n\
       \        \"\"\"\n        Compute a vector for the phase and frequency correction\
       \ for the samples\n        between two tags (start and end).\n\n        @param\
@@ -503,15 +559,16 @@ blocks:
       \ .4f} rad and freq={freq*1e3: .4f}e-3 rad / sample\")\n\n        # compute\
       \ chunk values\n        return sphase * np.ones(nsamples) + freq * np.arange(0,\
       \ nsamples)\n\n    def work(self, input_items, output_items):\n        counter\
-      \ = self.nitems_written(0)\n\n        # nicer aliases\n        inp = input_items[0]\n\
-      \        out = output_items[0]\n\n        # read phase tags\n        is_phase\
-      \ = lambda tag: pmt.to_python(tag.key) == \"phase_est\"\n        tags = list(filter(is_phase,\
-      \ self.get_tags_in_window(0, 0, len(inp))))\n\n        if not tags:\n      \
-      \      print(f\"There were no tags in {len(inp)} samples!\")\n            out[:]\
-      \ = inp\n            return len(out)\n\n        # debugging\n        print(f\"\
-      Processing {len(tags)} tags = {tags[-1].offset - tags[0].offset} \" \\\n   \
-      \           f\"samples out of {len(inp)} input samples\")\n\n        # compute\
-      \ \"the middle\"\n        enough_samples = lambda pair: ((pair[1].offset - pair[0].offset)\
+      \ = self.nitems_written(0)\n        print(f\"Counter is at {counter} (nitems_written)\"\
+      )\n\n        # nicer aliases\n        inp = input_items[0]\n        out = output_items[0]\n\
+      \n        # read phase tags\n        is_phase = lambda tag: pmt.to_python(tag.key)\
+      \ == \"phase_est\"\n        tags = list(filter(is_phase, self.get_tags_in_range(0,\
+      \ counter, counter + len(inp))))\n\n        if not tags:\n            print(f\"\
+      There were no tags in {len(inp)} samples!\")\n            out[:] = inp\n   \
+      \         return len(out)\n\n        # debugging\n        print(f\"Processing\
+      \ {len(tags)} tags = {tags[-1].offset - tags[0].offset} \" \\\n            \
+      \  f\"samples out of {len(inp)} input samples\")\n\n        # compute \"the\
+      \ middle\"\n        enough_samples = lambda pair: ((pair[1].offset - pair[0].offset)\
       \ > 0)\n        pairs = list(filter(enough_samples, zip(tags, tags[1:])))\n\
       \        chunks = [ self.block_phase(start, end) for (start, end) in pairs ]\n\
       \        middle = np.concatenate(chunks) if chunks else []\n\n        # compute\
@@ -523,15 +580,20 @@ blocks:
       \ the \"start\", using the last tag from the previous call\n        nfront =\
       \ tags[0].offset - counter\n        print(f\"Processing {nfront} samples at\
       \ the front of the buffer\")\n        start = self.block_phase(self.last, tags[0])[-nfront:]\
-      \ \\\n                if self.last and nfront else np.zeros(nfront)\n\n    \
-      \    # debugging\n        if nfront + self.lastnback != self.lastnsamples:\n\
-      \            print(f\"Something went wrong: {self.lastnback + nfront} != self.lastnsamples\"\
-      )\n        self.lastnback = nback\n\n        # compute correction\n        correction\
-      \ = np.exp(-1j * np.concatenate([start, middle, end]))\n        length = len(correction)\n\
-      \n        # write outputs\n        out[:length] = inp[:length] * correction\n\
-      \n        # save last tag for next call\n        self.last = tags[-1]\n\n  \
-      \      # add tags\n        for tag in tags:\n            self.add_item_tag(0,\
-      \ tag.offset, pmt.intern(\"frame_start\"), pmt.PMT_T)\n\n        return len(out)\n"
+      \ \\\n                if self.last and nfront else np.zeros(nfront)\n      \
+      \  # start = np.zeros(nfront)\n\n        # debugging\n        if nfront + self.lastnback\
+      \ != self.lastnsamples:\n            print(\"Something went wrong: last back\
+      \ + front != chunk size,\"\\\n                 f\" {self.lastnback} + {nfront}\
+      \ != {self.lastnsamples}\")\n        self.lastnback = nback\n\n        # compute\
+      \ correction\n        correction = np.exp(-1j * np.concatenate([start, middle,\
+      \ end]))\n        length = len(correction)\n\n        # write outputs\n    \
+      \    out[:] = inp * correction\n\n        # save last tag for next call\n  \
+      \      self.last = tags[-1]\n\n        # corr_start phase tags\n        is_start\
+      \ = lambda tag: pmt.to_python(tag.key) == \"corr_start\"\n        start_tags\
+      \ = list(filter(is_start, \\\n            self.get_tags_in_range(0, counter,\
+      \ counter + len(inp))))\n\n        for tag in start_tags:\n            self.add_item_tag(0,\
+      \ tag.offset, \\\n                    pmt.intern(\"frame_start\"), pmt.from_long(10))\n\
+      \n        print(f\"Writing {len(out)} samples\")\n        return len(out)\n"
     affinity: ''
     alias: ''
     comment: ''
@@ -552,10 +614,9 @@ blocks:
   id: epy_block
   parameters:
     _source_code: "import numpy as np\nfrom gnuradio import gr\n\n# remove print for\
-      \ now\nprint = lambda x: None\n\nnp.set_printoptions(formatter={'int':hex})\n\
-      \nclass blk(gr.sync_block):\n    def __init__(self, vlen=1):\n        dt = np.byte\
-      \ if vlen == 1 else (np.byte, vlen)\n\n        gr.sync_block.__init__(\n   \
-      \         self,\n            name='Printer',\n            in_sig=[(np.byte,\
+      \ now\n# print = lambda x: None\n\nnp.set_printoptions(formatter={'int':hex})\n\
+      \nclass blk(gr.sync_block):\n    def __init__(self, vlen=4):\n        gr.sync_block.__init__(\n\
+      \            self,\n            name='Printer',\n            in_sig=[(np.byte,\
       \ vlen)],\n            out_sig=[]\n        )\n\n    def work(self, input_items,\
       \ output_items):\n        inp = np.array(input_items[0], dtype=np.uint8)\n \
       \       print(f\"Decoded {len(inp)} samples:\\n{inp}\")\n\n        return len(inp)\n"
@@ -566,13 +627,13 @@ blocks:
     minoutbuf: '0'
     vlen: len(testvec)
   states:
-    _io_cache: ('Printer', 'blk', [('vlen', '1')], [('0', 'byte', 1)], [], '', [])
+    _io_cache: ('Printer', 'blk', [('vlen', '4')], [('0', 'byte', 4)], [], '', [])
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [952, 1260.0]
+    coordinate: [1432, 1260.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: epy_block_2
   id: epy_block
   parameters:
@@ -622,9 +683,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [752, 1252.0]
+    coordinate: [936, 1164.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: fir_filter_xxx_1
   id: fir_filter_xxx
   parameters:
@@ -1402,9 +1463,12 @@ connections:
 - [blocks_complex_to_magphase_0_0, '1', blocks_null_sink_3, '0']
 - [blocks_multiply_const_vxx_0_0, '0', qtgui_time_sink_x_2_0, '0']
 - [blocks_null_source_0, '0', blocks_stream_mux_0, '0']
-- [blocks_repack_bits_bb_0, '0', blocks_tag_debug_0, '0']
+- [blocks_repack_bits_bb_0, '0', blocks_tagged_stream_align_0, '0']
 - [blocks_repack_bits_bb_0, '0', epy_block_2, '0']
 - [blocks_stream_mux_0, '0', digital_constellation_modulator_0, '0']
+- [blocks_stream_to_vector_0, '0', epy_block_1, '0']
+- [blocks_tagged_stream_align_0, '0', blocks_stream_to_vector_0, '0']
+- [blocks_tagged_stream_to_pdu_1, pdus, blocks_socket_pdu_0, pdus]
 - [blocks_throttle_0, '0', virtual_sink_0, '0']
 - [blocks_vector_source_x_0, '0', blocks_stream_mux_0, '1']
 - [channels_channel_model_0, '0', blocks_throttle_0, '0']
@@ -1423,7 +1487,6 @@ connections:
 - [digital_pfb_clock_sync_xxx_0, '0', digital_cma_equalizer_cc_0, '0']
 - [epy_block_0, '0', qtgui_const_sink_x_0_0, '0']
 - [epy_block_0, '0', virtual_sink_3, '0']
-- [epy_block_2, '0', epy_block_1, '0']
 - [fir_filter_xxx_1, '0', blocks_complex_to_magphase_0_0, '0']
 - [virtual_source_0, '0', digital_pfb_clock_sync_xxx_0, '0']
 - [virtual_source_1, '0', digital_constellation_decoder_cb_0, '0']
