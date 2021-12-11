@@ -68,12 +68,15 @@ class phasecorrection(gr.sync_block):
         phasediff = (ephase - sphase) % (2 * np.pi)
         freq = phasediff / nsamples
 
+        if freq < 1e-3:
+            freq = 0
+
         # save this one for the last block (see variable `end' in self.work)
         self.lastfreq = freq
 
         # debugging
         log.debug(f"Correction for chunk of {nsamples:2d} samples is " \
-              f"sphase={sphase: .4f} rad and freq={freq*1e3: .4f}e-3 rad / sample")
+              f"sphase={sphase: .4f} rad, ephase={ephase: .4f} rad and freq={freq*1e3: .4f}e-3 rad / sample")
         self.lastnsamples = nsamples
 
         # compute chunk values

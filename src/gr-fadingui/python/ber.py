@@ -26,6 +26,8 @@ from gnuradio import gr
 from fadingui.logger import get_logger
 log = get_logger("ber")
 
+np.set_printoptions(formatter={'int': hex})
+
 class ber(gr.sync_block):
     """
     docstring for block ber
@@ -41,18 +43,16 @@ class ber(gr.sync_block):
     def work(self, input_items, output_items):
         
         inp = input_items[0]
-        ber_tot = 0
         log.debug(f"Length: {len(inp)}")
         log.debug(f"Inp_vector:{inp}")
         
         for i in inp:
-            log.debug(f"In Schlaufe{i}")
-            v = np.array(self.vgl, dtype=np.uint8)^np.array(i, dtype=np.uint8)
+            i = np.array(i, dtype=np.uint8)
+            v = np.array(self.vgl, dtype=np.uint8) ^ i
             ber = sum(np.unpackbits(v))
-            log.debug(f"BER {ber} in Paket {i}")
-            ber_tot+=ber
-            log.debug(f"BER Total{ber_tot}")
-        
+
+            trueber = ber - 32
+            log.debug(f"BER {trueber if trueber > 0 else 0} in Paket {i}")
 
         return len(input_items[0])
 
