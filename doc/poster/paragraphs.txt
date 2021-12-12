@@ -1,0 +1,27 @@
+INTRODUCTION
+
+Nowadays smartphones, internet of things (IoT) and many other wireless
+devices are carried around by everyone and have to work in environments
+that from a technical perspective are very far from ideal. Wireless
+channels have many complex problems that need to be solved to guarantee
+a reliable communication link.
+
+Among the multitude of problems, a common issue that observed in
+wireless channels is what is called "multipath fading effect". Multipath
+refers to the fact electromagnetic waves (EMWs) radiated from a sender
+antenna may take different paths by reflecting on multiple surfaces
+before reaching the receiver (see figure). Because EMWs travel at a
+constant speed, and some paths are longer than others, the receiver sees
+multiple overlapped (superimposed) copies of the sent signal, each with
+a different phase shift. In practice only one path is desirable, thus
+the other delayed copies cause a degradation of the received signal
+(fading).
+
+TASK DESCRIPTION
+
+The goal of the project is to develop a platform to illustrate the
+impact of different fading effects on the received signal. 
+
+CONCLUSIONS
+
+
