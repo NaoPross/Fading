@@ -1,0 +1,23 @@
+\documentclass[tikz]{standalone}
+
+\usepackage{tikz}        % Pretty drawings
+\usepackage{tikz-3dplot} % More dimensions!
+\usetikzlibrary{
+	external,
+	calc,
+	positioning,
+	backgrounds,
+	decorations.pathreplacing,
+	calligraphy,
+	decorations.markings,
+	matrix,
+	arrows,
+	patterns,
+}
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+\begin{document}
+\include{tikz/multipath-sketch.tex}
+\end{document}
