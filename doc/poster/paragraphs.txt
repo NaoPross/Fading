@@ -20,8 +20,18 @@ the other delayed copies cause a degradation of the received signal
 TASK DESCRIPTION
 
 The goal of the project is to develop a platform to illustrate the
-impact of different fading effects on the received signal. 
+impact of different fading effects on the received signal. The platform
+is thus built for pedagogical purposes and ought to show the various
+parts of the signal processing chain of a receiver.
 
-CONCLUSIONS
+METHODS
+
+Two USRP B210 software defined radio (SDR) devices from Ettus Reasearch,
+together with the open source software libraries GNU Radio and Dear
+PyGUI were used to create a graphical user interface to display
+waveforms from either a simulated or real wireless links affected by
+multipath fading. The platform transmits a picture either using QPSK or
+16ary QAM over a 2.4 GHz carrier and computes the empirical bit error
+rate of the link.
 
 
