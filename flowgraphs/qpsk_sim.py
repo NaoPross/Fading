@@ -179,7 +179,7 @@ class qpsk_sim(gr.top_block, Qt.QWidget):
         self.top_grid_layout.addWidget(self._qtgui_const_sink_x_0_win)
         self.fadingui_phasecorrection_0 = fadingui.phasecorrection(frame_len)
         self.fadingui_multipath_fading_0 = fadingui.multipath_fading(amplitudes=[0.12], delays=[1.8], los =True)
-        self.fadingui_ber_0 = fadingui.ber(vgl=testvec + list(np.zeros(4)), vlen=frame_len)
+        self.fadingui_ber_0 = fadingui.ber(vgl=testvec + list(np.zeros(4)), vlen=frame_len,address='udp://localhost:31415')
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, 2 * np.pi / 100, rrc_taps, 32, 16, 1.5, 1)
         self.digital_corr_est_cc_0 = digital.corr_est_cc(access_code_symbols, 1, len(access_code_symbols) // 2, 0.9, digital.THRESHOLD_ABSOLUTE)
         self.digital_constellation_modulator_0 = digital.generic_mod(
