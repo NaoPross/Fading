@@ -299,51 +299,22 @@ As mentioned in \ref{sec:discrete-time-model} a FIR filter can be used to simula
 	\quad \text{commonly written as} \quad
 	H(z) = \sum_{n = 0}^{N} h(n) z^{-n},
 \end{equation}
-but a non integer delay of \(\tau\) in the frequency domain is \(H_\tau(j\omega) = e^{-j\omega \tau}\).
-
-% In other words, exact non integer delays cannot be made using FIR filters because they can only produce delays that are integer multiples of the sampling time, but an approximately equivalent effect can be obtained by carefully choosing the values of \(h(n)\).
-
-There are multiple ways to find 
-
-% For a integer delays in the sinc function all sample values are zero except the one by the delayed sample, which is the amplitude value, here one. When the delay is a fractional number all samples are non-zero. In theory this filter is notrealizable because its noncasual and the impulse respond is infinity long. This problem can't be solve by adding them because of the imaginary part.
-
-
-% Where the transfare function is given as:
-
-The Order of the filter is given with the help of \(N\), this value only contains integer coefficients.
-To be mention for the approximation is that the error decreases with a higher filter order.
-
-
-The error function between the ideal frequency respond an the approximation should be minimized, for the best possible approximation:
-  
-\begin{equation} \label{eqn:error-function}
-		E\left(e^{j \omega}\right)=H\left(e^{j \omega}\right)-H_{\mathrm{id}}\left(e^{j \omega}\right)
+but a non integer delay of \(\tau\) in the frequency domain is \(H_\tau(j\omega) = e^{-j\omega \tau}\). There are multiple ways to find coefficients \(h(n)\) that approximate \(H_\tau\), in this case the least squares method was used by minimizing the error function
+\begin{equation}
+	E(j\omega) = H(j\omega) - H_\tau(j\omega).
 \end{equation}
-
-The impulse respond of such a least squared fractional delay filter in \eqref{eqn:impuls-respond}. Only positive values are used to make the sinc-function casual. 
-
-\begin{equation} \label{eqn:impuls-respond}
-	h(n)= \begin{cases}\operatorname{sinc}(n-D), & 0 \leq n \leq N \\ 0, & \text { otherwise }\end{cases}
+The least square method plus the assumption of finite bandwidth and the requirement of causality gives the following rule for computing the FIR filter coefficients:
+\begin{equation}
+	h(n)= \begin{cases}
+		\sinc (n - \tau) & 0 \leq n \leq N \\ 
+		0 & \text { otherwise }
+	\end{cases},
 \end{equation}
-
-To simplify the calculation, the assumption was made that the filter order is an odd number. With this assumption the exact order for the filter can be found out with the help of the integer delay \(D_{\text {int }}\):
-\begin{equation} \label{eqn:filter-order}
-	N = 2 D_{\text {int }} + 1
+where the odd order of the filter \(N\) should satisfy the condition
+\begin{equation} \label{eqn:fractional-fir-length}
+	N = 2 \lfloor \tau \rfloor + 1
 \end{equation}
-
-
-The first non-zero sample can be find out with the help of the index M:
-\begin{equation}\label{eqn: M first non-zero sample}
-	M = \lfloor D\rfloor-\frac{N-1}{2} \quad \text { for odd } N
-\end{equation}
-
-With the help of this index it can also be said whether the FIR filter is causal or not. For \(M \geq 0\) casual and if  \(M < 0\) noncasual, an so notrealizable. With the assumption that \(N\) is an odd number \(M \) should always be \( 0\) else something went wrong.
-
-
-
-%% TO DO : Mention windowing or not ?
-
-\skelpar{Discrete frequency response. Discuss bins, etc.}
+for a minimal error in the approximation. It is worth mentioning that it is also possible to build FIR filters of even length with a different condition, or that do not satisfy \eqref{eqn:fractional-fir-length}, in which cases more consideration is required. An example of a fractional delay FIR filter is shown in \figref{fig:fractional-delay-sinc-plot}.
 
 \subsection{Statistical model} \label{sec:statistical-model}
 
