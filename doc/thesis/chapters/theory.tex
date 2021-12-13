@@ -15,10 +15,7 @@
 
 \section{Overview}
 
-The first two sections will briefly introduce mathematical formulations of the modulation schemes and of the channel models used in the project. The notation used is summarised in \figref{fig:notation}. For conciseness encoding schemes and (digital) signal processing calculations are left out and discussed later. Thus for this section \(m_e = m\).
-\skelpar[4]{Finish overview of the chapter.}
-
-\skelpar[3]{Discuss notation \(m(n) = m(nT)\) in discrete time and some other details.}
+The following two sections will briefly introduce mathematical formulations of the modulation schemes and of the channel models used in this project. The notation used is summarised in \figref{fig:notation}. For conciseness encoding schemes and (digital) signal processing calculations are left out and discussed later.  Section \ref{sec:multipath-fading} presents an established mathematical model to understand multipath fading, as well as a brief description of a discrete-time model and the intricacies caused by the sampling process. Finally the concept of stochastic models is mentioned, as they are often used to simulate multipath channels \cite{Messier,Mathis}.
 
 %% TODO: A section on maths?
 % \section{Signal space and linear operators}
@@ -44,7 +41,7 @@ Quadrature amplitude modulation is a family of modern digital modulation methods
 
 \paragraph{Bit splitter}
 
-As mentioned earlier, quadrature modulation allows sending more than one bit per unit time. The first step to do it is to use a so called bit splitter, that converts the continuous bitstream \(m(n)\) into pairs of chunks of \(\sqrt{M}\) bits. The two bit vectors of length \(\sqrt{M}\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\) in figure \ref{fig:quadrature-modulation}, are called in-phase and quadrature component respectively\cite{Hsu}. The reason will become more clear later.
+As mentioned earlier, quadrature modulation allows sending more than one bit per unit time. The first step is to use a so called bit splitter, that converts the continuous bitstream \(m(n)\) into pairs of chunks of \(\sqrt{M}\) bits each. The two bit vectors of length \(\sqrt{M}\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\) in figure \ref{fig:quadrature-modulation}, are called in-phase and quadrature component respectively\cite{Hsu}. The reason will become more clear later.
 
 \paragraph{Binary to level converter}
 
@@ -128,13 +125,12 @@ The Hilbert transform is a linear operator that introduces a phase shift of \(\p
 
 \skelpar[4]{Give a few details on how the carrier is generated in practice.}
 
-\subsection{Spectral properties of a QAM signal}
-
-\skelpar[4]{Spectral properties of QAM}
+% \subsection{Spectral properties of a QAM signal}
+% \skelpar[4]{Spectral properties of QAM}
 
 \section{Phase shift keying (\(M\)-PSK)}
 
-\skelpar[6]{Explain PSK (assuming the previous section was read).}
+Phase shift keying is another popular family of modulation schemes for digital signals.
 
 % PSK is a popular modulation type for data transmission\cite{Meyer2011}. With a bipolar binary signal, the amplitude remains constant and only the phase will be changed with phase jumps of 180 degrees, which can be seen as a multiplication of the carrier signal with $\pm$ 1. That is alow known as binary phase shift keying.
 
@@ -152,7 +148,7 @@ The Hilbert transform is a linear operator that introduces a phase shift of \(\p
 
 \skelpar[2]{QPSK = 4-PSK = 4-QAM}
 
-\section{Multipath fading}
+\section{Multipath fading} \label{sec:multipath-fading}
 
 In the previous section, we discussed how the data is modulated and demodulated at the two ends of the transmission system. This section discusses what happens between the sender and receiver when the modulated passband signal is transmitted wirelessly.
 
@@ -236,15 +232,15 @@ as is done in \cite{Gallager}. However since in reality some paths get more atte
 
 Another important parameter for quantifying dispersion is \emph{coherence bandwidth}, a measure how 
 
-\subsection{Fading Parameter}
-\skelpar{Beschreiben warnn die Werte hübsch sind}
+\subsection{Effects of multipath fading on modulation constellations}
 
+\skelpar{Beschreiben warnn die Werte hübsch sind}
 
 \subsection{Discrete-time model} \label{sec:discrete-time-model}
 
 % TODO: discuss the "bins" of discrete time
 
-Since in practice signal processing is done digitally, it is meaningful to discuss the properties of a discrete-time model. To keep the complexity of the model manageable some assumptions are necessary, thus the sent discrete signal \(s(n)\)\footnote{This is an abuse of notation. The argument \(n\) is used to mean the \(n\)-th digital sample of \(s\), whereas \(s(t)\) is used for the analog waveform.} is assumed to have a finite single sided bandwidth \(W\). This implies that in the time-domain signal is a series of sinc-shaped pulses each shifted from the previous by a time interval \(T = 1 / (2W)\) (Nyquist rate):
+Since in practice signal processing is done digitally, it is meaningful to discuss the properties of a discrete-time model. To keep the complexity of the model manageable some assumptions are necessary, thus the sent discrete signal\footnote{This is an abuse of notation. The argument \(n\) is used to mean the \(n\)-th digital sample of \(s\), whereas \(s(t)\) is used for the analog waveform. A more correct but longer notation is \(s(nT)\), where \(T\) is the sample time.} \(s(n)\) is assumed to have a finite single sided bandwidth \(W\). This implies that in the time-domain signal is a series of sinc-shaped pulses each shifted from the previous by a time interval \(T = 1 / (2W)\) (Nyquist rate):
 \begin{equation}
 	s(t) = \sum_n s(n) \sinc(t/T - n)
 \end{equation}
@@ -280,7 +276,7 @@ is different from \eqref{eqn:multipath-impulse-response} consider again the plot
 From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-response} can be interpreted as a simple tapped delay line, schematically drawn in \figref{fig:tapped-delay-line}, which confirms that the presented mathematical model is indeed a FIR filter. Simple multipath channels can be simulated with just a few lines of code, for example the data for the static fading channel in \figref{fig:multipath-frequency-response-plots} is generated in just four lines of Python. The difficulty of fading channels in practice lies in the estimation of the constantly changing parameters \(c_k(t)\) and \(\tau_k(t)\).
 
 
-\subsection{FIR filter simulation with fractional delays} \label{sec:fractional-delay}
+\subsection{Simulating multipath CIR with FIR filters} \label{sec:fractional-delay}
 % TO Do quelle: http://users.spa.aalto.fi/vpv/publications/vesan_vaitos/ch3_pt1_fir.pdf
 
 \begin{figure}
@@ -297,17 +293,23 @@ From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-respo
 	\caption{\label{fig:fractional-delay-sinc-plot}}
 \end{figure}
 
-As in \ref{sec:discrete-time-model} mentioned a FIR filter can be used to simulate a discrete time model of multipath fading. But with a FIR filter the delays can only be an integer multiple of the the sample rate. When the delays are noninteger an approximation has to be done. 
-
-In the example shown in \figref{fig:fractional-delay-sinc-plot}. For a integer delays in the sinc function all sample values are zero except the one by the delayed sample, which is the amplitude value, here one. When the delay is a fractional number all samples are non-zero. In theory this filter is notrealizable because its noncasual and the impulse respond is infinity long. This problem can't be solve by adding them because of the imaginary part.
-
-To desing a noninteger digital delay FIR Filter a least square integral error design approximation could be chosen.  
-
-Where the transfare function is given as:
-
-\begin{equation} \label{eqn:transfer-function-FIR}
-	H(z)=\sum_{n=0}^{N} h(n) z^{-n}
+As mentioned in \ref{sec:discrete-time-model} a FIR filter can be used to simulate discrete-time models of multipath fading. But with FIR filters the delays can only be integer multiples of the sample rate. When the delays are non integer an approximation needs to be done, that is because FIR filters have a transfer function of the form
+\begin{equation} \label{eqn:transfer-function-fir}
+	H(j\omega) = \sum_{n = 0}^{N} h(n) e^{-j\omega nT}
+	\quad \text{commonly written as} \quad
+	H(z) = \sum_{n = 0}^{N} h(n) z^{-n},
 \end{equation}
+but a non integer delay of \(\tau\) in the frequency domain is \(H_\tau(j\omega) = e^{-j\omega \tau}\).
+
+% In other words, exact non integer delays cannot be made using FIR filters because they can only produce delays that are integer multiples of the sampling time, but an approximately equivalent effect can be obtained by carefully choosing the values of \(h(n)\).
+
+There are multiple ways to find 
+
+% For a integer delays in the sinc function all sample values are zero except the one by the delayed sample, which is the amplitude value, here one. When the delay is a fractional number all samples are non-zero. In theory this filter is notrealizable because its noncasual and the impulse respond is infinity long. This problem can't be solve by adding them because of the imaginary part.
+
+
+% Where the transfare function is given as:
+
 The Order of the filter is given with the help of \(N\), this value only contains integer coefficients.
 To be mention for the approximation is that the error decreases with a higher filter order.
 
@@ -345,13 +347,13 @@ With the help of this index it can also be said whether the FIR filter is causal
 
 \subsection{Statistical model} \label{sec:statistical-model}
 
-Because as mentioned earlier it is difficult to estimate the time-dependent parameters of \(h_l(m)\) in many cases it is easier to model the components of the CIR as stochastic processes, thus greatly reducing the number of parameters. This is especially effective for channels that are constantly changing, because by the central limit theorem the cumulative effect of many small changes tends to a normal statistical distribution.
+Because as mentioned earlier it is difficult to estimate the time-dependent parameters of \(h_l(m)\) in many cases it is easier to model the components of the CIR as stochastic processes, thus greatly reducing the number of parameters. This is especially effective for channels that are constantly changing, because by the central limit theorem the cumulative effect of many small changes tends to a normal distribution.
 
-Recall that \(h_l(m)\) is a function of time because \(c_k\) and \(\tau_k\) change over time. The idea of the statistical model is to replace the cumulative change caused by \(c_k\) and \(\tau_k\) (which are difficult to estimate) by picking the next CIR sample \(h_l(m +1)\) from a \emph{circularly symmetric complex Gaussian distribution}, written as
+Recall that \(h_l(m)\) is a function of time because \(c_k\) and \(\tau_k\) change over time. The idea of the statistical model is to replace the cumulative change caused by \(c_k\) and \(\tau_k\) (which are difficult to estimate) by picking the next CIR sample \(h_l(m +1)\) from a \emph{circularly symmetric complex Gaussian distribution}, or concisely written as
 \begin{equation}
 	h_l \sim \mathcal{CN}(0, \sigma^2)
 \end{equation} 
-for some parameter \(\sigma\). Loosely speaking, the distribution needs to be ``circular'' because \(h_l\) is a complex number, which is two dimensional, it can however be understood as \(\Re{h_l} \sim \mathcal{N}(0, \sigma^2)\) and \(\Im{h_l} \sim \mathcal{N}(\mu, \sigma^2)\), i.e. having each component being normally distributed.
+for some parameter \(\sigma\). Loosely speaking, the distribution needs to be ``circular'' because \(h_l\) is a complex number, which is a ``two dimensional number'', it can however be understood as \(\Re{h_l} \sim \mathcal{N}(0, \sigma^2)\) and \(\Im{h_l} \sim \mathcal{N}(\mu, \sigma^2)\), i.e. having each component being normally distributed.
 
 
 % TO DO : Picture of gaussian distribution
