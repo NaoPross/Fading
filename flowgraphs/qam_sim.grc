@@ -385,7 +385,7 @@ blocks:
     bus_structure: null
     coordinate: [600, 572.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: digital_constellation_decoder_cb_0
   id: digital_constellation_decoder_cb
   parameters:
@@ -534,7 +534,7 @@ blocks:
     bus_structure: null
     coordinate: [648, 740.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: fadingui_netsink_0
   id: fadingui_netsink
   parameters:

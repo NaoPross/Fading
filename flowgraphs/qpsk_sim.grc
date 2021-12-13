@@ -8,7 +8,7 @@ options:
     description: ''
     gen_cmake: 'On'
     gen_linking: dynamic
-    generate_options: qt_gui
+    generate_options: no_gui
     hier_block_src_path: '.:'
     id: qpsk_sim
     max_nouts: '0'
@@ -210,7 +210,7 @@ blocks:
     bus_structure: null
     coordinate: [1064, 1080.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: blocks_repack_bits_bb_0
   id: blocks_repack_bits_bb
   parameters:
@@ -521,7 +521,7 @@ blocks:
 - name: fadingui_netsink_0
   id: fadingui_netsink
   parameters:
-    address: udp://localhost:31415
+    address: udp://localhost:31416
     affinity: ''
     alias: ''
     comment: ''
@@ -533,11 +533,11 @@ blocks:
     bus_structure: null
     coordinate: [704, 316.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_netsink_1
   id: fadingui_netsink
   parameters:
-    address: udp://localhost:31415
+    address: udp://localhost:31418
     affinity: ''
     alias: ''
     comment: ''
@@ -549,11 +549,11 @@ blocks:
     bus_structure: null
     coordinate: [768, 916.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_netsink_3
   id: fadingui_netsink
   parameters:
-    address: udp://localhost:31415
+    address: udp://localhost:31419
     affinity: ''
     alias: ''
     comment: ''
@@ -565,11 +565,11 @@ blocks:
     bus_structure: null
     coordinate: [1280, 916.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_netsink_4
   id: fadingui_netsink
   parameters:
-    address: udp://localhost:31415
+    address: udp://localhost:31417
     affinity: ''
     alias: ''
     comment: ''
@@ -581,7 +581,7 @@ blocks:
     bus_structure: null
     coordinate: [528, 916.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_phasecorrection_0
   id: fadingui_phasecorrection
   parameters:
@@ -702,7 +702,7 @@ blocks:
     bus_structure: null
     coordinate: [1240, 828.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: qtgui_time_sink_x_0
   id: qtgui_time_sink_x
   parameters:
@@ -799,7 +799,7 @@ blocks:
     bus_structure: null
     coordinate: [1248, 1060.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: virtual_sink_0
   id: virtual_sink
   parameters:

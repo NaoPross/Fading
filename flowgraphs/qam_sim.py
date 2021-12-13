@@ -178,7 +178,6 @@ class qam_sim(gr.top_block, Qt.QWidget):
         self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_const_sink_x_0_win)
         self.fadingui_phasecorrection_0 = fadingui.phasecorrection(frame_len)
-        self.fadingui_multipath_fading_0 = fadingui.multipath_fading(amplitudes=[0.12], delays=[1.8], los =True)
         self.fadingui_ber_0 = fadingui.ber(vgl=testvec + list(np.zeros(4)), vlen=frame_len)
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, 2 * np.pi / 100, rrc_taps, 32, 16, 1.5, 1)
         self.digital_lms_dd_equalizer_cc_0 = digital.lms_dd_equalizer_cc(2, 5e-3, 1, qam_const)
@@ -192,6 +191,7 @@ class qam_sim(gr.top_block, Qt.QWidget):
             verbose=False,
             log=False)
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(qam_const)
+        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, ((4*carrier_freq)/(3*10e8))/samp_rate, False, 4.0, 21, (0,1.8), (1,0.12), 8 )
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=100e-3,
             frequency_offset=0,
@@ -223,7 +223,8 @@ class qam_sim(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_tagged_stream_align_0, 0), (self.blocks_repack_bits_bb_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.channels_channel_model_0, 0))
         self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_stream_mux_0, 0))
-        self.connect((self.channels_channel_model_0, 0), (self.fadingui_multipath_fading_0, 0))
+        self.connect((self.channels_channel_model_0, 0), (self.channels_selective_fading_model_0, 0))
+        self.connect((self.channels_selective_fading_model_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
         self.connect((self.digital_constellation_decoder_cb_0, 0), (self.blocks_tagged_stream_align_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.digital_corr_est_cc_0, 1), (self.blocks_complex_to_mag_0, 0))
@@ -232,7 +233,6 @@ class qam_sim(gr.top_block, Qt.QWidget):
         self.connect((self.digital_lms_dd_equalizer_cc_0, 0), (self.qtgui_const_sink_x_0, 1))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_lms_dd_equalizer_cc_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.qtgui_const_sink_x_0, 0))
-        self.connect((self.fadingui_multipath_fading_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
         self.connect((self.fadingui_phasecorrection_0, 0), (self.digital_constellation_decoder_cb_0, 0))
         self.connect((self.fadingui_phasecorrection_0, 0), (self.qtgui_const_sink_x_0, 2))
 
@@ -278,6 +278,7 @@ class qam_sim(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
+        self.channels_selective_fading_model_0.set_fDTs(((4*self.carrier_freq)/(3*10e8))/self.samp_rate)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate / self.sps)
 
     def get_rrc_taps(self):
@@ -304,6 +305,7 @@ class qam_sim(gr.top_block, Qt.QWidget):
 
     def set_carrier_freq(self, carrier_freq):
         self.carrier_freq = carrier_freq
+        self.channels_selective_fading_model_0.set_fDTs(((4*self.carrier_freq)/(3*10e8))/self.samp_rate)
 
     def get_access_code_symbols(self):
         return self.access_code_symbols

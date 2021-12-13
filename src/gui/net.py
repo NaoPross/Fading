@@ -12,10 +12,11 @@ class udpsource:
     """
     Creates an UDP listening socket
     """
-    def __init__(self, url, dtype):
+    def __init__(self, url, dtype, timeout=0.05):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.url = urlparse(url)
         self.dtype = dtype
+        self.timeout = timeout
 
     def __del__(self):
         self.sock.close()
@@ -26,7 +27,8 @@ class udpsource:
         # self.sock.listen()
 
     def read(self, nblocks):
-        ready, _, _ = select.select([self.sock], [], [])
+        # TODO: run in a separate thread (it will be painful to implement)
+        ready, _w, _x = select.select([self.sock], [], [], self.timeout)
         if not ready:
             return None
 
@@ -40,7 +42,10 @@ class udpsource:
         def chunk_to_samples(chunk):
             samples = chunk.split(",")
             if samples:
-                return list(map(self.dtype, samples))
+                try:
+                    return list(map(self.dtype, samples))
+                except ValueError:
+                    return []
 
         # convert each chunk into a list of samples
         chunk_values = map(chunk_to_samples, chunks)
@@ -51,18 +56,29 @@ class udpsource:
         return values
 
 class network_plot(udpsource):
-    def __init__(self, url, dtype, nsamples, **kwargs):
+    """
+    Wraps a udpsource while at the same time intefacing with DearPyGUI as a plot element.
+    """
+    def __init__(self, url, dtype, nsamples , **kwargs):
         udpsource.__init__(self, url, dtype)
-
-        # create buffers for x and y values
         self.nsamples = nsamples
-        self.xvalues = np.arange(0, self.nsamples)
-        self.yvalues = RingBuffer(capacity=self.nsamples, dtype=np.dtype(dtype))
+
+        self._init_buffers()
+        self._init_dpg_plot(**kwargs)
+
+        # listen for connections
+        self.bind()
+
+    def _init_buffers(self):
+        # create buffers for x and y values
+        self.xvalues = RingBuffer(capacity=self.nsamples, dtype=np.dtype(self.dtype))
+        self.yvalues = RingBuffer(capacity=self.nsamples, dtype=np.dtype(self.dtype))
+
+        self.xvalues.extend(np.arange(0, self.nsamples))
         self.yvalues.extend(np.zeros(self.nsamples))
 
-        # create a plot
+    def _init_dpg_plot(self, **kwargs):
         self.plot = dpg.plot(**kwargs)
-        self.bind()
 
     # Map `with' expressions to the underlying plot
     def __enter__(self):
@@ -73,15 +89,41 @@ class network_plot(udpsource):
 
     @property
     def xdata(self):
-        return self.xvalues
+        # unwrap ringbuffer
+        return np.array(self.xvalues)
 
     @property
     def ydata(self):
+        # unwrap ringbuffer
         return np.array(self.yvalues)
+
+    def refresh_series(self, tag):
+        new_values = self.read(10)
+
+        if new_values:
+            self.yvalues.extendleft(new_values)
+            dpg.set_value(tag, [self.xdata, self.ydata])
+
+
+class network_constellation_plot(network_plot):
+    """
+    Special case of a plot, where complex numbers are drawn into a scatter plot
+    """
+    def __init__(self, url, nsamples, **kwargs):
+        network_plot.__init__(self, url, np.complex64, nsamples)
+
+    def _init_buffers(self):
+        self.xvalues = RingBuffer(capacity=self.nsamples, dtype=np.float32)
+        self.yvalues = RingBuffer(capacity=self.nsamples, dtype=np.float32)
+
+        self.xvalues.extend(np.zeros(self.nsamples))
+        self.yvalues.extend(np.zeros(self.nsamples))
 
     def refresh_series(self, tag):
         new_values = self.read(1)
 
         if new_values:
-            self.yvalues.extendleft(new_values)
+            self.xvalues.extendleft(np.real(new_values))
+            self.yvalues.extendleft(np.imag(new_values))
+
             dpg.set_value(tag, [self.xdata, self.ydata])
