@@ -110,7 +110,7 @@ class network_constellation_plot(network_plot):
     Special case of a plot, where complex numbers are drawn into a scatter plot
     """
     def __init__(self, url, nsamples, **kwargs):
-        network_plot.__init__(self, url, np.complex64, nsamples)
+        network_plot.__init__(self, url, np.complex64, nsamples, **kwargs)
 
     def _init_buffers(self):
         self.xvalues = RingBuffer(capacity=self.nsamples, dtype=np.float32)

@@ -142,7 +142,7 @@ with window(label="RX DSP Flow Graph", width=800, height=400, pos=(0,25), tag="r
 time_plot         = net.network_plot(url="udp://localhost:31415", dtype=float, \
                         nsamples=100, tag="time_plot", label="Time plot")
 channel_plot      = net.network_constellation_plot(url="udp://localhost:31416", \
-                        nsamples=80, tag="channel_plot", label="Channel")
+                        nsamples=100, tag="channel_plot", label="Channel")
 synchronized_plot = net.network_constellation_plot(url="udp://localhost:31417", \
                         nsamples=100, tag="synchronized_plot",  label="Synchronized")
 equalized_plot    = net.network_constellation_plot(url="udp://localhost:31418", \
@@ -160,12 +160,16 @@ network_plots = {
 
 with window(label="Time domain", width=800, height=350, pos=(0,425)):
     with time_plot:
+        configure_item("time_plot", width=-1, height=-1)
+
         add_plot_axis(mvXAxis, label="Time", tag="xaxis_time")
         add_plot_axis(mvYAxis, label="Amplitude", tag="yaxis_time")
         add_line_series(time_plot.xdata, time_plot.ydata, parent="yaxis_time", tag=network_plots[time_plot])
 
 with window(label="Channel", width=560, height=400, pos=(800,25)):
     with channel_plot:
+        configure_item("channel_plot", width=-1, height=-1)
+
         add_plot_axis(mvXAxis, label="In-Phase", tag="inphase_channel")
         add_plot_axis(mvYAxis, label="Quadrature", tag="quadrature_channel")
 
@@ -177,10 +181,11 @@ with window(label="Channel", width=560, height=400, pos=(800,25)):
         add_scatter_series(channel_plot.xdata, channel_plot.ydata, \
             label = "Channel", parent="inphase_channel", tag=series_tag)
         bind_item_theme(series_tag, "constellation_series_theme")
-        # bind_colormap("channel_plot", mvPlotColormap_Spectral)
 
 with window(label="Synchronized", width=560, height=400, pos=(1360,25)):
     with synchronized_plot:
+        configure_item("synchronized_plot", width=-1, height=-1)
+
         add_plot_axis(mvXAxis, label="In-Phase", tag="inphase_synchronized")
         add_plot_axis(mvYAxis, label="Quadrature", tag="quadrature_synchronized")
 
@@ -195,6 +200,8 @@ with window(label="Synchronized", width=560, height=400, pos=(1360,25)):
 
 with window(label="Equalized", width=560, height=400, pos=(800,425)):
     with equalized_plot:
+        configure_item("equalized_plot", width=-1, height=-1)
+
         add_plot_legend()
         add_plot_axis(mvXAxis, label="In-Phase", tag="inphase_equalized")
         add_plot_axis(mvYAxis, label="Quadrature", tag="quadrature_equalized")
@@ -210,6 +217,8 @@ with window(label="Equalized", width=560, height=400, pos=(800,425)):
 
 with window(label="Locked", width=560, height=400, pos=(1360,425)):
     with locked_plot:
+        configure_item("locked_plot", width=-1, height=-1)
+
         add_plot_legend()
         add_plot_axis(mvXAxis, label="In-Phase", tag="inphase_locked")
         add_plot_axis(mvYAxis, label="Quadrature", tag="quadrature_locked")
