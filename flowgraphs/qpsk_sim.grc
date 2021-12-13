@@ -471,6 +471,7 @@ blocks:
 - name: fadingui_ber_0
   id: fadingui_ber
   parameters:
+    address: udp://localhost:31415
     affinity: ''
     alias: ''
     comment: ''
@@ -480,7 +481,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1184, 1300.0]
+    coordinate: [1184, 1292.0]
     rotation: 0
     state: true
 - name: fadingui_datasource_0

@@ -19,6 +19,8 @@
 # Boston, MA 02110-1301, USA.
 #
 
+import socket
+from urllib.parse import urlparse
 
 import numpy as np
 from gnuradio import gr
@@ -32,7 +34,7 @@ class ber(gr.sync_block):
     """
     docstring for block ber
     """
-    def __init__(self, vgl, vlen):
+    def __init__(self, vgl, vlen, address):
         gr.sync_block.__init__(self,
             name="ber",
             in_sig=[np.dtype(str(vlen) + "b")],
@@ -40,9 +42,34 @@ class ber(gr.sync_block):
         self.vgl=vgl
         self.vlen=vlen
 
+        # Create a socket and parse remote machine url
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.url = urlparse(address)
+        self.srv = (self.url.hostname, self.url.port)
+
+
+    def send(self, data):
+        """
+        Send the data to self.srv
+
+        @param data Data as python bytes
+        @return Number of bytes that were actually sent
+        """
+        assert type(data) == bytes
+        return self.socket.sendto(data, self.srv)
+
+    def encode(self, data):
+        """
+        Encode the data into a dead simple format
+        """
+        # FIXME: this could be (very) slow, is there a faster way with numpy?
+        # Maybe numpy.array2string
+        return bytes(str(data) + "\n", "ascii")
+    
+
     def work(self, input_items, output_items):
-        
         inp = input_items[0]
+
         log.debug(f"Length: {len(inp)}")
         log.debug(f"Inp_vector:{inp}")
         
@@ -52,7 +79,13 @@ class ber(gr.sync_block):
             ber = sum(np.unpackbits(v))
 
             trueber = ber - 32
-            log.debug(f"BER {trueber if trueber > 0 else 0} in Paket {i}")
+            if trueber < 0:
+                trueber = 0
+            log.debug(f"BER {trueber} in Paket {i}")
+        
+            self.send(self.encode(trueber))
 
-        return len(input_items[0])
+        return len(inp)
+
+        #return len(input_items[0])
 

@@ -4,6 +4,8 @@
 
 \section{Overview}
 
+First of all the tools which were used in this theses are interdused; software and hardware. Then the sender and receiver chain are explained in detail and how they are implemented. This both chains are the same for the simulation itself and the hardware implementation. Also the channel in details are explained which is inportent for the simulation to illustrate the multipath fading effect. After some measurements are tried, with the help of the bit error rate, to compare it with the simulation.
+
 \section{Software Stack}
 
 \subsection{GNU Radio}
@@ -240,6 +242,8 @@ def block_phase(self, start, end):
 
 Here its possible to add some AWGN noise in the channel line. Different parameters can be changed like the noise voltage, time or the frequency offset.
 
+In this part the fading blocks for the simulation are added. Tow different types are implemented a discrete-time one and a statistical one. First to get a better understanding of the material the discrete-time modeled one and after the more realistic one, based on the Rayleight and Rician distribution.
+
 \skelpar[5]{
 	Discuss the multitap FIR model we used. How it is possible to set the delay etc. Also mathematics for the interpolation.
 }
@@ -251,28 +255,82 @@ Here its possible to add some AWGN noise in the channel line. Different paramete
 %For the a first simulation with some fading the 16QAM simulation model has been extended with a FIR-Filter in the Chanel. The results of this simulation are shown in \figref{fig:simul16QAM} and \figref{fig:simul16QAM_1} as the blue Signal.
 
 \subsection{Fading with Discrete-time model}
-\begin{german}
-%TO DO: übersetzen 
-Für die statische gemäss \ref{sec:discrete-time-model} implementation und veranschaulichen des Fading effekts wurde ein eigener Block kreaiert und in den Channel implementiert. Dieser Block basiert auf einem FIR Filter. Es kann mit direcktem Pfad oder ohne dargestellt werden (Line of Sight). Mit Hilfe dieses Filters wird die Verspätung, anhand Zeitlicher delay, der nebenpfaden dargestellt. Es ist möglich beliebig viele dieser Pfade mit unterschiedlicher stärke zu simulieren, solange das für jeden verspäteten Pfad eine dazugehörige Amplute angegeben wird. Leider werden diese simulationswerte nicht mit der Wircklichkeit übereinstien, da zuviele unkalkulierbaren nebeneffekte auftretten.
-Dieser Block wurde zusätzlich mit der methode in \ref{sec:fractional-delay} beschriben implementiert um nichtganzahlige delay Werte zuzulassen, im vergleich zu den sampels zu erlauben, welche in \figref{fig:fractional-delay-sinc-plot} dargestellt sind. Bei dem die sinc-funktion auf kein ganzzahliges sample fählt. Was widerum bedeutet das bei den anderen abgetasteten Werten nicht null ergeben.
-\end{german}
+
+For the statical version according to \ref{sec:discrete-time-model} to implement and illustrat the fading effect, a separate block was created and implemented in the channel. Nearer shown in \ref{lst:fir-block}. This block is based on a FIR filter. It can be displayed with a direct path or without one. With the help of this filter, the delay of the line of side paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed path. Unfortunately, these simulation values do not correspond to the realety, because too many incalculable side effects occur, which aren't possiple to ilustrate in this simulation.
+This block was additionally implemented with the method described in \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample. Which in turn means that the other sampled values do not add up to zero.Thus, they will be distributed among the other whole numbers. A window function could also be implemented to limit these values. Here none was implemented because the sinc function is restricted.
+
+\skelpar[5]{
+	Discrabe a perfect plot
+}
+
+%\begin{german}
+%Für die statische gemäss \ref{sec:discrete-time-model} implementation und veranschaulichen des Fading effekts wurde ein eigener Block kreaiert und in den Channel implementiert \ref{lst:fir-block}. Dieser Block basiert auf einem FIR Filter. Es kann mit direcktem Pfad oder ohne dargestellt werden (Line of Sight). Mit Hilfe dieses Filters wird die Verspätung, anhand Zeitlicher delay, der nebenpfaden dargestellt. Es ist möglich beliebig viele dieser Pfade mit unterschiedlicher stärke zu simulieren, solange das für jeden verspäteten Pfad eine dazugehörige Amplute angegeben wird. Leider werden diese simulationswerte nicht mit der Wircklichkeit übereinstien, da zuviele unkalkulierbaren nebeneffekte auftretten.
+%Dieser Block wurde zusätzlich mit der methode in \ref{sec:fractional-delay} beschriben implementiert um nichtganzahlige delay Werte zuzulassen, im vergleich zu den sampels zu erlauben, welche in \figref{fig:fractional-delay-sinc-plot} dargestellt sind. Bei dem die sinc-funktion auf kein ganzzahliges sample fählt. Was widerum bedeutet das bei den anderen abgetasteten Werten nicht null ergeben.
+%\end{german}
+
+\begin{lstlisting}[
+	texcl = true, language = python, escapechar = {`},
+	float, captionpos = b, label = {lst:fir-block},
+	caption = {
+		Block FIR Filter function referenced in listing \ref{lst:phasecorr-work}.
+	},
+	]
+	def work(self, input_items, output_items):
+		inp = input_items[0]
+		oup = output_items[0]
+		# reads the moduled signal 
+		if len(self.amplitudes) != len(self.delays):  
+			raise Exception("Amplitudes and Delay length dont match")
+		if np.min(self.delays)<0:  
+			raise Exception("Delay can't be negativ")
+		# Some test that there are as match delays as amplitudes and no negative filter values
+		max_order = 2 * np.floor(np.max(self.delays)) + 1 
+		# find the maximal order of the Filter
+	  	max_samples = np.arange(0, max_order +1) 
+		max_len = len(max_samples) 
+		sum_x = np.zeros(int(max_len))
+	
+		for (a,d) in zip(self.amplitudes,self.delays):
+			order = 2 * np.floor(d) + 1
+			samples = np.arange(0, order +1)  
+			h = a*(np.sinc(samples-d)) 
+			# impuls respond 
+			h_len = np.concatenate([h, np.zeros(max_len-len(h))])
+			sum_x += h_len
+			# add them al together to have one array with al amplitudes one the position of the delay (in samples)
+		sum_x[0] = self.los
+		# if there is no direct line ad the first delayed amplitude to a zero else to a one.
+		y = np.convolve(inp, sum_x)
+		y += np.concatenate([self.temp,np.zeros(len(y)-len(self.temp))])
+		oup[:] = y[:len(inp)]
+		self.temp = y[len(inp):]   
+		# The output need to have the same lenght as the input.     		
+		return len(oup)
+	
+\end{lstlisting}
 
 % Bild einfügen 
 \subsection{Fading with Statistical model}
 
-% TO DO quellen  %Compact Rayleigh and Rician fading simulator based on random walk processes A. Alimohammad S.F. Fard B.F. Cockburn C. Schlegel26th November 2008  		
+	
 
+% TODO: Quelle https://ch.mathworks.com/help/comm/ug/fading-channels.html?searchHighlight=rician%20fading&s_tid=srchtitle_rician%2520fading_2#a1070327427b1
 
-\ref{statistical_model}
-Whit the help 
 
 \begin{german}
-	Um den effect des multipaht fadinngs nicht nur statisch dar zu stellen, wurde ein zweites model kreiert mit hilfe des Frequency Selective Fading Models von Gnu Radio.
-	Welcher nach dem Algorthmus aud dem paper  \cite{Alimohammad2009}
-	
+	Um den effect des multipaht fadinngs nicht nur statisch darzu stellen, wurde ein zweites model kreiert mit hilfe des Frequency Selective Fading Models von Gnu Radio, gemäss \ref{statistical_model}.
+	Welcher nach dem Algorthmus aud dem paper \cite{Alimohammad2009} implementiert wurde. 
+	Um die resultate einigermassse nach vollziehen zu können wurde ein MATLAP model zur veranschaulichung erstelle.
+	Um ein realistisches beispiel zu haben wurden werte aus dem Skript \cite{Mathis} genomen
 	
 \end{german}
 
+Some realistic value for this block are:
+The first delay when theirs non line of side is zero. The second delayed path depend on the environment of measurement. In an indoor enviroment it is usaely between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on on the bandwith 
+
+\skelpar[5]{
+	Simulation mit Werten aus dem Skript
+}
 
 \subsection{Measurements}
 
