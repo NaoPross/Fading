@@ -8,7 +8,7 @@ options:
     description: ''
     gen_cmake: 'On'
     gen_linking: dynamic
-    generate_options: qt_gui
+    generate_options: no_gui
     hier_block_src_path: '.:'
     id: qam_sim
     max_nouts: '0'
@@ -208,7 +208,7 @@ blocks:
     bus_structure: null
     coordinate: [1088, 1080.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: blocks_null_source_0
   id: blocks_null_source
   parameters:
@@ -385,7 +385,7 @@ blocks:
     bus_structure: null
     coordinate: [600, 572.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: digital_constellation_decoder_cb_0
   id: digital_constellation_decoder_cb
   parameters:
@@ -488,6 +488,7 @@ blocks:
 - name: fadingui_ber_0
   id: fadingui_ber
   parameters:
+    address: udp://localhost:31415
     affinity: ''
     alias: ''
     comment: ''
@@ -534,11 +535,11 @@ blocks:
     bus_structure: null
     coordinate: [648, 740.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_netsink_0
   id: fadingui_netsink
   parameters:
-    address: udp://localhost:31415
+    address: udp://localhost:31416
     affinity: ''
     alias: ''
     comment: ''
@@ -548,13 +549,13 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [704, 316.0]
+    coordinate: [984, 620.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_netsink_1
   id: fadingui_netsink
   parameters:
-    address: udp://localhost:31415
+    address: udp://localhost:31418
     affinity: ''
     alias: ''
     comment: ''
@@ -564,13 +565,13 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [768, 916.0]
+    coordinate: [800, 916.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_netsink_3
   id: fadingui_netsink
   parameters:
-    address: udp://localhost:31415
+    address: udp://localhost:31419
     affinity: ''
     alias: ''
     comment: ''
@@ -582,11 +583,11 @@ blocks:
     bus_structure: null
     coordinate: [1280, 916.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_netsink_4
   id: fadingui_netsink
   parameters:
-    address: udp://localhost:31415
+    address: udp://localhost:31417
     affinity: ''
     alias: ''
     comment: ''
@@ -598,7 +599,7 @@ blocks:
     bus_structure: null
     coordinate: [528, 916.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_phasecorrection_0
   id: fadingui_phasecorrection
   parameters:
@@ -719,7 +720,7 @@ blocks:
     bus_structure: null
     coordinate: [1304, 800.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: qtgui_time_sink_x_0
   id: qtgui_time_sink_x
   parameters:
@@ -816,7 +817,7 @@ blocks:
     bus_structure: null
     coordinate: [1272, 1060.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: virtual_sink_0
   id: virtual_sink
   parameters:
@@ -908,18 +909,20 @@ connections:
 - [blocks_vector_source_x_0, '0', blocks_stream_mux_0, '0']
 - [channels_channel_model_0, '0', channels_selective_fading_model_0, '0']
 - [channels_channel_model_0, '0', fadingui_multipath_fading_0, '0']
+- [channels_selective_fading_model_0, '0', fadingui_netsink_0, '0']
 - [channels_selective_fading_model_0, '0', virtual_sink_1, '0']
 - [digital_constellation_decoder_cb_0, '0', blocks_tagged_stream_align_0, '0']
 - [digital_constellation_modulator_0, '0', blocks_throttle_0, '0']
-- [digital_constellation_modulator_0, '0', fadingui_netsink_0, '0']
 - [digital_corr_est_cc_0, '0', fadingui_phasecorrection_0, '0']
 - [digital_corr_est_cc_0, '1', blocks_complex_to_mag_0, '0']
 - [digital_lms_dd_equalizer_cc_0, '0', digital_corr_est_cc_0, '0']
+- [digital_lms_dd_equalizer_cc_0, '0', fadingui_netsink_1, '0']
 - [digital_lms_dd_equalizer_cc_0, '0', qtgui_const_sink_x_0, '1']
 - [digital_pfb_clock_sync_xxx_0, '0', digital_lms_dd_equalizer_cc_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', fadingui_netsink_4, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', qtgui_const_sink_x_0, '0']
 - [fadingui_datasource_0, '0', digital_constellation_modulator_0, '0']
+- [fadingui_multipath_fading_0, '0', fadingui_netsink_0, '0']
 - [fadingui_multipath_fading_0, '0', virtual_sink_1, '0']
 - [fadingui_phasecorrection_0, '0', fadingui_netsink_3, '0']
 - [fadingui_phasecorrection_0, '0', qtgui_const_sink_x_0, '2']

@@ -51,7 +51,7 @@ show_debug()
 # Constellation diagrams
 with theme(tag="constellation_series_theme"):
     with theme_component(mvScatterSeries):
-        # add_theme_style(mvPlotStyleVar_Marker, mvPlotMarker_Asterisk, category=mvThemeCat_Plots)
+        add_theme_style(mvPlotStyleVar_Marker, mvPlotMarker_Asterisk, category=mvThemeCat_Plots)
         add_theme_style(mvPlotStyleVar_MarkerSize, 3, category=mvThemeCat_Plots)
 
 
@@ -140,15 +140,15 @@ with window(label="RX DSP Flow Graph", width=800, height=400, pos=(0,25), tag="r
 # Network plots
 
 time_plot         = net.network_plot(url="udp://localhost:31415", dtype=float, \
-                        nsamples=100, tag="time_plot", label="Time plot")
+                        nsamples=500, tag="time_plot", label="Time plot")
 channel_plot      = net.network_constellation_plot(url="udp://localhost:31416", \
-                        nsamples=100, tag="channel_plot", label="Channel")
+                        nsamples=200, tag="channel_plot", label="Channel")
 synchronized_plot = net.network_constellation_plot(url="udp://localhost:31417", \
-                        nsamples=100, tag="synchronized_plot",  label="Synchronized")
+                        nsamples=200, tag="synchronized_plot",  label="Synchronized")
 equalized_plot    = net.network_constellation_plot(url="udp://localhost:31418", \
-                        nsamples=100, tag="equalized_plot",  label="Equalized")
+                        nsamples=200, tag="equalized_plot",  label="Equalized")
 locked_plot       = net.network_constellation_plot(url="udp://localhost:31419", \
-                        nsamples=100, tag="locked_plot",  label="Locked")
+                        nsamples=200, tag="locked_plot",  label="Locked")
 
 network_plots = {
     time_plot:         "time_plot_series",

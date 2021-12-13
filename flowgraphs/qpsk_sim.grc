@@ -210,7 +210,7 @@ blocks:
     bus_structure: null
     coordinate: [1064, 1080.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: blocks_repack_bits_bb_0
   id: blocks_repack_bits_bb
   parameters:
@@ -471,7 +471,7 @@ blocks:
 - name: fadingui_ber_0
   id: fadingui_ber
   parameters:
-    address: udp://localhost:31415
+    address: udp://localhost:31420
     affinity: ''
     alias: ''
     comment: ''
@@ -481,7 +481,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1184, 1292.0]
+    coordinate: [1200, 1292.0]
     rotation: 0
     state: true
 - name: fadingui_datasource_0
@@ -532,7 +532,23 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [704, 316.0]
+    coordinate: [992, 620.0]
+    rotation: 0
+    state: enabled
+- name: fadingui_netsink_0_0
+  id: fadingui_netsink
+  parameters:
+    address: udp://localhost:31415
+    affinity: ''
+    alias: ''
+    comment: ''
+    type: float
+    veclen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1248, 1148.0]
     rotation: 0
     state: enabled
 - name: fadingui_netsink_1
@@ -882,6 +898,7 @@ blocks:
 
 connections:
 - [analog_random_source_x_0, '0', blocks_stream_mux_0, '1']
+- [blocks_complex_to_mag_0, '0', fadingui_netsink_0_0, '0']
 - [blocks_complex_to_mag_0, '0', qtgui_time_sink_x_0, '0']
 - [blocks_repack_bits_bb_0, '0', blocks_stream_to_vector_0, '0']
 - [blocks_stream_mux_0, '0', digital_constellation_modulator_0, '0']
@@ -891,17 +908,18 @@ connections:
 - [blocks_vector_source_x_0, '0', blocks_stream_mux_0, '0']
 - [channels_channel_model_0, '0', channels_selective_fading_model_0, '0']
 - [channels_channel_model_0, '0', fadingui_multipath_fading_0, '0']
+- [channels_selective_fading_model_0, '0', fadingui_netsink_0, '0']
 - [channels_selective_fading_model_0, '0', virtual_sink_1, '0']
 - [digital_cma_equalizer_cc_0, '0', digital_corr_est_cc_0, '0']
 - [digital_cma_equalizer_cc_0, '0', fadingui_netsink_1, '0']
 - [digital_constellation_decoder_cb_0, '0', blocks_tagged_stream_align_0, '0']
 - [digital_constellation_modulator_0, '0', blocks_throttle_0, '0']
-- [digital_constellation_modulator_0, '0', fadingui_netsink_0, '0']
 - [digital_corr_est_cc_0, '0', fadingui_phasecorrection_0, '0']
 - [digital_corr_est_cc_0, '1', blocks_complex_to_mag_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', digital_cma_equalizer_cc_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', fadingui_netsink_4, '0']
 - [fadingui_datasource_0, '0', digital_constellation_modulator_0, '0']
+- [fadingui_multipath_fading_0, '0', fadingui_netsink_0, '0']
 - [fadingui_multipath_fading_0, '0', virtual_sink_1, '0']
 - [fadingui_phasecorrection_0, '0', fadingui_netsink_3, '0']
 - [fadingui_phasecorrection_0, '0', qtgui_const_sink_x_0, '0']
