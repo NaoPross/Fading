@@ -76,7 +76,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.sps = sps = 2
+        self.sps = sps = 4
         self.nfilts = nfilts = 32
         self.excess_bw = excess_bw = 350e-3
         self.timing_loop_bw = timing_loop_bw = 2 * 3.141592653589793 / 100
@@ -91,8 +91,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.eq_ntaps = eq_ntaps = 15
         self.eq_mod = eq_mod = 1
         self.eq_gain = eq_gain = .01
-        self.const = const = digital.constellation_calcdist([-1-1j, -1+1j, 1+1j, 1-1j], [0, 1, 3, 2],
-        4, 1).base()
+        self.const = const = digital.constellation_qpsk().base()
         self.chn_taps = chn_taps = [1.0 + 0.0j, ]
 
         ##################################################
@@ -467,7 +466,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
         self.digital_cma_equalizer_cc_0_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
-        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, ((2*fc*1e9)/(3*10e8))/samp_rate, False, 4, 0, (0,1.8), (1,0.12), 8 )
+        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, ((2*fc*1e9)/(3*10e8))/samp_rate, False, 4, 21, (0,1.8), (1,0.12), 8 )
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=noise_volt,
             frequency_offset=freq_offset,

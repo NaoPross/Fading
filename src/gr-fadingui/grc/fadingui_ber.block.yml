@@ -5,7 +5,7 @@ category: '[fadingui]'
 templates:
   imports: import fadingui
   make: fadingui.ber(vgl=${vgl}, vlen=${vlen},address=${address})
-
+  
 #  Make one 'parameters' list entry for every parameter you want settable from the GUI.
 #     Keys include:
 #     * id (makes the value accessible as \$keyname, e.g. in the make entry)
@@ -21,7 +21,7 @@ parameters:
 - id: address
   label: Address
   dtype: string
-  default: "udp://localhost:31415"
+  default: "udp://localhost:31420"
 
 
 #  Make one 'inputs' list entry per input and one 'outputs' list entry per output.

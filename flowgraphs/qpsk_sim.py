@@ -47,11 +47,6 @@ class qpsk_sim(gr.top_block):
         # Blocks
         ##################################################
         self.fadingui_phasecorrection_0 = fadingui.phasecorrection(frame_len)
-        self.fadingui_netsink_4 = fadingui.netsink(address='udp://localhost:31417', dtype="complex", vlen=1)
-        self.fadingui_netsink_3 = fadingui.netsink(address='udp://localhost:31419', dtype="complex", vlen=1)
-        self.fadingui_netsink_1 = fadingui.netsink(address='udp://localhost:31418', dtype="complex", vlen=1)
-        self.fadingui_netsink_0_0 = fadingui.netsink(address='udp://localhost:31415', dtype="float", vlen=1)
-        self.fadingui_netsink_0 = fadingui.netsink(address='udp://localhost:31416', dtype="complex", vlen=1)
         self.fadingui_multipath_fading_0 = fadingui.multipath_fading(amplitudes=[0.12], delays=[1.8], los =True)
         self.fadingui_ber_0 = fadingui.ber(vgl=testvec + list(np.zeros(4)), vlen=frame_len,address='udp://localhost:31420')
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, 2 * np.pi / 100, rrc_taps, 32, 16, 1.5, 1)
@@ -79,7 +74,6 @@ class qpsk_sim(gr.top_block):
         self.blocks_stream_to_vector_0 = blocks.stream_to_vector(gr.sizeof_char*1, frame_len)
         self.blocks_stream_mux_0 = blocks.stream_mux(gr.sizeof_char*1, [len(testvec), 4])
         self.blocks_repack_bits_bb_0 = blocks.repack_bits_bb(2, 8, "", False, gr.GR_LSB_FIRST)
-        self.blocks_complex_to_mag_0 = blocks.complex_to_mag(1)
         self.analog_random_source_x_0 = blocks.vector_source_b(list(map(int, numpy.random.randint(0, 255, 400))), True)
 
 
@@ -88,7 +82,6 @@ class qpsk_sim(gr.top_block):
         # Connections
         ##################################################
         self.connect((self.analog_random_source_x_0, 0), (self.blocks_stream_mux_0, 1))
-        self.connect((self.blocks_complex_to_mag_0, 0), (self.fadingui_netsink_0_0, 0))
         self.connect((self.blocks_repack_bits_bb_0, 0), (self.blocks_stream_to_vector_0, 0))
         self.connect((self.blocks_stream_mux_0, 0), (self.digital_constellation_modulator_0, 0))
         self.connect((self.blocks_stream_to_vector_0, 0), (self.fadingui_ber_0, 0))
@@ -97,17 +90,12 @@ class qpsk_sim(gr.top_block):
         self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_stream_mux_0, 0))
         self.connect((self.channels_channel_model_0, 0), (self.fadingui_multipath_fading_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.digital_corr_est_cc_0, 0))
-        self.connect((self.digital_cma_equalizer_cc_0, 0), (self.fadingui_netsink_1, 0))
         self.connect((self.digital_constellation_decoder_cb_0, 0), (self.blocks_tagged_stream_align_0, 0))
         self.connect((self.digital_constellation_modulator_0, 0), (self.blocks_throttle_0, 0))
-        self.connect((self.digital_corr_est_cc_0, 1), (self.blocks_complex_to_mag_0, 0))
         self.connect((self.digital_corr_est_cc_0, 0), (self.fadingui_phasecorrection_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_cma_equalizer_cc_0, 0))
-        self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.fadingui_netsink_4, 0))
         self.connect((self.fadingui_multipath_fading_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
-        self.connect((self.fadingui_multipath_fading_0, 0), (self.fadingui_netsink_0, 0))
         self.connect((self.fadingui_phasecorrection_0, 0), (self.digital_constellation_decoder_cb_0, 0))
-        self.connect((self.fadingui_phasecorrection_0, 0), (self.fadingui_netsink_3, 0))
 
 
     def get_testvec(self):
