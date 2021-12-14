@@ -12,11 +12,12 @@ class udpsource:
     """
     Creates an UDP listening socket
     """
-    def __init__(self, url, dtype, timeout=0.05):
+    def __init__(self, url, dtype, timeout=0.05, blocksize=1024):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.url = urlparse(url)
         self.dtype = dtype
         self.timeout = timeout
+        self.blocksize = blocksize
 
     def __del__(self):
         self.sock.close()
@@ -33,8 +34,7 @@ class udpsource:
             return None
 
         # read from socket
-        blocksize = 1024 * 4
-        string = ready[0].recv(nblocks * blocksize).decode("ascii")
+        string = ready[0].recv(nblocks * self.blocksize).decode("ascii")
 
         # decode string, remove empty values
         chunks = filter(None, re.split(r"\[(.+?)\]", string))
@@ -54,6 +54,24 @@ class udpsource:
         values = sum(chunk_values, [])
 
         return values
+
+class network_value(udpsource):
+    def __init__(self, url, dtype, refresh_func):
+        udpsource.__init__(self, url, dtype, blocksize=16)
+
+        self._refresh = refresh_func
+        self.value = None
+
+        self.bind()
+
+    def read(self):
+        return udpsource.read(self, 1)
+
+    def refresh(self):
+        self.value = self.read()
+        if self.value:
+            self._refresh(self.value)
+
 
 class network_plot(udpsource):
     """

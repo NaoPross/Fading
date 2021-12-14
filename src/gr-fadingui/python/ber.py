@@ -43,7 +43,7 @@ class ber(gr.sync_block):
         self.vgl=vgl
         self.vlen=vlen
 
-        self.ber_samples = RingBuffer(capacity=2000, dtype=int)
+        self.ber_samples = RingBuffer(capacity=100, dtype=int)
         self.ber_samples.extend(np.zeros(self.ber_samples.maxlen))
 
         # Create a socket and parse remote machine url
@@ -84,8 +84,6 @@ class ber(gr.sync_block):
         log.debug(f"Length: {len(inp)}")
         # log.debug(f"Inp_vector:{inp}")
 
-        
-
         for i in inp:
             i = np.array(i, dtype=np.uint8)
             v = np.array(self.vgl, dtype=np.uint8) ^ i
@@ -102,11 +100,7 @@ class ber(gr.sync_block):
         ber_max, ber_min, ber_avg = self.ber_stats()
         log.debug(f"Statistics: {ber_max}, {ber_min}, {ber_avg}")
 
-        #self.send(self.encode(ber_max, ber_min, ber_avg))
-        self.send(self.encode(trueber))
-        self.send(self.encode(ber_max))
-        self.send(self.encode(ber_min))
-        self.send(self.encode(ber_avg))
+        self.send(self.encode([trueber, ber_max, ber_avg]))
 
         return len(inp)
         #return len(input_items[0])

@@ -253,11 +253,17 @@ with window(label="Bit Error Rate ", width=300, height=150, pos=(1200,875), no_t
             add_theme_color(mvThemeCol_Text,(0,0,0))#Schwarz
             add_theme_style(mvStyleVar_FrameRounding, 5)
 
-    add_button(label="BER", height=60, width=150,pos=(75,60))
-    bind_item_theme(last_item(),"button_ber")
+    add_button(label="BER", height=60, width=-1, tag="ber_value")
+    bind_item_theme(last_item(), "button_ber")
 
 # bind_item_theme(ber_window, "ber_window")
 # bind_item_font(ber_window, test)
+
+def set_ber(values):
+    ber_curr, ber_max, ber_avg = values
+    configure_item("ber_value", label=f"Current: {ber_curr}, Max: {ber_max}, Avg: {ber_avg}")
+
+ber_value = net.network_value(url="udp://localhost:31420", dtype=float, refresh_func=set_ber)
 
 #================================================
 # Picture Window
@@ -275,6 +281,7 @@ set_primary_window("primary_window", True)
 while is_dearpygui_running():
     for plt, tag in network_plots.items():
         plt.refresh_series(tag)
+    ber_value.refresh()
 
     render_dearpygui_frame()
 

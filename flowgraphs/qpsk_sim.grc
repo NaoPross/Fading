@@ -366,9 +366,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [568, 548.0]
+    coordinate: [592, 572.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: digital_cma_equalizer_cc_0
   id: digital_cma_equalizer_cc
   parameters:
@@ -518,7 +518,7 @@ blocks:
     bus_structure: null
     coordinate: [648, 740.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: fadingui_netsink_0
   id: fadingui_netsink
   parameters:
@@ -816,7 +816,7 @@ blocks:
     bus_structure: null
     coordinate: [1248, 1060.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: virtual_sink_0
   id: virtual_sink
   parameters:
