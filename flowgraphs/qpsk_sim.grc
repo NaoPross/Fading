@@ -76,8 +76,8 @@ blocks:
   parameters:
     alias: ''
     comment: ''
-    payload_len: '4096'
-    preamble: '[0xbe, 0xef]'
+    payload_len: '16'
+    preamble: '[0x1f, 0x35]'
   states:
     bus_sink: false
     bus_source: false
@@ -96,7 +96,19 @@ blocks:
     bus_structure: null
     coordinate: [184, 252.0]
     rotation: 0
-    state: true
+    state: enabled
+- name: frame_len
+  id: variable
+  parameters:
+    comment: ''
+    value: 2 + 4 + 16
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [208, 604.0]
+    rotation: 0
+    state: disabled
 - name: nfilts
   id: variable
   parameters:
@@ -174,7 +186,7 @@ blocks:
     bus_structure: null
     coordinate: [48, 252.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: analog_random_source_x_0
   id: analog_random_source_x
   parameters:
@@ -194,7 +206,24 @@ blocks:
     bus_structure: null
     coordinate: [48, 420.0]
     rotation: 0
-    state: true
+    state: enabled
+- name: analog_simple_squelch_cc_0
+  id: analog_simple_squelch_cc
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    threshold: ''
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1000, 692.0]
+    rotation: 0
+    state: disabled
 - name: blocks_complex_to_mag_0
   id: blocks_complex_to_mag
   parameters:
@@ -211,6 +240,25 @@ blocks:
     coordinate: [1064, 1080.0]
     rotation: 0
     state: enabled
+- name: blocks_null_source_0
+  id: blocks_null_source
+  parameters:
+    affinity: ''
+    alias: ''
+    bus_structure_source: '[[0,],]'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_outputs: '1'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [744, 344.0]
+    rotation: 0
+    state: disabled
 - name: blocks_repack_bits_bb_0
   id: blocks_repack_bits_bb
   parameters:
@@ -247,9 +295,28 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [272, 416.0]
+    coordinate: [240, 416.0]
     rotation: 0
-    state: true
+    state: enabled
+- name: blocks_stream_mux_1
+  id: blocks_stream_mux
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    lengths: '[]'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_inputs: '2'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [928, 344.0]
+    rotation: 0
+    state: disabled
 - name: blocks_stream_to_vector_0
   id: blocks_stream_to_vector
   parameters:
@@ -324,7 +391,7 @@ blocks:
     bus_structure: null
     coordinate: [48, 324.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: channels_channel_model_0
   id: channels_channel_model
   parameters:
@@ -356,7 +423,7 @@ blocks:
     alias: ''
     comment: ''
     delays: (0,1.8)
-    fDTs: ((4*carrier_freq)/(3*10e8))/samp_rate
+    fDTs: ((2*carrier_freq)/(3*10e8))/samp_rate
     mags: (1,0.12)
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -368,7 +435,7 @@ blocks:
     bus_structure: null
     coordinate: [600, 572.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: digital_cma_equalizer_cc_0
   id: digital_cma_equalizer_cc
   parameters:
@@ -475,7 +542,7 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    vgl: testvec + list(np.zeros(4))
+    vgl: list(np.zeros(frame_len))
     vlen: frame_len
   states:
     bus_sink: false
@@ -490,8 +557,8 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    fname: ''
-    frame_obj: ''
+    fname: ./lena512color.png
+    frame_obj: frame
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
@@ -518,7 +585,7 @@ blocks:
     bus_structure: null
     coordinate: [648, 740.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: fadingui_netsink_0
   id: fadingui_netsink
   parameters:
@@ -717,7 +784,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1240, 828.0]
+    coordinate: [552, 852.0]
     rotation: 0
     state: disabled
 - name: qtgui_time_sink_x_0
@@ -827,9 +894,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [928, 428.0]
+    coordinate: [1104, 428.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: virtual_sink_1
   id: virtual_sink
   parameters:
@@ -900,10 +967,13 @@ connections:
 - [analog_random_source_x_0, '0', blocks_stream_mux_0, '1']
 - [blocks_complex_to_mag_0, '0', fadingui_netsink_0_0, '0']
 - [blocks_complex_to_mag_0, '0', qtgui_time_sink_x_0, '0']
+- [blocks_null_source_0, '0', blocks_stream_mux_1, '0']
 - [blocks_repack_bits_bb_0, '0', blocks_stream_to_vector_0, '0']
 - [blocks_stream_mux_0, '0', digital_constellation_modulator_0, '0']
+- [blocks_stream_mux_1, '0', virtual_sink_0, '0']
 - [blocks_stream_to_vector_0, '0', fadingui_ber_0, '0']
 - [blocks_tagged_stream_align_0, '0', blocks_repack_bits_bb_0, '0']
+- [blocks_throttle_0, '0', blocks_stream_mux_1, '1']
 - [blocks_throttle_0, '0', virtual_sink_0, '0']
 - [blocks_vector_source_x_0, '0', blocks_stream_mux_0, '0']
 - [channels_channel_model_0, '0', channels_selective_fading_model_0, '0']
@@ -918,11 +988,11 @@ connections:
 - [digital_corr_est_cc_0, '1', blocks_complex_to_mag_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', digital_cma_equalizer_cc_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', fadingui_netsink_4, '0']
+- [digital_pfb_clock_sync_xxx_0, '0', qtgui_const_sink_x_0, '0']
 - [fadingui_datasource_0, '0', digital_constellation_modulator_0, '0']
 - [fadingui_multipath_fading_0, '0', fadingui_netsink_0, '0']
 - [fadingui_multipath_fading_0, '0', virtual_sink_1, '0']
 - [fadingui_phasecorrection_0, '0', fadingui_netsink_3, '0']
-- [fadingui_phasecorrection_0, '0', qtgui_const_sink_x_0, '0']
 - [fadingui_phasecorrection_0, '0', virtual_sink_2, '0']
 - [virtual_source_0, '0', digital_constellation_decoder_cb_0, '0']
 - [virtual_source_1, '0', digital_pfb_clock_sync_xxx_0, '0']

@@ -52,8 +52,7 @@ class qpsk_sim(gr.top_block):
         self.fadingui_netsink_1 = fadingui.netsink(address='udp://localhost:31418', dtype="complex", vlen=1)
         self.fadingui_netsink_0_0 = fadingui.netsink(address='udp://localhost:31415', dtype="float", vlen=1)
         self.fadingui_netsink_0 = fadingui.netsink(address='udp://localhost:31416', dtype="complex", vlen=1)
-        self.fadingui_multipath_fading_0 = fadingui.multipath_fading(amplitudes=[0.12], delays=[1.8], los =True)
-        self.fadingui_ber_0 = fadingui.ber(vgl=testvec + list(np.zeros(4)), vlen=frame_len,address='udp://localhost:31420')
+        self.fadingui_ber_0 = fadingui.ber(vgl=list(np.zeros(frame_len)), vlen=frame_len,address='udp://localhost:31420')
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, 2 * np.pi / 100, rrc_taps, 32, 16, 1.5, 1)
         self.digital_corr_est_cc_0 = digital.corr_est_cc(access_code_symbols, 1, len(access_code_symbols) // 2, 0.9, digital.THRESHOLD_ABSOLUTE)
         self.digital_constellation_modulator_0 = digital.generic_mod(
@@ -66,6 +65,7 @@ class qpsk_sim(gr.top_block):
             log=False)
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(qpsk_const)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(15, 1, 2e-3, 1)
+        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, ((2*carrier_freq)/(3*10e8))/samp_rate, False, 4.0, 21, (0,1.8), (1,0.12), 8 )
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=100e-3,
             frequency_offset=2e-3,
@@ -95,7 +95,9 @@ class qpsk_sim(gr.top_block):
         self.connect((self.blocks_tagged_stream_align_0, 0), (self.blocks_repack_bits_bb_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.channels_channel_model_0, 0))
         self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_stream_mux_0, 0))
-        self.connect((self.channels_channel_model_0, 0), (self.fadingui_multipath_fading_0, 0))
+        self.connect((self.channels_channel_model_0, 0), (self.channels_selective_fading_model_0, 0))
+        self.connect((self.channels_selective_fading_model_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
+        self.connect((self.channels_selective_fading_model_0, 0), (self.fadingui_netsink_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.digital_corr_est_cc_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.fadingui_netsink_1, 0))
         self.connect((self.digital_constellation_decoder_cb_0, 0), (self.blocks_tagged_stream_align_0, 0))
@@ -104,8 +106,6 @@ class qpsk_sim(gr.top_block):
         self.connect((self.digital_corr_est_cc_0, 0), (self.fadingui_phasecorrection_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_cma_equalizer_cc_0, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.fadingui_netsink_4, 0))
-        self.connect((self.fadingui_multipath_fading_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
-        self.connect((self.fadingui_multipath_fading_0, 0), (self.fadingui_netsink_0, 0))
         self.connect((self.fadingui_phasecorrection_0, 0), (self.digital_constellation_decoder_cb_0, 0))
         self.connect((self.fadingui_phasecorrection_0, 0), (self.fadingui_netsink_3, 0))
 
@@ -145,6 +145,7 @@ class qpsk_sim(gr.top_block):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
+        self.channels_selective_fading_model_0.set_fDTs(((2*self.carrier_freq)/(3*10e8))/self.samp_rate)
 
     def get_rrc_taps(self):
         return self.rrc_taps
@@ -170,6 +171,7 @@ class qpsk_sim(gr.top_block):
 
     def set_carrier_freq(self, carrier_freq):
         self.carrier_freq = carrier_freq
+        self.channels_selective_fading_model_0.set_fDTs(((2*self.carrier_freq)/(3*10e8))/self.samp_rate)
 
     def get_access_code_symbols(self):
         return self.access_code_symbols
