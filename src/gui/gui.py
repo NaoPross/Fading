@@ -56,25 +56,29 @@ locked_plot       = net.network_constellation_plot(url="udp://localhost:31419", 
 constellation_plots = [channel_plot, synchronized_plot, equalized_plot, locked_plot]
 network_plots = [time_plot] + constellation_plots
 
-# Where to place the network plot windows
-plot_window_positions = {
-    time_plot:         (0, 425),
-    channel_plot:      (800, 25),
-    synchronized_plot: (1360, 25),
-    equalized_plot:    (800, 425),
-    locked_plot:       (1360, 425),
-}
-
-
+const_plots_start     = (800, 25)
 const_plot_win_width  = 560
-const_plot_win_height = 400
+const_plot_win_height = 560
 
+# size of the plot windows
 plot_window_sizes = {
     time_plot: (800, 400),
     channel_plot:      (const_plot_win_width, const_plot_win_height),
     synchronized_plot: (const_plot_win_width, const_plot_win_height),
     equalized_plot:    (const_plot_win_width, const_plot_win_height),
     locked_plot:       (const_plot_win_width, const_plot_win_height),
+}
+
+# Where to place the network plot windows
+plot_window_positions = {
+    time_plot:         (0, 425),
+    channel_plot:      (const_plots_start),
+    synchronized_plot: (const_plots_start[0] + const_plot_win_width, \
+                        const_plots_start[1]),
+    equalized_plot:    (const_plots_start[0], \
+                        const_plots_start[1] + const_plot_win_height),
+    locked_plot:       (const_plots_start[0] + const_plot_win_width, \
+                        const_plots_start[1] + const_plot_win_height),
 }
 
 # Wheter contellation plots axes are locked
@@ -231,20 +235,18 @@ with window(label="Time domain", width=800, height=400, pos=(0,425), tag=time_pl
 
 #TO DO:BER von GNU Radio anzeigen 
 
-with theme(tag= "ber_window"):
+with theme(tag="ber_window"):
         with theme_component(mvAll):
             add_theme_style(mvStyleVar_WindowTitleAlign, 0.5)
             add_theme_style(mvStyleVar_WindowRounding, 5)
             add_theme_style(mvStyleVar_WindowBorderSize, 1)#Rad ein und aus Schalten 
 
-with window(label="Bit Error Rate ", width=300, height=150, pos=(1200,875), no_title_bar = True, no_move=True, no_collapse= True) as ber_window : 
-
-    add_text("The Bit Error Rate is:", pos=(35,10))
-
-    with theme(tag= "button_ber"):
+with window(label="Bit Error Rate ", width=300, height=150, pos=(200,875)) as ber_window:
+    add_text("The Bit Error Rate is:")
+    with theme(tag="button_ber"):
         with theme_component(mvButton):
-            add_theme_color(mvThemeCol_Button,(135, 206, 255))#Blau
-            add_theme_color(mvThemeCol_Text,(0,0,0))#Schwarz
+            add_theme_color(mvThemeCol_Button,(135, 206, 255)) #Blau
+            add_theme_color(mvThemeCol_Text,(0,0,0)) #Schwarz
             add_theme_style(mvStyleVar_FrameRounding, 5)
 
     add_button(label="BER", height=60, width=150,pos=(75,60))
@@ -256,16 +258,16 @@ with window(label="Bit Error Rate ", width=300, height=150, pos=(1200,875), no_t
 #================================================
 # Picture Window
 
-def add_and_load_image(image_path):
-    width, height, channels, data = load_image(image_path)
-
-    with texture_registry() as reg_id:
-        texture_id = add_static_texture(width, height, data, parent=reg_id)
-
-    return add_image(texture_id)
-
-with window(label="Picture", width=400, height=300, pos=(0,825)) as picture_window : 
-    add_and_load_image("lena512color.png") #TO DO Problem lösen 
+# def add_and_load_image(image_path):
+#     width, height, channels, data = load_image(image_path)
+# 
+#     with texture_registry() as reg_id:
+#         texture_id = add_static_texture(width, height, data, parent=reg_id)
+# 
+#     return add_image(texture_id)
+# 
+# with window(label="Picture", width=400, height=300, pos=(0,825)) as picture_window : 
+#     add_and_load_image("lena512color.png") #TO DO Problem lösen 
 
 #================================================
 # Start GUI and main loop
