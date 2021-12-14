@@ -61,8 +61,8 @@ class netsink(gr.sync_block):
         return bytes(values, "ascii")
 
     def work(self, input_items, output_items):
-        # FIXME: it is probably better NOT to send *every* sample
-        inp = input_items[0]
+        # send only every k-th sample
+        inp = input_items[0][::3]
         inp_len = len(inp)
         blocksize = 1024
 
