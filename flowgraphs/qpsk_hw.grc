@@ -131,7 +131,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 1e6
+    value: 5e5
   states:
     bus_sink: false
     bus_source: false
@@ -361,7 +361,7 @@ blocks:
     minoutbuf: '0'
     sps: '1'
     symbols: access_code_symbols
-    threshold: '0.85'
+    threshold: '0.7'
     threshold_method: digital.THRESHOLD_ABSOLUTE
   states:
     bus_sink: false
@@ -386,7 +386,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [520, 1100.0]
+    coordinate: [520, 1084.0]
     rotation: 0
     state: enabled
 - name: digital_pfb_clock_sync_xxx_0
@@ -424,7 +424,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1184, 1300.0]
+    coordinate: [1184, 1292.0]
     rotation: 0
     state: true
 - name: fadingui_datasource_0
@@ -1000,7 +1000,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [312, 692.0]
+    coordinate: [336, 684.0]
     rotation: 0
     state: true
 - name: uhd_usrp_source_0
@@ -1450,7 +1450,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [56, 764.0]
+    coordinate: [80, 756.0]
     rotation: 0
     state: true
 

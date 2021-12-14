@@ -81,7 +81,7 @@ class qpsk_hw(gr.top_block, Qt.QWidget):
         self.sps = sps = 4
         self.nfilts = nfilts = 32
         self.excess_bw = excess_bw = 0.35
-        self.samp_rate = samp_rate = 1e6
+        self.samp_rate = samp_rate = 5e5
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), excess_bw, 45*nfilts)
         self.qpsk_const = qpsk_const = digital.constellation_qpsk().base()
         self.frame_len = frame_len = len(testvec) +4
@@ -210,7 +210,7 @@ class qpsk_hw(gr.top_block, Qt.QWidget):
         self.fadingui_ber_0 = fadingui.ber(vgl=testvec + list(np.zeros(4)), vlen=frame_len)
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, 2 * np.pi / 100, rrc_taps, 32, 16, 1.5, 1)
         self.digital_lms_dd_equalizer_cc_0 = digital.lms_dd_equalizer_cc(15, 3e-3, 1, qpsk_const)
-        self.digital_corr_est_cc_0 = digital.corr_est_cc(access_code_symbols, 1, len(access_code_symbols) // 2, 0.85, digital.THRESHOLD_ABSOLUTE)
+        self.digital_corr_est_cc_0 = digital.corr_est_cc(access_code_symbols, 1, len(access_code_symbols) // 2, 0.7, digital.THRESHOLD_ABSOLUTE)
         self.digital_constellation_modulator_0 = digital.generic_mod(
             constellation=qpsk_const,
             differential=False,
