@@ -257,7 +257,8 @@ In this part the fading blocks for the simulation are added. Tow different types
 \subsection{Fading with Discrete-time model}
 
 For the statical version according to \ref{sec:discrete-time-model} to implement and illustrat the fading effect, a separate block was created and implemented in the channel. Nearer shown in \ref{lst:fir-block}. This block is based on a FIR filter. It can be displayed with a direct path or without one. With the help of this filter, the delay of the line of side paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed path. Unfortunately, these simulation values do not correspond to the realety, because too many incalculable side effects occur, which aren't possiple to ilustrate in this simulation.
-This block was additionally implemented with the method described in \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample. Which in turn means that the other sampled values do not add up to zero.Thus, they will be distributed among the other whole numbers. A window function could also be implemented to limit these values. Here none was implemented because the sinc function is restricted.
+This block was additionally implemented with the method described in \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample. Which in turn means that the other sampled values do not add up to zero.
+Thus, they will be distributed among the other whole numbers. A window function could also be implemented to limit these values. Here none was implemented because the sinc function is restricted.
 
 \skelpar[5]{
 	Discrabe a perfect plot
@@ -316,17 +317,21 @@ This block was additionally implemented with the method described in \ref{sec:fr
 
 % TODO: Quelle https://ch.mathworks.com/help/comm/ug/fading-channels.html?searchHighlight=rician%20fading&s_tid=srchtitle_rician%2520fading_2#a1070327427b1
 
+In order to represent the effect of the multipaht fading not only statically, a second model was created using the Frequency Selective Fading Model from Gnu Radio, according to \ref{statistical_model}.which was implemented after the algorithm from the paper \cite{Alimohammad2009}. It is based on the sum-of sinusoid principal(SOS)
 
 \begin{german}
-	Um den effect des multipaht fadinngs nicht nur statisch darzu stellen, wurde ein zweites model kreiert mit hilfe des Frequency Selective Fading Models von Gnu Radio, gemäss \ref{statistical_model}.
-	Welcher nach dem Algorthmus aud dem paper \cite{Alimohammad2009} implementiert wurde. 
+	Um den effect des multipaht fadinngs nicht nur statisch darzu stellen, wurde ein zweites model kreiert mit hilfe des Frequency Selective Fading Models von Gnu Radio, gemäss \ref{statistical_model}.Welcher nach dem Algorthmus aud dem paper \cite{Alimohammad2009} implementiert wurde. Er basiert auf dem sum-of sinusoid princip(SOS)
+	
 	Um die resultate einigermassse nach vollziehen zu können wurde ein MATLAP model zur veranschaulichung erstelle.
 	Um ein realistisches beispiel zu haben wurden werte aus dem Skript \cite{Mathis} genomen
 	
 \end{german}
 
 Some realistic value for this block are:
-The first delay when theirs non line of side is zero. The second delayed path depend on the environment of measurement. In an indoor enviroment it is usaely between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on on the bandwith 
+The first delay when theirs non line of side should be zero. The second delayed path depend on the environment of measurement. In an indoor enviroment it is usually between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on on the bandwidth. 
+
+
+Rician fading factor K = 0 = Rylehnt Model 
 
 \skelpar[5]{
 	Simulation mit Werten aus dem Skript

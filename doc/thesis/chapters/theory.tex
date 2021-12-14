@@ -231,10 +231,16 @@ An intuitive parameter to quantify how dispersive channel is, is to take the tim
 as is done in \cite{Gallager}. However since in reality some paths get more attenuated than others (\(c_k(t)\) parameters) it also not uncommon to define the delay spread as a weighted mean or even as a statistical second moment (RMS value), where mean tap power \(\expectation\{|c_k(t)|^2\}\) is taken into account \cite{Mathis,Messier}. More sophisticated definitions of delay spread will be briefly mentioned later in section \ref{sec:statistical-model}.
 
 Another important parameter for quantifying dispersion is \emph{coherence bandwidth}, a measure how 
+\skelpar{sentence}
+
+% TODO: End the sentence
 
 \subsection{Effects of multipath fading on modulation constellations}
 
-\skelpar{Beschreiben warnn die Werte hübsch sind}
+% TODO : Can we sai it that way /dose it need to be in the implementation Part?
+
+It is to mention that not every constellation of parameter for a fading illustration leads to a satisfying  plot constellation.
+For example in a Discrete-time Model: the same delay as the samples per Symbol or a multiple of it leads to a special case, where we see the constellation are around the modulate signal points, when there is no line of side path. This is because of \skelpar{Beschreiben warnn die Werte hübsch sind}
 
 \subsection{Discrete-time model} \label{sec:discrete-time-model}
 
@@ -274,10 +280,10 @@ is different from \eqref{eqn:multipath-impulse-response} consider again the plot
 \end{figure}
 
 From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-response} can be interpreted as a simple tapped delay line, schematically drawn in \figref{fig:tapped-delay-line}, which confirms that the presented mathematical model is indeed a FIR filter. Simple multipath channels can be simulated with just a few lines of code, for example the data for the static fading channel in \figref{fig:multipath-frequency-response-plots} is generated in just four lines of Python. The difficulty of fading channels in practice lies in the estimation of the constantly changing parameters \(c_k(t)\) and \(\tau_k(t)\).
-
+%TODO: Code ? 
 
 \subsection{Simulating multipath CIR with FIR filters} \label{sec:fractional-delay}
-% TO Do quelle: http://users.spa.aalto.fi/vpv/publications/vesan_vaitos/ch3_pt1_fir.pdf
+% TODO quelle: http://users.spa.aalto.fi/vpv/publications/vesan_vaitos/ch3_pt1_fir.pdf
 
 \begin{figure}
 	\centering
@@ -327,7 +333,7 @@ Recall that \(h_l(m)\) is a function of time because \(c_k\) and \(\tau_k\) chan
 for some parameter \(\sigma\). Loosely speaking, the distribution needs to be ``circular'' because \(h_l\) is a complex number, which is a ``two dimensional number'', it can however be understood as \(\Re{h_l} \sim \mathcal{N}(0, \sigma^2)\) and \(\Im{h_l} \sim \mathcal{N}(\mu, \sigma^2)\), i.e. having each component being normally distributed.
 
 
-% TO DO : Picture of gaussian distribution
+%TODO : Picture of gaussian distribution
 \begin{subequations}
 	\begin{align}
 		R_{l} (k) &= \E{h_l(m) h_l^*(m+k)}, \\
@@ -352,7 +358,32 @@ for some parameter \(\sigma\). Loosely speaking, the distribution needs to be ``
 	}
 \end{figure}
 
+%TODO :Maby some correction on the descreption, because mentionet earlyer
 \paragraph{NLOS case}
+
+%TODO: Quellen : Skript Mathis und Buch Grundlagen der digitalen Informationsübertagung Peter Adam  Höher
+
+ 
+ In the case of the Rayleight distribution the signal has no line of sight. So to find the probability function of the amplitutes of this superimposition of those infinity of distribute signals:
+\begin{equation} \label{eqn:rayleight fading}
+ 	f(t) = \lim_{N\rightarrow\infty} \frac{1}{\sqrt{N}}\sum_{n=1}^{N} e^{j(\Theta +2\pi jf t)}.
+ \end{equation}  
+whish are nominatet with the factor \(\frac{1}{\sqrt{N}}\) so that the \(\E{|f(t)|²}=1\) and the fact that we are looking at the complex basiband and this prosses are independent and in this the gaussian distribution it can be said that is zero \(\E{f(t)}=0\)
+ 
+
+ It can be explain in two different way with the help of  %TODO: How do you say Quadraturkomponenten in english?
+ quadraturcomponents or the help of the amplitude in time and the associated phase \(\Theta(t) \in[\,0,2\pi)\,\)
+ 
+
+
+
+So it can be said that the amplitude of the rayleightdistribution 
+
+%\begin{equation} \label{eqn:rayleight_fading_probabilety_dencety}
+%	p(a)= 2a \exp{-a^2}
+%
+%\end{equation}
+%TODO: Why not the same as in the skript
 
 \skelpar[4]{Explain statistical model with Rayleighan distribution.}
 \begin{equation}
