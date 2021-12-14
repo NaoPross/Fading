@@ -59,7 +59,7 @@ class network_plot(udpsource):
     """
     Wraps a udpsource while at the same time intefacing with DearPyGUI as a plot element.
     """
-    def __init__(self, url, dtype, nsamples , **kwargs):
+    def __init__(self, url, dtype, nsamples, **kwargs):
         udpsource.__init__(self, url, dtype)
         self.nsamples = nsamples
 
@@ -78,6 +78,14 @@ class network_plot(udpsource):
         self.yvalues.extend(np.zeros(self.nsamples))
 
     def _init_dpg_plot(self, **kwargs):
+        if "tag" in kwargs:
+            self.tag = kwargs["tag"]
+
+            self.series_tag = f"{self.tag}_series"
+            self.xaxis_tag = f"{self.tag}_xaxis"
+            self.yaxis_tag = f"{self.tag}_yaxis"
+            self.window_tag = f"window_{self.tag}"
+
         self.plot = dpg.plot(**kwargs)
 
     # Map `with' expressions to the underlying plot

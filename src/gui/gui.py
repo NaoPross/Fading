@@ -39,6 +39,48 @@ show_demo()
 show_debug()
 
 #================================================
+# Globl variables
+
+# Network Plots
+time_plot         = net.network_plot(url="udp://localhost:31415", dtype=float, \
+                        nsamples=500, tag="time_plot", label="Time plot")
+channel_plot      = net.network_constellation_plot(url="udp://localhost:31416", \
+                        nsamples=200, tag="channel_plot", label="Channel")
+synchronized_plot = net.network_constellation_plot(url="udp://localhost:31417", \
+                        nsamples=200, tag="synchronized_plot",  label="Synchronized")
+equalized_plot    = net.network_constellation_plot(url="udp://localhost:31418", \
+                        nsamples=200, tag="equalized_plot",  label="Equalized")
+locked_plot       = net.network_constellation_plot(url="udp://localhost:31419", \
+                        nsamples=200, tag="locked_plot",  label="Locked")
+
+constellation_plots = [channel_plot, synchronized_plot, equalized_plot, locked_plot]
+network_plots = [time_plot] + constellation_plots
+
+# Where to place the network plot windows
+plot_window_positions = {
+    time_plot:         (0, 425),
+    channel_plot:      (800, 25),
+    synchronized_plot: (1360, 25),
+    equalized_plot:    (800, 425),
+    locked_plot:       (1360, 425),
+}
+
+
+const_plot_win_width  = 560
+const_plot_win_height = 400
+
+plot_window_sizes = {
+    time_plot: (800, 400),
+    channel_plot:      (const_plot_win_width, const_plot_win_height),
+    synchronized_plot: (const_plot_win_width, const_plot_win_height),
+    equalized_plot:    (const_plot_win_width, const_plot_win_height),
+    locked_plot:       (const_plot_win_width, const_plot_win_height),
+}
+
+# Wheter contellation plots axes are locked
+plots_locked = True
+
+#================================================
 # Set up theme and looks
 
 # Font
@@ -62,26 +104,6 @@ with theme(tag="constellation_series_theme"):
 def exit(sender, data):
     stop_dearpygui()
 
-# Flow graph window
-def on_rx_node_link(sender, app_data):
-    link_id_1, link_id_2 = app_data
-    add_node_link(link_id_1, link_id_2, parent=sender)
-
-def on_rx_node_delink(sender, app_data):
-    link_id = app_data
-    # do nothing
-    # delete_item(link_id)
-
-# add and load images
-def add_and_load_image(image_path):
-    width, height, channels, data = load_image(image_path)
-
-    with texture_registry() as reg_id:
-        texture_id = add_static_texture(width, height, data, parent=reg_id)
-
-    return add_image(texture_id)
-
-
 #================================================
 # Primary Window
 
@@ -91,21 +113,50 @@ with window(tag="primary_window"):
 
     with menu_bar():
         with menu(label="Settings"):
-            add_menu_item(label="Toggle Fullscreen",callback=toggle_viewport_fullscreen)
-            add_menu_item(label="Minimize",callback=minimize_viewport)
-            add_menu_item(label="Close", callback=exit)
+            add_menu_item(label="Toggle Fullscreen", callback=toggle_viewport_fullscreen)
+            add_menu_item(label="Minimize", callback=minimize_viewport)
+            add_menu_item(label="Close", callback=exit, tag="menu_settings_close")
 
             with theme(tag="close"):
                 with theme_component():
                     add_theme_color(mvThemeCol_Text,(255, 64, 64))
                     add_theme_style(mvStyleVar_Alpha, 5)
-            bind_item_theme(last_item(),"close")
+            bind_item_theme("menu_settings_close", "close")
+
+        with menu(label="Windows"):
+            def restore_windows():
+                global plot_window_sizes, plot_window_positions
+
+                for plot in network_plots:
+                    configure_item(plot.window_tag,
+                            width=plot_window_sizes[plot][0],
+                            height=plot_window_sizes[plot][1],
+                            pos=plot_window_positions[plot])
+
+            add_menu_item(label="Restore Default Positions", callback=restore_windows)
+
+            def unlock_plots():
+                global plots_locked
+                if plots_locked:
+                    for plot in constellation_plots:
+                        set_axis_limits_auto(plot.xaxis_tag)
+                        set_axis_limits_auto(plot.yaxis_tag)
+                else:
+                    for plot in constellation_plots:
+                        set_axis_limits(plot.xaxis_tag, -2, 2)
+                        set_axis_limits(plot.yaxis_tag, -2, 2)
+
+                plots_locked = not plots_locked
+
+            add_menu_item(label="Unlocked plots", callback=unlock_plots, check=True)
+
+
 
 #================================================
 # Flow Graph Window
 
 with window(label="RX DSP Flow Graph", width=800, height=400, pos=(0,25), tag="rx_win"):
-    with node_editor(callback=on_rx_node_link, delink_callback=on_rx_node_delink):
+    with node_editor():
         with node(label="USRP Source", pos=(20,100)):
             with node_attribute(tag="src_out", attribute_type=mvNode_Attr_Output):
                 add_text("Signal from antenna")
@@ -139,98 +190,41 @@ with window(label="RX DSP Flow Graph", width=800, height=400, pos=(0,25), tag="r
 #================================================
 # Network plots
 
-time_plot         = net.network_plot(url="udp://localhost:31415", dtype=float, \
-                        nsamples=500, tag="time_plot", label="Time plot")
-channel_plot      = net.network_constellation_plot(url="udp://localhost:31416", \
-                        nsamples=200, tag="channel_plot", label="Channel")
-synchronized_plot = net.network_constellation_plot(url="udp://localhost:31417", \
-                        nsamples=200, tag="synchronized_plot",  label="Synchronized")
-equalized_plot    = net.network_constellation_plot(url="udp://localhost:31418", \
-                        nsamples=200, tag="equalized_plot",  label="Equalized")
-locked_plot       = net.network_constellation_plot(url="udp://localhost:31419", \
-                        nsamples=200, tag="locked_plot",  label="Locked")
+def make_constellation_plot_window(plot, label):
+    with window(label=label, no_collapse=True,
+            width=plot_window_sizes[plot][0], \
+            height=plot_window_sizes[plot][1], \
+            pos=plot_window_positions[plot], \
+            tag=plot.window_tag):
+        with plot:
+            # Fit to width of window
+            configure_item(plot.tag, width=-1, height=-1)
 
-network_plots = {
-    time_plot:         "time_plot_series",
-    channel_plot:      "channel_plot_series",
-    synchronized_plot: "synchronized_plot_series",
-    equalized_plot:    "equalized_plot_series",
-    locked_plot:       "locked_plot_series",
-}
+            # Create and configure axis
+            add_plot_axis(mvXAxis, label="In-Phase", tag=plot.xaxis_tag)
+            add_plot_axis(mvYAxis, label="Quadrature", tag=plot.yaxis_tag)
 
-with window(label="Time domain", width=800, height=350, pos=(0,425)):
+            add_plot_legend()
+            set_axis_limits(plot.xaxis_tag, -2, 2)
+            set_axis_limits(plot.yaxis_tag, -2, 2)
+
+            # Add series from network
+            add_scatter_series(plot.xdata, plot.ydata, \
+                label=label, parent=plot.xaxis_tag, tag=plot.series_tag)
+            bind_item_theme(plot.series_tag, "constellation_series_theme")
+
+make_constellation_plot_window(channel_plot, "Channel")
+make_constellation_plot_window(synchronized_plot, "Synchronized")
+make_constellation_plot_window(equalized_plot, "Equalized")
+make_constellation_plot_window(locked_plot, "Locked")
+
+with window(label="Time domain", width=800, height=400, pos=(0,425), tag=time_plot.window_tag):
     with time_plot:
-        configure_item("time_plot", width=-1, height=-1)
+        configure_item(time_plot.tag, width=-1, height=-1)
 
-        add_plot_axis(mvXAxis, label="Time", tag="xaxis_time")
-        add_plot_axis(mvYAxis, label="Amplitude", tag="yaxis_time")
-        add_line_series(time_plot.xdata, time_plot.ydata, parent="yaxis_time", tag=network_plots[time_plot])
-
-with window(label="Channel", width=560, height=400, pos=(800,25)):
-    with channel_plot:
-        configure_item("channel_plot", width=-1, height=-1)
-
-        add_plot_axis(mvXAxis, label="In-Phase", tag="inphase_channel")
-        add_plot_axis(mvYAxis, label="Quadrature", tag="quadrature_channel")
-
-        add_plot_legend()
-        set_axis_limits("inphase_channel", -2.5, 2.5)
-        set_axis_limits("quadrature_channel", -2.5, 2.5)
-
-        series_tag = network_plots[channel_plot]
-        add_scatter_series(channel_plot.xdata, channel_plot.ydata, \
-            label = "Channel", parent="inphase_channel", tag=series_tag)
-        bind_item_theme(series_tag, "constellation_series_theme")
-
-with window(label="Synchronized", width=560, height=400, pos=(1360,25)):
-    with synchronized_plot:
-        configure_item("synchronized_plot", width=-1, height=-1)
-
-        add_plot_axis(mvXAxis, label="In-Phase", tag="inphase_synchronized")
-        add_plot_axis(mvYAxis, label="Quadrature", tag="quadrature_synchronized")
-
-        add_plot_legend()
-        set_axis_limits("inphase_synchronized", -2.5, 2.5)
-        set_axis_limits("quadrature_synchronized", -2.5, 2.5)
-
-        series_tag = network_plots[synchronized_plot]
-        add_scatter_series(synchronized_plot.xdata, synchronized_plot.ydata, \
-            label="Synchronized", parent="inphase_synchronized", tag=series_tag)
-        bind_item_theme(series_tag, "constellation_series_theme")
-
-with window(label="Equalized", width=560, height=400, pos=(800,425)):
-    with equalized_plot:
-        configure_item("equalized_plot", width=-1, height=-1)
-
-        add_plot_legend()
-        add_plot_axis(mvXAxis, label="In-Phase", tag="inphase_equalized")
-        add_plot_axis(mvYAxis, label="Quadrature", tag="quadrature_equalized")
-
-        add_plot_legend()
-        set_axis_limits("inphase_equalized", -1.5, 1.5)
-        set_axis_limits("quadrature_equalized", -1.5, 1.5)
-
-        series_tag = network_plots[equalized_plot]
-        add_scatter_series(equalized_plot.xdata, equalized_plot.ydata, \
-            label="Equalized", parent="inphase_equalized", tag=series_tag)
-        bind_item_theme(series_tag, "constellation_series_theme")
-
-with window(label="Locked", width=560, height=400, pos=(1360,425)):
-    with locked_plot:
-        configure_item("locked_plot", width=-1, height=-1)
-
-        add_plot_legend()
-        add_plot_axis(mvXAxis, label="In-Phase", tag="inphase_locked")
-        add_plot_axis(mvYAxis, label="Quadrature", tag="quadrature_locked")
-
-        add_plot_legend()
-        set_axis_limits("inphase_locked", -1.5, 1.5)
-        set_axis_limits("quadrature_locked", -1.5, 1.5)
-
-        series_tag = network_plots[locked_plot]
-        add_scatter_series(locked_plot.xdata, locked_plot.ydata, \
-            label="Locked", parent="inphase_locked", tag=series_tag)
-        bind_item_theme(series_tag, "constellation_series_theme")
+        add_plot_axis(mvXAxis, label="Time", tag=time_plot.xaxis_tag)
+        add_plot_axis(mvYAxis, label="Amplitude", tag=time_plot.yaxis_tag)
+        add_line_series(time_plot.xdata, time_plot.ydata, parent=time_plot.xaxis_tag, tag=time_plot.series_tag)
 
 #================================================
 # Bit Error Rate Window
@@ -261,6 +255,15 @@ with window(label="Bit Error Rate ", width=300, height=150, pos=(1200,875), no_t
 
 #================================================
 # Picture Window
+
+def add_and_load_image(image_path):
+    width, height, channels, data = load_image(image_path)
+
+    with texture_registry() as reg_id:
+        texture_id = add_static_texture(width, height, data, parent=reg_id)
+
+    return add_image(texture_id)
+
 with window(label="Picture", width=400, height=300, pos=(0,825)) as picture_window : 
     add_and_load_image("lena512color.png") #TO DO Problem lösen 
 
@@ -273,8 +276,8 @@ set_primary_window("primary_window", True)
 
 # Main loop
 while is_dearpygui_running():
-    for plt, tag in network_plots.items():
-        plt.refresh_series(tag)
+    for plt in network_plots:
+        plt.refresh_series(plt.series_tag)
 
     render_dearpygui_frame()
 
