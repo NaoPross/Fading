@@ -3,11 +3,15 @@
 #
 # Copyright 2021 Sara Cinzia Halter, Naoki Pross.
 
+import os
 import socket
 from urllib.parse import urlparse
 
 import numpy as np
 from gnuradio import gr
+
+from fadingui.logger import get_logger
+log = get_logger("netsink")
 
 class netsink(gr.sync_block):
     """
@@ -26,7 +30,6 @@ class netsink(gr.sync_block):
         dt = to_numpy[dtype]
         if vlen > 1:
             dt = np.dtype(dt, (vlen,))
-        print(dt)
 
         gr.sync_block.__init__(self,
             name="Network Sink",
@@ -34,9 +37,28 @@ class netsink(gr.sync_block):
             out_sig=None)
 
         # Create a socket and parse remote machine url
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.url = urlparse(address)
-        self.srv = (self.url.hostname, self.url.port)
+        self.srv = None
+
+        if self.url.scheme == "udp":
+            log.debug(f"Creating UDP socket to {self.srv}")
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.srv = (self.url.hostname, self.url.port)
+            self.socket.connect(self.srv)
+
+        elif self.url.scheme == "file":
+            log.debug(f"Creating UNIX file socket to {self.url.path}")
+            self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+            self.srv = self.url.path
+            try:
+                self.socket.connect(self.srv)
+            except FileNotFoundError:
+                log.error("Cannot find socket file, is the server (GUI) running?")
+                raise
+
+        else:
+            raise NotImplemented
+
 
     def send(self, data):
         """
@@ -46,7 +68,11 @@ class netsink(gr.sync_block):
         @return Number of bytes that were actually sent
         """
         assert type(data) == bytes
-        return self.socket.sendto(data, self.srv)
+        try:
+            return self.socket.sendto(data, self.srv)
+        except socket.error as err:
+            log.warn(f"No data was sent: {err}")
+            return 0
 
     def encode(self, data):
         """
@@ -62,7 +88,7 @@ class netsink(gr.sync_block):
 
     def work(self, input_items, output_items):
         # send only every k-th sample
-        inp = input_items[0][::3]
+        inp = input_items[0][::2]
         inp_len = len(inp)
         blocksize = 1024
 

@@ -1,3 +1,4 @@
+import os
 import select
 import socket
 from urllib.parse import urlparse
@@ -13,18 +14,34 @@ class udpsource:
     Creates an UDP listening socket
     """
     def __init__(self, url, dtype, timeout=0.05):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.url = urlparse(url)
         self.dtype = dtype
         self.timeout = timeout
+
+        if self.url.scheme == "udp":
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        elif self.url.scheme == "file":
+            try:
+                os.unlink(self.url.path)
+            except OSError:
+                if os.path.exists(self.url.path):
+                    raise
+
+            self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+        else:
+            raise NotImplemented
 
     def __del__(self):
         self.sock.close()
 
     def bind(self):
         self.sock.setblocking(False)
-        self.sock.bind((self.url.hostname, self.url.port))
-        # self.sock.listen()
+        if self.url.scheme == "udp":
+            self.sock.bind((self.url.hostname, self.url.port))
+        elif self.url.scheme == "file":
+            self.sock.bind(self.url.path)
+
+        # self.sock.listen(1)
 
     def read(self, nblocks):
         # TODO: run in a separate thread (it will be painful to implement)
@@ -33,7 +50,7 @@ class udpsource:
             return None
 
         # read from socket
-        blocksize = 1024 * 4
+        blocksize = 1024
         string = ready[0].recv(nblocks * blocksize).decode("ascii")
 
         # decode string, remove empty values

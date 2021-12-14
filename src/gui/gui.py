@@ -45,13 +45,13 @@ show_debug()
 time_plot         = net.network_plot(url="udp://localhost:31415", dtype=float, \
                         nsamples=500, tag="time_plot", label="Time plot")
 channel_plot      = net.network_constellation_plot(url="udp://localhost:31416", \
-                        nsamples=200, tag="channel_plot", label="Channel")
+                        nsamples=512, tag="channel_plot", label="Channel")
 synchronized_plot = net.network_constellation_plot(url="udp://localhost:31417", \
-                        nsamples=200, tag="synchronized_plot",  label="Synchronized")
+                        nsamples=512, tag="synchronized_plot",  label="Synchronized")
 equalized_plot    = net.network_constellation_plot(url="udp://localhost:31418", \
-                        nsamples=200, tag="equalized_plot",  label="Equalized")
+                        nsamples=512, tag="equalized_plot",  label="Equalized")
 locked_plot       = net.network_constellation_plot(url="udp://localhost:31419", \
-                        nsamples=200, tag="locked_plot",  label="Locked")
+                        nsamples=512, tag="locked_plot",  label="Locked")
 
 constellation_plots = [channel_plot, synchronized_plot, equalized_plot, locked_plot]
 network_plots = [time_plot] + constellation_plots
@@ -195,7 +195,7 @@ with window(label="RX DSP Flow Graph", width=800, height=400, pos=(0,25), tag="r
 # Network plots
 
 def make_constellation_plot_window(plot, label):
-    with window(label=label, no_collapse=True,
+    with window(label=label, no_collapse=True, no_close=True, \
             width=plot_window_sizes[plot][0], \
             height=plot_window_sizes[plot][1], \
             pos=plot_window_positions[plot], \
