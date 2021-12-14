@@ -88,11 +88,11 @@ plots_locked = True
 # Set up theme and looks
 
 # Font
-# with font_registry():
-#     # first argument ids the path to the .ttf or .otf file
-#     default_font = add_font("NotoSerifCJKjp-Medium.otf", 20)
-#     second_font = add_font("NotoSerifCJKjp-Medium.otf", 10)
-#     test = add_font("NotoSerifCJKjp-Medium.otf", 30)
+with font_registry():
+    # first argument ids the path to the .ttf or .otf file
+    default_font = add_font("res/ttf/Hack-Regular.ttf", 20)
+    # second_font = add_font("NotoSerifCJKjp-Medium.otf", 10)
+    # test = add_font("NotoSerifCJKjp-Medium.otf", 30)
 
 # Constellation diagrams
 with theme(tag="constellation_series_theme"):
@@ -113,7 +113,7 @@ def exit(sender, data):
 
 with window(tag="primary_window"):
     # Grössere Schrifftart/ Grösse für das ganze Dokument definiert
-    # bind_font(default_font) 
+    bind_font(default_font) 
 
     with menu_bar():
         with menu(label="Settings"):
