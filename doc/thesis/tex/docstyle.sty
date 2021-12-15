@@ -8,16 +8,16 @@
 \ProcessOptions\relax
 
 %% Page Margins (done with KOMA)
-% \PassOptionsToPackage{geometry}{
-% 	a4paper, showframe
-% }
-% \RequirePackage{geometry}
-% \AfterCalculatingTypearea{%
-% 	\geometry{%
-% 			inner = 1cm, outer = 1cm, includeheadfoot
-% 			top = 3cm, bottom = 3cm
-% 	}
-% }
+\PassOptionsToPackage{geometry}{
+	a4paper, showframe
+}
+\RequirePackage{geometry}
+\AfterCalculatingTypearea{%
+	\geometry{%
+			inner = 3cm, outer = 2.5cm, includeheadfoot,
+			top = 2cm, bottom = 2cm
+	}
+}
 
 %% Need colors
 \RequirePackage{xcolor}
