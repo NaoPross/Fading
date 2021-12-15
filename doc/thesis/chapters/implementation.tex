@@ -4,14 +4,22 @@
 
 \section{Overview}
 
-First of all the tools which were used in this theses are interdused; software and hardware. Then the sender and receiver chain are explained in detail and how they are implemented. This both chains are the same for the simulation itself and the hardware implementation. Also the channel in details are explained which is inportent for the simulation to illustrate the multipath fading effect. After some measurements are tried, with the help of the bit error rate, to compare it with the simulation.
+First of all the tools that were used in this project are introduced. Then it is explained how the sender and receiver chains are implemented. Except for the channel, there are no differences in the signal processing chains between the simulated and real flowgraphs (with hardware). Following are some channel simulations and measurements of the bit error rate (BER). Finally, the issues and the degree of completeness of our current implementation is discussed.
 
 \section{Software Stack}
 
 \subsection{GNU Radio}
+
 For both the signal processing and the simulations the GNU Radio (GR) toolkit was chosen, as it already had drivers for the USRP hardware. GR is an open-source free software framework that can be used to build signal processing chains and software defined radios (SDR). GR is composed of two parts: a C\texttt{++} library with Python bindings to write signal processing code, and GNU Radio Companion (GRC), a graphical user interface to more easily construct signal processing chains by representing signal processing algorithms as ``blocks'' that are chained together with arrows, essentially drawing a diagram called ``flow graph''. An example of a flow graph is shown in \figref{fig:flowgraph}.
 
 Internally GR works by keeping multiple memory buffers of samples, that are passed as pointers to the signal processing algorithms' ``work functions''. When the signal processing is complete, the output buffer of one block is given to the next block as input according to how they were connected in the flow graph. The structure of a block is shown in the Python listing \ref{lst:gr-block-py}. To improve performance GR creates a thread for each work function to parallelize the workload of the concurrently running signal processing blocks. For more details see the GNU Radio Wiki and User Manual in \cite{GRWiki}.
+
+\begin{figure}
+	\caption{
+		A GNU Radio flow graph.
+		\label{fig:flowgraph}
+	}
+\end{figure}
 
 {\newcommand{\placeholder}[1]{\textit{\(\langle\)\,\textrm{#1}\,\(\rangle\)}}
 \begin{lstlisting}[
@@ -43,7 +51,7 @@ To construct a graphical interface for a demonstration platform the Dear IMGUI (
 
 The DPG GUI communicates with the GR flow graphs using the IP/UDP protocol. This decision to separate the project into two parts that communicate over the IP network was made because it is not very easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configure flow graph on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time.
 
-Also as a side effect, in theory this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph.
+As a side effect, in theory this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph.
 
 \section{Hardware}
 
@@ -66,6 +74,7 @@ Also as a side effect, in theory this setup allows to have one computer running 
 As receivers and transmitter devices for the SDR setup two USRP B210 devices from Ettus Research were used. Some technical specifications are shown in \tabref{tab:usrp-specs}. GR provides off the shelf blocks that interface with the official API provided from Ettus Research.
 
 \section{Sender chain}
+
 \subsection{Data frame}
 
 \begin{figure}
@@ -133,7 +142,7 @@ The relevant observation to make in \eqref{eqn:xc-oop-copy} that since \(R_{aa}\
 
 \subsection{Implementing fine phase and frequency correction}
 
-To implement in GR what was discussed in \S\ref{sec:phasecorr} two blocks shown in \figref{fig:phasecorr-blocks} were used: a correlator estimator block, and a custom block. The former essentially implements the first 3 of the steps discussed at the end of \S\ref{sec:phasecorr}. The correlator estimator block is given a sequence of samples, and when the cross correlation between them and the input stream is higher than a certain threshold (90\% of the amplitude of a perfect autocorrelation), it produces a ``tag'' in the output stream, that contains the phase estimate.
+To implement in GR what was discussed in section \ref{sec:phasecorr} two blocks shown in \figref{fig:phasecorr-blocks} were used: a correlator estimator block, and a custom block. The former essentially implements the first 3 of the steps discussed at the end of section \ref{sec:phasecorr}. The correlator estimator block is given a sequence of samples, and when the cross correlation between them and the input stream is higher than a certain threshold (90\% of the amplitude of a perfect autocorrelation), it produces a ``tag'' in the output stream, that contains the phase estimate.
 
 Tags are GR's way of working with metadata that is attached to a sample. Internally tags are just polymorphic data structures containing a number indicating the absolute offset (in samples), and a pair of arbitrary values called ``key'' and ``value''. Tags are passed on from one block to the next like sample streams (unless the block specifies to do otherwise).
 
@@ -386,7 +395,6 @@ For generating the Byte error rate it is focus on byte-blocks of a specific leng
 		self.send(self.encode([trueber, ber_max, ber_avg]))
 		#Send the valuse to the GUI
 		return len(inp)
-	
 \end{lstlisting}
 
 
