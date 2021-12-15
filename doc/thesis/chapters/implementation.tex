@@ -341,10 +341,21 @@ Rician fading factor K = 0 = Rylehnt Model
 
 \subsection{Measurements}
 
+\skelpar[5]{
+	Do some masurements
+}
+
 \subsection{Empirical BER} \label{sec:ber}
 
-To find out how accurate the simulations are comparer with a simulation of the fadinng effect and test measurements, the byte error rate of the system is calculated. This is done with the help of a user specified \(k\)-byte test frame in the beginning of each vector. Implemented according to the code in \ref{lst:ber-block}. Every bit is compared with the test vector at the beginning  before the modulation and demodulation part. 
-Because of the fact that the test vector has some random bit at the end the bit error rate has always a value on average 32. 
+To find out how accurate the simulations are comparer with a simulation of the fadinng effect and tested measurements, the byte error rate of the system is calculated. This is done with the help of a user specified \(k\)-byte test frame in the beginning of each vector. Implemented according to the code in \ref{lst:ber-block}. Every bit is compared with the test vector at the beginning before the modulation and demodulation part. 
+Because of the fact that the test vector has some random bit at the end the bit error rate has always a value on average 32, even when its perfect match.  So to avoid high numbers this value is subtracted and only on focused on the positive values. 
+
+The vector which is used as test vector is: \([0x1f, 0x35] + [0x12, 0x48] \), because this numbers are well suited to compare.
+For generating the Byte error rate it is focus on byte-blocks of a specific length. So for each of this blocks compared with test vector there is a BER. To make it simpler or better said to avoid mistakes, the last 200 of this individual BER are taken to find an average and the highest value. 
+
+\skelpar[5]{
+	Maybe more 
+}
 
 
 
@@ -380,9 +391,6 @@ Because of the fact that the test vector has some random bit at the end the bit 
 
 
 
-\skelpar[5]{
-	Discuss how i did that 
-}
 
 
 \begin{figure}
