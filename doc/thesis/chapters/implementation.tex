@@ -270,14 +270,12 @@ For the statical version according to \ref{sec:discrete-time-model} to implement
 This block was additionally implemented with the method described in \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample. Which in turn means that the other sampled values do not add up to zero.
 Thus, they will be distributed among the other whole numbers. A window function could also be implemented to limit these values. Here none was implemented because the sinc function is restricted.
 
+%TODO: Show some plot
 \skelpar[5]{
 	Discrabe a perfect plot
 }
 
-%\begin{german}
-%Für die statische gemäss \ref{sec:discrete-time-model} implementation und veranschaulichen des Fading effekts wurde ein eigener Block kreaiert und in den Channel implementiert \ref{lst:fir-block}. Dieser Block basiert auf einem FIR Filter. Es kann mit direcktem Pfad oder ohne dargestellt werden (Line of Sight). Mit Hilfe dieses Filters wird die Verspätung, anhand Zeitlicher delay, der nebenpfaden dargestellt. Es ist möglich beliebig viele dieser Pfade mit unterschiedlicher stärke zu simulieren, solange das für jeden verspäteten Pfad eine dazugehörige Amplute angegeben wird. Leider werden diese simulationswerte nicht mit der Wircklichkeit übereinstien, da zuviele unkalkulierbaren nebeneffekte auftretten.
-%Dieser Block wurde zusätzlich mit der methode in \ref{sec:fractional-delay} beschriben implementiert um nichtganzahlige delay Werte zuzulassen, im vergleich zu den sampels zu erlauben, welche in \figref{fig:fractional-delay-sinc-plot} dargestellt sind. Bei dem die sinc-funktion auf kein ganzzahliges sample fählt. Was widerum bedeutet das bei den anderen abgetasteten Werten nicht null ergeben.
-%\end{german}
+
 
 \begin{lstlisting}[
 	texcl = true, language = python, escapechar = {`},
@@ -320,7 +318,6 @@ Thus, they will be distributed among the other whole numbers. A window function 
 	
 \end{lstlisting}
 
-% Bild einfügen 
 \subsection{Fading with Statistical model}
 
 	
@@ -329,24 +326,40 @@ Thus, they will be distributed among the other whole numbers. A window function 
 }
 % TODO: Quelle https://ch.mathworks.com/help/comm/ug/fading-channels.html?searchHighlight=rician%20fading&s_tid=srchtitle_rician%2520fading_2#a1070327427b1
 
-In order to represent the effect of the multipaht fading not only statically, a second model was created using the Frequency Selective Fading Model from Gnu Radio, according to \ref{statistical_model}.which was implemented after the algorithm from the paper \cite{Alimohammad2009}. It is based on the sum-of sinusoid principal(SOS)
+In order to represent the effect of the multipaht fading not only statically, a second model was created using the Frequency Selective Fading Model from Gnu Radio, according to \ref{statistical_model},which was implemented after the algorithm from the paper \cite{Alimohammad2009}. It is based on the sum-of sinusoid principal(SOS)
 
-\begin{german}
-	
-	Um die resultate einigermassse nach vollziehen zu können wurde ein MATLAP model zur veranschaulichung erstelle.
-	Um ein realistisches beispiel zu haben wurden werte aus dem Skript \cite{Mathis} genomen
-	
-\end{german}
+For this given block there need to set a few parameters. First of al the numbers of Sinusoids for the model which are simulateed for each ray, for this 8 is a good value like it's described in the paper on which the block is based on.
+For the Doppler effect which shoudent be forgotten if something is moving in the construction, like the transmitter or the reviser. It need to be normalized with the sampling rate. 
 
-Some realistic value for this block are:
-The first delay when theirs non line of side should be zero. The second delayed path depend on the environment of measurement. In an indoor enviroment it is usually between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on on the bandwidth. 
+\begin{equation}
+	max. Doppler = \frac{v\cdot f_c}{c}
+\end{equation}
+
+With the velocity \(v\) in \(\frac{m}{s}\) for example walking this value is between \(2-4\frac{m}{s}\).The carrier frequency \(f_c\) in this case 2.4GHz and the velocity of light \(c\).
+
+It can also be chosen whish Statical model should be taken for the simulation Rayleigh or Rician. When the Rician model is taken also a realistc value for the factor \(K\) need to be given. For a K factor zero it can be Rician distribution is the same as the  Rayleight distribution. With a faktor \(K = 5.1\) the probability function is gaussien distributed.
+
+The power delay profile which specify the delay in time for each impulse need to be in sample. For this delay vector some realistic values are for the first delay when theirs non line of side should be zero. The second delayed path depend on the environment of measurement. In an indoor enviroment it is usually between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on on the bandwidth. 
 
 
-Rician fading factor K = 0 = Rylehnt Model 
+%TODO finish this paragraph
+%\begin{german}
+%	
+%	Um die resultate einigermassse nach vollziehen zu können wurde ein MATLAP model zur veranschaulichung erstelle.
+%	Um ein realistisches beispiel zu haben wurden werte aus dem Skript \cite{Mathis} genomen
+%	
+%\end{german}
+
+
+\subsubsection{Example from the skript}
 
 \skelpar[5]{
-	Simulation mit Werten aus dem Skript
+	Simulate an example from the skript 
 }
+   
+
+
+
 
 \subsection{Measurements}
 
