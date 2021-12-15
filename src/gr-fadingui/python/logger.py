@@ -10,5 +10,5 @@ def get_logger(module):
     log.addHandler(stdout_handler)
     stdout_handler.setFormatter(formatter)
 
-    log.setLevel(logging.DEBUG)
+    log.setLevel(logging.WARNING)
     return log
