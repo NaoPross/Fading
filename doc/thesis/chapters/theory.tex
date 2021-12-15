@@ -281,7 +281,7 @@ is different from \eqref{eqn:multipath-impulse-response} consider again the plot
 \end{figure}
 
 From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-response} can be interpreted as a simple tapped delay line, schematically drawn in \figref{fig:tapped-delay-line}, which confirms that the presented mathematical model is indeed a FIR filter. Simple multipath channels can be simulated with just a few lines of code, for example the data for the static fading channel in \figref{fig:multipath-frequency-response-plots} is generated in just four lines of Python. The difficulty of fading channels in practice lies in the estimation of the constantly changing parameters \(c_k(t)\) and \(\tau_k(t)\).
-%TODO: Code ? 
+
 
 \subsection{Simulating multipath CIR with FIR filters} \label{sec:fractional-delay}
 % TODO quelle: http://users.spa.aalto.fi/vpv/publications/vesan_vaitos/ch3_pt1_fir.pdf
@@ -324,7 +324,7 @@ where the odd order of the filter \(N\) should satisfy the condition
 for a minimal error in the approximation. It is worth mentioning that it is also possible to build FIR filters of even length with a different condition, or that do not satisfy \eqref{eqn:fractional-fir-length}, in which cases more consideration is required. An example of a fractional delay FIR filter is shown in \figref{fig:fractional-delay-sinc-plot}.
 
 \subsection{Statistical model} \label{sec:statistical-model}
-
+%TODO: Quelle?
 Because as mentioned earlier it is difficult to estimate the time-dependent parameters of \(h_l(m)\) in many cases it is easier to model the components of the CIR as stochastic processes, thus greatly reducing the number of parameters. This is especially effective for channels that are constantly changing, because by the central limit theorem the cumulative effect of many small changes tends to a normal distribution.
 
 Recall that \(h_l(m)\) is a function of time because \(c_k\) and \(\tau_k\) change over time. The idea of the statistical model is to replace the cumulative change caused by \(c_k\) and \(\tau_k\) (which are difficult to estimate) by picking the next CIR sample \(h_l(m +1)\) from a \emph{circularly symmetric complex Gaussian distribution}, or concisely written as
@@ -359,31 +359,20 @@ for some parameter \(\sigma\). Loosely speaking, the distribution needs to be ``
 	}
 \end{figure}
 
-%TODO :Maby some correction on the descreption, because mentionet earlyer
+%TODO :Maby some correction on the descreption, because mentionet earlyer Is f(t) =(c k (t) parameters)?
 \paragraph{NLOS case}
 
-%TODO: Quellen : Skript Mathis und Buch Grundlagen der digitalen Informationsübertagung Peter Adam  Höher
-
- 
- In the case of the Rayleight distribution the signal has no line of sight. So to find the probability function of the amplitutes of this superimposition of those infinity of distribute signals:
+ In the case of the Rayleight distribution the signal has no line of sight. It can be looked at the Fading process \cite{Hoher2013} with the help of the amplitude \(a(t)\) in time and the associated phase \(\Theta(t) \in[\,0,2\pi)\,\). To find the probability function of the amplitutes it can be looked at the fading possess as a superimposition of those infinity distribute signals:
 \begin{equation} \label{eqn:rayleight fading}
  	f(t) = \lim_{N\rightarrow\infty} \frac{1}{\sqrt{N}}\sum_{n=1}^{N} e^{j(\Theta +2\pi jf t)}.
  \end{equation}  
-whish are nominatet with the factor \(\frac{1}{\sqrt{N}}\) so that the \(\E{|f(t)|²}=1\) and the fact that we are looking at the complex basiband and this prosses are independent and in this the gaussian distribution it can be said that is zero \(\E{f(t)}=0\)
+whish are nominate with the factor \(\frac{1}{\sqrt{N}}\) so that the power probability is \(\E{|f(t)|²}=1\) as mentioned earlier. From the fact that we are looking at the complex basiband and this processes is an independent one with a gaussian distributions it can be said that \(\E{f(t)}=0\) and so the propabiliti of the amplitude is:
  
+\begin{equation} \label{eqn:rayleight_fading_probabilety_dencety}
+	p(a)= 2a\exp{{-a}^2}
+\end{equation}
 
- It can be explain in two different way with the help of  %TODO: How do you say Quadraturkomponenten in english?
- quadraturcomponents or the help of the amplitude in time and the associated phase \(\Theta(t) \in[\,0,2\pi)\,\)
- 
-
-
-%\begin{equation} \label{eqn:rayleight_fading_probabilety_dencety}
-%	p(a)= 2a \exp{-a^2}
-%
-%\end{equation}
-%TODO: Why not the same as in the skript
-
-\skelpar[4]{Explain statistical model with Rayleighan distribution.}
+It can also explaint with I- and Q-contribution :
 \begin{equation}
 	\Re{h_l(n)}, \Im{h_l(n)}
 	\sim \mathcal{N} \left(0, \frac{1}{2} \E{|h_l(n)|^2} \right)
