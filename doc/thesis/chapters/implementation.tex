@@ -48,7 +48,7 @@ Also as a side effect, in theory this setup allows to have one computer running 
 \section{Hardware}
 
 \begin{table}[b]
-	%To DO sepzifikationen ampssen / genauer? https://www.ettus.com/wp-content/uploads/2019/01/b200-b210_spec_sheet.pdf
+	%TODO sepzifikationen ampssen / genauer? https://www.ettus.com/wp-content/uploads/2019/01/b200-b210_spec_sheet.pdf
 	% https://kb.ettus.com/B200/B210/B200mini/B205mini#FAQ
 	\centering
 	\begin{tabular}{ll}
@@ -91,7 +91,7 @@ GR provides a constellation modulator block, that already implements several sta
 What is here referred to as envelope detector has the purpose of synchronizing the symbols and equalizing the input signal amplitude. This is accomplished in GRC using two blocks: a polyphase clock sync and a CMA equalizer. The input signal for the envelope detector has 4 samples per symbol, while the output has only one sample per symbol.
 
 \paragraph{Polyphase Clock Sync}
-%% To Do : nochmals anschauen ob dieese erklärung verständlich ist und richtig interpretiert wurde.
+%TODO : nochmals anschauen ob dieese erklärung verständlich ist und richtig interpretiert wurde.
 With the the polyphase clock sync the symbols can be synchronized by preforming a time synchronization with the help of multiple filterbanks. For that the derivative of the filtered signal should be minimized which turns to a better SNR. 
 % This works with the help of two filterbanks, one of them contains the filters of the signal adapted to the pulse shaping with several phases. The other contains its derivative. So in the time domain it has a sinc shape, for the output Signal the sinc peak should be on a sample, with the fact that sinc(0) = 1 and sinc(0)' = 0 an error signal can be generated which tells how far away from the peak it is. This error Signal should be zero this is possible with the help of a loop second order whish constants the number of the filterbank and the rate. This rate is generated because of the clock difference between the transmitter and receiver to synchronized the receiver the filter goes through the phases. For the output one sample per symbol is enough.
 
@@ -177,7 +177,7 @@ def work(self, inputs, outputs):
 
 \begin{figure}
 	\centering
-	%% TODO: move code into separate file
+	% TODO: move code into separate file
 	\begin{tikzpicture}[
 			blk/.style = {
 				draw, rectangle, thick, black,
@@ -248,6 +248,7 @@ In this part the fading blocks for the simulation are added. Tow different types
 	Discuss the multitap FIR model we used. How it is possible to set the delay etc. Also mathematics for the interpolation.
 }
 
+%TODO find out what to do with this text in the comment
 %To get a basic line for further simulations a 16QAM has been made. The results of this simulation are shown in \figref{fig:simul16QAM} and \figref{fig:simul16QAM_1} as the red Signal. In \tabref{tab:modulation_settings} some importer Parameter settings for a different modulation scheme are mentioned.
 %
 %A FIR-Filter was added in the Channel to create a time delay between tow paths. In \figref{fig:simul16QAM} the result includes a direct path and a delayed one. In the plot of \figref{fig:simul16QAM_1} the transmission line dosn't include a direct path. %It's impotent to mention that the delay should be smaller than the symbol rate or a multiple of it. (Stimmt dies , not sure any more)
@@ -314,13 +315,14 @@ Thus, they will be distributed among the other whole numbers. A window function 
 \subsection{Fading with Statistical model}
 
 	
-
+\skelpar[5]{
+	Discuss how i did that 
+}
 % TODO: Quelle https://ch.mathworks.com/help/comm/ug/fading-channels.html?searchHighlight=rician%20fading&s_tid=srchtitle_rician%2520fading_2#a1070327427b1
 
 In order to represent the effect of the multipaht fading not only statically, a second model was created using the Frequency Selective Fading Model from Gnu Radio, according to \ref{statistical_model}.which was implemented after the algorithm from the paper \cite{Alimohammad2009}. It is based on the sum-of sinusoid principal(SOS)
 
 \begin{german}
-	Um den effect des multipaht fadinngs nicht nur statisch darzu stellen, wurde ein zweites model kreiert mit hilfe des Frequency Selective Fading Models von Gnu Radio, gemäss \ref{statistical_model}.Welcher nach dem Algorthmus aud dem paper \cite{Alimohammad2009} implementiert wurde. Er basiert auf dem sum-of sinusoid princip(SOS)
 	
 	Um die resultate einigermassse nach vollziehen zu können wurde ein MATLAP model zur veranschaulichung erstelle.
 	Um ein realistisches beispiel zu haben wurden werte aus dem Skript \cite{Mathis} genomen
@@ -341,9 +343,47 @@ Rician fading factor K = 0 = Rylehnt Model
 
 \subsection{Empirical BER} \label{sec:ber}
 
-%
-%
-%
+To find out how accurate the simulations are comparer with a simulation of the fadinng effect and test measurements, the byte error rate of the system is calculated. This is done with the help of a user specified \(k\)-byte test frame in the beginning of each vector. Implemented according to the code in \ref{lst:ber-block}. Every bit is compared with the test vector at the beginning  before the modulation and demodulation part. 
+Because of the fact that the test vector has some random bit at the end the bit error rate has always a value on average 32. 
+
+
+
+\begin{lstlisting}[
+	texcl = true, language = python, escapechar = {`},
+	float, captionpos = b, label = {lst:ber-block},
+	caption = {
+		Block FIR Filter function referenced in listing \ref{lst:phasecorr-work}.
+	},
+	]
+	def work(self, input_items, output_items):
+		inp = input_items[0]
+		# input vector
+	
+		for i in inp:
+			i = np.array(i, dtype=np.uint8)
+			v = np.array(self.vgl, dtype=np.uint8) ^ i
+			# XOR comparsion to find the diviation for the bits 
+			ber = sum(np.unpackbits(v))
+	
+			trueber = ber - 32
+			if trueber < 0:
+			trueber = 0
+	
+			self.ber_samples.appendleft(trueber)
+
+		ber_max, ber_min, ber_avg = self.ber_stats()
+		self.send(self.encode([trueber, ber_max, ber_avg]))
+		#Send the valuse to the GUI
+		return len(inp)
+	
+\end{lstlisting}
+
+
+
+\skelpar[5]{
+	Discuss how i did that 
+}
+
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{./figures/pdfs/qam_nogui.pdf}
@@ -375,4 +415,4 @@ Rician fading factor K = 0 = Rylehnt Model
 	\label{fig:simul16QAM__Hardware}	
 \end{figure}
 
-% To Do: Picture of the setup
+% TODO: Picture of the setup

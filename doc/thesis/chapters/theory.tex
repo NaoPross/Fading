@@ -208,6 +208,7 @@ With a continuous time channel model we can now discuss the spectral properties 
 
 Equation \eqref{eqn:multipath-frequency-response} shows that the frequency response is a periodic complex exponential, which has some important implications. Notice that if there is only one tap (term), the magnitude of \(H(f, t)\) is a constant (with respect to \(f\)) since \(|e^{j\alpha f}| = 1\). This means that the channels attenuates all frequencies by the same amount, therefore it is said to be a \emph{frequency non-selective} or \emph{flat fading} channel. Whereas in the case when there is more than one tap, the taps interfere destructively at certain frequencies and the channel is called \emph{frequency selective}. To illustrate how this happens, plots of the frequency response of a two tap channel model are shown in \figref{fig:multipath-frequency-response-plots}. On the left is the magnitude of \(H(f, t)\), which presents periodic ``dips'', and on the right complex loci for the two taps (red and blue), as well as their sum (magenta), over the frequency range near the first dip (2 to 2.5 MHz) are shown.
 
+
 \begin{figure}
 	\centering
 	\resizebox{\linewidth}{!}{
@@ -376,9 +377,6 @@ whish are nominatet with the factor \(\frac{1}{\sqrt{N}}\) so that the \(\E{|f(t
  
 
 
-
-So it can be said that the amplitude of the rayleightdistribution 
-
 %\begin{equation} \label{eqn:rayleight_fading_probabilety_dencety}
 %	p(a)= 2a \exp{-a^2}
 %
@@ -393,6 +391,11 @@ So it can be said that the amplitude of the rayleightdistribution
 \skelpar[4]
 
 \paragraph{LOS case}
+In the case of the Rician distribution model. The line of side exist, which means that one of the paths have a straight communication line from the transmitter to the reviser.
+
+It can be said that a Rayleight distribution is the same as a Rician distribution with a factor K =0.
+
+For a faktor K= 5.1 the probability function is gaussien distributed.
 
 \skelpar[4]{Explain statistical model with Rician distribution.}
 \begin{equation}
