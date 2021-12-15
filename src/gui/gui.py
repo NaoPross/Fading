@@ -284,8 +284,8 @@ set_primary_window("primary_window", True)
 
 # Main loop
 while is_dearpygui_running():
-    for plt, tag in network_plots.items():
-        plt.refresh_series(tag)
+    for plt in network_plots:
+        plt.refresh_series(plt.series_tag)
     ber_value.refresh()
 
     render_dearpygui_frame()
