@@ -255,7 +255,7 @@ with window(label="Bit Error Rate ", width=800, height=320, pos=(0,825),\
             add_theme_color(mvThemeCol_Text,(0,0,0)) #Schwarz
             add_theme_style(mvStyleVar_FrameRounding, 5)
 
-    add_button(label="BER", height=60, width=700, pos=(50,125),tag="ber_value")
+    add_button(label="BER", height=60, width=700, pos=(50,125), tag="ber_value")
     bind_item_theme(last_item(), "button_ber")
 
     bind_item_theme(ber_window, "ber_window")

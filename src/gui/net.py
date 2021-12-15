@@ -83,7 +83,7 @@ class network_value(udpsource):
         self.bind()
 
     def read(self):
-        return udpsource.read(self, 1)
+        return udpsource.read(self, 3)
 
     def refresh(self):
         self.value = self.read()

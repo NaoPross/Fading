@@ -415,6 +415,7 @@ blocks:
 - name: fadingui_ber_0
   id: fadingui_ber
   parameters:
+    address: udp://localhost:31420
     affinity: ''
     alias: ''
     comment: ''
@@ -459,7 +460,7 @@ blocks:
     bus_structure: null
     coordinate: [704, 316.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_netsink_1
   id: fadingui_netsink
   parameters:
@@ -491,7 +492,7 @@ blocks:
     bus_structure: null
     coordinate: [1280, 916.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_netsink_4
   id: fadingui_netsink
   parameters:
@@ -507,7 +508,7 @@ blocks:
     bus_structure: null
     coordinate: [528, 916.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_phasecorrection_0
   id: fadingui_phasecorrection
   parameters:

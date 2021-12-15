@@ -371,16 +371,31 @@ i.e. the amplitude of \(f\) is \emph{Raileigh} distributed.
 		\label{fig:multipath-statistical-models}
 	}
 \end{figure}
+\skelpar[4]{Explain This formulars}
 
 
 \paragraph{LOS case}
-In the case of the Rician distribution model. The line of side exist, which means that one of the paths have a straight communication line from the transmitter to the reviser.
 
-It can be said that a Rayleight distribution is the same as a Rician distribution with a factor K =0.
 
-For a faktor K= 5.1 the probability function is gaussien distributed.
+In the case of the Ricean distribution model the line of side exist, which means that one of the paths have a straight communication line from the transmitter to the reviser. So there are in addition to the Rayleight model direct components, whish are also gaussian distributed.
 
-\skelpar[4]{Explain statistical model with Rician distribution.}
+\begin{equation} \label{eqn:rician fading}
+	f(t) = \sqrt{\frac{K}{K+1}}+\lim_{N\rightarrow\infty}\frac{1}{\sqrt{K+1}} \frac{1}{\sqrt{N}}\sum_{n=1}^{N} e^{j(\Theta +2\pi jf t)}.
+\end{equation}  
+
+The factor \(K\) named Ricean factor it is the ratio of the line of side power to the average power of the distributed components.
+The Phase for the strait line component has no influences for the Random process therefore there set to zero. In the case when \(K = 0 \)
+the Rician distribution becomes a Rayleight distribution on the other hand when \(K\rightarrow \infty \) the distribution becomes an AWGN-channel model (additive white Gaussian noise). When \(K > 0 \) is the phase not equally distributed.
+
+For this distribution model the expectation value for the real part is \(\E{\Re{f(t)}}=\sqrt{\frac{K}{K+1}} \) and for the imaginary part \(\E{\Im{f(t)}}=0\) 
+
+So the probability function of the amplitude in this case is:
+\begin{equation} \label{eqn:rician_fading_probabilety_dencety}
+	p(a)= 2a(1+K)\exp{(-K-{a}^2(K+1))}\cdot I_0(2a\sqrt{K(1+K)})
+\end{equation}
+
+Where \(I_0\) the zero ordered modified besselfunction represent.
+
 \begin{equation}
 	\Re{h_l(n)}, \Im{h_l(n)}
 	\sim \mathcal{N} \left( \frac{A_l}{\sqrt{2}}, \frac{1}{2} \sigma_l^2 \right)
