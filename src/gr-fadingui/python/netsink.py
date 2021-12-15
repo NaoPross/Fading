@@ -71,7 +71,7 @@ class netsink(gr.sync_block):
         try:
             return self.socket.sendto(data, self.srv)
         except socket.error as err:
-            log.warn(f"No data was sent: {err}")
+            log.debug(f"No data was sent: {err}")
             return 0
 
     def encode(self, data):
