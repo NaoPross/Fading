@@ -281,41 +281,41 @@ Thus, they will be distributed among the other whole numbers. A window function 
 
 \begin{lstlisting}[
 	texcl = true, language = python, escapechar = {`},
-	float, captionpos = b, label = {lst:fir-block},
+	float, captionpos = b, label = {lst:fractional-delay-fir},
 	caption = {
-		Block FIR Filter function referenced in listing \ref{lst:phasecorr-work}.
+		Implementation of a static fractional delay FIR filter.
 	},
 	]
 	def work(self, input_items, output_items):
 		inp = input_items[0]
 		oup = output_items[0]
-		# reads the moduled signal 
-		if len(self.amplitudes) != len(self.delays):  
-			raise Exception("Amplitudes and Delay length dont match")
-		if np.min(self.delays)<0:  
-			raise Exception("Delay can't be negativ")
-		# Some test that there are as match delays as amplitudes and no negative filter values
-		max_order = 2 * np.floor(np.max(self.delays)) + 1 
-		# find the maximal order of the Filter
-	  	max_samples = np.arange(0, max_order +1) 
-		max_len = len(max_samples) 
-		sum_x = np.zeros(int(max_len))
-	
-		for (a,d) in zip(self.amplitudes,self.delays):
+		# find the length of the highest order filter
+		max_order = 2 * np.floor(np.max(self.delays)) + 1
+		max_samples = np.arange(0, max_order +1)
+		max_len = len(max_samples)
+		# total impulse response (of all taps)
+		tot_h = np.zeros(int(max_len))
+		# compute for each tap
+		for (a, d) in zip(self.amplitudes, self.delays):
+			# compute fir coefficients
 			order = 2 * np.floor(d) + 1
-			samples = np.arange(0, order +1)  
-			h = a*(np.sinc(samples-d)) 
-			# impuls respond 
-			h_len = np.concatenate([h, np.zeros(max_len-len(h))])
-			sum_x += h_len
-			# add them al together to have one array with al amplitudes one the position of the delay (in samples)
-		sum_x[0] = self.los
-		# if there is no direct line ad the first delayed amplitude to a zero else to a one.
-		y = np.convolve(inp, sum_x)
-		y += np.concatenate([self.temp,np.zeros(len(y)-len(self.temp))])
+			samples = np.arange(0, order + 1)
+			# compute impulse response
+			h = a * np.sinc(samples - d)
+			# correct length
+			h = np.concatenate([h, np.zeros(max_len - len(h))])
+			# add to other filters
+			tot_h += h
+		# add a LOS path if necessary
+		tot_h[0] = self.los
+		# compute output
+		y = np.convolve(inp, tot_h)
+		# add values from previous block processing
+		y += np.concatenate([self.temp, np.zeros(len(y) - len(self.temp))])
+		# write to output
 		oup[:] = y[:len(inp)]
-		self.temp = y[len(inp):]   
-		# The output need to have the same lenght as the input.     		
+		# save rest for next block processing
+		self.temp = y[len(inp):]
 		return len(oup)
 	
 \end{lstlisting}
@@ -367,33 +367,28 @@ For generating the Byte error rate it is focus on byte-blocks of a specific leng
 }
 
 
-
 \begin{lstlisting}[
 	texcl = true, language = python, escapechar = {`},
-	float, captionpos = b, label = {lst:ber-block},
+	float, captionpos = b, label = {lst:ber-work},
 	caption = {
-		Block FIR Filter function referenced in listing \ref{lst:phasecorr-work}.
+		Custom block to compute the empirical BER.
 	},
 	]
 	def work(self, input_items, output_items):
+		# input is a list of blocks of k-bytes
 		inp = input_items[0]
-		# input vector
-	
+		# for each block
 		for i in inp:
 			i = np.array(i, dtype=np.uint8)
+			# XOR to compute the difference
 			v = np.array(self.vgl, dtype=np.uint8) ^ i
-			# XOR comparsion to find the diviation for the bits 
+			# compute how many bits differ
 			ber = sum(np.unpackbits(v))
-	
-			trueber = ber - 32
-			if trueber < 0:
-			trueber = 0
-	
-			self.ber_samples.appendleft(trueber)
-
+			# save BER value
+			self.ber_samples.appendleft(ber)
+		# compute statistics and send to GUI
 		ber_max, ber_min, ber_avg = self.ber_stats()
-		self.send(self.encode([trueber, ber_max, ber_avg]))
-		#Send the valuse to the GUI
+		self.send(self.encode([ber_max, ber_min, ber_avg]))
 		return len(inp)
 \end{lstlisting}
 
