@@ -36,7 +36,7 @@ setup_dearpygui()
 
 # Show demo for dev
 show_demo()
-show_debug()
+
 
 #================================================
 # Globl variables
@@ -99,7 +99,8 @@ with theme(tag="constellation_series_theme"):
     with theme_component(mvScatterSeries):
         add_theme_style(mvPlotStyleVar_Marker, mvPlotMarker_Asterisk, category=mvThemeCat_Plots)
         add_theme_style(mvPlotStyleVar_MarkerSize, 3, category=mvThemeCat_Plots)
-
+    with theme_component(mvAll):
+        add_theme_style(mvStyleVar_WindowBorderSize,0)
 
 #================================================
 # GUI Callback functions
@@ -160,6 +161,7 @@ with window(tag="primary_window"):
 # Flow Graph Window
 
 with window(label="RX DSP Flow Graph", width=800, height=400, pos=(0,25), tag="rx_win"):
+    add_text("TODO:Blockschaltbild")
     with node_editor():
         with node(label="USRP Source", pos=(20,100)):
             with node_attribute(tag="src_out", attribute_type=mvNode_Attr_Output):
@@ -195,11 +197,11 @@ with window(label="RX DSP Flow Graph", width=800, height=400, pos=(0,25), tag="r
 # Network plots
 
 def make_constellation_plot_window(plot, label):
-    with window(label=label, no_collapse=True, no_close=True, \
+    with window(label=label, no_collapse=True, no_close=True,no_title_bar= True,no_move=True,no_resize=True, \
             width=plot_window_sizes[plot][0], \
             height=plot_window_sizes[plot][1], \
             pos=plot_window_positions[plot], \
-            tag=plot.window_tag):
+            tag=plot.window_tag) as constelation:
         with plot:
             # Fit to width of window
             configure_item(plot.tag, width=-1, height=-1)
@@ -216,20 +218,23 @@ def make_constellation_plot_window(plot, label):
             add_scatter_series(plot.xdata, plot.ydata, \
                 label=label, parent=plot.xaxis_tag, tag=plot.series_tag)
             bind_item_theme(plot.series_tag, "constellation_series_theme")
+        bind_item_theme(constelation, "constellation_series_theme")
 
 make_constellation_plot_window(channel_plot, "Channel")
 make_constellation_plot_window(synchronized_plot, "Synchronized")
 make_constellation_plot_window(equalized_plot, "Equalized")
 make_constellation_plot_window(locked_plot, "Locked")
 
-with window(label="Time domain", width=800, height=400, pos=(0,425), tag=time_plot.window_tag):
+with window(label="Time domain", width=800, height=400, pos=(0,425), \
+            no_title_bar= True,no_move=True,no_resize=True,no_collapse=True, no_close=True,\
+            tag=time_plot.window_tag) as time:
     with time_plot:
         configure_item(time_plot.tag, width=-1, height=-1)
 
         add_plot_axis(mvXAxis, label="Time", tag=time_plot.xaxis_tag)
         add_plot_axis(mvYAxis, label="Amplitude", tag=time_plot.yaxis_tag)
         add_line_series(time_plot.xdata, time_plot.ydata, parent=time_plot.xaxis_tag, tag=time_plot.series_tag)
-
+    bind_item_theme(time, "constellation_series_theme")
 #================================================
 # Bit Error Rate Window
 
@@ -239,20 +244,21 @@ with theme(tag="ber_window"):
         with theme_component(mvAll):
             add_theme_style(mvStyleVar_WindowTitleAlign, 0.5)
             add_theme_style(mvStyleVar_WindowRounding, 5)
-            add_theme_style(mvStyleVar_WindowBorderSize, 1)#Rad ein und aus Schalten 
+            add_theme_style(mvStyleVar_WindowBorderSize, 0)#Rad ein und aus Schalten 
 
-with window(label="Bit Error Rate ", width=300, height=150, pos=(200,875)) as ber_window:
-    add_text("The Bit Error Rate is:")
+with window(label="Bit Error Rate ", width=800, height=320, pos=(0,825),\
+    no_collapse=True, no_close=True, no_title_bar= True,no_move=True,no_resize=True,) as ber_window:
+    add_text("The Bit Error Rate is:",pos=(50,75))
     with theme(tag="button_ber"):
         with theme_component(mvButton):
             add_theme_color(mvThemeCol_Button,(135, 206, 255)) #Blau
             add_theme_color(mvThemeCol_Text,(0,0,0)) #Schwarz
             add_theme_style(mvStyleVar_FrameRounding, 5)
 
-    add_button(label="BER", height=60, width=-1, tag="ber_value")
+    add_button(label="BER", height=60, width=700, pos=(50,125),tag="ber_value")
     bind_item_theme(last_item(), "button_ber")
 
-# bind_item_theme(ber_window, "ber_window")
+    bind_item_theme(ber_window, "ber_window")
 # bind_item_font(ber_window, test)
 
 def set_ber(values):

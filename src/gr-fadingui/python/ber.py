@@ -94,7 +94,8 @@ class ber(gr.sync_block):
                 trueber = 0
             # log.debug(f"BER {trueber} in Paket {i}")
 
-            self.ber_samples.appendleft(trueber)
+            if truper =! 0:
+             self.ber_samples.appendleft(trueber)
 
 
         ber_max, ber_min, ber_avg = self.ber_stats()
