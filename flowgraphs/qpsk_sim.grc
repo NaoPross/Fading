@@ -148,7 +148,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [432, 1156.0]
+    coordinate: [256, 1228.0]
     rotation: 0
     state: true
 - name: samp_rate
@@ -221,7 +221,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1000, 692.0]
+    coordinate: [1000, 684.0]
     rotation: 0
     state: disabled
 - name: blocks_complex_to_mag_0
@@ -240,6 +240,78 @@ blocks:
     coordinate: [1064, 1080.0]
     rotation: 0
     state: enabled
+- name: blocks_file_sink_0
+  id: blocks_file_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    append: 'False'
+    comment: ''
+    file: data/qpsk_channel.dat
+    type: complex
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [992, 524.0]
+    rotation: 0
+    state: disabled
+- name: blocks_file_sink_1
+  id: blocks_file_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    append: 'False'
+    comment: ''
+    file: data/qpsk_locked.dat
+    type: complex
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1280, 820.0]
+    rotation: 0
+    state: disabled
+- name: blocks_file_sink_2
+  id: blocks_file_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    append: 'False'
+    comment: ''
+    file: data/qpsk_sync.dat
+    type: complex
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [528, 1084.0]
+    rotation: 0
+    state: disabled
+- name: blocks_file_sink_3
+  id: blocks_file_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    append: 'False'
+    comment: ''
+    file: data/qpsk_equalized.dat
+    type: complex
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [768, 828.0]
+    rotation: 0
+    state: disabled
 - name: blocks_null_source_0
   id: blocks_null_source
   parameters:
@@ -784,7 +856,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [552, 852.0]
+    coordinate: [536, 852.0]
     rotation: 0
     state: disabled
 - name: qtgui_time_sink_x_0
@@ -978,20 +1050,24 @@ connections:
 - [blocks_vector_source_x_0, '0', blocks_stream_mux_0, '0']
 - [channels_channel_model_0, '0', channels_selective_fading_model_0, '0']
 - [channels_channel_model_0, '0', fadingui_multipath_fading_0, '0']
+- [channels_selective_fading_model_0, '0', blocks_file_sink_0, '0']
 - [channels_selective_fading_model_0, '0', fadingui_netsink_0, '0']
 - [channels_selective_fading_model_0, '0', virtual_sink_1, '0']
+- [digital_cma_equalizer_cc_0, '0', blocks_file_sink_3, '0']
 - [digital_cma_equalizer_cc_0, '0', digital_corr_est_cc_0, '0']
 - [digital_cma_equalizer_cc_0, '0', fadingui_netsink_1, '0']
 - [digital_constellation_decoder_cb_0, '0', blocks_tagged_stream_align_0, '0']
 - [digital_constellation_modulator_0, '0', blocks_throttle_0, '0']
 - [digital_corr_est_cc_0, '0', fadingui_phasecorrection_0, '0']
 - [digital_corr_est_cc_0, '1', blocks_complex_to_mag_0, '0']
+- [digital_pfb_clock_sync_xxx_0, '0', blocks_file_sink_2, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', digital_cma_equalizer_cc_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', fadingui_netsink_4, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', qtgui_const_sink_x_0, '0']
 - [fadingui_datasource_0, '0', digital_constellation_modulator_0, '0']
 - [fadingui_multipath_fading_0, '0', fadingui_netsink_0, '0']
 - [fadingui_multipath_fading_0, '0', virtual_sink_1, '0']
+- [fadingui_phasecorrection_0, '0', blocks_file_sink_1, '0']
 - [fadingui_phasecorrection_0, '0', fadingui_netsink_3, '0']
 - [fadingui_phasecorrection_0, '0', virtual_sink_2, '0']
 - [virtual_source_0, '0', digital_constellation_decoder_cb_0, '0']
