@@ -23,9 +23,15 @@ SOURCES := \
 	figures/tikz/multipath-impulse-response.tex \
 	figures/tikz/multipath-frequency-response-plots.tex \
 	figures/tikz/tapped-delay-line.tex \
-	figures/tikz/packet-frame.tex
+	figures/tikz/packet-frame.tex \
+	figures/tikz/qpsk-sim-constellations-static.tex \
+	figures/tikz/qpsk-sim-constellations-dynamic.tex
 
-DATA := figures/data/multipath_frequency_response.dat
+DATA := \
+	figures/data/multipath_frequency_response.dat \
+	figures/data/qpsk_sim_constellations_static.dat \
+	figures/data/qpsk_sim_constellations_dynamic.dat
+
 
 # Get the main file from the file
 MAIN := $(shell sed -ne 's/^.*\!TeX root =\(.*\)$$/\1/ p' $(SOURCES))

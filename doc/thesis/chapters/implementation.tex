@@ -261,7 +261,6 @@ def block_phase(self, start, end):
 	return sphase * np.ones(nsamples) + freq * np.arange(0, nsamples)
 \end{lstlisting}
 
-
 \section{Channel simulations}
 
 Here its possible to add some AWGN noise in the channel line. Different parameters can be changed like the noise voltage, time or the frequency offset.
@@ -278,6 +277,22 @@ In this part the fading blocks for the simulation are added. Tow different types
 %A FIR-Filter was added in the Channel to create a time delay between tow paths. In \figref{fig:simul16QAM} the result includes a direct path and a delayed one. In the plot of \figref{fig:simul16QAM_1} the transmission line dosn't include a direct path. %It's impotent to mention that the delay should be smaller than the symbol rate or a multiple of it. (Stimmt dies , not sure any more)
 %
 %For the a first simulation with some fading the 16QAM simulation model has been extended with a FIR-Filter in the Chanel. The results of this simulation are shown in \figref{fig:simul16QAM} and \figref{fig:simul16QAM_1} as the blue Signal.
+
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpsk-sim-constellations-static}
+	\caption{
+		Constellation diagrams for a simulated link using QPSK with AWGN and Rayleighan fading.
+	}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpsk-sim-constellations-dynamic}
+	\caption{
+		Constellation diagrams for a simulated link using QPSK with AWGN and Rayleighan fading. The paramters are: frequency offset of 0.2 \%, \SI{100}{\milli\volt} noise, dopper shift for \(v = \SI{2}{\meter\per\second}\), and a NLOS urban PDP.
+	}
+\end{figure}
 
 \subsection{Fading with Discrete-time model}
 
@@ -356,7 +371,6 @@ It can also be chosen whish Statical model should be taken for the simulation Ra
 
 The power delay profile which specify the delay in time for each impulse need to be in sample. For this delay vector some realistic values are for the first delay when theirs non line of side should be zero. The second delayed path depend on the environment of measurement. In an indoor enviroment it is usually between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on on the bandwidth. 
 
-
 %TODO finish this paragraph
 %\begin{german}
 %	
@@ -371,9 +385,6 @@ The power delay profile which specify the delay in time for each impulse need to
 \skelpar[5]{
 	Simulate an example from the skript 
 }
-   
-
-
 
 
 \subsection{Measurements}
@@ -419,35 +430,8 @@ For generating the Byte error rate it is focus on byte-blocks of a specific leng
 		return len(inp)
 \end{lstlisting}
 
+\section{Technical pro
 
-\begin{figure}
-	\includegraphics[width=\linewidth]{./figures/pdfs/qam_nogui.pdf}
-	\caption{GNU Radio Blocks}
-	\label{fig:simul16QAM_block}	
-\end{figure}
-
-\begin{figure}
-	\includegraphics[width=\linewidth]{./figures/screenshots/QAM16_Fading_2.png}
-	\caption{Simulation results}
-	\label{fig:simul16QAM}	
-\end{figure}
-
-\begin{figure}
-	\includegraphics[width=\linewidth]{./figures/screenshots/QAM16_Fading_2_.png}
-	\caption{Simulation results}
-	\label{fig:simul16QAM_1}	
-\end{figure}
-
-\begin{figure}
-	\includegraphics[width=\linewidth]{./figures/pdfs/qam_Hardware_1711.pdf}
-	\caption{GNU Radio Blocks Hardware}
-	\label{fig:simul16QAM_Hardware_Aufbau}	
-\end{figure}
-
-\begin{figure}
-	\includegraphics[width=\linewidth]{./figures/screenshots/QAM16_Hardware_1711.png}
-	\caption{Hardware results}
-	\label{fig:simul16QAM__Hardware}	
-\end{figure}
+\section{Issue with the current implementation}
 
 % TODO: Picture of the setup
