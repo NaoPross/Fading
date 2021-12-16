@@ -255,8 +255,12 @@ def block_phase(self, start, end):
 	sphase = pmt.to_python(start.value)
 	ephase = pmt.to_python(end.value)
 	# compute frequency offset between start and end
-	phasediff = (ephase - sphase) % (2 * np.pi)
+	phasediff = (ephase - sphase)
 	freq = phasediff / nsamples
+	if phsediff > np.pi:
+		phasediff -= np.pi
+	elif phasediff < -np.pi:
+		phasediff += np.pi
 	# compute chunk values
 	return sphase * np.ones(nsamples) + freq * np.arange(0, nsamples)
 \end{lstlisting}

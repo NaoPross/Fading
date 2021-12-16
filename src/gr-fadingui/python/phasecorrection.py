@@ -65,7 +65,11 @@ class phasecorrection(gr.sync_block):
         ephase = pmt.to_python(end.value)
 
         # compute frequency offset between start and end
-        phasediff = (ephase - sphase) % (2 * np.pi)
+        phasediff = (ephase - sphase) # % (2 * np.pi)
+        if phasediff > np.pi:
+            phasediff -= np.pi
+        elif phasediff < -np.pi:
+            phasediff += np.pi
         freq = phasediff / nsamples
 
         if freq < 1e-3:
