@@ -52,8 +52,8 @@
 	patterns,
 }
 % \tikzexternalize[
-	% mode=graphics if exists,
-	% figure list=true]
+% mode=graphics if exists,
+% figure list=true]
 \pgfdeclarelayer{background}
 \pgfdeclarelayer{foreground}
 \pgfsetlayers{background,main,foreground}
@@ -63,6 +63,17 @@
 
 %% Placeholders
 \usepackage{skeldoc}
+
+%% Nicer tables
+\usepackage{tabularx}
+\usepackage{booktabs}
+
+%% Writing units
+\usepackage{siunitx}
+% this one is for siunitx v3, debian and older systems
+% still have only siunitx v2 installed
+% \sisetup{uncertainty-mode = separate}
+\sisetup{separate-uncertainty}
 
 %% Load bibliography 
 \addbibresource{Fading.bib}
@@ -93,8 +104,55 @@
 	\end{abstract}
 
 	\tableofcontents
-
 	\cleardoublepage
+
+	%% TODO: move in a separate file
+	\chapter*{List of symbols}
+	\noindent %
+	\begin{tabularx}{\linewidth}{>{\(}c<{\)} X}
+		\toprule
+		% \textbf{Notation} & \bfseries Description \\
+		% \midrule
+		\multicolumn{2}{l}{\itshape Mathematics} \\
+		\vec{v},\, \vec{m} & Vector quantity \\
+		\phi^*             & Complex conjugate of \(\phi\) \\
+		\midrule
+		\multicolumn{2}{l}{\itshape Physical quantities} \\
+		t      & Time \\
+		T      & Period \\
+		\tau   & Convolution time \\
+		f      & Frequency in Hz \\
+		\omega & Frequency in radians per second \\
+		\Omega & Digital frequency in radians per sample \\
+		\midrule
+		\multicolumn{2}{l}{\itshape Modulation schemes} \\
+		n(t)    & Additive white Gaussian noise (AWGN) \\
+		f(t)    & Multiplicative fading noise \\
+		p(t)    & Pulse function \\
+		m(n)    & Message samples \\
+		m(t)    & Message waveform \\
+		\phi(t) & Carrier signal \\
+		s(t)    & Signal waveform \\
+		s(n)    & Signal samples \\
+		r(t)    & Received signal \\
+		r(m)    & Received samples \\
+		\midrule
+		\multicolumn{2}{l}{\itshape Channel modelling} \\
+		h(t)       & LTI impluse response \\
+		h(\tau, t) & LTV impluse response \\
+		h(m)       & LTI discrete time impulse response \\
+		h_l(m)     & LTV discrete time impulse response \\
+		H(f)       & LTI Frequency response \\
+		H(f, t)    & LTV Frequency response \\
+		c_k        & Tap attenuation \\
+		\tau_k     & Tap delay \\
+		T_d        & Delay spread \\
+		B_c        & Coherence bandwidth \\
+		R_{xy}     & Correlation between \(x\) and \(y\) \\
+		\bottomrule
+	\end{tabularx}
+	\cleardoublepage
+
 	\hypersetup{pageanchor = true}
 	\pagenumbering{arabic}
 	\setcounter{page}{1}
