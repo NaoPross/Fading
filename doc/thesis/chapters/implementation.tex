@@ -140,7 +140,7 @@ The relevant observation to make in \eqref{eqn:xc-oop-copy} that since \(R_{aa}\
 	\item Remove the phase offset in the envelope by multiplying it with the complex conjugate of the offset, that is \(\hat{r}(t) = r(t) e^{-j\varphi}\).
 \end{enumerate}
 
-\subsubsection{Implementing fine phase and frequency correction}
+\subsubsection{Implementing fine phase and frequency correction} \label{sec:implement-phasecorr}
 
 To implement in GR what was discussed in section \ref{sec:phasecorr} two blocks shown in \figref{fig:phasecorr-blocks} were used: a correlator estimator block, and a custom block. The former essentially implements the first 3 of the steps discussed at the end of section \ref{sec:phasecorr}. The correlator estimator block is given a sequence of samples, and when the cross correlation between them and the input stream is higher than a certain threshold (90\% of the amplitude of a perfect autocorrelation), it produces a ``tag'' in the output stream, that contains the phase estimate.
 
@@ -423,7 +423,7 @@ For generating the Byte error rate it is focus on byte-blocks of a specific leng
 
 Currently as described in section \ref{sec:data-frame}, the access codes are put as bytes in front of the frame in the \(k\)-byte preamble. For this to work, the access code bytes must still have a good autocorrelation function after being modulated into symbols using the chosen modulation scheme. This works well with QPSK, because the constellation is quite simple and the length of the sequence is only halved after the modulation (since QPKS has 2 bits per symbol). Thus in the QPSK flowgraph, the longest known 13 bit Barker sequence \texttt{0x1f35} padded with zeros after MSB is sufficient (\(\approx 7\) symbols).
 
-With QAM however, the complexity of the constellation and the higher number of bits per symbol makes it increasingly difficult to find binary sequences, that after being modulated still retain a good autocorrelation function. A better solution would be to use for example a \emph{constant amplitude zero autocorrelation waveform} (CAZAC) of length \(N\), which is computed with
+With QAM however, the complexity of the constellation and the higher number of bits per symbol makes it increasingly difficult to find binary sequences that after being modulated still retain a good autocorrelation function. A better solution would be to use for example a \emph{constant amplitude zero autocorrelation waveform} (CAZAC) of length \(N\), which is computed with
 \begin{equation}
 	u_k = \exp\left(j\frac{M\pi K}{N}\right) \text{ where }
 	K = \begin{cases}
@@ -431,4 +431,8 @@ With QAM however, the complexity of the constellation and the higher number of b
 		k(k+1) & \text{when } N \text{ is odd}
 	\end{cases},
 \end{equation}
-that has an impulse as autocorrelation\cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Though unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer. Thus to use CAZAC waveforms the sender needs to put them in front of the modulated symbols (for example using a correctly parametrized stream mux block in GR), and the receiver would need to synchronize with the sequence before the clock recovery.
+and \(M\) is relatively prime to \(N\). CAZAC waveforms are ideal because they have a Dirac delta as autocorrelation\cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Though unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer. Thus to use CAZAC waveforms the sender needs to put them in front of the modulated symbols (for example using a correctly parametrized stream mux block in GR), and the receiver would need to synchronize with the sequence before the clock recovery or equalization. The latter is especially problematic because then it is no longer possible to identify the peak by comparing the autocorrelation value to a fixed threshold as done in section \ref{sec:implement-phasecorr}.
+
+\section{Incomplete}
+
+
