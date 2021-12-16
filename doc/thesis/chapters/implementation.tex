@@ -86,7 +86,7 @@ As receivers and transmitter devices for the SDR setup two USRP B210 devices fro
 	}
 \end{figure}
 
-To compute the empirical \emph{bit error rate} (BER) of the setup, the data has to be framed by the sender and the bitstream synchronized on the receiver side. The structure of a data packet used in the implementation is shown in \figref{fig:dataframe}. A frame begins with an user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple.
+To compute the empirical bit error rate (BER) of the setup, the data has to be framed by the sender and the bitstream synchronized on the receiver side. The structure of a data packet used in the implementation is shown in \figref{fig:dataframe}. A frame begins with an user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple.
 
 
 \subsection{Modulation}
@@ -140,21 +140,36 @@ The relevant observation to make in \eqref{eqn:xc-oop-copy} that since \(R_{aa}\
 	\item Remove the phase offset in the envelope by multiplying it with the complex conjugate of the offset, that is \(\hat{r}(t) = r(t) e^{-j\varphi}\).
 \end{enumerate}
 
-\subsection{Implementing fine phase and frequency correction}
+\subsubsection{Implementing fine phase and frequency correction}
 
 To implement in GR what was discussed in section \ref{sec:phasecorr} two blocks shown in \figref{fig:phasecorr-blocks} were used: a correlator estimator block, and a custom block. The former essentially implements the first 3 of the steps discussed at the end of section \ref{sec:phasecorr}. The correlator estimator block is given a sequence of samples, and when the cross correlation between them and the input stream is higher than a certain threshold (90\% of the amplitude of a perfect autocorrelation), it produces a ``tag'' in the output stream, that contains the phase estimate.
 
 Tags are GR's way of working with metadata that is attached to a sample. Internally tags are just polymorphic data structures containing a number indicating the absolute offset (in samples), and a pair of arbitrary values called ``key'' and ``value''. Tags are passed on from one block to the next like sample streams (unless the block specifies to do otherwise).
 
-Thus the tagged stream is processed with a custom block, of which a simplified version of its work function shown in listing \ref{lst:phasecorr-work}. The custom block also implements fine frequency correction by linearly interpolating the phase estimates between each pair of tags (called chunk). Mathematically this can be rather trivially be formulated for a chunk of \(N\) samples with the
+Thus the tagged stream is processed with a custom block, of which a simplified version of its work function shown in listing \ref{lst:phasecorr-work}. The custom block also implements fine frequency correction (shown in listing \ref{lst:phasecorr-blockphase}) by linearly interpolating the phase estimates between each pair of tags (called chunk). Mathematically this can be rather trivially be formulated for a chunk of \(N\) samples with the
 \begin{subequations}
 	\begin{align}
-		k\text{-th chunk digital frequency} \quad  & \omega_k = (\varphi_{k+1} - \varphi_k) / N, \text{ and the }\\
-		k\text{-th chunk phase estimate} \quad & \phi_k(n) = \varphi_k - \omega_k n/N.
+		k\text{-th chunk digital frequency} \quad  & \Omega_k = (\varphi_{k+1} - \varphi_k) / N, \text{ and the }\\
+		k\text{-th chunk phase estimate} \quad & \Phi(n) = \varphi_k - \omega_k n/N.
 	\end{align}
 \end{subequations}
 
-% TODO: discuss performance of implementation
+\subsubsection{Performance of the implementation}
+
+The phase and frequency correction block was implemented with the design goal of being able to correct under ideal conditions a maximal frequency offsets of \(\hat{\epsilon} = 0.1\%\), which is sufficient to take into account small Doppler shifts at walking speed (\(v = \SI{2}{\meter\per\second}\)) with carrier at \(f_c = 2.4\) GHz. The USRP B210 devices have an internal clock frequency accuracy of \(\epsilon = 1\text{ ppm} = 10^{-6}\), which results in a total frequency offset of
+\begin{equation}
+	\Delta f = f_c \left( \frac{v}{c_0} + \epsilon \right)
+	= \SI{2.4}{\giga\hertz} \left(
+		\frac{\SI{2}{\meter\per\second}}{\SI{3e8}{\meter\per\second}} + 10^{-6} 
+	\right) = \SI{2416}{\hertz}.
+\end{equation}
+Because the frequency estimate is linearly interpolated, the phase error may not exceed \(\pi\) (half rotation) during one data frame (chunk). These constraints imply that for frames of \(N'\) symbols of duration \(T\), using \(\kappa\) samples per symbol the relation
+\begin{equation}
+	2\pi\Delta f N' T \kappa \leq \pi
+	\iff T = 1/f_s \leq \frac{1}{2\Delta f N' \kappa},
+	\iff N' \leq \frac{1}{2\Delta f T \kappa},
+\end{equation}
+must hold. By further setting \(\kappa = 4\) and \(N' = 32\) we obtain a minimum sampling frequency of approximately \(\SI{618.5}{\kilo\hertz}\), or conversely by letting \(f_s = \SI{1}{\mega\hertz}\) we have a maximum frame length of \(N' = 51\) symbols. In other words, roughly every 50 symbols the system must send an access code sequence.
 
 \begin{lstlisting}[
 	texcl = true, language = python, escapechar = {`},
@@ -173,7 +188,7 @@ def work(self, inputs, outputs):
 	pairs = zip(tags, tags[1:])
 	# compute phase correction between each pair of tags
 	chunks = [self.block_phase(start, end) for (start, end) in pairs]
-	# flatten array to get \(\phi(n)\) and compute the correction
+	# flatten array to get \(\Phi(n)\) and compute the correction
 	phases = np.concatenate(chunks)
 	correction = np.exp(-1j * phases) 
 	# write to the first output port
@@ -368,8 +383,7 @@ The power delay profile which specify the delay in time for each impulse need to
 }
 
 \subsection{Empirical BER} \label{sec:ber}
-
-To find out how accurate the simulations are comparer with a simulation of the fadinng effect and tested measurements, the byte error rate of the system is calculated. This is done with the help of a user specified \(k\)-byte test frame in the beginning of each vector. Implemented according to the code in \ref{lst:ber-block}. Every bit is compared with the test vector at the beginning before the modulation and demodulation part. 
+To find out how accurate the simulations are comparer with a simulation of the fadinng effect and tested measurements, the byte error rate of the system is calculated. This is done with the help of a user specified \(k\)-byte test frame in the beginning of each vector. Implemented according to the code in \ref{lst:ber-work}. Every bit is compared with the test vector at the beginning before the modulation and demodulation part. 
 Because of the fact that the test vector has some random bit at the end the bit error rate has always a value on average 32, even when its perfect match.  So to avoid high numbers this value is subtracted and only on focused on the positive values. 
 
 The vector which is used as test vector is: \([0x1f, 0x35] + [0x12, 0x48] \), because this numbers are well suited to compare.
@@ -404,9 +418,6 @@ For generating the Byte error rate it is focus on byte-blocks of a specific leng
 		self.send(self.encode([ber_max, ber_min, ber_avg]))
 		return len(inp)
 \end{lstlisting}
-
-
-
 
 
 \begin{figure}
