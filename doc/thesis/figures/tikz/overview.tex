@@ -3,55 +3,99 @@
 \begin{tikzpicture}[
 		% show background rectangle,
 		box/.style = {
-			font = \small\sffamily\bfseries,
+			font = \small\sffamily,
 			draw, thick, fill = white,
-			minimum height = 10mm,
-			minimum width = 25mm,
+			minimum height = 14mm,
+			minimum width = 28,
+			text width = 28mm, align = center,
+		},
+		circ/.style = {
+			draw, thick, circle, fill = white,
+			minimum size = 10mm, inner sep = 0pt,
+			font = \Huge,
 		},
 	]
+
+	% --------------------------------------------------------	
+
+	\coordinate (TX) at (0, 0);
 	\matrix[
-		nodes = {box}, column sep = 10mm, row sep = 10mm,
-	]{
-		\node (SRC) {Source}; &
-		\node (ENC) {Encoder}; &
-		\node (MOD) {Modulator}; \\
-		&& \node (CHN) {Channel}; \\
-		\node (SNK) {Sink}; &
-		\node (DEC) {Decoder}; &
-		\node (DMD) {Demodulator}; \\
+		nodes = {box}, column sep = 14mm, row sep = 10mm,
+		inner sep = 3mm, fill = lightgray!20,
+		anchor = north west,
+	] at (TX) {
+		\node (SRC) {\textbf{Source}\\ Digital data}; &
+		\node (FRA) {\textbf{Framer}\\ Data Packets}; &
+		\node (MOD) {\textbf{Modulator}\\ QPSK or 16-QAM}; \\
 	};
+
 	\draw[very thick, -latex]
-		(SRC) edge node[midway, above] {\(m\)}    (ENC)
-		(ENC) edge node[midway, above] {\(m_e\)}  (MOD)
-		(MOD) edge node[midway, right] {\(s(t)\)}    (CHN)
-		(CHN) edge node[midway, right] {\(r(t)\)}    (DMD)
-		(DMD) edge node[midway, above] {\(\hat{m}_e\)} (DEC)
-		(DEC) edge node[midway, above] {\(\hat{m}\)}   (SNK)
+		(SRC) edge node[midway, above] {\(m\)} (FRA)
+		(FRA) edge (MOD)
 	;
 
-	\draw[very thick, -latex]
-		($(MOD.east)+(5mm,0)$) node[right] (CARR) {Carrier \(e^{j(\omega_c t + \phi)}\)} to (MOD);
+	\node[
+		gray,
+		anchor = south west,
+		font = \ttfamily,
+	] at (TX) {Transmitter};
+
+	% --------------------------------------------------------
+
+	\coordinate (CHN) at ($(MOD.south east)+(3mm, -11mm)$);
+	\matrix[
+		row sep = 5mm, inner sep = 3mm, fill = lightgray!20,
+		anchor = north east,
+	] at (CHN) {
+		\node[circ] (PLUS) {\(+\)}; %
+		\node[left = 14mm of PLUS] (AWGN) {AWGN}; &
+		\node[minimum width = 12mm] {}; \\
+		\node[circ] (TIMES) {\(\times\)}; %
+		\node[left = 14mm of TIMES] (FADING) {Fading}; \\
+	};
 
 	\draw[very thick, -latex]
-		($(CHN.east)+(5mm,0)$) node[right] (NOISE) {Noise \(n(t)\)} to (CHN);
+		(AWGN) edge node[midway, above] {\(n(t)\)} (PLUS)
+		(FADING) edge node[midway, above] {\(f(t)\)} (TIMES)
+		(MOD) edge node[midway, right] {\(s(t)\)} (PLUS)
+		(PLUS) edge (TIMES)
+	;
 
-	% \draw[very thick, -latex]
-	% 	($(CHN.west)-(5mm,0)$) node[left] (FADE) {Fading} to (CHN);
+	\node[
+		gray,
+		anchor = south west,
+		font = \ttfamily,
+	] at ($(CHN) - (62mm, 0)$) {Channel Model};
+
+	% --------------------------------------------------------
+
+	\coordinate (RX) at (0, -68mm);
+	\matrix[
+		nodes = {box},
+		column sep = 14mm, row sep = 5mm,
+		inner sep = 3mm, fill = lightgray!20,
+		anchor = north west,
+	] at (RX) {
+		\node (PFC) {\textbf{Fine phase and freq. correction}}; &
+		\node (EQL) {\textbf{Equalizer} \\ Amplitude}; &
+		\node (CLK) {\textbf{Clock Recovery} \\ Symbol peak}; \\
+		\node (DMO) {\textbf{Demodulator}}; &
+		\node (DFR) {\textbf{Deframer} \\ Error detection}; &
+		\node (SIN) {\textbf{Sink} \\ User interface}; \\
+	};
 
 	\draw[very thick, -latex]
-		($(DMD.east)+(5mm,0)$) node[right] (SYNC) {Sync} to (DMD);
+		(TIMES) edge node[midway, right] {\(r(t)\)} (CLK)
+		(CLK) edge (EQL)
+		(EQL) edge (PFC)
+		(PFC) edge (DMO)
+		(DMO) edge (DFR)
+		(DFR) edge (SIN)
+	;
 
-	\begin{pgfonlayer}{background}
-		\fill[lightgray!20] ($(SRC.north west)+(-5mm,5mm)$) node (TX) {}
-			rectangle ($(MOD.south -| CARR.east)+(5mm,-5mm)$);
-
-		\fill[lightgray!20] ($(SNK.north west)+(-5mm,5mm)$) node (RX) {}
-			rectangle ($(DMD.south -| CARR.east)+(5mm,-5mm)$);
-
-		\node[gray, font = \ttfamily\bfseries, anchor = south west]
-			at (TX.north) {Transmitter};
-
-		\node[gray, font = \ttfamily\bfseries, anchor = south west]
-			at (RX.north) {Receiver};
-	\end{pgfonlayer}
+	\node[
+		gray,
+		anchor = south west,
+		font = \ttfamily,
+	] at (RX) {Receiver};
 \end{tikzpicture}
