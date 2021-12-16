@@ -27,6 +27,7 @@ SOURCES := \
 	figures/tikz/rayleigh-rice-pdf-plots.tex \
 	figures/tikz/packet-frame.tex \
 	figures/tikz/qpsk-sim-constellations-static.tex \
+	figures/tikz/qpsk-sim-constellations-static-symb.tex \
 	figures/tikz/qpsk-sim-constellations-dynamic.tex\
 	figures/tikz/qpsk-sim-constellations-without-effects.tex\
 
