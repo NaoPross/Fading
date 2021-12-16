@@ -25,12 +25,15 @@ SOURCES := \
 	figures/tikz/tapped-delay-line.tex \
 	figures/tikz/packet-frame.tex \
 	figures/tikz/qpsk-sim-constellations-static.tex \
-	figures/tikz/qpsk-sim-constellations-dynamic.tex
+	figures/tikz/qpsk-sim-constellations-dynamic.tex\
+	figures/tikz/qpsk-sim-constellations-whitout-effects.tex\
 
 DATA := \
 	figures/data/multipath_frequency_response.dat \
 	figures/data/qpsk_sim_constellations_static.dat \
-	figures/data/qpsk_sim_constellations_dynamic.dat
+	figures/data/qpsk_sim_constellations_static_symb.dat \
+	figures/data/qpsk_sim_constellations_dynamic.dat\
+	figures/data/qpsk_sim_constellations_whitout_effects.dat \
 
 
 # Get the main file from the file

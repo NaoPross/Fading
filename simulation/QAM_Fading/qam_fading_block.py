@@ -82,7 +82,7 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
         self.excess_bw = excess_bw = 350e-3
         self.timing_loop_bw = timing_loop_bw = 2 * 3.141592653589793 / 100
         self.time_offset = time_offset = 1.0
-        self.samp_rate = samp_rate = 32000
+        self.samp_rate = samp_rate = 1e6
         self.rrc_taps = rrc_taps = firdes.root_raised_cosine(nfilts, nfilts, 1.0/float(sps), excess_bw, 45*nfilts)
         self.phase_bw = phase_bw = 2 * 3.141592653589793 / 100
         self.noise_volt = noise_volt = 0.0001
@@ -91,8 +91,7 @@ class qam_fading_block(gr.top_block, Qt.QWidget):
         self.eq_ntaps = eq_ntaps = 15
         self.eq_mod = eq_mod = 1
         self.eq_gain = eq_gain = .01
-        self.const = const = digital.constellation_calcdist([-1-1j, -1+1j, 1+1j, 1-1j], [0, 1, 3, 2],
-        4, 1).base()
+        self.const = const = digital.constellation_qpsk().base()
         self.chn_taps = chn_taps = [1.0 + 0.0j, ]
         self.amp_1 = amp_1 = 0.2
         self.LOS_NLOS = LOS_NLOS = 1
