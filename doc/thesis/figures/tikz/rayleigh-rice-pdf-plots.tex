@@ -1,0 +1,33 @@
+% vim:set ts=2 sw=2 noet:
+\begin{tikzpicture}
+	\begin{axis}[
+			font = \small,
+			width = \linewidth, height = 6cm,
+			ylabel = {Probability density},
+			% xlabel = {Amplitude},
+			xlabel near ticks,
+			ylabel near ticks,
+			smooth, samples = 100, domain = 0:3,
+			legend = north east, legend style = {
+				cells = {anchor = west},
+				font = \footnotesize,
+			},
+		]
+
+		\addplot[thick, solid, blue] plot ({x}, {2*x*exp(-x^2)});
+		\addlegendentry{Rayleigh}
+
+		\addplot[thick, solid, red!40!blue] table[x index = 0, y index = 2]
+			{figures/data/rice_pdf.dat};
+		\addlegendentry{Rice \(K = 2\)}
+
+		\addplot[thick, solid, red!60!blue] table[x index = 0, y index = 3]
+			{figures/data/rice_pdf.dat};
+		\addlegendentry{Rice \(K = 5\)}
+
+		\addplot[thick, solid, red!80!blue] table[x index = 0, y index = 4]
+			{figures/data/rice_pdf.dat};
+		\addlegendentry{Rice \(K = 10\)}
+
+	\end{axis}
+\end{tikzpicture}

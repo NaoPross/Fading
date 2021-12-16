@@ -464,8 +464,8 @@ With QAM however, the complexity of the constellation and the higher number of b
 		k(k+1) & \text{when } N \text{ is odd}
 	\end{cases},
 \end{equation}
-and \(M\) is relatively prime to \(N\). CAZAC waveforms are ideal because they have a Dirac delta as autocorrelation\cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Though unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer. Thus to use CAZAC waveforms the sender needs to put them in front of the modulated symbols (for example using a correctly parametrized stream mux block in GR), and the receiver would need to synchronize with the sequence before the clock recovery or equalization. The latter is especially problematic because then it is no longer possible to identify the peak by comparing the autocorrelation value to a fixed threshold as done in section \ref{sec:implement-phasecorr}.
+and \(M\) is relatively prime to \(N\). CAZAC waveforms are ideal because they have a Dirac delta as autocorrelation\cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Though unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer (but not CMA). Thus to use CAZAC waveforms the sender needs to put them in front of the modulated symbols (for example using a correctly parametrized stream mux block in GR), and the receiver would need to synchronize with the sequence before the clock recovery or equalization. The latter is especially problematic because then it is no longer possible to identify the peak by comparing the autocorrelation value to a fixed threshold as done in section \ref{sec:implement-phasecorr}.
 
-\section{Incomplete}
+\subsection{Incomplete parts}
 
 

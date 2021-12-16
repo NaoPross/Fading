@@ -23,6 +23,8 @@ SOURCES := \
 	figures/tikz/multipath-impulse-response.tex \
 	figures/tikz/multipath-frequency-response-plots.tex \
 	figures/tikz/tapped-delay-line.tex \
+	figures/tikz/ring-of-scattering-objects.tex \
+	figures/tikz/rayleigh-rice-pdf-plots.tex \
 	figures/tikz/packet-frame.tex \
 	figures/tikz/qpsk-sim-constellations-static.tex \
 	figures/tikz/qpsk-sim-constellations-dynamic.tex\
@@ -34,6 +36,7 @@ DATA := \
 	figures/data/qpsk_sim_constellations_static_symb.dat \
 	figures/data/qpsk_sim_constellations_dynamic.dat\
 	figures/data/qpsk_sim_constellations_whitout_effects.dat \
+	figures/data/rice_pdf.dat
 
 
 # Get the main file from the file

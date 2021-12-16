@@ -357,17 +357,22 @@ i.e. the amplitude of \(f\) is \emph{Raileigh} distributed.
 
 \begin{figure}
 	\centering
-	\begin{subfigure}{.45\linewidth}
-		\skelfig
-		\caption{NLOS, Rayleigh}
+	\hfill
+	\begin{subfigure}[t]{.5\linewidth}
+		\input{figures/tikz/rayleigh-rice-pdf-plots}
+		\caption{Amplitude density.}
 	\end{subfigure}
-	\hskip 5mm
-	\begin{subfigure}{.45\linewidth}
-		\skelfig 
-		\caption{LOS, Rice}
+	\hfill
+	\begin{subfigure}[t]{.45\linewidth}
+		\centering
+		\resizebox{!}{5cm}{%
+			\input{figures/tikz/ring-of-scattering-objects}
+		}
+		\caption{Ring of scattering objects.}
 	\end{subfigure}
+	\hfill
 	\caption{
-		Ring of scattering objects.
+		Statistical model for multipath fading.
 		\label{fig:multipath-statistical-models}
 	}
 \end{figure}
