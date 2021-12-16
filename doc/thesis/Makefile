@@ -28,13 +28,18 @@ SOURCES := \
 	figures/tikz/packet-frame.tex \
 	figures/tikz/qpsk-sim-constellations-static.tex \
 	figures/tikz/qpsk-sim-constellations-static-symb.tex \
+	figures/tikz/qpsk-sim-constellations-static-symb-NLOS.tex \
+	figures/tikz/qpsk-sim-constellations-static-symb-vec.tex \
 	figures/tikz/qpsk-sim-constellations-dynamic.tex\
 	figures/tikz/qpsk-sim-constellations-without-effects.tex\
+
 
 DATA := \
 	figures/data/multipath_frequency_response.dat \
 	figures/data/qpsk_sim_constellations_static.dat \
 	figures/data/qpsk_sim_constellations_static_symb.dat \
+	figures/data/qpsk_sim_constellations_static_symb_NLOS.dat \
+	figures/data/qpsk_sim_constellations_static_symb_vec.dat \
 	figures/data/qpsk_sim_constellations_dynamic.dat\
 	figures/data/qpsk_sim_constellations_without_effects.dat \
 	figures/data/rice_pdf.dat
