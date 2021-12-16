@@ -121,28 +121,25 @@ Knowing why there is a need for orthogonal carriers, we should now discuss which
 \end{equation}
 The Hilbert transform is a linear operator that introduces a phase shift of \(\pi / 2\) over all frequencies \cite{Hsu,Gallager}, and it is possible to show that given a real valued function \(g(t)\) then \(\langle g, \hilbert g \rangle = 0\) \cite{Kschischang,Kneubuehler}. There are many functions that are Hilbert transform pairs, however in practice the pair \(\phi_i(t) = \cos(\omega_c t)\) and \(\phi_q(t) = \hilbert \phi_i(t) = \sin(\omega_c t)\) is always used.
 
-\paragraph{Oscillator and phase shifter}
-
-\skelpar[4]{Give a few details on how the carrier is generated in practice.}
+% \paragraph{Oscillator and phase shifter}
+% \skelpar[4]{Give a few details on how the carrier is generated in practice.}
 
 % \subsection{Spectral properties of a QAM signal}
 % \skelpar[4]{Spectral properties of QAM}
 
 \section{Phase shift keying (\(M\)-PSK)}
 
-Phase shift keying is another popular family of modulation schemes for digital signals.
-
-% PSK is a popular modulation type for data transmission\cite{Meyer2011}. With a bipolar binary signal, the amplitude remains constant and only the phase will be changed with phase jumps of 180 degrees, which can be seen as a multiplication of the carrier signal with $\pm$ 1. That is alow known as binary phase shift keying.
+Phase shift keying (PSK) is another popular family of modulation schemes for digital signals, that is however simpler than QAM. In PSK as the name suggests only the phase of the envelope changes, which means that the symbols have all the same amplitude. Thus, instead of arranging the symbols into a grid as done in QAM, \(M\)-PSK distributes the symbols over the unit circle at equidistant intervals of \(2\pi / M\) radians \cite{Mathis,Kneubuehler}. An example of 8-PSK is shown in \figref{fig:psk-constellation}. Mathematically the process of a PSK modulation can be described by \skelpar[2]
+\begin{equation}
+	\skelpar[1]
+\end{equation}
+\skelpar[3]
 
 % \begin{figure}
 % 	% TODO: Better Image
 % 	% https://sites.google.com/site/billmahroukelec675/bipolar-phase-shift-keying
 % 	\includegraphics[width=5cm]{./image/BPSK2.png}
 % \end{figure}
-
-% Two bits are modulated at ones with the same bandwidth as a 2-PSK so more informations are transmitted at the same time. \cite{Meyer2011}
-%TODO: Image Signal Raum 
-% Most times there is noise and the points on the constellation diagram become a surface. If the surfaces overlap there will be a problem with decoding. 
 
 \subsection{Quadrature PSK (QPSK)}
 
@@ -196,7 +193,7 @@ obtaining a new function
 \begin{equation} \label{eqn:multipath-impulse-response}
 	h(\tau, t) = \sum_k c_k(t) \delta(\tau - \tau_k(t)),
 \end{equation}
-that describes the \emph{channel impulse response} (CIR). This function depends on two time parameters: actual time \(t\) and convolution time \(\tau\). To better understand \(h(\tau, t)\), consider an example shown in figure \ref{fig:multipath-impulse-response}. Each stem represents a weighted Dirac delta, so each series of stems of the same color, along the convolution time \(\tau\) axis, is a channel response at some specific time \(t\). Along the other \(t\) axis we see how the entire channel response changes over time\footnote{In the figure only a finite number of stems was drawn, but actually the weights \(c_k(t)\) of the Dirac deltas change continuously.}. Notice that the stems are not quite aligned to the \(\tau\) time raster (dotted lines), that is because in \eqref{eqn:multipath-impulse-response} not only the weights \(c_k\) but also the delays \(\tau_k\) are time dependent.
+that describes the \emph{channel impulse response} (CIR). This function depends on two time parameters: actual time \(t\) and convolution time \(\tau\). To better understand \(h(\tau, t)\), consider an example shown in figure \ref{fig:multipath-impulse-response}. Each stem represents a weighted Dirac delta, so each series of stems of the same color, along the convolution time \(\tau\) axis, is a channel response at some specific time \(t\). Along the other axis we see how the entire channel response changes over time\footnote{In the figure only a finite number of stems was drawn, but actually the weights \(c_k(t)\) of the Dirac deltas change continuously.}. Notice that the stems are not quite aligned to the \(\tau\) time raster (dotted lines), that is because in \eqref{eqn:multipath-impulse-response} not only the weights \(c_k\) but also the delays \(\tau_k\) are time dependent.
 
 \subsection{Spectrum of a multipath fading channel}
 
@@ -229,19 +226,17 @@ An intuitive parameter to quantify how dispersive channel is, is to take the tim
 \begin{equation}
 	T_d = \max_{k} (\tau_k(t)) -  \min_{k} (\tau_k(t)),
 \end{equation}
-as is done in \cite{Gallager}. However since in reality some paths get more attenuated than others (\(c_k(t)\) parameters) it also not uncommon to define the delay spread as a weighted mean or even as a statistical second moment (RMS value), where mean tap power \(\expectation\{|c_k(t)|^2\}\) is taken into account \cite{Mathis,Messier}. More sophisticated definitions of delay spread will be briefly mentioned later in section \ref{sec:statistical-model}.
+as is done in \cite{Gallager}. However since in reality some paths get more attenuated than others (\(c_k(t)\) parameters) it also not uncommon to define the delay spread as a weighted mean or even as a statistical second moment (RMS value), where mean tap power \(\expectation\{|c_k(t)|^2\}\) is taken into account \cite{Mathis,Messier}. % More sophisticated definitions of delay spread will be briefly mentioned later in section \ref{sec:statistical-model}.
 
-Another important parameter for quantifying dispersion is \emph{coherence bandwidth}, a measure how 
-\skelpar{sentence}
+Another important parameter for quantifying dispersion is \emph{coherence bandwidth}, a measure that is highly related to delay spread but in the frequency domain. % Coherence bandwidth can be be defined as 
+\skelpar[3]
 
-% TODO: End the sentence
-
-\subsection{Effects of multipath fading on modulation constellations}
-
-% TODO : Can we sai it that way /dose it need to be in the implementation Part?
-
-It is to mention that not every constellation of parameter for a fading illustration leads to a satisfying  plot constellation.
-For example in a Discrete-time Model: the same delay as the samples per Symbol or a multiple of it leads to a special case, where we see the constellation are around the modulate signal points, when there is no line of side path. This is because of \skelpar{Beschreiben warnn die Werte hübsch sind}
+% \subsection{Effects of multipath fading on modulation constellations}
+% 
+% % TODO : Can we sai it that way /dose it need to be in the implementation Part?
+% 
+% It is to mention that not every constellation of parameter for a fading illustration leads to a satisfying  plot constellation.
+% For example in a Discrete-time Model: the same delay as the samples per Symbol or a multiple of it leads to a special case, where we see the constellation are around the modulate signal points, when there is no line of side path. This is because of \skelpar{Beschreiben warnn die Werte hübsch sind}
 
 \subsection{Discrete-time model} \label{sec:discrete-time-model}
 
@@ -287,16 +282,19 @@ From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-respo
 
 \begin{figure}
 	\centering
-	\begin{subfigure}{.45\linewidth}
+	\begin{subfigure}{.4\linewidth}
 		\includegraphics[width=\linewidth]{./figures/screenshots/Fractional_delay_6}
-		\caption{Pulse with an integer delay of 6 samples.}
+		\caption{Integer delay of 6 samples.}
 	\end{subfigure}
 	\hskip 5mm
-	\begin{subfigure}{.45\linewidth}
+	\begin{subfigure}{.4\linewidth}
 		\includegraphics[width=\linewidth]{./figures/screenshots/Fractional_delay_637}
-		\caption{Pulse with a fractional delay of 6.37 samples.}
+		\caption{Fractional delay of 6.37 samples.}
 	\end{subfigure}
-	\caption{\label{fig:fractional-delay-sinc-plot}}
+	\caption{
+		FIR filters for integer and fractional delays.
+		\label{fig:fractional-delay-sinc-plot}
+	}
 \end{figure}
 
 As mentioned in \ref{sec:discrete-time-model} a FIR filter can be used to simulate discrete-time models of multipath fading. But with FIR filters the delays can only be integer multiples of the sample rate. When the delays are non integer an approximation needs to be done, that is because FIR filters have a transfer function of the form
@@ -326,13 +324,15 @@ for a minimal error in the approximation. It is worth mentioning that it is also
 
 Because as mentioned earlier it is difficult to estimate the time-dependent parameters of \(h_l(m)\) in many cases it is easier to model the components of the CIR as stochastic processes, thus greatly reducing the number of parameters \cite{Messier,Mathis}. This is especially effective for channels that are constantly changing, because by the central limit theorem the cumulative effect of many small changes tends to a normal distribution.
 
-\skelpar[3]{Assumptions of the model}
+% \skelpar[3]{Assumptions of the model}
+Before discussing the models themselves, their underlying statistical assumptions need to be considered. In the literature the so called WSSUS assumptions are made, which for a discrete time CIR \(h_l(m)\) can be formulated as
 \begin{subequations}
 	\begin{align}
-		R_{l} (k) &= \E{h_l(m) h_l^*(m+k)}, \\
-		0 &= \E{h_l(m) h_k^*(m)} \text { for } l \neq k
+		R_{l} (k) &= \E{h_l(m) h_l^*(m+k)}, \text{ and } \label{eqn:stat-wss} \\
+		0 &= \E{h_l(m) h_k^*(m)} \text { for } l \neq k. \label{eqn:stat-us}
 	\end{align}
 \end{subequations}
+Equation \eqref{eqn:stat-wss} states that the fading CIR is a \emph{wide sense stationary} stochastic process, while \eqref{eqn:stat-us} is the \emph{uncorrelated scattering} assumption, which says that the path do not interfere with each other. The latter is more realistic than the former, but WSS is still useful as it considerably simplifies the mathematical formulation \cite{Messier}.
 
 \paragraph{NLOS case}
 

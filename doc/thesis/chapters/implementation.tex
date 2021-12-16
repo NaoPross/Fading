@@ -86,7 +86,7 @@ As receivers and transmitter devices for the SDR setup two USRP B210 devices fro
 	}
 \end{figure}
 
-To compute the empirical bit error rate (BER) of the setup, the data has to be framed by the sender and the bitstream synchronized on the receiver side. The structure of a data packet used in the implementation is shown in \figref{fig:dataframe}. A frame begins with an user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple.
+To compute the empirical bit error rate (BER) of the setup, the data has to be framed by the sender and the bitstream synchronized on the receiver side. The structure of a data packet used in the implementation is shown in \figref{fig:dataframe}. A frame begins with an user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the theoretical maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple.
 
 
 \subsection{Modulation}
@@ -169,7 +169,7 @@ Because the frequency estimate is linearly interpolated, the phase error may not
 	\iff T = 1/f_s \leq \frac{1}{2\Delta f N' \kappa},
 	\iff N' \leq \frac{1}{2\Delta f T \kappa},
 \end{equation}
-must hold. By further setting \(\kappa = 4\) and \(N' = 32\) we obtain a minimum sampling frequency of approximately \(\SI{618.5}{\kilo\hertz}\), or conversely by letting \(f_s = \SI{1}{\mega\hertz}\) we have a maximum frame length of \(N' = 51\) symbols. In other words, roughly every 50 symbols the system must send an access code sequence.
+must hold. By further setting \(\kappa = 4\) and \(N' = 32\) we obtain a minimum sampling frequency of approximately \(\SI{618.5}{\kilo\hertz}\), or conversely by letting \(f_s = \SI{1}{\mega\hertz}\) we have a maximum frame length of \(N' = 51\) symbols. In other words, roughly every 50 symbols the system must send an access code sequence. This result is rather unfortunate as it requires a lot more processing power than expected.
 
 \begin{lstlisting}[
 	texcl = true, language = python, escapechar = {`},
@@ -430,7 +430,7 @@ For generating the Byte error rate it is focus on byte-blocks of a specific leng
 		return len(inp)
 \end{lstlisting}
 
-\section{Technical pro
+% \section{Technical pro}
 
 \section{Issue with the current implementation}
 
