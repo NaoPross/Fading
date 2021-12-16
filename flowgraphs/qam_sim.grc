@@ -151,7 +151,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [184, 436.0]
+    coordinate: [216, 436.0]
     rotation: 0
     state: true
 - name: nfilts
@@ -448,7 +448,7 @@ blocks:
     block_tags: 'False'
     comment: ''
     epsilon: '1.0'
-    freq_offset: '0'
+    freq_offset: 1e-3
     maxoutbuf: '0'
     minoutbuf: '0'
     noise_voltage: 100e-3
@@ -481,7 +481,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [600, 748.0]
+    coordinate: [608, 748.0]
     rotation: 0
     state: enabled
 - name: digital_constellation_decoder_cb_0
@@ -550,8 +550,8 @@ blocks:
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    mu: 5e-3
-    num_taps: '5'
+    mu: 2e-3
+    num_taps: '15'
     sps: '1'
   states:
     bus_sink: false
@@ -559,7 +559,7 @@ blocks:
     bus_structure: null
     coordinate: [520, 1156.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: digital_pfb_clock_sync_xxx_0
   id: digital_pfb_clock_sync_xxx
   parameters:
@@ -747,7 +747,7 @@ blocks:
     color1: '"blue"'
     color10: '"red"'
     color2: '"red"'
-    color3: '"red"'
+    color3: '"green"'
     color4: '"red"'
     color5: '"red"'
     color6: '"red"'

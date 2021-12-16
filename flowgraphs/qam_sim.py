@@ -155,7 +155,7 @@ class qam_sim(gr.top_block, Qt.QWidget):
             '', '', '', '', '']
         widths = [1, 1, 1, 1, 1,
             1, 1, 1, 1, 1]
-        colors = ["blue", "red", "red", "red", "red",
+        colors = ["blue", "red", "green", "red", "red",
             "red", "red", "red", "red", "red"]
         styles = [0, 0, 0, 0, 0,
             0, 0, 0, 0, 0]
@@ -184,7 +184,7 @@ class qam_sim(gr.top_block, Qt.QWidget):
         self.fadingui_netsink_0 = fadingui.netsink(address='udp://localhost:31416', dtype="complex", vlen=1)
         self.fadingui_ber_0 = fadingui.ber(vgl=testvec + list(np.zeros(4)), vlen=frame_len,address='udp://localhost:31415')
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, 2 * np.pi / 100, rrc_taps, 32, 16, 1.5, 1)
-        self.digital_lms_dd_equalizer_cc_0 = digital.lms_dd_equalizer_cc(5, 5e-3, 1, qam_const)
+        self.digital_lms_dd_equalizer_cc_0 = digital.lms_dd_equalizer_cc(15, 2e-3, 1, qam_const)
         self.digital_corr_est_cc_0 = digital.corr_est_cc(access_code, 1, len(access_code) // 2, 0.9, digital.THRESHOLD_ABSOLUTE)
         self.digital_constellation_modulator_0 = digital.generic_mod(
             constellation=qam_const,
@@ -198,7 +198,7 @@ class qam_sim(gr.top_block, Qt.QWidget):
         self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, ((2*carrier_freq)/(3*10e8))/samp_rate, False, 4.0, 21, (0,1.8), (1,0.12), 8 )
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=100e-3,
-            frequency_offset=0,
+            frequency_offset=1e-3,
             epsilon=1.0,
             taps=[np.exp(1j * 30 / 180 * np.pi)],
             noise_seed=243,

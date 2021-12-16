@@ -8,7 +8,7 @@ options:
     description: ''
     gen_cmake: 'On'
     gen_linking: dynamic
-    generate_options: qt_gui
+    generate_options: no_gui
     hier_block_src_path: '.:'
     id: qpsk_hw
     max_nouts: '0'
@@ -36,7 +36,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 2 * np.array([(-0.7071067811865475-0.7071067811865475j), (0.7071067811865475-0.7071067811865475j),
+    value: 2* np.array([(-0.7071067811865475-0.7071067811865475j), (0.7071067811865475-0.7071067811865475j),
       (0.7071067811865475+0.7071067811865475j), (0.7071067811865475+0.7071067811865475j),
       (-0.7071067811865475-0.7071067811865475j), (0.7071067811865475+0.7071067811865475j),
       (0.7071067811865475-0.7071067811865475j), (0.7071067811865475-0.7071067811865475j)])
@@ -131,7 +131,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 5e5
+    value: 800e3
   states:
     bus_sink: false
     bus_source: false
@@ -198,7 +198,7 @@ blocks:
     bus_structure: null
     coordinate: [1064, 1080.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: blocks_repack_bits_bb_0
   id: blocks_repack_bits_bb
   parameters:
@@ -460,11 +460,11 @@ blocks:
     bus_structure: null
     coordinate: [704, 316.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: fadingui_netsink_1
   id: fadingui_netsink
   parameters:
-    address: udp://localhost:31415
+    address: udp://localhost:31418
     affinity: ''
     alias: ''
     comment: ''
@@ -476,11 +476,11 @@ blocks:
     bus_structure: null
     coordinate: [768, 916.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_netsink_3
   id: fadingui_netsink
   parameters:
-    address: udp://localhost:31415
+    address: udp://localhost:31419
     affinity: ''
     alias: ''
     comment: ''
@@ -496,7 +496,7 @@ blocks:
 - name: fadingui_netsink_4
   id: fadingui_netsink
   parameters:
-    address: udp://localhost:31415
+    address: udp://localhost:31417
     affinity: ''
     alias: ''
     comment: ''
@@ -507,6 +507,22 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [528, 916.0]
+    rotation: 0
+    state: enabled
+- name: fadingui_netsink_4_0
+  id: fadingui_netsink
+  parameters:
+    address: udp://localhost:31416
+    affinity: ''
+    alias: ''
+    comment: ''
+    type: complex
+    veclen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [968, 660.0]
     rotation: 0
     state: enabled
 - name: fadingui_phasecorrection_0
@@ -627,9 +643,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1128, 784.0]
+    coordinate: [1280, 784.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: qtgui_time_sink_x_0
   id: qtgui_time_sink_x
   parameters:
@@ -726,7 +742,7 @@ blocks:
     bus_structure: null
     coordinate: [1248, 1060.0]
     rotation: 0
-    state: true
+    state: disabled
 - name: uhd_usrp_sink_0
   id: uhd_usrp_sink
   parameters:
@@ -1314,7 +1330,7 @@ blocks:
     norm_gain9: 'False'
     num_mboards: '1'
     otw: ''
-    rx_agc0: Default
+    rx_agc0: Disabled
     rx_agc1: Default
     rx_agc10: Default
     rx_agc11: Default
@@ -1472,6 +1488,7 @@ connections:
 - [digital_corr_est_cc_0, '0', fadingui_phasecorrection_0, '0']
 - [digital_corr_est_cc_0, '1', blocks_complex_to_mag_0, '0']
 - [digital_lms_dd_equalizer_cc_0, '0', digital_corr_est_cc_0, '0']
+- [digital_lms_dd_equalizer_cc_0, '0', fadingui_netsink_1, '0']
 - [digital_lms_dd_equalizer_cc_0, '0', qtgui_const_sink_x_0_0, '1']
 - [digital_pfb_clock_sync_xxx_0, '0', digital_cma_equalizer_cc_0, '0']
 - [digital_pfb_clock_sync_xxx_0, '0', digital_lms_dd_equalizer_cc_0, '0']
@@ -1481,6 +1498,7 @@ connections:
 - [fadingui_phasecorrection_0, '0', fadingui_netsink_3, '0']
 - [fadingui_phasecorrection_0, '0', qtgui_const_sink_x_0_0, '2']
 - [fadingui_phasecorrection_0, '0', virtual_sink_2, '0']
+- [uhd_usrp_source_0, '0', fadingui_netsink_4_0, '0']
 - [uhd_usrp_source_0, '0', virtual_sink_1, '0']
 - [virtual_source_0, '0', digital_constellation_decoder_cb_0, '0']
 - [virtual_source_1, '0', digital_pfb_clock_sync_xxx_0, '0']

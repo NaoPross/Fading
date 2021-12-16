@@ -94,7 +94,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [184, 252.0]
+    coordinate: [224, 252.0]
     rotation: 0
     state: enabled
 - name: frame_len
@@ -179,7 +179,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '[0x1f, 0x35] + [0x12, 0x48] '
+    value: '[0x1f, 0x35] + [0x12, 0x48, 0x12, 0x45] '
   states:
     bus_sink: false
     bus_source: false
