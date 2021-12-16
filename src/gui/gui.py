@@ -41,11 +41,10 @@ setup_dearpygui()
 #================================================
 # Globl variables
 
-# ber_win_tag = "ber_window"
-# ber_win_pos = (0,25)
-# ber_win_width = 800 
-# ber_win_height = 160
-
+ber_win_tag = "ber_window"
+ber_win_pos = (0,25)
+ber_win_width = 800 
+ber_win_height = 160
 
 # Network Plots
 time_plot         = net.network_plot(url="udp://localhost:31415", dtype=float, \
@@ -266,7 +265,7 @@ with window(label="Time domain", width=800, height=400, pos=(0,185), \
 
 #TO DO:BER von GNU Radio anzeigen 
 
-with theme(tag="ber_window"):
+with theme(tag="theme_ber_window"):
         with theme_component(mvAll):
             add_theme_style(mvStyleVar_WindowTitleAlign, 0.5)
             add_theme_style(mvStyleVar_WindowBorderSize, 0)#Rad ein und aus Schalten 
@@ -274,7 +273,6 @@ with theme(tag="ber_window"):
 with window(label="Bit Error Rate ", width=800, height=160, pos=(0,25),\
     no_collapse=True, no_close=True, no_title_bar= True,no_move=True,no_resize=True,\
     tag=ber_win_tag) as ber_window:
-    with ber:
         add_text("The Bit Error Rate is:",pos=(50,25))
         with theme(tag="button_ber"):
             with theme_component(mvButton):
@@ -284,8 +282,7 @@ with window(label="Bit Error Rate ", width=800, height=160, pos=(0,25),\
 
         add_button(label="BER", height=60, width=700, pos=(50,70), tag="ber_value")
         bind_item_theme(last_item(), "button_ber")
-
-        bind_item_theme(ber_window, "ber_window")
+        bind_item_theme(ber_window, "theme_ber_window")
 
 def set_ber(values):
     ber_curr, ber_max, ber_avg = values
@@ -303,9 +300,9 @@ set_primary_window("primary_window", True)
 
 # Main loop
 while is_dearpygui_running():
-    # for plt in network_plots:
-    #     plt.refresh_series(plt.series_tag)
-    # ber_value.refresh()
+    for plt in network_plots:
+        plt.refresh_series(plt.series_tag)
+    ber_value.refresh()
 
     render_dearpygui_frame()
 
