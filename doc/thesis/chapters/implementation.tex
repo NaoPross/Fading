@@ -75,7 +75,7 @@ As receivers and transmitter devices for the SDR setup two USRP B210 devices fro
 
 \section{Sender chain}
 
-\subsection{Data frame}
+\subsection{Data frame} \label{sec:data-frame}
 
 \begin{figure}
 \centering
@@ -263,20 +263,7 @@ def block_phase(self, start, end):
 
 \section{Channel simulations}
 
-Here its possible to add some AWGN noise in the channel line. Different parameters can be changed like the noise voltage, time or the frequency offset.
-
-In this part the fading blocks for the simulation are added. Tow different types are implemented a discrete-time one and a statistical one. First to get a better understanding of the material the discrete-time modeled one and after the more realistic one, based on the Rayleight and Rician distribution.
-
-\skelpar[5]{
-	Discuss the multitap FIR model we used. How it is possible to set the delay etc. Also mathematics for the interpolation.
-}
-
-%TODO find out what to do with this text in the comment
-%To get a basic line for further simulations a 16QAM has been made. The results of this simulation are shown in \figref{fig:simul16QAM} and \figref{fig:simul16QAM_1} as the red Signal. In \tabref{tab:modulation_settings} some importer Parameter settings for a different modulation scheme are mentioned.
-%
-%A FIR-Filter was added in the Channel to create a time delay between tow paths. In \figref{fig:simul16QAM} the result includes a direct path and a delayed one. In the plot of \figref{fig:simul16QAM_1} the transmission line dosn't include a direct path. %It's impotent to mention that the delay should be smaller than the symbol rate or a multiple of it. (Stimmt dies , not sure any more)
-%
-%For the a first simulation with some fading the 16QAM simulation model has been extended with a FIR-Filter in the Chanel. The results of this simulation are shown in \figref{fig:simul16QAM} and \figref{fig:simul16QAM_1} as the blue Signal.
+In order to study the effects of multipath fading, a series of simulations have been made under different conditions. To simulate a channel affected by multipath fading two blocks from the GR library, and a third custom block were used. The channel model can simulate AWGN, a frequency offset and either a Rayleigh (NLOS) oder Rice (LOS) fading.
 
 \begin{figure}
 	\centering
@@ -294,9 +281,9 @@ In this part the fading blocks for the simulation are added. Tow different types
 	}
 \end{figure}
 
-\subsection{Fading with Discrete-time model}
+\subsection{Fading with discrete time model}
 
-For the statical version according to \ref{sec:discrete-time-model} to implement and illustrat the fading effect, a separate block was created and implemented in the channel. Nearer shown in \ref{lst:fir-block}. This block is based on a FIR filter. It can be displayed with a direct path or without one. With the help of this filter, the delay of the line of side paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed path. Unfortunately, these simulation values do not correspond to the realety, because too many incalculable side effects occur, which aren't possiple to ilustrate in this simulation.
+For the statical version according to \ref{sec:discrete-time-model} to implement and illustrate the fading effect, a separate block was created and implemented in the channel. Nearer shown in \ref{lst:fir-block}. This block is based on a FIR filter. It can be displayed with a direct path or without one. With the help of this filter, the delay of the line of side paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed path. Unfortunately, these simulation values do not correspond to the realety, because too many incalculable side effects occur, which aren't possiple to ilustrate in this simulation.
 This block was additionally implemented with the method described in \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample. Which in turn means that the other sampled values do not add up to zero.
 Thus, they will be distributed among the other whole numbers. A window function could also be implemented to limit these values. Here none was implemented because the sinc function is restricted.
 
@@ -304,8 +291,6 @@ Thus, they will be distributed among the other whole numbers. A window function 
 \skelpar[5]{
 	Discrabe a perfect plot
 }
-
-
 
 \begin{lstlisting}[
 	texcl = true, language = python, escapechar = {`},
@@ -348,7 +333,7 @@ Thus, they will be distributed among the other whole numbers. A window function 
 	
 \end{lstlisting}
 
-\subsection{Fading with Statistical model}
+\subsection{Fading with statistical model}
 
 	
 \skelpar[5]{
@@ -397,7 +382,7 @@ The power delay profile which specify the delay in time for each impulse need to
 To find out how accurate the simulations are comparer with a simulation of the fadinng effect and tested measurements, the byte error rate of the system is calculated. This is done with the help of a user specified \(k\)-byte test frame in the beginning of each vector. Implemented according to the code in \ref{lst:ber-work}. Every bit is compared with the test vector at the beginning before the modulation and demodulation part. 
 Because of the fact that the test vector has some random bit at the end the bit error rate has always a value on average 32, even when its perfect match.  So to avoid high numbers this value is subtracted and only on focused on the positive values. 
 
-The vector which is used as test vector is: \([0x1f, 0x35] + [0x12, 0x48] \), because this numbers are well suited to compare.
+The vector which is used as test vector is: \texttt{[0x1f, 0x35, 0x12, 0x48]}, because this numbers are well suited to compare.
 For generating the Byte error rate it is focus on byte-blocks of a specific length. So for each of this blocks compared with test vector there is a BER. To make it simpler or better said to avoid mistakes, the last 200 of this individual BER are taken to find an average and the highest value. 
 
 \skelpar[5]{
@@ -430,8 +415,20 @@ For generating the Byte error rate it is focus on byte-blocks of a specific leng
 		return len(inp)
 \end{lstlisting}
 
-% \section{Technical pro}
-
-\section{Issue with the current implementation}
-
 % TODO: Picture of the setup
+
+\section{Issues in the current implementation}
+
+\subsection{Non modulated access codes}
+
+Currently as described in section \ref{sec:data-frame}, the access codes are put as bytes in front of the frame in the \(k\)-byte preamble. For this to work, the access code bytes must still have a good autocorrelation function after being modulated into symbols using the chosen modulation scheme. This works well with QPSK, because the constellation is quite simple and the length of the sequence is only halved after the modulation (since QPKS has 2 bits per symbol). Thus in the QPSK flowgraph, the longest known 13 bit Barker sequence \texttt{0x1f35} padded with zeros after MSB is sufficient (\(\approx 7\) symbols).
+
+With QAM however, the complexity of the constellation and the higher number of bits per symbol makes it increasingly difficult to find binary sequences, that after being modulated still retain a good autocorrelation function. A better solution would be to use for example a \emph{constant amplitude zero autocorrelation waveform} (CAZAC) of length \(N\), which is computed with
+\begin{equation}
+	u_k = \exp\left(j\frac{M\pi K}{N}\right) \text{ where }
+	K = \begin{cases}
+		k^2 & \text{when } N \text{ is even} \\
+		k(k+1) & \text{when } N \text{ is odd}
+	\end{cases},
+\end{equation}
+that has an impulse as autocorrelation\cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Though unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer. Thus to use CAZAC waveforms the sender needs to put them in front of the modulated symbols (for example using a correctly parametrized stream mux block in GR), and the receiver would need to synchronize with the sequence before the clock recovery.
