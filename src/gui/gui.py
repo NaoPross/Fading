@@ -35,11 +35,17 @@ create_viewport(title="Fading Demonstrator",width=1920, height=1200)
 setup_dearpygui()
 
 # Show demo for dev
-show_demo()
+#show_demo()
 
 
 #================================================
 # Globl variables
+
+# ber_win_tag = "ber_window"
+# ber_win_pos = (0,25)
+# ber_win_width = 800 
+# ber_win_height = 160
+
 
 # Network Plots
 time_plot         = net.network_plot(url="udp://localhost:31415", dtype=float, \
@@ -63,6 +69,7 @@ const_plot_win_height = 560
 # size of the plot windows
 plot_window_sizes = {
     time_plot: (800, 400),
+
     channel_plot:      (const_plot_win_width, const_plot_win_height),
     synchronized_plot: (const_plot_win_width, const_plot_win_height),
     equalized_plot:    (const_plot_win_width, const_plot_win_height),
@@ -71,7 +78,7 @@ plot_window_sizes = {
 
 # Where to place the network plot windows
 plot_window_positions = {
-    time_plot:         (0, 425),
+    time_plot:         (0,185),
     channel_plot:      (const_plots_start),
     synchronized_plot: (const_plots_start[0] + const_plot_win_width, \
                         const_plots_start[1]),
@@ -132,6 +139,11 @@ with window(tag="primary_window"):
             def restore_windows():
                 global plot_window_sizes, plot_window_positions
 
+                configure_item(ber_win_tag,
+                    width=ber_win_width,
+                    height=ber_win_height,
+                    pos=ber_win_pos)
+
                 for plot in network_plots:
                     configure_item(plot.window_tag,
                             width=plot_window_sizes[plot][0],
@@ -160,38 +172,52 @@ with window(tag="primary_window"):
 #================================================
 # Flow Graph Window
 
-with window(label="RX DSP Flow Graph", width=800, height=400, pos=(0,25), tag="rx_win"):
-    add_text("TODO:Blockschaltbild")
-    with node_editor():
-        with node(label="USRP Source", pos=(20,100)):
-            with node_attribute(tag="src_out", attribute_type=mvNode_Attr_Output):
-                add_text("Signal from antenna")
+def add_and_load_image(image_path, **kwargs):
+    width, height, channels, data = load_image(image_path)
 
-        with node(label="Clock Sync", pos=(200,200)):
-            with node_attribute(tag="clksync_in", attribute_type=mvNode_Attr_Input):
-                add_text("Input")
-
-            with node_attribute(tag="clksync_out", attribute_type=mvNode_Attr_Output):
-                add_text("Synchronized")
-
-        with node(label="Equalizer", pos=(350,100)):
-            with node_attribute(tag="eq_in", attribute_type=mvNode_Attr_Input):
-                add_text("Input")
-
-            with node_attribute(tag="eq_out", attribute_type=mvNode_Attr_Output):
-                add_text("Equalized")
-
-        with node(label="Phase Locked Loop", pos=(600, 200)):
-            with node_attribute(tag="pll_in", attribute_type=mvNode_Attr_Input):
-                add_text("Input")
-
-            with node_attribute(tag="pll_out", attribute_type=mvNode_Attr_Output):
-                add_text("Locked")
+    with texture_registry() as reg_id:
+        texture_id = add_static_texture(width, height, data, parent=reg_id)
+    return add_image(texture_id, **kwargs)
 
 
-        add_node_link(get_alias_id("src_out"), get_alias_id("clksync_in"))
-        add_node_link(get_alias_id("clksync_out"), get_alias_id("eq_in"))
-        add_node_link(get_alias_id("eq_out"), get_alias_id("pll_in"))
+with window(label="RX DSP Flow Graph", width=800, height=653, pos=(0,585),\
+ no_collapse=True, no_close=True,no_title_bar= True, no_scrollbar=True,\
+ no_move=True,no_resize=True) as png:
+    add_and_load_image("res/pic/overview.png", width=650, height=531, pos=(50,0))
+    bind_item_theme(png, "constellation_series_theme") 
+
+# with window(label="RX DSP Flow Graph", width=800, height=400, pos=(0,25), tag="rx_win"):
+#     add_text("TODO:Blockschaltbild")
+#     with node_editor():
+#         with node(label="USRP Source", pos=(20,100)):
+#             with node_attribute(tag="src_out", attribute_type=mvNode_Attr_Output):
+#                 add_text("Signal from antenna")
+
+#         with node(label="Clock Sync", pos=(200,200)):
+#             with node_attribute(tag="clksync_in", attribute_type=mvNode_Attr_Input):
+#                 add_text("Input")
+
+#             with node_attribute(tag="clksync_out", attribute_type=mvNode_Attr_Output):
+#                 add_text("Synchronized")
+
+#         with node(label="Equalizer", pos=(350,100)):
+#             with node_attribute(tag="eq_in", attribute_type=mvNode_Attr_Input):
+#                 add_text("Input")
+
+#             with node_attribute(tag="eq_out", attribute_type=mvNode_Attr_Output):
+#                 add_text("Equalized")
+
+#         with node(label="Phase Locked Loop", pos=(600, 200)):
+#             with node_attribute(tag="pll_in", attribute_type=mvNode_Attr_Input):
+#                 add_text("Input")
+
+#             with node_attribute(tag="pll_out", attribute_type=mvNode_Attr_Output):
+#                 add_text("Locked")
+
+
+#         add_node_link(get_alias_id("src_out"), get_alias_id("clksync_in"))
+#         add_node_link(get_alias_id("clksync_out"), get_alias_id("eq_in"))
+#         add_node_link(get_alias_id("eq_out"), get_alias_id("pll_in"))
 
 #================================================
 # Network plots
@@ -225,7 +251,7 @@ make_constellation_plot_window(synchronized_plot, "Synchronized")
 make_constellation_plot_window(equalized_plot, "Equalized")
 make_constellation_plot_window(locked_plot, "Locked")
 
-with window(label="Time domain", width=800, height=400, pos=(0,425), \
+with window(label="Time domain", width=800, height=400, pos=(0,185), \
             no_title_bar= True,no_move=True,no_resize=True,no_collapse=True, no_close=True,\
             tag=time_plot.window_tag) as time:
     with time_plot:
@@ -243,23 +269,23 @@ with window(label="Time domain", width=800, height=400, pos=(0,425), \
 with theme(tag="ber_window"):
         with theme_component(mvAll):
             add_theme_style(mvStyleVar_WindowTitleAlign, 0.5)
-            add_theme_style(mvStyleVar_WindowRounding, 5)
             add_theme_style(mvStyleVar_WindowBorderSize, 0)#Rad ein und aus Schalten 
 
-with window(label="Bit Error Rate ", width=800, height=320, pos=(0,825),\
-    no_collapse=True, no_close=True, no_title_bar= True,no_move=True,no_resize=True,) as ber_window:
-    add_text("The Bit Error Rate is:",pos=(50,75))
-    with theme(tag="button_ber"):
-        with theme_component(mvButton):
-            add_theme_color(mvThemeCol_Button,(135, 206, 255)) #Blau
-            add_theme_color(mvThemeCol_Text,(0,0,0)) #Schwarz
-            add_theme_style(mvStyleVar_FrameRounding, 5)
+with window(label="Bit Error Rate ", width=800, height=160, pos=(0,25),\
+    no_collapse=True, no_close=True, no_title_bar= True,no_move=True,no_resize=True,\
+    tag=ber_win_tag) as ber_window:
+    with ber:
+        add_text("The Bit Error Rate is:",pos=(50,25))
+        with theme(tag="button_ber"):
+            with theme_component(mvButton):
+                add_theme_color(mvThemeCol_Button,(135, 206, 255)) #Blau
+                add_theme_color(mvThemeCol_Text,(0,0,0)) #Schwarz
+                add_theme_style(mvStyleVar_FrameRounding, 5)
 
-    add_button(label="BER", height=60, width=700, pos=(50,125), tag="ber_value")
-    bind_item_theme(last_item(), "button_ber")
+        add_button(label="BER", height=60, width=700, pos=(50,70), tag="ber_value")
+        bind_item_theme(last_item(), "button_ber")
 
-    bind_item_theme(ber_window, "ber_window")
-# bind_item_font(ber_window, test)
+        bind_item_theme(ber_window, "ber_window")
 
 def set_ber(values):
     ber_curr, ber_max, ber_avg = values
@@ -267,19 +293,6 @@ def set_ber(values):
 
 ber_value = net.network_value(url="udp://localhost:31420", dtype=float, refresh_func=set_ber)
 
-#================================================
-# Picture Window
-
-# def add_and_load_image(image_path):
-#     width, height, channels, data = load_image(image_path)
-# 
-#     with texture_registry() as reg_id:
-#         texture_id = add_static_texture(width, height, data, parent=reg_id)
-# 
-#     return add_image(texture_id)
-# 
-# with window(label="Picture", width=400, height=300, pos=(0,825)) as picture_window : 
-#     add_and_load_image("lena512color.png") #TO DO Problem lösen 
 
 #================================================
 # Start GUI and main loop
@@ -290,9 +303,9 @@ set_primary_window("primary_window", True)
 
 # Main loop
 while is_dearpygui_running():
-    for plt in network_plots:
-        plt.refresh_series(plt.series_tag)
-    ber_value.refresh()
+    # for plt in network_plots:
+    #     plt.refresh_series(plt.series_tag)
+    # ber_value.refresh()
 
     render_dearpygui_frame()
 
