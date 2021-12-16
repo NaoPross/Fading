@@ -31,87 +31,52 @@ class multipath_fading(gr.sync_block):
     """
     docstring for block multipath_fading
     """
-    def __init__(self, amplitudes, delays, los):  # only default arguments here
-        """arguments to this function show up as parameters in GRC"""
+    def __init__(self, amplitudes, delays, los):
         gr.sync_block.__init__(
             self,
-            name='Embedded Python Block',   # will show up in GRC
+            name='Multipath fading',
             in_sig=[np.complex64],
             out_sig=[np.complex64]
         )
-        # if an attribute with the same name as a parameter is found,
-        # a callback is registered (properties work, too).
+
+        if len(amplitudes) != len(delays):
+            raise Exception("Amplitudes and Delay length dont match")
+
+        if np.min(delays) < 0:
+            raise Exception("Delay can't be negative")
+
         self.amplitudes = amplitudes
         self.delays = delays
         self.temp = [0]
-        log.debug(los) #TO DO: True False unterscheidung 
-        if los == True:
-            self.los = 1
-            log.debug("Los True")
-        else: 
-            self.los = 0
-            log.debug("Los False")
-
-
-        
-        
+        self.los = 1 if los else 0
 
     def work(self, input_items, output_items):
-        """example: multiply with constant"""
         inp = input_items[0]
         oup = output_items[0]
-        
 
-        if len(self.amplitudes) != len(self.delays):    # Test: Es muss gleich viele Werte für Delays und Amplituden haben.
-            raise Exception("Amplitudes and Delay length dont match")
-        if np.min(self.delays)<0:   #Negativ Check
-            raise Exception("Delay can't be negativ")
-
-        
-        #    raise Exception("Delay length can't be one")
-        #if np.min(self.delays)<=1:
-        #    raise Exception("Delay length can't be one")
-
-
-
-        max_order = 2 * np.floor(np.max(self.delays)) + 1 #Max Werte herausfinden für länge 
+        max_order = 2 * np.floor(np.max(self.delays)) + 1
         max_samples = np.arange(0, max_order +1) 
-        max_len = len(max_samples) #Für Filter
+        max_len = len(max_samples)
 
-        sum_x = np.zeros(int(max_len))
+        tot_h = np.zeros(int(max_len))
 
-        for (a,d) in zip(self.amplitudes,self.delays):
-            # if d-1 <= 0:
-            #     x = np.concatenate([[a], np.zeros(max_len-1)])
-            # else:    
+        for (a, d) in zip(self.amplitudes, self.delays):
             order = 2 * np.floor(d) + 1
+            samples = np.arange(0, order +1)
+            # compute FIR
+            h = a * np.sinc(samples - d)
+            # adjust length
+            h = np.concatenate([h, np.zeros(max_len - len(h))])
+            tot_h += h
 
-            skip = np.floor(d) - (order - 1) / 2 #M sollte immer 0 sein 
-            assert skip >= 0
+        tot_h[0] += self.los
 
-            samples = np.arange(0, order +1)  
-
-            h = a*(np.sinc(samples-d)) #sinc
-            h_len = np.concatenate([h, np.zeros(max_len-len(h))])
-
-            sum_x += h_len
-
-            #x = np.concatenate([np.zeros(d-1), [a], np.zeros(max_len-d)])
-            #sum_x += x
-        
-        sum_x[0] = self.los
-        #log.debug(sum_x)
-
-
-        y = np.convolve(inp, sum_x)
-        
-        # signal_shifted = np.convolve(h, inp, mode='full')
-        # y = signal_shifted
-
-        y+=np.concatenate([self.temp,np.zeros(len(y)-len(self.temp))])
-
+        # compute output and add rest from last block processing
+        y = np.convolve(inp, tot_h)
+        y += np.concatenate([self.temp, np.zeros(len(y) - len(self.temp))])
+        # write output
         oup[:] = y[:len(inp)]
-        self.temp = y[len(inp):]        
-        
+        # save for next block processing
+        self.temp = y[len(inp):]
 
         return len(oup)
