@@ -271,23 +271,50 @@ In order to study the effects of multipath fading, a series of simulations have 
 
 \begin{figure}
 	\centering
-	\input{figures/tikz/qpsk-sim-constellations-static}
+	\input{figures/tikz/qpsk-sim-constellations-static-symb}
+	\caption{
+		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
+	}
+\end{figure}
+
+
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpsk-sim-constellations-whitout-effects}
 	\caption{
 		Constellation diagrams for a simulated link using QPSK with AWGN and Rayleighan fading.
 	}
 \end{figure}
 
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-dynamic}
-	\caption{
-		Constellation diagrams for a simulated link using QPSK with AWGN and Rayleighan fading. The paramters are: frequency offset of 0.2 \%, \SI{100}{\milli\volt} noise, dopper shift for \(v = \SI{2}{\meter\per\second}\), and a NLOS urban PDP.
-	}
-\end{figure}
+%\begin{figure}
+%	\centering
+%	\input{figures/tikz/qpsk-sim-constellations-static}
+%	\caption{
+%		Constellation diagrams for a simulated link using QPSK with AWGN and Rayleighan fading.
+%	}
+%\end{figure}
+
+%\begin{figure}
+%	\centering
+%	\input{figures/tikz/qpsk-sim-constellations-static-symb}
+%	\caption{
+%		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
+%	}
+%\end{figure}
+%
+%\begin{figure}
+%	\centering
+%	\input{figures/tikz/qpsk-sim-constellations-dynamic}
+%	\caption{
+%		Constellation diagrams for a simulated link using QPSK with AWGN and Rayleighan fading. The paramters are: frequency offset of 0.2 \%, \SI{100}{\milli\volt} noise, dopper shift for \(v = \SI{2}{\meter\per\second}\), and a NLOS urban PDP.
+%	}
+%\end{figure}
 
 \subsection{Fading with discrete time model}
 
-For the statical version according to \ref{sec:discrete-time-model} to implement and illustrate the fading effect, a separate block was created and implemented in the channel. Nearer shown in \ref{lst:fir-block}. This block is based on a FIR filter. It can be displayed with a direct path or without one. With the help of this filter, the delay of the line of side paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed path. Unfortunately, these simulation values do not correspond to the realety, because too many incalculable side effects occur, which aren't possiple to ilustrate in this simulation.
+For the statical version according to \ref{sec:discrete-time-model} for implement and illustrate the fading effect, a separate block was created and implemented in the channel. Nearer shown in \ref{lst:fractional-delay-fir}. This block is based on a FIR filter. It can be displayed with a direct path or without one.
+
+ With the help of this filter, the delay of the line of side paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed path. Unfortunately, these simulation values do not correspond to the realety, because too many incalculable side effects occur, which aren't possiple to ilustrate in this simulation.
 This block was additionally implemented with the method described in \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample. Which in turn means that the other sampled values do not add up to zero.
 Thus, they will be distributed among the other whole numbers. A window function could also be implemented to limit these values. Here none was implemented because the sinc function is restricted.
 
@@ -339,15 +366,17 @@ Thus, they will be distributed among the other whole numbers. A window function 
 
 \subsection{Fading with statistical model}
 
-	
-\skelpar[5]{
-	Discuss how i did that 
-}
-% TODO: Quelle https://ch.mathworks.com/help/comm/ug/fading-channels.html?searchHighlight=rician%20fading&s_tid=srchtitle_rician%2520fading_2#a1070327427b1
+In order to represent the effect of the multipaht fading not only statically, a second model was created using the Frequency Selective Fading Model from Gnu Radio, according to \ref{sec:statistical-model},which was implemented after the algorithm from the paper \cite{Alimohammad2009}, with the help of the sum-of sinusoid principal (SOS). The algorithm in this block is implemented with the aim that only a small number of sinusoids are needed. 
+This number represent the sinusoids which are simulated for each ray, for that value 8 has been chosen.
 
-In order to represent the effect of the multipaht fading not only statically, a second model was created using the Frequency Selective Fading Model from Gnu Radio, according to \ref{statistical_model},which was implemented after the algorithm from the paper \cite{Alimohammad2009}. It is based on the sum-of sinusoid principal(SOS)
+It can also be chosen whish statical model should be taken for the simulation Rayleigh or Rician. When the Rician model is taken also a realistic value for the factor \(K\) need to be given. Whish is something between zero and ten. As mentioned earlier, when  \(K=0\) the distribution is the same as with the Rayleight model. For a faktor \(K = 5.1\) the probability function is gaussien distributed.
 
-For this given block there need to set a few parameters. First of al the numbers of Sinusoids for the model which are simulateed for each ray, for this 8 is a good value like it's described in the paper on which the block is based on.
+The power delay profile which specify the delay in time for each impulse need to be in sample. For this delay vector some realistic values \cite{Matlab} are for the first delay, when theirs non line of side zero. The second delayed path depend on the environment of measurement. In an indoor environment it is usually between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on  the bandwidth. 
+
+The magnitudes of the pulses are given with the linear value. In practices the avarage path gain of a fading paht is in the range of \([ -20 \text{dB} , 0\text{dB}]\).
+
+
+
 For the Doppler effect which shoudent be forgotten if something is moving in the construction, like the transmitter or the reviser. It need to be normalized with the sampling rate. 
 
 \begin{equation}
@@ -356,7 +385,7 @@ For the Doppler effect which shoudent be forgotten if something is moving in the
 
 With the velocity \(v\) in \(\frac{m}{s}\) for example walking this value is between \(2-4\frac{m}{s}\).The carrier frequency \(f_c\) in this case 2.4GHz and the velocity of light \(c\).
 
-It can also be chosen whish Statical model should be taken for the simulation Rayleigh or Rician. When the Rician model is taken also a realistc value for the factor \(K\) need to be given. For a K factor zero it can be Rician distribution is the same as the  Rayleight distribution. With a faktor \(K = 5.1\) the probability function is gaussien distributed.
+
 
 The power delay profile which specify the delay in time for each impulse need to be in sample. For this delay vector some realistic values are for the first delay when theirs non line of side should be zero. The second delayed path depend on the environment of measurement. In an indoor enviroment it is usually between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on on the bandwidth. 
 

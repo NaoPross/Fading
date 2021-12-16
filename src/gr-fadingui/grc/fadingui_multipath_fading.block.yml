@@ -16,7 +16,7 @@ templates:
 parameters:
 - id: delays
   label: Delays
-  dtype: complex_vector
+  dtype: raw
 - id: amplitudes
   label: Amplitudes
   dtype: raw

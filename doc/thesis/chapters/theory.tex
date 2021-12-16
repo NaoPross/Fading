@@ -378,7 +378,7 @@ i.e. the amplitude of \(f\) is \emph{Raileigh} distributed.
 In the case of the Ricean distribution model the line of side exist, which means that one of the paths have a straight communication line from the transmitter to the reviser. So there are in addition to the Rayleight model direct components, whish are also gaussian distributed.
 
 \begin{equation} \label{eqn:rician fading}
-	f(t) = \sqrt{\frac{K}{K+1}}+\lim_{N\rightarrow\infty}\frac{1}{\sqrt{K+1}} \frac{1}{\sqrt{N}}\sum_{n=1}^{N} e^{j(\Theta +2\pi jf t)}.
+	f(t) = \sqrt{\frac{K}{K+1}}+\lim_{N\rightarrow\infty}\frac{1}{\sqrt{K+1}} \frac{1}{\sqrt{N}}\sum_{n=1}^{N} e^{j \vartheta_k }.
 \end{equation}  
 
 The factor \(K\) named Ricean factor it is the ratio of the line of side power to the average power of the distributed components.
@@ -389,13 +389,13 @@ For this distribution model the expectation value for the real part is \(\E{\Re{
 
 So the probability function of the amplitude in this case is:
 \begin{equation} \label{eqn:rician_fading_probabilety_dencety}
-	p(a)= 2a(1+K)\exp{(-K-{a}^2(K+1))}\cdot I_0(2a\sqrt{K(1+K)})
+	p(a)= 2a(1+K)e^{(-K-{a}^2(K+1))}\cdot I_0(2a\sqrt{K(1+K)})
 \end{equation}
 
 Where \(I_0\) the zero ordered modified besselfunction represent.
 
-\begin{equation}
-	\Re{h_l(n)}, \Im{h_l(n)}
-	\sim \mathcal{N} \left( \frac{A_l}{\sqrt{2}}, \frac{1}{2} \sigma_l^2 \right)
-\end{equation}
+%\begin{equation}
+%	\Re{h_l(n)}, \Im{h_l(n)}
+%	\sim \mathcal{N} \left( \frac{A_l}{\sqrt{2}}, \frac{1}{2} \sigma_l^2 \right)
+%\end{equation}
 \skelpar[4]
