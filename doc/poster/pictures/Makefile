@@ -1,4 +1,4 @@
-PICS := sketch.svg
+PICS := sketch.svg overview.svg
 
 all: $(PICS)
 
