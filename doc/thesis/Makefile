@@ -31,6 +31,7 @@ SOURCES := \
 	figures/tikz/qpsk-sim-constellations-static-symb-NLOS.tex \
 	figures/tikz/qpsk-sim-constellations-static-symb-vec.tex \
 	figures/tikz/qpsk-sim-constellations-dynamic.tex\
+	figures/tikz/qpsk-sim-constellations-dynamic-exp-NLOS-5.tex\
 	figures/tikz/qpsk-sim-constellations-without-effects.tex\
 
 
@@ -41,6 +42,7 @@ DATA := \
 	figures/data/qpsk_sim_constellations_static_symb_NLOS.dat \
 	figures/data/qpsk_sim_constellations_static_symb_vec.dat \
 	figures/data/qpsk_sim_constellations_dynamic.dat\
+	figures/data/qpsk_sim_constellations_dynamic_exp_NLOS_5.dat\
 	figures/data/qpsk_sim_constellations_without_effects.dat \
 	figures/data/rice_pdf.dat
 

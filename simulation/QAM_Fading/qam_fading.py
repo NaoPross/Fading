@@ -116,13 +116,6 @@ class qam_fading(gr.top_block, Qt.QWidget):
             self.params_grid_layout_0.setRowStretch(r, 1)
         for c in range(1, 2):
             self.params_grid_layout_0.setColumnStretch(c, 1)
-        self._time_offset_range = Range(0.999, 1.001, 0.0001, 1.0, 200)
-        self._time_offset_win = RangeWidget(self._time_offset_range, self.set_time_offset, 'Timing Offset', "counter_slider", float)
-        self.params_grid_layout_0.addWidget(self._time_offset_win, 0, 1, 1, 1)
-        for r in range(0, 1):
-            self.params_grid_layout_0.setRowStretch(r, 1)
-        for c in range(1, 2):
-            self.params_grid_layout_0.setColumnStretch(c, 1)
         self.plots = Qt.QTabWidget()
         self.plots_widget_0 = Qt.QWidget()
         self.plots_layout_0 = Qt.QBoxLayout(Qt.QBoxLayout.TopToBottom, self.plots_widget_0)
@@ -147,20 +140,6 @@ class qam_fading(gr.top_block, Qt.QWidget):
             self.params_grid_layout_1.setRowStretch(r, 1)
         for c in range(0, 1):
             self.params_grid_layout_1.setColumnStretch(c, 1)
-        self._noise_volt_range = Range(0, 1, 0.01, 0.0001, 200)
-        self._noise_volt_win = RangeWidget(self._noise_volt_range, self.set_noise_volt, 'Noise Voltage', "counter_slider", float)
-        self.params_grid_layout_0.addWidget(self._noise_volt_win, 0, 0, 1, 1)
-        for r in range(0, 1):
-            self.params_grid_layout_0.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.params_grid_layout_0.setColumnStretch(c, 1)
-        self._freq_offset_range = Range(-100e-3, 100e-3, 1e-3, 0, 200)
-        self._freq_offset_win = RangeWidget(self._freq_offset_range, self.set_freq_offset, 'Frequency Offset', "counter_slider", float)
-        self.params_grid_layout_0.addWidget(self._freq_offset_win, 1, 0, 1, 1)
-        for r in range(1, 2):
-            self.params_grid_layout_0.setRowStretch(r, 1)
-        for c in range(0, 1):
-            self.params_grid_layout_0.setColumnStretch(c, 1)
         self._fc_range = Range(0, 10, 1, 2.4, 200)
         self._fc_win = RangeWidget(self._fc_range, self.set_fc, 'fc', "counter_slider", float)
         self.params_grid_layout_0.addWidget(self._fc_win, 1, 2, 1, 1)
@@ -175,6 +154,13 @@ class qam_fading(gr.top_block, Qt.QWidget):
             self.params_grid_layout_1.setRowStretch(r, 1)
         for c in range(0, 1):
             self.params_grid_layout_1.setColumnStretch(c, 1)
+        self._time_offset_range = Range(0.999, 1.001, 0.0001, 1.0, 200)
+        self._time_offset_win = RangeWidget(self._time_offset_range, self.set_time_offset, 'Timing Offset', "counter_slider", float)
+        self.params_grid_layout_0.addWidget(self._time_offset_win, 0, 1, 1, 1)
+        for r in range(0, 1):
+            self.params_grid_layout_0.setRowStretch(r, 1)
+        for c in range(1, 2):
+            self.params_grid_layout_0.setColumnStretch(c, 1)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
             1024, #size
             samp_rate, #samp_rate
@@ -446,6 +432,20 @@ class qam_fading(gr.top_block, Qt.QWidget):
             self.plots_grid_layout_0.setRowStretch(r, 1)
         for c in range(0, 1):
             self.plots_grid_layout_0.setColumnStretch(c, 1)
+        self._noise_volt_range = Range(0, 1, 0.01, 0.0001, 200)
+        self._noise_volt_win = RangeWidget(self._noise_volt_range, self.set_noise_volt, 'Noise Voltage', "counter_slider", float)
+        self.params_grid_layout_0.addWidget(self._noise_volt_win, 0, 0, 1, 1)
+        for r in range(0, 1):
+            self.params_grid_layout_0.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.params_grid_layout_0.setColumnStretch(c, 1)
+        self._freq_offset_range = Range(-100e-3, 100e-3, 1e-3, 0, 200)
+        self._freq_offset_win = RangeWidget(self._freq_offset_range, self.set_freq_offset, 'Frequency Offset', "counter_slider", float)
+        self.params_grid_layout_0.addWidget(self._freq_offset_win, 1, 0, 1, 1)
+        for r in range(1, 2):
+            self.params_grid_layout_0.setRowStretch(r, 1)
+        for c in range(0, 1):
+            self.params_grid_layout_0.setColumnStretch(c, 1)
         self.digital_pfb_clock_sync_xxx_0_0 = digital.pfb_clock_sync_ccf(sps , timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps , timing_loop_bw, rrc_taps, nfilts, nfilts/2, 1.5, 1)
         self.digital_map_bb_0_0 = digital.map_bb([0, 1, 3, 2])
@@ -466,14 +466,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(const)
         self.digital_cma_equalizer_cc_0_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(eq_ntaps, eq_mod, eq_gain, 2)
-        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, ((2*fc*1e9)/(3*10e8))/samp_rate, False, 4, 21, (0,1.8), (1,0.12), 8 )
-        self.channels_channel_model_0 = channels.channel_model(
-            noise_voltage=noise_volt,
-            frequency_offset=freq_offset,
-            epsilon=time_offset,
-            taps=chn_taps,
-            noise_seed=0,
-            block_tags=False)
+        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, 70/samp_rate, False, 4, 0, (0,0.05e-6/samp_rate,0.12e-6/samp_rate,0.2e-6/samp_rate,0.23e-6/samp_rate,0.5e-6/samp_rate,1.6e-6/samp_rate,2.3e-6/samp_rate,5e-6/samp_rate), (0.7943282347242815,0.7943282347242815,0.7943282347242815,1,1,1,0.5011872336272722,0.31622776601683794,0.19952623149688797), 9 )
         self.blocks_unpack_k_bits_bb_0_1 = blocks.unpack_k_bits_bb(2)
         self.blocks_unpack_k_bits_bb_0_0 = blocks.unpack_k_bits_bb(2)
         self.blocks_unpack_k_bits_bb_0 = blocks.unpack_k_bits_bb(2)
@@ -495,14 +488,13 @@ class qam_fading(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_char_to_float_0_0, 0), (self.blocks_delay_0, 0))
         self.connect((self.blocks_char_to_float_0_1, 0), (self.qtgui_time_sink_x_0, 2))
         self.connect((self.blocks_delay_0, 0), (self.qtgui_time_sink_x_0, 1))
-        self.connect((self.blocks_throttle_0, 0), (self.channels_channel_model_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.digital_pfb_clock_sync_xxx_0_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.qtgui_const_sink_x_0, 1))
+        self.connect((self.blocks_throttle_0, 0), (self.qtgui_freq_sink_x_0, 1))
         self.connect((self.blocks_unpack_k_bits_bb_0, 0), (self.blocks_char_to_float_0, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_0, 0), (self.blocks_char_to_float_0_0, 0))
         self.connect((self.blocks_unpack_k_bits_bb_0_1, 0), (self.blocks_char_to_float_0_1, 0))
         self.connect((self.channels_channel_model_0, 0), (self.channels_selective_fading_model_0, 0))
-        self.connect((self.channels_channel_model_0, 0), (self.digital_pfb_clock_sync_xxx_0_0, 0))
-        self.connect((self.channels_channel_model_0, 0), (self.qtgui_const_sink_x_0, 1))
-        self.connect((self.channels_channel_model_0, 0), (self.qtgui_freq_sink_x_0, 1))
         self.connect((self.channels_selective_fading_model_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
         self.connect((self.channels_selective_fading_model_0, 0), (self.qtgui_const_sink_x_0, 0))
         self.connect((self.channels_selective_fading_model_0, 0), (self.qtgui_freq_sink_x_0, 0))
@@ -580,7 +572,7 @@ class qam_fading(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
-        self.channels_selective_fading_model_0.set_fDTs(((2*self.fc*1e9)/(3*10e8))/self.samp_rate)
+        self.channels_selective_fading_model_0.set_fDTs(70/self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
 
@@ -619,7 +611,6 @@ class qam_fading(gr.top_block, Qt.QWidget):
 
     def set_fc(self, fc):
         self.fc = fc
-        self.channels_selective_fading_model_0.set_fDTs(((2*self.fc*1e9)/(3*10e8))/self.samp_rate)
 
     def get_eq_ntaps(self):
         return self.eq_ntaps
