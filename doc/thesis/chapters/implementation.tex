@@ -408,27 +408,23 @@ In order to obtain a realistic simulation the values for multi-path fading propa
 \begin{table}[b]
 	
 	\centering
-	\begin{tabular}{lll}
+	\begin{tabular}{rr}
 		\toprule
-		Excess tap delay \([\mu s]\) & Relative power \([dB]\) & linear value for relative power  \\     
+		Excess tap delay in \si{\nano\second} & Relative power in \si{\decibel} \\
 		\midrule
-		0	 & -1.0	& 0.7943282347242815	\\
-		50   & -1.0	& 0.7943282347242815	\\
-		120  & -1.0	& 0.7943282347242815	\\
-		200  &  0.0	& 1.0					\\
-		230  & 	0.0 & 1.0					\\
-		500  & 	0.0	& 1.0					\\
-		1600 & -3.0 & 0.5011872336272722	\\
-		2300 & -5.0	& 0.31622776601683794	\\
-		5000 & -7.0 & 0.19952623149688797	\\
-
+			 0 & \(-1.0 \approx 0.7943\) \\
+		  50 & \(-1.0 \approx 0.7943\) \\
+		 120 & \(-1.0 \approx 0.7943\) \\
+		 200 & \( 0.0 = 1.0000\) \\
+		 230 & \( 0.0 = 1.0000\) \\
+		 500 & \( 0.0 \approx 1.0000\) \\
+		1600 & \(-3.0 \approx 0.5011\) \\
+		2300 & \(-5.0 \approx 0.3162\) \\
+		5000 & \(-7.0 \approx 0.1995\) \\
 		\bottomrule
 	\end{tabular}
 	\caption{Values used for the simulation\label{tab:values}}
 \end{table}
-
-
-
 
 \subsection{Measurements}
 
