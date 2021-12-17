@@ -325,14 +325,19 @@ for a minimal error in the approximation. It is worth mentioning that it is also
 Because as mentioned earlier it is difficult to estimate the time-dependent parameters of \(h_l(m)\) in many cases it is easier to model the components of the CIR as stochastic processes, thus greatly reducing the number of parameters \cite{Messier,Mathis}. This is especially effective for channels that are constantly changing, because by the central limit theorem the cumulative effect of many small changes tends to a normal distribution.
 
 % \skelpar[3]{Assumptions of the model}
-Before discussing the models themselves, their underlying statistical assumptions need to be considered. In the literature the so called WSSUS assumptions are made, which for a discrete time CIR \(h_l(m)\) can be formulated as
+Before discussing the models themselves, their underlying statistical assumptions need to be considered. In the literature the so called WSSUS assumptions are made, which for a LTV CIR \(h(\tau, t)\) can be formulated as
 \begin{subequations}
 	\begin{align}
-		R_{l} (k) &= \E{h_l(m) h_l^*(m+k)}, \text{ and } \label{eqn:stat-wss} \\
-		0 &= \E{h_l(m) h_k^*(m)} \text { for } l \neq k. \label{eqn:stat-us}
+		R(\tau') &= \E{h(\tau, t) h^*(\tau + \tau', t)}, \text{ and } \label{eqn:stat-wss} \\
+		0 &= \E{h(\tau, t) h^*(\tau, t')} \text { for } t \neq t'. \label{eqn:stat-us}
 	\end{align}
+	% discrete time version
+	% \begin{align}
+	% 	R_{l} (k) &= \E{h_l(m) h_l^*(m+k)}, \text{ and } \label{eqn:stat-wss} \\
+	% 	0 &= \E{h_l(m) h_k^*(m)} \text { for } l \neq k. \label{eqn:stat-us}
+	% \end{align}
 \end{subequations}
-Equation \eqref{eqn:stat-wss} states that the fading CIR is a \emph{wide sense stationary} stochastic process, while \eqref{eqn:stat-us} is the \emph{uncorrelated scattering} assumption, which says that the path do not interfere with each other. The latter is more realistic than the former, but WSS is still useful as it considerably simplifies the mathematical formulation \cite{Messier}.
+Equation \eqref{eqn:stat-wss} states that the fading CIR is a \emph{wide sense stationary} (WSS) stochastic process, while \eqref{eqn:stat-us} is the \emph{uncorrelated scattering} assumption, which loosely speaking states that the path do not interfere with each other. The latter is more realistic than the former, but WSS is still useful as it considerably simplifies the mathematical formulation \cite{Messier}.
 
 \paragraph{NLOS case}
 
@@ -344,8 +349,8 @@ Multipath fading is a form of multiplicative noise, as mathematically confirmed 
 	= e^{j\omega_c \tau} \sum_k c_k(t) e^{-j\omega_c \tau_k(t)}
 	= e^{j\omega_c \tau} \cdot f(t).
 \end{equation}
-If there is no line of sight (NLOS), it is reasonable to assume that all path have more or less the same attenuation, i.e. all \(c_k\) are the same. Another reasonable assumption in this case is that all paths are equally likely to be taken, or in other words the delays \(-\omega_c \tau_k\) can be replaced with random variables \(\vartheta_k\) that are uniformly distributed on \([0,2\pi)\) \cite{Hoher2013,Mathis}. Finally, assuming that there are infinitely many paths the random variable for the multiplicative fading noise becomes
-\begin{equation}
+If there is no line of sight (NLOS), it is reasonable to assume that all path have more or less the same attenuation, i.e. all \(c_k\) are the same. Another reasonable assumption in this case is that all paths are equally likely to be taken, or in other words the delays \(-\omega_c \tau_k\) can be replaced with random variables \(\vartheta_k\) that are uniformly distributed on \([0,2\pi)\) \cite{Hoher2013,Mathis}; physically this can be imagined as a ``ring of scattering objects'' around the receiver\cite{Messier}, as shown in \figref{fig:ring-of-scattering-objects} (without the red line of sight signal). Finally, assuming that there are infinitely many paths the random variable for the multiplicative fading noise becomes
+\begin{equation} \label{eqn:mult-fading-nlos}
 	f = \lim_{N\rightarrow\infty} \frac{1}{\sqrt{N}}
 		\sum_{k=1}^{N} e^{j \vartheta_k },
 \end{equation}
@@ -353,14 +358,17 @@ where the \(c_k\) where omitted, since they are assumed to be all equal. The fac
 \begin{equation}
 	p(a)= 2a e^{-a^2}, \text{ or } |f| \sim \mathcal{R},
 \end{equation}
-i.e. the amplitude of \(f\) is \emph{Raileigh} distributed.
+i.e. the amplitude of \(f\) is \emph{Raileigh} distributed. The probability density function of a Rayleigh distributed random variable is shown in \figref{fig:rayleigh-rice-pdf}.
 
 \begin{figure}
 	\centering
 	\hfill
 	\begin{subfigure}[t]{.5\linewidth}
 		\input{figures/tikz/rayleigh-rice-pdf-plots}
-		\caption{Amplitude density.}
+		\caption{
+			Amplitude density \(p(a)\).
+			\label{fig:rayleigh-rice-pdf}
+		}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[t]{.45\linewidth}
@@ -368,7 +376,10 @@ i.e. the amplitude of \(f\) is \emph{Raileigh} distributed.
 		\resizebox{!}{5cm}{%
 			\input{figures/tikz/ring-of-scattering-objects}
 		}
-		\caption{Ring of scattering objects.}
+		\caption{
+			Ring of scattering objects.
+			\label{fig:ring-of-scattering-objects}
+		}
 	\end{subfigure}
 	\hfill
 	\caption{
@@ -377,30 +388,27 @@ i.e. the amplitude of \(f\) is \emph{Raileigh} distributed.
 	}
 \end{figure}
 
-
 \paragraph{LOS case}
 
-In the case of the Ricean distribution model the line of side exist, which means that one of the paths have a straight communication line from the transmitter to the reviser. So there are in addition to the Rayleight model direct components, whish are also gaussian distributed.
-
-\begin{equation} \label{eqn:rician fading}
-	f(t) = \sqrt{\frac{K}{K+1}}+\lim_{N\rightarrow\infty}\frac{1}{\sqrt{K+1}} \frac{1}{\sqrt{N}}\sum_{n=1}^{N} e^{j \vartheta_k }.
-\end{equation}  
-
-The factor \(K\) named Ricean factor it is the ratio of the line of side power to the average power of the distributed components.
-The Phase for the strait line component has no influences for the Random process therefore there set to zero. In the case when \(K = 0 \)
-the Rician distribution becomes a Rayleight distribution on the other hand when \(K\rightarrow \infty \) the distribution becomes an AWGN-channel model (additive white Gaussian noise). When \(K > 0 \) is the phase not equally distributed.
-
-For this distribution model the expectation value for the real part is \(\E{\Re{f(t)}}=\sqrt{\frac{K}{K+1}} \) and for the imaginary part \(\E{\Im{f(t)}}=0\) 
-
-So the probability function of the amplitude in this case is:
-\begin{equation} \label{eqn:rician_fading_probabilety_dencety}
-	p(a)= 2a(1+K)e^{(-K-{a}^2(K+1))}\cdot I_0(2a\sqrt{K(1+K)})
+Extending the previous NLOS case, if there is a line of sight (LOS) path (red signal in \figref{fig:ring-of-scattering-objects}), the statistical model has to be extended by defining the so called Rice factor \(K\). This \(K\) factor is the ratio between the power from the LOS path and the average power of the NLOS paths (often also referred to as distributed components). Hence, by taking \(K\) into account \eqref{eqn:mult-fading-nlos} becomes
+\begin{equation} \label{eqn:mult-fading-los}
+	f = \sqrt{\frac{K}{K+1}} + 
+	\frac{1}{\sqrt{K+1}} \left(
+		\lim_{N\rightarrow\infty} 
+		\frac{1}{\sqrt{N}}\sum_{n=1}^{N} e^{j \vartheta_k}
+	\right).
 \end{equation}
+Notice that by letting \(K = 0\), that is no power in the LOS path, \eqref{eqn:mult-fading-los} becomes \eqref{eqn:mult-fading-nlos} or Rayleigh distributed (as expected). Conversely when \(K \to \infty\), i.e. no power in the NLOS paths, then \(f \to 1\) and so the fading disappears. The new amplitude density in this case is:
+\begin{equation}
+	p(a)= 2a(1+K) \exp{\left(-K -a^2 (K+1) \right)} I_0 \left(2a\sqrt{K(1+K)} \right),
+\end{equation}
+where \(I_0\) the zeroth order modified Bessel function.
 
-Where \(I_0\) the zero ordered modified besselfunction represent.
+% The Phase for the strait line component has no influences for the Random process therefore there set to zero. In the case when \(K = 0\).
+% the Rician distribution becomes a Rayleight distribution on the other hand when \(K\rightarrow \infty \) the distribution becomes an AWGN-channel model (additive white Gaussian noise). When \(K > 0 \) is the phase not equally distributed.
+% For this distribution model the expectation value for the real part is \(\E{\Re{f(t)}}=\sqrt{\frac{K}{K+1}} \) and for the imaginary part \(\E{\Im{f(t)}}=0\) 
 
 %\begin{equation}
 %	\Re{h_l(n)}, \Im{h_l(n)}
 %	\sim \mathcal{N} \left( \frac{A_l}{\sqrt{2}}, \frac{1}{2} \sigma_l^2 \right)
 %\end{equation}
-\skelpar[4]
