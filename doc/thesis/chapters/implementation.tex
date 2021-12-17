@@ -4,7 +4,7 @@
 
 \section{Overview}
 
-First of all the tools that were used in this project are introduced. Then it is explained how the sender and receiver chains are implemented. Except for the channel, there are no differences in the signal processing chains between the simulated and real flowgraphs (with hardware). Following are some channel simulations and measurements of the bit error rate (BER). Finally, the issues and the degree of completeness of our current implementation is discussed.
+First of all the tools that were used in this project are introduced. Then it is explained how the transmitter and receiver chains are implemented. Except for the channel, there are no differences in the signal processing chains between the simulated and real flow graphs (with hardware). Following are some channel simulations and measurements of the bit error rate (BER). Finally, the issues and the degree of completeness of our current implementation is discussed.
 
 \section{Software Stack}
 
@@ -68,12 +68,12 @@ As a side effect, in theory this setup allows to have one computer running the g
 		External reference input & 10 MHz                            \\
 		\bottomrule
 	\end{tabular}
-	\caption{USRP B210 specifications.\label{tab:usrp-specs}}
+	\caption{USRP B210 specifications \cite{EttusUSRPB210}. \label{tab:usrp-specs}}
 \end{table}
 
 As receivers and transmitter devices for the SDR setup two USRP B210 devices from Ettus Research were used. Some technical specifications are shown in \tabref{tab:usrp-specs}. GR provides off the shelf blocks that interface with the official API provided from Ettus Research.
 
-\section{Sender chain}
+\section{Transmitter chain}
 
 \subsection{Data frame} \label{sec:data-frame}
 
@@ -86,27 +86,26 @@ As receivers and transmitter devices for the SDR setup two USRP B210 devices fro
 	}
 \end{figure}
 
-To compute the empirical bit error rate (BER) of the setup, the data has to be framed by the sender and the bitstream synchronized on the receiver side. The structure of a data packet used in the implementation is shown in \figref{fig:dataframe}. A frame begins with an user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the theoretical maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple.
+To compute the empirical bit error rate (BER) of the setup, the data has to be framed by the transmitter and the bitstream synchronized on the receiver side. The structure of a data packet used in the implementation is shown in \figref{fig:dataframe}. A frame begins with an user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the theoretical maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple.
 
 
 \subsection{Modulation}
 
-GR provides a constellation modulator block, that already implements several standard constellations (QPSK and 16ary-QAM being of interest for us). The block also already integrates a root raised cosine filter, whose phase bandwidth (roll-off factor) can be given as parameter.
+GR provides a constellation modulator block, that already implements several standard constellations (QPSK and 16ary-QAM being of interest for us). The block also already integrates a root raised cosine filter, whose phase bandwidth (roll-off factor) can be given as parameter; in all flow graphs the roll off factor is \(\alpha = 0.35\).
 
 \section{Receiver chain}
 
 \subsection{Envelope detector}
 
-What is here referred to as envelope detector has the purpose of synchronizing the symbols and equalizing the input signal amplitude. This is accomplished in GRC using two blocks: a polyphase clock sync and a CMA equalizer. The input signal for the envelope detector has 4 samples per symbol, while the output has only one sample per symbol.
+What is here referred to as envelope detector has the purpose of synchronizing the symbols and equalizing the input signal amplitude. This is accomplished in GRC using two blocks: a polyphase clock sync and a constant modulus adaptive (CMA) filter equalizer. The input signal for the envelope detector has 4 samples per symbol, while the output has only one sample per symbol. The choice of the CMA equalizer later turned out to be a mistake in the QAM flow graphs, as it only works for envelope with a constant amplitude. In the latest version least mean square decision-directed (LMS-DD) equalizers have been used.
 
-\paragraph{Polyphase Clock Sync}
-%TODO : nochmals anschauen ob dieese erklärung verständlich ist und richtig interpretiert wurde.
-With the the polyphase clock sync the symbols can be synchronized by preforming a time synchronization with the help of multiple filterbanks. For that the derivative of the filtered signal should be minimized which turns to a better SNR. 
+% \paragraph{Polyphase Clock Sync}
+% %TODO : nochmals anschauen ob dieese erklärung verständlich ist und richtig interpretiert wurde.
+% With the the polyphase clock sync the symbols can be synchronized by preforming a time synchronization with the help of multiple filterbanks. For that the derivative of the filtered signal should be minimized which turns to a better SNR. 
 % This works with the help of two filterbanks, one of them contains the filters of the signal adapted to the pulse shaping with several phases. The other contains its derivative. So in the time domain it has a sinc shape, for the output Signal the sinc peak should be on a sample, with the fact that sinc(0) = 1 and sinc(0)' = 0 an error signal can be generated which tells how far away from the peak it is. This error Signal should be zero this is possible with the help of a loop second order whish constants the number of the filterbank and the rate. This rate is generated because of the clock difference between the transmitter and receiver to synchronized the receiver the filter goes through the phases. For the output one sample per symbol is enough.
 
-\paragraph{Equalizer}
-
-\skelpar[2]{CMA equalizer.}
+% \paragraph{Equalizer}
+% \skelpar[2]{CMA equalizer.}
 
 \subsection{Frame synchronization and phase correction} \label{sec:phasecorr}
 
@@ -163,10 +162,10 @@ The phase and frequency correction block was implemented with the design goal of
 		\frac{\SI{2}{\meter\per\second}}{\SI{3e8}{\meter\per\second}} + 10^{-6} 
 	\right) = \SI{2416}{\hertz}.
 \end{equation}
-Because the frequency estimate is linearly interpolated, the phase error may not exceed \(\pi\) (half rotation) during one data frame (chunk). These constraints imply that for frames of \(N'\) symbols of duration \(T\), using \(\kappa\) samples per symbol the relation
+Because the frequency estimate is linearly interpolated, the phase error may not exceed \(\pi\) (half rotation) during one data frame (chunk). These constraints imply that for frames of \(N'\) symbols of duration \(T\) each, using \(\kappa\) samples per symbol the relation
 \begin{equation}\label{Doppler-shift}
 	2\pi\Delta f N' T \kappa \leq \pi
-	\iff T = 1/f_s \leq \frac{1}{2\Delta f N' \kappa},
+	\implies T = 1/f_s \leq \frac{1}{2\Delta f N' \kappa},
 	\iff N' \leq \frac{1}{2\Delta f T \kappa},
 \end{equation}
 must hold. By further setting \(\kappa = 4\) and \(N' = 32\) we obtain a minimum sampling frequency of approximately \(\SI{618.5}{\kilo\hertz}\), or conversely by letting \(f_s = \SI{1}{\mega\hertz}\) we have a maximum frame length of \(N' = 51\) symbols. In other words, roughly every 50 symbols the system must send an access code sequence. This result is rather unfortunate as it requires a lot more processing power than expected.
@@ -269,49 +268,12 @@ def block_phase(self, start, end):
 
 In order to study the effects of multipath fading, a series of simulations have been made under different conditions. To simulate a channel affected by multipath fading two blocks from the GR library, and a third custom block were used. The channel model can simulate AWGN, a frequency offset and either a Rayleigh (NLOS) oder Rice (LOS) fading.
 
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-without-effects}
-	\caption{ Plot of without any effect, to compare with the other Plots.
-	}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-static-symb}
-	\caption{
-		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
-		The parameters are: delay of samples per symbol, amplitude of 0.2 and LOS.
-	}
-	\label{fig:static-symb-specal-case}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-static-symb-NLOS}
-	\caption{
-		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
-		The parameters are: delay of samples per symbol, amplitude of 0.2 and LOS.
-	}
-	\label{fig:static-symb-specal-case-NLOS}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-static-symb-vec}
-	\caption{
-		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
-		The parameters are: delay of \([0.25,4,6.3,3.25]\) samples , amplitude of \([0.2,0.5,0.4,0.08]\) and LOS.
-	}
-	\label{fig:static-symb-specal-case-vec}
-\end{figure}
-
 \subsection{Fading with discrete time model}
 
 For the statical version according to \ref{sec:discrete-time-model} for implement and illustrate the fading effect, a separate block was created and implemented in the channel. Nearer shown in \ref{lst:fractional-delay-fir}. This block is based on a FIR filter. It can be displayed with a direct path (LOS) or without one (NLOS).
 With the help of this filter, the delay of the line of side paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed ray. 
 
-A special case is show in \figref{fig:static-symb-specal-case} and in \figref{fig:static-symb-specal-case-NLOS}, where the delay in sample is the same as the sample per symbol value or a multiple of it. An other example is shown in \figref{fig:static-symb-specal-case-vec},with more diffident delayed paths.
+A special case is show in \figref{fig:static-symb-special-case} and in \figref{fig:static-symb-special-case-NLOS}, where the delay in sample is the same as the sample per symbol value or a multiple of it. An other example is shown in \figref{fig:static-symb-special-case-vec},with more diffident delayed paths.
 Unfortunately, these simulation values do not correspond to the reality, because too many incalculable side effects occur, which aren't possible to illustrate in this simulation.
 
 This block was additionally implemented with the method described in \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample. Which in turn means that the other sampled values do not add up to zero.
@@ -376,8 +338,6 @@ Thus, they will be distributed among the other whole numbers. A window function 
 	\label{fig:dynamic-exp}
 \end{figure}
 
-
-
 \subsection{Fading with statistical model}
 
 In order to represent the effect of the multipaht fading not only statically, a second model was created using the Frequency Selective Fading Model from Gnu Radio, according to \ref{sec:statistical-model},which was implemented after the algorithm from the paper \cite{Alimohammad2009}, with the help of the sum-of sinusoid principal (SOS). The algorithm in this block is implemented with the aim that only a small number of sinusoids are needed. 
@@ -396,9 +356,6 @@ When nothing mentioned the number of how many FIR- filter taps are used is eight
 
 %TODO: Other Plots?
 \subsubsection{Real value example}
-
-%TODO: How to referenc Tabels feom an other Skript.
-%TODO: Quelle https://www.etsi.org/deliver/etsi_ts/136100_136199/136104/11.04.00_60/ts_136104v110400p.pdf
 
 In order to obtain a realistic simulation the values for multi-path fading propagation condition for a Extended Typical Urban (ETU) model from the ETSI (European Telecommunication Standards Institute) where used. This 
 
@@ -423,7 +380,7 @@ In order to obtain a realistic simulation the values for multi-path fading propa
 		5000 & \(-7.0 \approx 0.1995\) \\
 		\bottomrule
 	\end{tabular}
-	\caption{Values used for the simulation\label{tab:values}}
+	\caption{Values used for the simulation \cite{ETSI}. \label{tab:etsi-tap-values}}
 \end{table}
 
 \begin{figure}
@@ -479,13 +436,47 @@ For generating the Byte error rate it is focus on byte-blocks of a specific leng
 		return len(inp)
 \end{lstlisting}
 
-% TODO: Picture of the setup
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpsk-sim-constellations-without-effects}
+	\caption{Plot of without any effect, to compare with the other Plots.}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpsk-sim-constellations-static-symb}
+	\caption{
+		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
+		The parameters are: delay of samples per symbol, amplitude of 0.2 and LOS.
+	}
+	\label{fig:static-symb-special-case}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpsk-sim-constellations-static-symb-NLOS}
+	\caption{
+		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
+		The parameters are: delay of samples per symbol, amplitude of 0.2 and LOS.
+	}
+	\label{fig:static-symb-special-case-NLOS}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpsk-sim-constellations-static-symb-vec}
+	\caption{
+		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
+		The parameters are: delay of \texttt{[0.25,4,6.3,3.25]} samples , amplitude of \texttt{[0.2,0.5,0.4,0.08]} and LOS.
+	}
+	\label{fig:static-symb-special-case-vec}
+\end{figure}
 
 \section{Issues in the current implementation}
 
 \subsection{Non modulated access codes}
 
-Currently as described in section \ref{sec:data-frame}, the access codes are put as bytes in front of the frame in the \(k\)-byte preamble. For this to work, the access code bytes must still have a good autocorrelation function after being modulated into symbols using the chosen modulation scheme. This works well with QPSK, because the constellation is quite simple and the length of the sequence is only halved after the modulation (since QPKS has 2 bits per symbol). Thus in the QPSK flowgraph, the longest known 13 bit Barker sequence \texttt{0x1f35} padded with zeros after MSB is sufficient (\(\approx 7\) symbols).
+Currently as described in section \ref{sec:data-frame}, the access codes are put as bytes in front of the frame in the \(k\)-byte preamble. For this to work, the access code bytes must still have a good autocorrelation function after being modulated into symbols using the chosen modulation scheme. This works well with QPSK, because the constellation is quite simple and the length of the sequence is only halved after the modulation (since QPKS has 2 bits per symbol). Thus in the QPSK flow graph, the longest known 13 bit Barker sequence \texttt{0x1f35} padded with zeros after MSB is sufficient (\(\approx 7\) symbols).
 
 With QAM however, the complexity of the constellation and the higher number of bits per symbol makes it increasingly difficult to find binary sequences that after being modulated still retain a good autocorrelation function. A better solution would be to use for example a \emph{constant amplitude zero autocorrelation waveform} (CAZAC) of length \(N\), which is computed with
 \begin{equation}
@@ -495,7 +486,7 @@ With QAM however, the complexity of the constellation and the higher number of b
 		k(k+1) & \text{when } N \text{ is odd}
 	\end{cases},
 \end{equation}
-and \(M\) is relatively prime to \(N\). CAZAC waveforms are ideal because they have a Dirac delta as autocorrelation\cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Though unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer (but not CMA). Thus to use CAZAC waveforms the sender needs to put them in front of the modulated symbols (for example using a correctly parametrized stream mux block in GR), and the receiver would need to synchronize with the sequence before the clock recovery or equalization. The latter is especially problematic because then it is no longer possible to identify the peak by comparing the autocorrelation value to a fixed threshold as done in section \ref{sec:implement-phasecorr}.
+and \(M\) is relatively prime to \(N\). CAZAC waveforms are ideal because they have a Dirac delta as autocorrelation\cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Though unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer (but not CMA). Thus to use CAZAC waveforms the transmitter needs to put them in front of the modulated symbols (for example using a correctly parametrized stream mux block in GR), and the receiver would need to synchronize with the sequence before the clock recovery or equalization. The latter is especially problematic because then it is no longer possible to identify the peak by comparing the autocorrelation value to a fixed threshold as done in section \ref{sec:implement-phasecorr}.
 
 \subsection{Incomplete parts}
 

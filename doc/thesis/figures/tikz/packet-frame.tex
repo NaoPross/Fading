@@ -15,18 +15,18 @@
 	\matrix[
 		column sep = -1pt,
 		nodes = {
-			draw, rectangle, thick,
+			draw, rectangle, very thick,
 			minimum height = 12mm,
 			text width = 20mm,
 			align = center,
 		},
 	]{
-		\node {Preamble \\ \(k\) Bytes}; &
-		\node (pad) {Padding \\ 1 Bit}; &
-		\node (id) {ID \\ 5 Bits}; &
-		\node {Length \\ 21 Bits}; &
-		\node (par) {Parity \\ 5 Bits}; &
-		\node {Payload \\ \(\ell\) Bytes}; \\
+		\node[] {Preamble \\ \(k\) Bytes}; &
+		\node[fill=lightgray!20] (pad) {Padding \\ 1 Bit}; &
+		\node[fill=red!10] (id) {ID \\ 5 Bits}; &
+		\node[fill=red!10] {Length \\ 21 Bits}; &
+		\node[fill=red!10] (par) {Parity \\ 5 Bits}; &
+		\node[] {Payload \\ \(\ell\) Bytes}; \\
 		% \node{Padding }; \\
 	};
 

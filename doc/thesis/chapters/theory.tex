@@ -135,11 +135,6 @@ Phase shift keying (PSK) is another popular family of modulation schemes for dig
 \end{equation}
 \skelpar[3]
 
-% \begin{figure}
-% 	% TODO: Better Image
-% 	% https://sites.google.com/site/billmahroukelec675/bipolar-phase-shift-keying
-% 	\includegraphics[width=5cm]{./image/BPSK2.png}
-% \end{figure}
 
 \subsection{Quadrature PSK (QPSK)}
 
@@ -278,7 +273,8 @@ is different from \eqref{eqn:multipath-impulse-response} consider again the plot
 From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-response} can be interpreted as a simple tapped delay line, schematically drawn in \figref{fig:tapped-delay-line}, which confirms that the presented mathematical model is indeed a FIR filter. Simple multipath channels can be simulated with just a few lines of code, for example the data for the static fading channel in \figref{fig:multipath-frequency-response-plots} is generated in just four lines of Python. The difficulty of fading channels in practice lies in the estimation of the constantly changing parameters \(c_k(t)\) and \(\tau_k(t)\).
 
 \subsection{Simulating multipath CIR with FIR filters} \label{sec:fractional-delay}
-% TODO quelle: http://users.spa.aalto.fi/vpv/publications/vesan_vaitos/ch3_pt1_fir.pdf
+
+% TODO: cite sources
 
 \begin{figure}
 	\centering
@@ -402,7 +398,7 @@ Notice that by letting \(K = 0\), that is no power in the LOS path, \eqref{eqn:m
 \begin{equation}
 	p(a)= 2a(1+K) \exp{\left(-K -a^2 (K+1) \right)} I_0 \left(2a\sqrt{K(1+K)} \right),
 \end{equation}
-where \(I_0\) the zeroth order modified Bessel function.
+where \(I_0\) the zeroth order modified Bessel function. Random variables with this probability density function are said to have a Rice or Rician distribution.
 
 % The Phase for the strait line component has no influences for the Random process therefore there set to zero. In the case when \(K = 0\).
 % the Rician distribution becomes a Rayleight distribution on the other hand when \(K\rightarrow \infty \) the distribution becomes an AWGN-channel model (additive white Gaussian noise). When \(K > 0 \) is the phase not equally distributed.
