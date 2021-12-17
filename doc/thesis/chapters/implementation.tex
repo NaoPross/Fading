@@ -394,16 +394,40 @@ An example of such a simulation plot is shown in \figref{fig:dynamic-exp}.
 
 When nothing mentioned the number of how many FIR- filter taps are used is eight.
 
-%TODO: Other Plots
-\subsubsection{Example from the skript}
+%TODO: Other Plots?
+\subsubsection{Real value example}
 
 %TODO: How to referenc Tabels feom an other Skript.
+%TODO: Quelle https://www.etsi.org/deliver/etsi_ts/136100_136199/136104/11.04.00_60/ts_136104v110400p.pdf
 
-To Do some realistic simulations with this block the examples from the script \cite{Mathis} are used. Withsh are standarized by ETSI (European Telecommunication Standards Institute).
+In order to obtain a realistic simulation the values for multi-path fading propagation condition for a Extended Typical Urban (ETU) model from the ETSI (European Telecommunication Standards Institute) where used. This 
 
 \skelpar[5]{
 	Simulate an example from the skript 
 }
+\begin{table}[b]
+	
+	\centering
+	\begin{tabular}{lll}
+		\toprule
+		Excess tap delay \([\mu s]\) & Relative power \([dB]\) & linear value for relative power  \\     
+		\midrule
+		0	 & -1.0	& 0.7943282347242815	\\
+		50   & -1.0	& 0.7943282347242815	\\
+		120  & -1.0	& 0.7943282347242815	\\
+		200  &  0.0	& 1.0					\\
+		230  & 	0.0 & 1.0					\\
+		500  & 	0.0	& 1.0					\\
+		1600 & -3.0 & 0.5011872336272722	\\
+		2300 & -5.0	& 0.31622776601683794	\\
+		5000 & -7.0 & 0.19952623149688797	\\
+
+		\bottomrule
+	\end{tabular}
+	\caption{Values used for the simulation\label{tab:values}}
+\end{table}
+
+
 
 
 \subsection{Measurements}
