@@ -301,7 +301,7 @@ In order to study the effects of multipath fading, a series of simulations have 
 	\input{figures/tikz/qpsk-sim-constellations-static-symb-vec}
 	\caption{
 		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
-		The parameters are: delay of \([0.25,4,6.3,3.25]\)samples , amplitude of \([0.2,0.5,0.4,0.08]\) and LOS.
+		The parameters are: delay of \([0.25,4,6.3,3.25]\) samples , amplitude of \([0.2,0.5,0.4,0.08]\) and LOS.
 	}
 	\label{fig:static-symb-specal-case-vec}
 \end{figure}
@@ -309,9 +309,9 @@ In order to study the effects of multipath fading, a series of simulations have 
 \subsection{Fading with discrete time model}
 
 For the statical version according to \ref{sec:discrete-time-model} for implement and illustrate the fading effect, a separate block was created and implemented in the channel. Nearer shown in \ref{lst:fractional-delay-fir}. This block is based on a FIR filter. It can be displayed with a direct path (LOS) or without one (NLOS).
-With the help of this filter, the delay of the line of side paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed path. 
+With the help of this filter, the delay of the line of side paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed ray. 
 
-A special case is show in \figref{fig:static-symb-specal-case} and in \figref{fig:static-symb-specal-case-NLOS}, where the delay in sample is the same as have the sample per symbol or a multiple of it. An other example is shown in \figref{fig:static-symb-specal-case-vec},with more diffident delayed paths.
+A special case is show in \figref{fig:static-symb-specal-case} and in \figref{fig:static-symb-specal-case-NLOS}, where the delay in sample is the same as the sample per symbol value or a multiple of it. An other example is shown in \figref{fig:static-symb-specal-case-vec},with more diffident delayed paths.
 Unfortunately, these simulation values do not correspond to the reality, because too many incalculable side effects occur, which aren't possible to illustrate in this simulation.
 
 This block was additionally implemented with the method described in \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample. Which in turn means that the other sampled values do not add up to zero.
@@ -381,21 +381,25 @@ Thus, they will be distributed among the other whole numbers. A window function 
 \subsection{Fading with statistical model}
 
 In order to represent the effect of the multipaht fading not only statically, a second model was created using the Frequency Selective Fading Model from Gnu Radio, according to \ref{sec:statistical-model},which was implemented after the algorithm from the paper \cite{Alimohammad2009}, with the help of the sum-of sinusoid principal (SOS). The algorithm in this block is implemented with the aim that only a small number of sinusoids are needed. 
-This number represent the sinusoids which are simulated for each ray, for that value 8 has been chosen.
+This number represent the sinusoids which are simulated for each ray, for the foaling simulations shown the value 8 has been chosen.
 
 It can also be chosen whish statical model should be taken for the simulation Rayleigh or Rician. When the Rician model is taken also a realistic value for the factor \(K\) need to be given. Whish is something between zero and ten. As mentioned earlier, when  \(K=0\) the distribution is the same as with the Rayleight model. For a faktor \(K = 5.1\) the probability function is gaussien distributed.
 
-The power delay profile which specify the delay in time for each impulse need to be in sample. For this delay vector some realistic values \cite{Matlab} are for the first delay, when theirs non line of side zero. The second delayed path depend on the environment of measurement. In an indoor environment it is usually between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on  the bandwidth. 
+The power delay profile which specify the delay in time for each impulse need to be in sample. For this delayed vector some realistic values are for the first delay \cite{Matlab}, when theirs non line of side zero. The second delayed path depend on the environment of measurement. In an indoor environment it is usually between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on  the bandwidth. 
 
 The magnitudes of the pulses are given with the linear value. In practices the avarage path gain of a fading path is in the range of \([ -20 \text{dB} , 0\text{dB}]\).
 
 To add some movement, like a movable transmitter some Doppler shift can be initialized after the formula \eqref{Doppler-shift}. But it need to be normalized with the sampling rate. 
 An example of such a simulation plot is shown in \figref{fig:dynamic-exp}.
 
+When nothing mentioned the number of how many FIR- filter taps are used is eight.
+
 %TODO: Other Plots
 \subsubsection{Example from the skript}
 
+%TODO: How to referenc Tabels feom an other Skript.
 
+To Do some realistic simulations with this block the examples from the script \cite{Mathis} are used. Withsh are standarized by ETSI (European Telecommunication Standards Institute).
 
 \skelpar[5]{
 	Simulate an example from the skript 
