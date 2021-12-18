@@ -156,7 +156,7 @@ Thus the tagged stream is processed with a custom block, of which a simplified v
 \subsubsection{Performance of the implementation}\label{sec:preforming-implementation}
 
 The phase and frequency correction block was implemented with the design goal of being able to correct under ideal conditions a maximal frequency offsets of \(\hat{\epsilon} = 0.1\%\), which is sufficient to take into account small Doppler shifts at walking speed (\(v = \SI{2}{\meter\per\second}\)) with carrier at \(f_c = 2.4\) GHz. The USRP B210 devices have an internal clock frequency accuracy of \(\epsilon = 1\text{ ppm} = 10^{-6}\), which results in a total frequency offset of
-\begin{equation}
+\begin{equation}\label{eq:doppler}
 	\Delta f = f_c \left( \frac{v}{c_0} + \epsilon \right)
 	= \SI{2.4}{\giga\hertz} \left(
 		\frac{\SI{2}{\meter\per\second}}{\SI{3e8}{\meter\per\second}} + 10^{-6} 
@@ -357,13 +357,20 @@ When nothing mentioned the number of how many FIR- filter taps are used is eight
 %TODO: Other Plots?
 \subsubsection{Real value example}
 
-In order to obtain a realistic simulation the values for multi-path fading propagation condition for a Extended Typical Urban (ETU) model from the ETSI (European Telecommunication Standards Institute) where used. This 
+In order to obtain a realistic simulation the values for multipath fading propagation condition for a Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute), where used\cite{ETSI}. For those values shown in \tabref{tab:etsi-tap-values} the maximum Doppler frequency possibilities are predefined. In the following examples \figref{fig:dynamic-exp-real} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, as in \eqref{eq:doppler} \(\SI{16}{\hertz}\) calculated for a walking speed of \(\SI{2}{\meter\per\second}\). Those predefined values had a speed of
+\begin{equation}
+	v = \frac{\Delta f}{f_c}\cdot c_0 = \frac{\SI{5}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{0.625}{\meter\per\second}
+\end{equation}
+and
+\begin{equation}
+	v = \frac{\Delta f}{f_c}\cdot c_0 = \frac{\SI{70}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{8.75}{\meter\per\second}
+\end{equation}.
 
 \skelpar[5]{
-	Simulate an example from the skript 
+	More simulation plots. 
 }
+
 \begin{table}[b]
-	
 	\centering
 	\begin{tabular}{rr}
 		\toprule
@@ -387,7 +394,7 @@ In order to obtain a realistic simulation the values for multi-path fading propa
 	\centering
 	\input{figures/tikz/qpsk-sim-constellations-dynamic-exp-NLOS-5}
 	\caption{
-		TODO
+		Constellation diagrams for a simulated link using QPSK and Rayleighan fading. With the ETU model and a Doppler frequency of \(\SI{5}{\hertz}\).
 	}
 	\label{fig:dynamic-exp-real}
 \end{figure}
@@ -457,7 +464,7 @@ For generating the Byte error rate it is focus on byte-blocks of a specific leng
 	\input{figures/tikz/qpsk-sim-constellations-static-symb-NLOS}
 	\caption{
 		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
-		The parameters are: delay of samples per symbol, amplitude of 0.2 and LOS.
+		The parameters are: delay of samples per symbol, amplitude of 0.2 and NLOS.
 	}
 	\label{fig:static-symb-special-case-NLOS}
 \end{figure}
