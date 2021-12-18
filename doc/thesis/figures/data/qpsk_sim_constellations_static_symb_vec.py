@@ -16,9 +16,9 @@ samples = [channel, sync, equalized, locked]
 # print(list(map(len, samples)))
 
 start = 1e3
-end = start +500
+end = start +800
 
-get_range = lambda arr: arr[int(start):int(end)]
+get_range = lambda arr: arr[int(start):int(end):2]
 get_parts = lambda v: (np.real(v), np.imag(v))
 
 values = map(get_range, samples)
