@@ -8,7 +8,7 @@ samples = utils.load_samples(__file__)
 
 # range of samples we want to show
 start = 1e3
-end = start +800
+end = start +400
 
 # select every second samples
 select_samples = lambda arr: arr[int(start):int(end):4]

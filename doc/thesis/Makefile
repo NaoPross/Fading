@@ -34,16 +34,17 @@ DATA := \
 	figures/data/multipath_frequency_response.dat \
 	figures/data/rice_pdf.dat \
 	\
-	figures/data/qpsk_sim_const_nochannel.dat \
+	figures/data/qpsk_sim_nochannel.dat \
 	\
-	figures/data/qpsk_sim_const_static_firblock_los_halfsymb.dat \
-	figures/data/qpsk_sim_const_static_firblock_los_vec.dat \
-	figures/data/qpsk_sim_const_static_firblock_nlos_halfsymb.dat \
+	figures/data/qpsk_sim_static_firblock_los_halfsymb.dat \
+	figures/data/qpsk_sim_static_firblock_nlos_halfsymb.dat \
+	figures/data/qpsk_sim_static_firblock_los_vec.dat \
+	figures/data/qpsk_sim_static_firblock_nlos_vec.dat \
 	\
-	figures/data/qpsk_sim_const_dynamic_grblock_los_etsi_doppler5_k5.dat \
-	figures/data/qpsk_sim_const_dynamic_grblock_los_etsi_doppler70_k5.dat \
-	figures/data/qpsk_sim_const_dynamic_grblock_nlos_etsi_doppler5.dat \
-	figures/data/qpsk_sim_const_dynamic_grblock_nlos_etsi_doppler70.dat
+	figures/data/qpsk_sim_dynamic_grblock_los_etsi_doppler5_k5.dat \
+	figures/data/qpsk_sim_dynamic_grblock_los_etsi_doppler70_k5.dat \
+	figures/data/qpsk_sim_dynamic_grblock_nlos_etsi_doppler5.dat \
+	figures/data/qpsk_sim_dynamic_grblock_nlos_etsi_doppler70.dat
 
 
 
