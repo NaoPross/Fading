@@ -32,14 +32,19 @@ SOURCES := \
 
 DATA := \
 	figures/data/multipath_frequency_response.dat \
-	figures/data/qpsk_sim_constellations_static.dat \
-	figures/data/qpsk_sim_constellations_static_symb.dat \
-	figures/data/qpsk_sim_constellations_static_symb_NLOS.dat \
-	figures/data/qpsk_sim_constellations_static_symb_vec.dat \
-	figures/data/qpsk_sim_constellations_dynamic.dat\
-	figures/data/qpsk_sim_constellations_dynamic_exp_NLOS_5.dat\
-	figures/data/qpsk_sim_constellations_without_effects.dat \
-	figures/data/rice_pdf.dat
+	figures/data/rice_pdf.dat \
+	\
+	figures/data/qpsk_sim_const_nochannel.dat \
+	\
+	figures/data/qpsk_sim_const_static_firblock_los_halfsymb.dat \
+	figures/data/qpsk_sim_const_static_firblock_los_vec.dat \
+	figures/data/qpsk_sim_const_static_firblock_nlos_halfsymb.dat \
+	\
+	figures/data/qpsk_sim_const_dynamic_grblock_los_etsi_doppler5_k5.dat \
+	figures/data/qpsk_sim_const_dynamic_grblock_los_etsi_doppler70_k5.dat \
+	figures/data/qpsk_sim_const_dynamic_grblock_nlos_etsi_doppler5.dat \
+	figures/data/qpsk_sim_const_dynamic_grblock_nlos_etsi_doppler70.dat
+
 
 
 # Get the main file from the file
