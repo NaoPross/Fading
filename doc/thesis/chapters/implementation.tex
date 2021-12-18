@@ -357,7 +357,7 @@ When nothing mentioned the number of how many FIR- filter taps are used is eight
 %TODO: Other Plots?
 \subsubsection{Real value example}
 
-In order to obtain a realistic simulation the values for multipath fading propagation condition for a Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute), where used\cite{ETSI}. For those values shown in \tabref{tab:etsi-tap-values} the maximum Doppler frequency possibilities are predefined. In the following examples \figref{fig:dynamic-exp-real} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, as in \eqref{eq:doppler} \(\SI{16}{\hertz}\) calculated for a walking speed of \(\SI{2}{\meter\per\second}\). Those predefined values had a speed of
+In order to obtain a realistic simulation the values for multipath fading propagation condition for a Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute), where used\cite{ETSI}, with the values shown in \tabref{tab:etsi-tap-values}. For those the maximum Doppler frequency possibilities are predefined. In the following examples \figref{fig:dynamic-exp-real} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, as in \eqref{eq:doppler} \(\SI{16}{\hertz}\) calculated for a walking speed of \(\SI{2}{\meter\per\second}\). Those predefined values had a speed of
 \begin{equation}
 	v = \frac{\Delta f}{f_c}\cdot c_0 = \frac{\SI{5}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{0.625}{\meter\per\second}
 \end{equation}
@@ -508,7 +508,7 @@ The second part which is missing is to be able to change the timing plot for the
 \subsection{Incomplete parts}
 
 \subsubsection{Hardware clock}
-Unfortunately the SDR needs an external clock generator. For that a Rubidium Frequency STd. Model FS725 is used. Better said two of them,to make them more moveable and independent, with the clock frequency \SI{10}{\mega\hertz}. Those Rubidiums where used, because the syncretization, dosn`t work as planed in \ref{sec:preforming-implementation}. 
+Unfortunately the SDR needs an external clock generator. For that a Rubidium Frequency STd. Model FS725 is used. Better said two of them, to make them more movable and independent, with the clock frequency \SI{10}{\mega\hertz}. Those Rubidiums where used, because the synchronization, dosn`t work as planed in \ref{sec:preforming-implementation}. 
 %TODO: Right squenz?
 Without those only the amplitudes could be seen in the Plots, with all the noise from the inter-symbol differences. 
 
