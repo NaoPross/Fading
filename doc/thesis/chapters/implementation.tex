@@ -345,7 +345,7 @@ This number represent the sinusoids which are simulated for each ray, for the fo
 
 It can also be chosen whish statical model should be taken for the simulation Rayleigh or Rician. When the Rician model is taken also a realistic value for the factor \(K\) need to be given. Whish is something between zero and ten. As mentioned earlier, when  \(K=0\) the distribution is the same as with the Rayleight model. For a faktor \(K = 5.1\) the probability function is gaussien distributed.
 
-The power delay profile which specify the delay in time for each impulse need to be in sample. For this delayed vector some realistic values are for the first delay \cite{Matlab}, when theirs non line of side zero. The second delayed path depend on the environment of measurement. In an indoor environment it is usually between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on  the bandwidth. 
+The power delay profile which specify the delay in time for each impulse need to be in sample. For this delayed vector some realistic values are for the first delay \cite{Mathworks}, when theirs non line of side zero. The second delayed path depend on the environment of measurement. In an indoor environment it is usually between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on  the bandwidth. 
 
 The magnitudes of the pulses are given with the linear value. In practices the avarage path gain of a fading path is in the range of \([ -20 \text{dB} , 0\text{dB}]\).
 
@@ -367,7 +367,7 @@ and
 \end{equation}.
 
 \skelpar[5]{
-	More simulation plots. 
+	More simulation plots. Beschreiben.
 }
 
 \begin{table}[b]
@@ -513,6 +513,7 @@ Unfortunately the SDR needs an external clock generator. For that a Rubidium Fre
 Without those only the amplitudes could be seen in the Plots, with all the noise from the inter-symbol differences. 
 
 \subsection{Issues}
+%TODO: überhaubt erwähnen ?
 Some of the issus was how do you correct the statistical models, if the is noise in the channel from the fading effect, especially when the doppler frequency is included. This was a problem, when the Parameter haven't the special case in which the the amplitude and the Phase shift can be seen. So how it can be verified that the plot, with the indicated values could be correct. 
 For that to get a quick view on it a  Mathlab little Matlab model for the different distribution where made.
 
