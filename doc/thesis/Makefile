@@ -26,13 +26,8 @@ SOURCES := \
 	figures/tikz/ring-of-scattering-objects.tex \
 	figures/tikz/rayleigh-rice-pdf-plots.tex \
 	figures/tikz/packet-frame.tex \
-	figures/tikz/qpsk-sim-constellations-static.tex \
-	figures/tikz/qpsk-sim-constellations-static-symb.tex \
-	figures/tikz/qpsk-sim-constellations-static-symb-NLOS.tex \
-	figures/tikz/qpsk-sim-constellations-static-symb-vec.tex \
-	figures/tikz/qpsk-sim-constellations-dynamic.tex\
-	figures/tikz/qpsk-sim-constellations-dynamic-exp-NLOS-5.tex\
-	figures/tikz/qpsk-sim-constellations-without-effects.tex\
+	figures/tikz/qpsk-simulations-static.tex \
+	figures/tikz/qpsk-simulations-dynamic.tex
 
 
 DATA := \
@@ -75,6 +70,7 @@ clean:
 	@rm -vf *.aux *.aue *.lof *.log *.lot *.fls *.out *.toc *.fmt *.fot *.cb *.cb2 .*.lb *.dvi *.xdv *-converted-to.* *.bbl *.bcf *.blg *-blx.aux *-blx.bib *.run.xml *.fdb_latexmk *.synctex *.synctex\(busy\) *.synctex.gz *.synctex.gz\(busy\) *.pdfsync *.alg *.loa acs-*.bib *.thm *.nav *.pre *.snm *.vrb *.soc *.cut *.cpt *.spl *.ent *.lox *.mf *.acn *.acr *.glg *.glo *.gls *.glsdefs *.lzo *.lzs *.lol *.auxlock *.figlist
 	@rm -vf tex/*.aux
 	@rm -vf chapters/*.aux
+	@rm -vf figures/tikz/*.aux
 
 cleanall: clean
 	@rm -vf $(PDF)

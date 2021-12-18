@@ -436,42 +436,6 @@ For generating the Byte error rate it is focus on byte-blocks of a specific leng
 		return len(inp)
 \end{lstlisting}
 
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-without-effects}
-	\caption{Plot of without any effect, to compare with the other Plots.}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-static-symb}
-	\caption{
-		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
-		The parameters are: delay of samples per symbol, amplitude of 0.2 and LOS.
-	}
-	\label{fig:static-symb-special-case}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-static-symb-NLOS}
-	\caption{
-		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
-		The parameters are: delay of samples per symbol, amplitude of 0.2 and LOS.
-	}
-	\label{fig:static-symb-special-case-NLOS}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-static-symb-vec}
-	\caption{
-		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
-		The parameters are: delay of \texttt{[0.25,4,6.3,3.25]} samples , amplitude of \texttt{[0.2,0.5,0.4,0.08]} and LOS.
-	}
-	\label{fig:static-symb-special-case-vec}
-\end{figure}
-
 \section{Issues in the current implementation}
 
 \subsection{Non modulated access codes}
@@ -490,4 +454,22 @@ and \(M\) is relatively prime to \(N\). CAZAC waveforms are ideal because they h
 
 \subsection{Incomplete parts}
 
-
+\newgeometry{
+	inner = 15mm, outer = 15mm,
+}
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpsk-simulations-static}
+	\caption{
+		QPSK static TODO.
+	}
+\end{figure}
+\newpage
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpsk-simulations-dynamic}
+	\caption{
+		QPSK dynamic TODO.
+	}
+\end{figure}
+\restoregeometry
