@@ -273,7 +273,7 @@ In order to study the effects of multipath fading, a series of simulations have 
 For the statical version according to \ref{sec:discrete-time-model} for implement and illustrate the fading effect, a separate block was created and implemented in the channel. Nearer shown in \ref{lst:fractional-delay-fir}. This block is based on a FIR filter. It can be displayed with a direct path (LOS) or without one (NLOS).
 With the help of this filter, the delay of the line of side paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed ray. 
 
-A special case is show in \figref{fig:static-symb-special-case} and in \figref{fig:static-symb-special-case-NLOS}, where the delay in sample is the same as the sample per symbol value or a multiple of it. An other example is shown in \figref{fig:static-symb-special-case-vec},with more diffident delayed paths.
+A special case is show in \figref{qpsk-simulations-static}, where the delay in sample is the same as the sample per symbol value or a multiple of it. An other example is shown in the same figure,with more diffident delayed paths, with the delay values of \texttt{[0.25,4,6.3,3.25]} and the amplitude values of \texttt{[0.2,0.5,0.4,0.08]}.
 Unfortunately, these simulation values do not correspond to the reality, because too many incalculable side effects occur, which aren't possible to illustrate in this simulation.
 
 This block was additionally implemented with the method described in \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample. Which in turn means that the other sampled values do not add up to zero.
@@ -354,6 +354,11 @@ An example of such a simulation plot is shown in \figref{fig:dynamic-exp}.
 
 When nothing mentioned the number of how many FIR- filter taps are used is eight.
 
+\subsubsection{Issues}
+%TODO: überhaubt erwähnen ?
+Some difficulty was how to check the correct the statistical models, if there is noise in the channel, from the fading effect, especially when the doppler frequency is included. This was difficult to recreate, when the Parameter haven't the special case in which the the amplitude and the phase shift can be seen exactly. 
+To have som indication to verified the plot, mainly whether the movement could be correct a little Matlab model was used with the same values for the different distributions.
+
 %TODO: Other Plots?
 \subsubsection{Real value example}
 
@@ -366,6 +371,7 @@ and
 	v = \frac{\Delta f}{f_c}\cdot c_0 = \frac{\SI{70}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{8.75}{\meter\per\second}
 \end{equation}.
 
+The numbers of tags used in this case are similar to the number of given values.
 \skelpar[5]{
 	More simulation plots. Beschreiben.
 }
@@ -411,7 +417,7 @@ To find out how accurate the simulations are comparer with a simulation of the f
 Because of the fact that the test vector has some random bit at the end the bit error rate has always a value on average 32, even when its perfect match.  So to avoid high numbers this value is subtracted and only on focused on the positive values. 
 
 The vector which is used as test vector is: \texttt{[0x1f, 0x35, 0x12, 0x48]}, because this numbers are well suited to compare.
-For generating the Byte error rate it is focus on byte-blocks of a specific length. So for each of this blocks compared with test vector there is a BER. To make it simpler or better said to avoid mistakes, the last 200 of this individual BER are taken to find an average and the highest value. 
+For generating the byte error rate it is focus on byte-blocks of a specific length. So for each of this blocks compared with test vector there is a BER. To make it simpler or better said to avoid mistakes, the last 200 of this individual BER are taken to find an average and the highest value. 
 
 \skelpar[5]{
 	Maybe more 
@@ -467,6 +473,15 @@ As in \ref{sec:GUI} described the GUI was implemented, but unfortunately the par
 
 The second part which is missing is to be able to change the timing plot for the different scattering plots.
 
+%\begin{figure}
+%	\centering
+%	\label{fig:GUI}
+%	\input{figures/screenshots/gui_screenshot.png}
+%	\caption{
+%		Screenshot from the GUI
+%	}
+%\end{figure}
+
 % TODO : Piczure of the setup
 %TODO: Plots from the Hardware 
 \subsection{Incomplete parts}
@@ -476,10 +491,6 @@ Unfortunately the SDR needs an external clock generator. For that a Rubidium Fre
 %TODO: Right squenz?
 Without those only the amplitudes could be seen in the Plots, with all the noise from the inter-symbol differences. 
 
-\subsection{Issues}
-%TODO: überhaubt erwähnen ?
-Some of the issus was how do you correct the statistical models, if the is noise in the channel from the fading effect, especially when the doppler frequency is included. This was a problem, when the Parameter haven't the special case in which the the amplitude and the Phase shift can be seen. So how it can be verified that the plot, with the indicated values could be correct. 
-For that to get a quick view on it a  Mathlab little Matlab model for the different distribution where made.
 
 
 \newgeometry{
@@ -487,6 +498,7 @@ For that to get a quick view on it a  Mathlab little Matlab model for the differ
 }
 \begin{figure}
 	\centering
+	\label{qpsk-simulations-static}
 	\input{figures/tikz/qpsk-simulations-static}
 	\caption{
 		QPSK static TODO.
