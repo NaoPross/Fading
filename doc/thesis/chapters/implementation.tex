@@ -45,7 +45,7 @@ class myblock(gr.sync_block):
 		return `\placeholder{N of inputs that were processed}`
 \end{lstlisting}}
 
-\subsection{Dear PyGUI}
+\subsection{Dear PyGUI}\label{sec:GUI}
 
 To construct a graphical interface for a demonstration platform the Dear IMGUI (immediate graphical user interface) library was chosen, mainly for its ease of use, wide range of techincal capabilites and high refresh rate. Dear PyGUI (DPG) are the Python bindings for the Dear IMGUI library.
 
@@ -153,7 +153,7 @@ Thus the tagged stream is processed with a custom block, of which a simplified v
 	\end{align}
 \end{subequations}
 
-\subsubsection{Performance of the implementation}
+\subsubsection{Performance of the implementation}\label{sec:preforming-implementation}
 
 The phase and frequency correction block was implemented with the design goal of being able to correct under ideal conditions a maximal frequency offsets of \(\hat{\epsilon} = 0.1\%\), which is sufficient to take into account small Doppler shifts at walking speed (\(v = \SI{2}{\meter\per\second}\)) with carrier at \(f_c = 2.4\) GHz. The USRP B210 devices have an internal clock frequency accuracy of \(\epsilon = 1\text{ ppm} = 10^{-6}\), which results in a total frequency offset of
 \begin{equation}
@@ -488,6 +488,25 @@ With QAM however, the complexity of the constellation and the higher number of b
 \end{equation}
 and \(M\) is relatively prime to \(N\). CAZAC waveforms are ideal because they have a Dirac delta as autocorrelation\cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Though unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer (but not CMA). Thus to use CAZAC waveforms the transmitter needs to put them in front of the modulated symbols (for example using a correctly parametrized stream mux block in GR), and the receiver would need to synchronize with the sequence before the clock recovery or equalization. The latter is especially problematic because then it is no longer possible to identify the peak by comparing the autocorrelation value to a fixed threshold as done in section \ref{sec:implement-phasecorr}.
 
+
+\subsubsection{GUI Parameter change}
+%TODO: Picture of the GUI
+As in \ref{sec:GUI} described the GUI was implemented, but unfortunately the parts where the parameter could be changed, will showing the current simulation isn`t possibl
+ like the noise voltage of the channel or the bandwidth from the Polyphase Clock , the Gain of the Equalizer aren`t implemented yet. Actually everything which needs a responds from the interfaces to the GR. 
+
+The second part which is missing is to be able to change the timing plot for the different scattering plots.
+
+% TODO : Piczure of the setup
+%TODO: Plots from the Hardware 
 \subsection{Incomplete parts}
+
+\subsubsection{Hardware clock}
+Unfortunately the SDR needs an external clock generator. For that a Rubidium Frequency STd. Model FS725 is used. Better said two of them,to make them more moveable and independent, with the clock frequency \SI{10}{\mega\hertz}. Those Rubidiums where used, because the syncretization, dosn`t work as planed in \ref{sec:preforming-implementation}. 
+%TODO: Right squenz?
+Without those only the amplitudes could be seen in the Plots, with all the noise from the inter-symbol differences. 
+
+\subsection{Issues}
+Some of the issus was how do you correct the statistical models, if the is noise in the channel from the fading effect, especially when the doppler frequency is included. This was a problem, when the Parameter haven't the special case in which the the amplitude and the Phase shift can be seen. So how it can be verified that the plot, with the indicated values could be correct. 
+For that to get a quick view on it a  Mathlab little Matlab model for the different distribution where made.
 
 
