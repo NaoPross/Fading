@@ -1,0 +1,115 @@
+From eed49f9dcea7d1a7c34f152bca0250a72e5339bc Mon Sep 17 00:00:00 2001
+From: Jeff Long <willcode4@gmail.com>
+Date: Thu, 15 Jul 2021 21:32:27 -0400
+Subject: [PATCH] gr-channels: fix "hide" expressions in yml files
+
+Also one in analog, and an overachieving set of quotes in qtgui.
+
+Signed-off-by: Jeff Long <willcode4@gmail.com>
+---
+ gr-analog/grc/analog_probe_avg_mag_sqrd_x.block.yml        | 2 +-
+ gr-channels/grc/channels_channel_model2.block.yml          | 2 +-
+ gr-channels/grc/channels_dynamic_channel_model.block.yml   | 2 +-
+ gr-channels/grc/channels_fading_model.block.yml            | 2 +-
+ gr-channels/grc/channels_selective_fading_model.block.yml  | 2 +-
+ gr-channels/grc/channels_selective_fading_model2.block.yml | 2 +-
+ gr-qtgui/grc/qtgui_vector_sink_f.block.yml                 | 4 ++--
+ 7 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/gr-analog/grc/analog_probe_avg_mag_sqrd_x.block.yml b/gr-analog/grc/analog_probe_avg_mag_sqrd_x.block.yml
+index c8c51f8412..12f1dc7355 100644
+--- a/gr-analog/grc/analog_probe_avg_mag_sqrd_x.block.yml
++++ b/gr-analog/grc/analog_probe_avg_mag_sqrd_x.block.yml
+@@ -9,7 +9,7 @@ parameters:
+     options: [c, f, cf]
+     option_labels: [Complex, Float, Complex->Float]
+     option_attributes:
+-        hide: [all, all, '']
++        hide: [all, all, none]
+         input: [complex, float, complex]
+         optional: ['1', '1', '0']
+     hide: part
+diff --git a/gr-channels/grc/channels_channel_model2.block.yml b/gr-channels/grc/channels_channel_model2.block.yml
+index 2494e84a80..3311321796 100644
+--- a/gr-channels/grc/channels_channel_model2.block.yml
++++ b/gr-channels/grc/channels_channel_model2.block.yml
+@@ -25,7 +25,7 @@ parameters:
+     options: ['True', 'False']
+     option_labels: ['Yes', 'No']
+     option_attributes:
+-        hide_block: ['', part]
++        hide_block: [none, part]
+     hide: ${ block_tags.hide_block }
+ 
+ inputs:
+diff --git a/gr-channels/grc/channels_dynamic_channel_model.block.yml b/gr-channels/grc/channels_dynamic_channel_model.block.yml
+index 3343f6dc14..5145686fc8 100644
+--- a/gr-channels/grc/channels_dynamic_channel_model.block.yml
++++ b/gr-channels/grc/channels_dynamic_channel_model.block.yml
+@@ -40,7 +40,7 @@ parameters:
+     options: ['False', 'True']
+     option_labels: [Rayleigh/NLOS, Rician/LOS]
+     option_attributes:
+-        hide_K: [all, '']
++        hide_K: [all, none]
+ -   id: K
+     label: Rician factor (K)
+     dtype: real
+diff --git a/gr-channels/grc/channels_fading_model.block.yml b/gr-channels/grc/channels_fading_model.block.yml
+index 5dbc5bd1a1..130429a115 100644
+--- a/gr-channels/grc/channels_fading_model.block.yml
++++ b/gr-channels/grc/channels_fading_model.block.yml
+@@ -16,7 +16,7 @@ parameters:
+     options: ['False', 'True']
+     option_labels: [Rayleigh/NLOS, Rician/LOS]
+     option_attributes:
+-        hide_K: [all, '']
++        hide_K: [all, none]
+ -   id: K
+     label: Rician factor (K)
+     dtype: real
+diff --git a/gr-channels/grc/channels_selective_fading_model.block.yml b/gr-channels/grc/channels_selective_fading_model.block.yml
+index f9829727a5..b45f8095e2 100644
+--- a/gr-channels/grc/channels_selective_fading_model.block.yml
++++ b/gr-channels/grc/channels_selective_fading_model.block.yml
+@@ -16,7 +16,7 @@ parameters:
+     options: ['False', 'True']
+     option_labels: [Rayleigh/NLOS, Rician/LOS]
+     option_attributes:
+-        hide_K: [all, '']
++        hide_K: [all, none]
+ -   id: K
+     label: Rician factor (K)
+     dtype: real
+diff --git a/gr-channels/grc/channels_selective_fading_model2.block.yml b/gr-channels/grc/channels_selective_fading_model2.block.yml
+index 6079071400..4d9b95a725 100644
+--- a/gr-channels/grc/channels_selective_fading_model2.block.yml
++++ b/gr-channels/grc/channels_selective_fading_model2.block.yml
+@@ -16,7 +16,7 @@ parameters:
+     options: ['False', 'True']
+     option_labels: [Rayleigh/NLOS, Rician/LOS]
+     option_attributes:
+-        hide_K: [all, '']
++        hide_K: [all, none]
+ -   id: K
+     label: Rician factor (K)
+     dtype: real
+diff --git a/gr-qtgui/grc/qtgui_vector_sink_f.block.yml b/gr-qtgui/grc/qtgui_vector_sink_f.block.yml
+index 0e16ff5879..b56397401d 100644
+--- a/gr-qtgui/grc/qtgui_vector_sink_f.block.yml
++++ b/gr-qtgui/grc/qtgui_vector_sink_f.block.yml
+@@ -37,12 +37,12 @@ parameters:
+     label: X-Axis Units
+     dtype: string
+     default: '""'
+-    hide: '''part'''
++    hide: part
+ -   id: y_units
+     label: Y-Axis Units
+     dtype: string
+     default: '""'
+-    hide: '''part'''
++    hide: part
+ -   id: ref_level
+     label: Ref Level
+     dtype: real
