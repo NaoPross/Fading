@@ -16,7 +16,7 @@ samples = [channel, sync, equalized, locked]
 # print(list(map(len, samples)))
 
 start = 67.8e3
-end = start + 500
+end = start + 200
 # start = 80e3
 # end = start + 1000
 

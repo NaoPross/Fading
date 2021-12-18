@@ -45,7 +45,7 @@ class myblock(gr.sync_block):
 		return `\placeholder{N of inputs that were processed}`
 \end{lstlisting}}
 
-\subsection{Dear PyGUI}
+\subsection{Dear PyGUI}\label{sec:GUI}
 
 To construct a graphical interface for a demonstration platform the Dear IMGUI (immediate graphical user interface) library was chosen, mainly for its ease of use, wide range of techincal capabilites and high refresh rate. Dear PyGUI (DPG) are the Python bindings for the Dear IMGUI library.
 
@@ -153,10 +153,10 @@ Thus the tagged stream is processed with a custom block, of which a simplified v
 	\end{align}
 \end{subequations}
 
-\subsubsection{Performance of the implementation}
+\subsubsection{Performance of the implementation}\label{sec:preforming-implementation}
 
 The phase and frequency correction block was implemented with the design goal of being able to correct under ideal conditions a maximal frequency offsets of \(\hat{\epsilon} = 0.1\%\), which is sufficient to take into account small Doppler shifts at walking speed (\(v = \SI{2}{\meter\per\second}\)) with carrier at \(f_c = 2.4\) GHz. The USRP B210 devices have an internal clock frequency accuracy of \(\epsilon = 1\text{ ppm} = 10^{-6}\), which results in a total frequency offset of
-\begin{equation}
+\begin{equation}\label{eq:doppler}
 	\Delta f = f_c \left( \frac{v}{c_0} + \epsilon \right)
 	= \SI{2.4}{\giga\hertz} \left(
 		\frac{\SI{2}{\meter\per\second}}{\SI{3e8}{\meter\per\second}} + 10^{-6} 
@@ -357,13 +357,20 @@ When nothing mentioned the number of how many FIR- filter taps are used is eight
 %TODO: Other Plots?
 \subsubsection{Real value example}
 
-In order to obtain a realistic simulation the values for multi-path fading propagation condition for a Extended Typical Urban (ETU) model from the ETSI (European Telecommunication Standards Institute) where used. This 
+In order to obtain a realistic simulation the values for multipath fading propagation condition for a Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute), where used\cite{ETSI}. For those values shown in \tabref{tab:etsi-tap-values} the maximum Doppler frequency possibilities are predefined. In the following examples \figref{fig:dynamic-exp-real} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, as in \eqref{eq:doppler} \(\SI{16}{\hertz}\) calculated for a walking speed of \(\SI{2}{\meter\per\second}\). Those predefined values had a speed of
+\begin{equation}
+	v = \frac{\Delta f}{f_c}\cdot c_0 = \frac{\SI{5}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{0.625}{\meter\per\second}
+\end{equation}
+and
+\begin{equation}
+	v = \frac{\Delta f}{f_c}\cdot c_0 = \frac{\SI{70}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{8.75}{\meter\per\second}
+\end{equation}.
 
 \skelpar[5]{
-	Simulate an example from the skript 
+	More simulation plots. 
 }
+
 \begin{table}[b]
-	
 	\centering
 	\begin{tabular}{rr}
 		\toprule
@@ -387,7 +394,7 @@ In order to obtain a realistic simulation the values for multi-path fading propa
 	\centering
 	\input{figures/tikz/qpsk-sim-constellations-dynamic-exp-NLOS-5}
 	\caption{
-		TODO
+		Constellation diagrams for a simulated link using QPSK and Rayleighan fading. With the ETU model and a Doppler frequency of \(\SI{5}{\hertz}\).
 	}
 	\label{fig:dynamic-exp-real}
 \end{figure}
@@ -452,6 +459,16 @@ With QAM however, the complexity of the constellation and the higher number of b
 \end{equation}
 and \(M\) is relatively prime to \(N\). CAZAC waveforms are ideal because they have a Dirac delta as autocorrelation\cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Though unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer (but not CMA). Thus to use CAZAC waveforms the transmitter needs to put them in front of the modulated symbols (for example using a correctly parametrized stream mux block in GR), and the receiver would need to synchronize with the sequence before the clock recovery or equalization. The latter is especially problematic because then it is no longer possible to identify the peak by comparing the autocorrelation value to a fixed threshold as done in section \ref{sec:implement-phasecorr}.
 
+
+\subsubsection{GUI Parameter change}
+%TODO: Picture of the GUI
+As in \ref{sec:GUI} described the GUI was implemented, but unfortunately the parts where the parameter could be changed, will showing the current simulation isn`t possibl
+ like the noise voltage of the channel or the bandwidth from the Polyphase Clock , the Gain of the Equalizer aren`t implemented yet. Actually everything which needs a responds from the interfaces to the GR. 
+
+The second part which is missing is to be able to change the timing plot for the different scattering plots.
+
+% TODO : Piczure of the setup
+%TODO: Plots from the Hardware 
 \subsection{Incomplete parts}
 
 \newgeometry{

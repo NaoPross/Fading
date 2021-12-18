@@ -274,8 +274,6 @@ From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-respo
 
 \subsection{Simulating multipath CIR with FIR filters} \label{sec:fractional-delay}
 
-% TODO: cite sources
-
 \begin{figure}
 	\centering
 	\begin{subfigure}{.4\linewidth}
@@ -293,7 +291,7 @@ From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-respo
 	}
 \end{figure}
 
-As mentioned in \ref{sec:discrete-time-model} a FIR filter can be used to simulate discrete-time models of multipath fading. But with FIR filters the delays can only be integer multiples of the sample rate. When the delays are non integer an approximation needs to be done, that is because FIR filters have a transfer function of the form
+As mentioned in \ref{sec:discrete-time-model} a FIR filter can be used to simulate discrete-time models of multipath fading. But with FIR filters the delays can only be integer multiples of the sample rate. When the delays are non integer an approximation needs to be done \cite{Valimaki1995}, that is because FIR filters have a transfer function of the form
 \begin{equation} \label{eqn:transfer-function-fir}
 	H(j\omega) = \sum_{n = 0}^{N} h(n) e^{-j\omega nT}
 	\quad \text{commonly written as} \quad
