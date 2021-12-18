@@ -1,0 +1,19 @@
+% vim: set ts=2 sw=2 noet:
+
+\newcommand{\makeplot}[6]{%
+	\hfill
+	\begin{tikzpicture}
+		\begin{axis}[
+				width  = {\linewidth / 3.5},
+				height = {\linewidth / 3.5},
+				grid = major,
+				xmin = {-#4}, xmax = {#4},
+				ymin = {-#4}, ymax = {#4},
+				#5
+			]
+
+			\addplot[only marks, #6] table[x index = #2, y index = #3] {#1};
+		\end{axis}
+	\end{tikzpicture}
+	\hfill
+}

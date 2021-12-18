@@ -26,25 +26,26 @@ SOURCES := \
 	figures/tikz/ring-of-scattering-objects.tex \
 	figures/tikz/rayleigh-rice-pdf-plots.tex \
 	figures/tikz/packet-frame.tex \
-	figures/tikz/qpsk-sim-constellations-static.tex \
-	figures/tikz/qpsk-sim-constellations-static-symb.tex \
-	figures/tikz/qpsk-sim-constellations-static-symb-NLOS.tex \
-	figures/tikz/qpsk-sim-constellations-static-symb-vec.tex \
-	figures/tikz/qpsk-sim-constellations-dynamic.tex\
-	figures/tikz/qpsk-sim-constellations-dynamic-exp-NLOS-5.tex\
-	figures/tikz/qpsk-sim-constellations-without-effects.tex\
+	figures/tikz/qpsk-simulations-static.tex \
+	figures/tikz/qpsk-simulations-dynamic.tex
 
 
 DATA := \
 	figures/data/multipath_frequency_response.dat \
-	figures/data/qpsk_sim_constellations_static.dat \
-	figures/data/qpsk_sim_constellations_static_symb.dat \
-	figures/data/qpsk_sim_constellations_static_symb_NLOS.dat \
-	figures/data/qpsk_sim_constellations_static_symb_vec.dat \
-	figures/data/qpsk_sim_constellations_dynamic.dat\
-	figures/data/qpsk_sim_constellations_dynamic_exp_NLOS_5.dat\
-	figures/data/qpsk_sim_constellations_without_effects.dat \
-	figures/data/rice_pdf.dat
+	figures/data/rice_pdf.dat \
+	\
+	figures/data/qpsk_sim_nochannel.dat \
+	\
+	figures/data/qpsk_sim_static_firblock_los_halfsymb.dat \
+	figures/data/qpsk_sim_static_firblock_nlos_halfsymb.dat \
+	figures/data/qpsk_sim_static_firblock_los_vec.dat \
+	figures/data/qpsk_sim_static_firblock_nlos_vec.dat \
+	\
+	figures/data/qpsk_sim_dynamic_grblock_los_etsi_doppler5_k5.dat \
+	figures/data/qpsk_sim_dynamic_grblock_los_etsi_doppler70_k5.dat \
+	figures/data/qpsk_sim_dynamic_grblock_nlos_etsi_doppler5.dat \
+	figures/data/qpsk_sim_dynamic_grblock_nlos_etsi_doppler70.dat
+
 
 
 # Get the main file from the file
@@ -75,6 +76,7 @@ clean:
 	@rm -vf *.aux *.aue *.lof *.log *.lot *.fls *.out *.toc *.fmt *.fot *.cb *.cb2 .*.lb *.dvi *.xdv *-converted-to.* *.bbl *.bcf *.blg *-blx.aux *-blx.bib *.run.xml *.fdb_latexmk *.synctex *.synctex\(busy\) *.synctex.gz *.synctex.gz\(busy\) *.pdfsync *.alg *.loa acs-*.bib *.thm *.nav *.pre *.snm *.vrb *.soc *.cut *.cpt *.spl *.ent *.lox *.mf *.acn *.acr *.glg *.glo *.gls *.glsdefs *.lzo *.lzs *.lol *.auxlock *.figlist
 	@rm -vf tex/*.aux
 	@rm -vf chapters/*.aux
+	@rm -vf figures/tikz/*.aux
 
 cleanall: clean
 	@rm -vf $(PDF)

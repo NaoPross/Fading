@@ -329,14 +329,14 @@ Thus, they will be distributed among the other whole numbers. A window function 
 %	}
 %\end{figure}
 %
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-dynamic}
-	\caption{
-		Constellation diagrams for a simulated link using QPSK with AWGN and Rayleighan fading. The paramters are: frequency offset of 0.2 \%, \SI{100}{\milli\volt} noise, dopper shift for \(v = \SI{2}{\meter\per\second}\), and a NLOS urban PDP.
-	}
-	\label{fig:dynamic-exp}
-\end{figure}
+% \begin{figure}
+% 	\centering
+% 	\input{figures/tikz/qpsk-sim-constellations-dynamic}
+% 	\caption{
+% 		Constellation diagrams for a simulated link using QPSK with AWGN and Rayleighan fading. The paramters are: frequency offset of 0.2 \%, \SI{100}{\milli\volt} noise, dopper shift for \(v = \SI{2}{\meter\per\second}\), and a NLOS urban PDP.
+% 	}
+% 	\label{fig:dynamic-exp}
+% \end{figure}
 
 \subsection{Fading with statistical model}
 
@@ -390,14 +390,14 @@ and
 	\caption{Values used for the simulation \cite{ETSI}. \label{tab:etsi-tap-values}}
 \end{table}
 
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-dynamic-exp-NLOS-5}
-	\caption{
-		Constellation diagrams for a simulated link using QPSK and Rayleighan fading. With the ETU model and a Doppler frequency of \(\SI{5}{\hertz}\).
-	}
-	\label{fig:dynamic-exp-real}
-\end{figure}
+% \begin{figure}
+% 	\centering
+% 	\input{figures/tikz/qpsk-sim-constellations-dynamic-exp-NLOS-5}
+% 	\caption{
+% 		Constellation diagrams for a simulated link using QPSK and Rayleighan fading. With the ETU model and a Doppler frequency of \(\SI{5}{\hertz}\).
+% 	}
+% 	\label{fig:dynamic-exp-real}
+% \end{figure}
 
 
 \subsection{Measurements}
@@ -443,42 +443,6 @@ For generating the Byte error rate it is focus on byte-blocks of a specific leng
 		return len(inp)
 \end{lstlisting}
 
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-without-effects}
-	\caption{Plot of without any effect, to compare with the other Plots.}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-static-symb}
-	\caption{
-		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
-		The parameters are: delay of samples per symbol, amplitude of 0.2 and LOS.
-	}
-	\label{fig:static-symb-special-case}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-static-symb-NLOS}
-	\caption{
-		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
-		The parameters are: delay of samples per symbol, amplitude of 0.2 and NLOS.
-	}
-	\label{fig:static-symb-special-case-NLOS}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\input{figures/tikz/qpsk-sim-constellations-static-symb-vec}
-	\caption{
-		Constellation diagrams for a simulated link using QPSK with the discrete time model block.
-		The parameters are: delay of \texttt{[0.25,4,6.3,3.25]} samples , amplitude of \texttt{[0.2,0.5,0.4,0.08]} and LOS.
-	}
-	\label{fig:static-symb-special-case-vec}
-\end{figure}
-
 \section{Issues in the current implementation}
 
 \subsection{Non modulated access codes}
@@ -518,3 +482,22 @@ Some of the issus was how do you correct the statistical models, if the is noise
 For that to get a quick view on it a  Mathlab little Matlab model for the different distribution where made.
 
 
+\newgeometry{
+	inner = 15mm, outer = 15mm,
+}
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpsk-simulations-static}
+	\caption{
+		QPSK static TODO.
+	}
+\end{figure}
+\newpage
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpsk-simulations-dynamic}
+	\caption{
+		QPSK dynamic TODO.
+	}
+\end{figure}
+\restoregeometry
