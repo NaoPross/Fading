@@ -268,7 +268,7 @@ def block_phase(self, start, end):
 
 In order to study the effects of multipath fading, a series of simulations have been made under different conditions. To simulate a channel affected by multipath fading two blocks from the GR library, and a third custom block were used. The channel model can simulate AWGN, a frequency offset and either a Rayleigh (NLOS) oder Rice (LOS) fading.
 
-\subsection{Fading with discrete time model}
+\subsection{Fading with discrete time model} \label{sec:discrete-time-model-fir}
 
 For the statical version according to \ref{sec:discrete-time-model} for implement and illustrate the fading effect, a separate block was created and implemented in the channel. Nearer shown in \ref{lst:fractional-delay-fir}. This block is based on a FIR filter. It can be displayed with a direct path (LOS) or without one (NLOS).
 With the help of this filter, the delay of the line of side paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed ray. 
@@ -374,20 +374,20 @@ and
 	\centering
 	\begin{tabular}{rr}
 		\toprule
-		Excess tap delay in \si{\nano\second} & Relative power in \si{\decibel} \\
+		\bfseries Excess tap delay & \bfseries Relative power \\
 		\midrule
-			 0 & \(-1.0 \approx 0.7943\) \\
-		  50 & \(-1.0 \approx 0.7943\) \\
-		 120 & \(-1.0 \approx 0.7943\) \\
-		 200 & \( 0.0 = 1.0000\) \\
-		 230 & \( 0.0 = 1.0000\) \\
-		 500 & \( 0.0 \approx 1.0000\) \\
-		1600 & \(-3.0 \approx 0.5011\) \\
-		2300 & \(-5.0 \approx 0.3162\) \\
-		5000 & \(-7.0 \approx 0.1995\) \\
+		\SI{   0}{\nano\second} & \(\SI{-1.0}{\decibel} \approx 0.7943\) \\
+		\SI{  50}{\nano\second} & \(\SI{-1.0}{\decibel} \approx 0.7943\) \\
+		\SI{ 120}{\nano\second} & \(\SI{-1.0}{\decibel} \approx 0.7943\) \\
+		\SI{ 200}{\nano\second} & \(\SI{ 0.0}{\decibel} = 1.0000\) \\
+		\SI{ 230}{\nano\second} & \(\SI{ 0.0}{\decibel} = 1.0000\) \\
+		\SI{ 500}{\nano\second} & \(\SI{ 0.0}{\decibel} = 1.0000\) \\
+		\SI{1.6}{\micro\second} & \(\SI{-3.0}{\decibel} \approx 0.5011\) \\
+		\SI{2.3}{\micro\second} & \(\SI{-5.0}{\decibel} \approx 0.3162\) \\
+		\SI{5.0}{\micro\second} & \(\SI{-7.0}{\decibel} \approx 0.1995\) \\
 		\bottomrule
 	\end{tabular}
-	\caption{Values used for the simulation \cite{ETSI}. \label{tab:etsi-tap-values}}
+	\caption{Extended Typical Urban model (ETU) ETSI Standard PDP values for multipath fading propagation conditions. \cite{ETSI}. \label{tab:etsi-tap-values}}
 \end{table}
 
 % \begin{figure}
@@ -483,13 +483,16 @@ For that to get a quick view on it a  Mathlab little Matlab model for the differ
 
 
 \newgeometry{
+	top = 25mm, bottom = 25mm,
 	inner = 15mm, outer = 15mm,
 }
 \begin{figure}
 	\centering
 	\input{figures/tikz/qpsk-simulations-static}
 	\caption{
-		QPSK static TODO.
+		Simulations of a static fading channel models with different tap values. The samples were generated using the custom block discussed in section \ref{sec:discrete-time-model-fir}. For the 1 tap model the fading tap was \(0.2\delta(n - 0.25)\), and for the 4 tap model uses \(0.2 \delta(n - 0.25) + 0.08 \delta(n - 3.25) + 0.5 \delta(n - 4) + 0.4 \delta(n - 6.3)\). In both cases the delays are given in samples.
+		% delay = [0.25, 3.25, 4, 6.3]
+		% ampl =  [0.2, 0.08, 0.5, 0.4]
 	}
 \end{figure}
 \newpage
@@ -497,7 +500,7 @@ For that to get a quick view on it a  Mathlab little Matlab model for the differ
 	\centering
 	\input{figures/tikz/qpsk-simulations-dynamic}
 	\caption{
-		QPSK dynamic TODO.
+		Simulations with a dynamic fading channel model using PDP values of the Extended Typical Urban model (ETU) of the ETSI standard normative Annex B.2 in \cite{ETSI}. The color gradient represents progression in time.
 	}
 \end{figure}
 \restoregeometry

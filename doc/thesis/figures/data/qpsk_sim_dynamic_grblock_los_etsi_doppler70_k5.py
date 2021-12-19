@@ -8,10 +8,10 @@ samples = utils.load_samples(__file__)
 
 # range of samples we want to show
 start = 1e3
-end = start +800
+end = start +1e3
 
 # select every second samples
-select_samples = lambda arr: arr[int(start):int(end):4]
+select_samples = lambda arr: arr[int(start):int(end):10]
 values = map(select_samples, samples)
 
 # split into imaginary and real parts
