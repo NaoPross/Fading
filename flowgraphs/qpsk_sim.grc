@@ -247,7 +247,7 @@ blocks:
     alias: ''
     append: 'False'
     comment: ''
-    file: data/qpsk_channel.dat
+    file: data/channel_qpsk.dat
     type: complex
     unbuffered: 'False'
     vlen: '1'
@@ -265,7 +265,7 @@ blocks:
     alias: ''
     append: 'False'
     comment: ''
-    file: data/qpsk_locked.dat
+    file: data/locked_qpsk.dat
     type: complex
     unbuffered: 'False'
     vlen: '1'
@@ -283,7 +283,7 @@ blocks:
     alias: ''
     append: 'False'
     comment: ''
-    file: data/qpsk_sync.dat
+    file: data/synchronized_qpsk.dat
     type: complex
     unbuffered: 'False'
     vlen: '1'
@@ -301,7 +301,7 @@ blocks:
     alias: ''
     append: 'False'
     comment: ''
-    file: data/qpsk_equalized.dat
+    file: data/equalized_qpsk.dat
     type: complex
     unbuffered: 'False'
     vlen: '1'
@@ -507,7 +507,7 @@ blocks:
     bus_structure: null
     coordinate: [592, 572.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: digital_cma_equalizer_cc_0
   id: digital_cma_equalizer_cc
   parameters:
@@ -645,10 +645,10 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    amplitudes: '[0.2]'
+    amplitudes: '[0.2, 0.08, 0.5, 0.4]'
     comment: ''
-    delays: '[sps]'
-    los: 'True'
+    delays: '[0.25, 3.25, 4, 6.3]'
+    los: 'False'
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
@@ -657,7 +657,7 @@ blocks:
     bus_structure: null
     coordinate: [648, 740.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: fadingui_netsink_0
   id: fadingui_netsink
   parameters:
@@ -671,7 +671,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [992, 620.0]
+    coordinate: [992, 628.0]
     rotation: 0
     state: enabled
 - name: fadingui_netsink_0_0

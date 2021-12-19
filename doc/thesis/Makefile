@@ -29,10 +29,11 @@ SOURCES := \
 	figures/tikz/qpsk-simulations-static.tex \
 	figures/tikz/qpsk-simulations-dynamic.tex
 
-
 DATA := \
 	figures/data/multipath_frequency_response.dat \
 	figures/data/rice_pdf.dat \
+	\
+	figures/data/qpsk_hw_lab.dat \
 	\
 	figures/data/qpsk_sim_nochannel.dat \
 	\
@@ -45,7 +46,6 @@ DATA := \
 	figures/data/qpsk_sim_dynamic_grblock_los_etsi_doppler70_k5.dat \
 	figures/data/qpsk_sim_dynamic_grblock_nlos_etsi_doppler5.dat \
 	figures/data/qpsk_sim_dynamic_grblock_nlos_etsi_doppler70.dat
-
 
 
 # Get the main file from the file
