@@ -4,7 +4,7 @@
 
 \section{Overview}
 
-First of all the tools that were used in this project are introduced. Then it is explained how the transmitter and receiver chains are implemented. Except for the channel, there are no differences in the signal processing chains between the simulated and real flow graphs (with hardware). Following are some channel simulations and measurements of the bit error rate (BER). Finally, the issues and the degree of completeness of our current implementation is discussed.
+First the tools used in this project are introduced. Then implementations of the transmitter and receiver chains is explained. Subsequently simulations and measurements of fading channels with an empirically computed bit error rate (BER) are presented. Finally, the issues and the state of our current implementation is discussed.
 
 \section{Software Stack}
 
@@ -47,15 +47,21 @@ class myblock(gr.sync_block):
 
 \subsection{Dear PyGUI}\label{sec:GUI}
 
+\begin{figure}
+	\centering
+	\includegraphics[frame, width = \linewidth]{figures/screenshots/gui_screenshot}
+	\caption{Screenshot of the graphical interface of receiver built using the DearPyGUI library.}
+\end{figure}
+
 To construct a graphical interface for a demonstration platform the Dear IMGUI (immediate mode graphical user interface) library was chosen, mainly for its ease of use, wide range of techincal capabilites and high refresh rate. Dear PyGUI (DPG) are the Python bindings for the Dear IMGUI library.
 
-The DPG GUI communicates with the GR flow graphs using the IP/UDP protocol. This decision to separate the project into two parts that communicate over the IP network was made because it is not very easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configure flow graph on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time.
-
-As a side effect, in theory this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph.
+The DPG GUI communicates with the GR flow graphs using the IP/UDP protocol. This decision to separate the project into two parts that communicate over the IP network was made because it is not very easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configure flow graph on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time. As a side effect, in theory this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph.
 
 \section{Hardware}
 
-\begin{table}[b]
+As receivers and transmitter devices for the SDR setup two USRP B210 devices from Ettus Research were used. Some technical specifications are shown in \tabref{tab:usrp-specs}. GR provides off the shelf blocks that interface with the official API provided from Ettus Research.
+
+\begin{table}[h]
 	%TODO sepzifikationen ampssen / genauer? https://www.ettus.com/wp-content/uploads/2019/01/b200-b210_spec_sheet.pdf
 	% https://kb.ettus.com/B200/B210/B200mini/B205mini#FAQ
 	\centering
@@ -70,8 +76,6 @@ As a side effect, in theory this setup allows to have one computer running the g
 	\end{tabular}
 	\caption{USRP B210 specifications \cite{EttusUSRPB210}. \label{tab:usrp-specs}}
 \end{table}
-
-As receivers and transmitter devices for the SDR setup two USRP B210 devices from Ettus Research were used. Some technical specifications are shown in \tabref{tab:usrp-specs}. GR provides off the shelf blocks that interface with the official API provided from Ettus Research.
 
 \section{Transmitter chain}
 
@@ -170,6 +174,17 @@ Because the frequency estimate is linearly interpolated, the phase error may not
 \end{equation}
 must hold. By further setting \(\kappa = 4\) and \(N' = 32\) we obtain a minimum sampling frequency of approximately \(\SI{618.5}{\kilo\hertz}\), or conversely by letting \(f_s = \SI{1}{\mega\hertz}\) we have a maximum frame length of \(N' = 51\) symbols. In other words, roughly every 50 symbols the system must send an access code sequence. This result is rather unfortunate as it requires a lot more processing power than expected.
 
+\begin{figure}
+	\centering
+	% TODO: move code into separate file
+	\input{figures/tikz/phasecorr-blockprocessing-diagram}
+	\caption{
+		Graphical representation of the input samples for the work function of the fine phase and frequency correction block (shown in listing \ref{lst:phasecorr-work}). Roughly every \(N\) samples there is a tag containing the information of the phase error (computed using the cross correlation peak). The white `chunks' of samples can be corrected using their respective left and right tag values. The samples in the red chunk need phase information from the previous block processing. The samples in the blue chunk need a phase information from the future, which is not attainable. Thus for the blue chunk the frequency estimate of the previous chunk is used.
+		\label{fig:phasecorr-chunks}
+	}
+\end{figure}
+
+
 \begin{lstlisting}[
 	texcl = true, language = python, escapechar = {`},
 	float, captionpos = b, label = {lst:phasecorr-work},
@@ -197,48 +212,6 @@ def work(self, inputs, outputs):
 	# return how many samples were processed
 	return len(outputs[0])
 \end{lstlisting}
-
-\begin{figure}
-	\centering
-	% TODO: move code into separate file
-	\begin{tikzpicture}[
-			blk/.style = {
-				draw, rectangle, thick, black,
-				minimum width = 15mm,
-				minimum height = 3mm,
-				outer sep = 1mm,
-				pattern = vertical lines,
-				pattern color = lightgray,
-			},
-		]
-
-		\foreach \i in {0,1,...,4}{
-			\coordinate (blkC\i) at (15mm*\i,0);
-			\node[blk] (blk\i) at (blkC\i) {};
-			\node[below] (phi\i) at (blk\i.south west) {\(\varphi_{\i}\)};
-		}
-		% last phase 
-		\node[below] (phi5) at (blk4.south east) {\(\varphi_{5}\)};
-
-		% first block
-		\node[blk, minimum width = 10mm, xshift = 2.5mm, fill = red!30] (S) at (-15mm,0) {};
-		\node[anchor = east] at (S.west) {Input};
-
-		% last block
-		\node[blk, minimum width = 9mm, xshift = -3mm, fill = blue!30] (E) at ($(blk4)+(15mm,0)$) {};
-
-		% labels
-		\draw[thick, latex-] (blk3.north) to[out = 90, in = 180] ++(5mm,6mm)
-			node[right] {Chunk of \(N\) samples};
-
-		\draw[thick, latex-] (blk0.north east) ++(-1mm,0) to[out = 90, in = 0] ++(-5mm,6mm)
-			node[left] (tags) {Phase tags};
-	\end{tikzpicture}
-	\caption{
-		Graphical representation of the input samples for the work function of the fine phase and frequency correction block (shown in listing \ref{lst:phasecorr-work}). Roughly every \(N\) samples there is a tag containing the information of the phase error (computed using the cross correlation peak). The white `chunks' of samples can be corrected using their respective left and right tag values. The samples in the red chunk need phase information from the previous block processing. The samples in the blue chunk need a phase information from the future, which is not attainable. Thus for the blue chunk the frequency estimate of the previous chunk is used.
-		\label{fig:phasecorr-chunks}
-	}
-\end{figure}
 
 \begin{lstlisting}[
 	texcl = true, language = python, escapechar = {`},
