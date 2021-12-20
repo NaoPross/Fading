@@ -8,7 +8,7 @@
 		\input{figures/tikz/overview}
 	}
 	\caption{
-		Block diagram of our wireless communication system with annotated signal names. Frequency domain representations of signals use the uppercase symbol of their respective time domain name.
+		Block diagram of our wireless communication system with annotated signal names. Frequency domain representations of signals use the uppercase symbol of their respective time domain name. Amplification constants in the channel (for \(s(t)\) and \(r(t)\)) were omitted throughout the document for readability.
 		\label{fig:notation}
 	}
 \end{figure}
@@ -91,6 +91,7 @@ A graphical way to see what is happening, is to observe a so called \emph{conste
 \paragraph{Example}
 
 A concrete example for \(M = 16\): if the message is 1110 the bit splitter creates two values \(\vec{m}_q = 11\) and \(\vec{m}_i = 10\); both are converted into analog amplitudes (symbols) \(m_q = 3\) and \(m_i = 4\); that are then mixed with their respective carrier, resulting in \(s(t)\) being the point inside the bottom right sub-quadrant of the top right quadrant (blue dot in \figref{fig:qam-constellation}).
+\vspace{1em}
 
 In \figref{fig:qam-constellation} the dots of the constellation have coordinates that begin on the bottom left corner, and are nicely aligned on a grid. Both are not a necessary requirement for QAM, in fact there are many schemes (for example when \(M = 32\)) that are arranged on a non square shape, and place the dots in different orders. The only constraint that most QAM modulators have in common, with regards to the geometry of the constellation, is that between any two adjacent dots (along the axis, not diagonally) only one bit of the represented value changes (gray code). This is done to improve the bit error rate (BER) of the transmission.
 
@@ -129,16 +130,13 @@ The Hilbert transform is a linear operator that introduces a phase shift of \(\p
 
 \section{Phase shift keying (\(M\)-PSK)}
 
-Phase shift keying (PSK) is another popular family of modulation schemes for digital signals, that is however simpler than QAM. In PSK as the name suggests only the phase of the envelope changes, which means that the symbols have all the same amplitude. Thus, instead of arranging the symbols into a grid as done in QAM, \(M\)-PSK distributes the symbols over the unit circle at equidistant intervals of \(2\pi / M\) radians \cite{Mathis,Kneubuehler}. An example of 8-PSK is shown in \figref{fig:psk-constellation}. Mathematically the process of a PSK modulation can be described by \skelpar[2]
+Phase shift keying (PSK) is another popular family of modulation schemes for digital signals, that is however simpler than QAM. In PSK as the name suggests only the phase of the envelope changes, which means that the symbols have all the same amplitude. Thus, instead of arranging the symbols into a grid as done in QAM, \(M\)-PSK distributes the symbols over the unit circle at equidistant intervals of \(2\pi / M\) radians \cite{Mathis,Kneubuehler}. An example of 8-PSK is shown in \figref{fig:psk-constellation}. Mathematically the process of a PSK modulation can be described by making the phase of a carrier function of the message signal. For a complex exponential carrier:
 \begin{equation}
-	\skelpar[1]
+	s(t) = \exp\left(\omega_c t + \varphi(t)\right), \quad\text{where}\quad
+	\varphi = \frac{2\pi \cdot \text{Level}(\vec{m}(t))}{M}, \vec{m} \in \{0,1\}^{M}.
 \end{equation}
-\skelpar[3]
 
-
-\subsection{Quadrature PSK (QPSK)}
-
-\skelpar[2]{QPSK = 4-PSK = 4-QAM}
+It is worth noting that the case of 4-PSK, also known as quaternary phase shift keying (QPSK), is a special case, because its constellation is (up to a constant phase) a 4-ary QAM.
 
 \section{Multipath fading} \label{sec:multipath-fading}
 
@@ -223,7 +221,7 @@ An intuitive parameter to quantify how dispersive channel is, is to take the tim
 \end{equation}
 as is done in \cite{Gallager}. However since in reality some paths get more attenuated than others (\(c_k(t)\) parameters) it also not uncommon to define the delay spread as a weighted mean or even as a statistical second moment (RMS value), where mean tap power \(\expectation\{|c_k(t)|^2\}\) is taken into account \cite{Mathis,Messier}. % More sophisticated definitions of delay spread will be briefly mentioned later in section \ref{sec:statistical-model}.
 
-Another important parameter for quantifying dispersion is \emph{coherence bandwidth}, a measure that is highly related to delay spread but in the frequency domain. Coherence bandwidth, is informally ``how much bandwidth can be used by the signal before it gets distorted (in our case by fading)'' \cite{Messier}. Thus intuitively, this parameter must be related to the delay spread with an inversely proportional relationship since higher delay spread implies more intersymbol interference. And in fact, although there are multiple definitions depending on the context, the coherence bandwidth \(B_c\) can be usually estimated with
+Another important parameter for quantifying dispersion is \emph{coherence bandwidth}, a measure that is highly related to delay spread but in the frequency domain. Coherence bandwidth, is informally ``how much bandwidth can be used by the signal before it gets distorted'' (in our case by fading) \cite{Messier}. Thus intuitively, this parameter must be related to the delay spread with an inversely proportional relationship, since higher delay spread implies more intersymbol interference. And in fact, although there are multiple definitions depending on the context, the coherence bandwidth \(B_c\) is usually estimated with
 \begin{equation}
 	B_c \approx \frac{1}{T_d}.
 \end{equation}
