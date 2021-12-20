@@ -536,18 +536,18 @@ blocks:
 - name: channels_selective_fading_model_0
   id: channels_selective_fading_model
   parameters:
-    K: '4.0'
+    K: '5'
     LOS: 'False'
     N: '8'
     affinity: ''
     alias: ''
     comment: ''
-    delays: (0,1.8)
-    fDTs: ((2*carrier_freq)/(3*10e8))/samp_rate
-    mags: (1,0.12)
+    delays: (0,0.05e-6/samp_rate,0.12e-6/samp_rate,0.2e-6/samp_rate,0.23e-6/samp_rate,0.5e-6/samp_rate,1.6e-6/samp_rate,2.3e-6/samp_rate,5e-6/samp_rate)
+    fDTs: 70/samp_rate
+    mags: (0.7943282347242815,0.7943282347242815,0.7943282347242815,1,1,1,0.5011872336272722,0.31622776601683794,0.19952623149688797)
     maxoutbuf: '0'
     minoutbuf: '0'
-    ntaps: '8'
+    ntaps: '9'
     seed: '21'
   states:
     bus_sink: false

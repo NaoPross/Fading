@@ -7,16 +7,19 @@ import numpy as np
 samples = utils.load_samples(__file__)
 
 # range of samples we want to show
-start = 20e3
-end = start +400
+start = 25e3
+end = start +800
 
 # select every second samples
-select_samples = lambda arr: arr[int(start):int(end):6]
+select_samples = lambda arr: arr[int(start):int(end):8]
 values = map(select_samples, samples)
 
 # split into imaginary and real parts
 get_parts = lambda v: (np.real(v), np.imag(v))
 parts = [p for v in map(get_parts, values) for p in v]
+
+# add 'samplenr' metadata
+parts += [np.arange(0, len(parts[0]))]
 
 # zip data and add header
 data = np.array(list(zip(*parts)))
@@ -24,7 +27,8 @@ headers = [
     "channel_re",      "channel_im",
     "synchronized_re", "synchronized_im",
     "equalized_re",    "equalized_im",
-    "locked_re",       "locked_im"
+    "locked_re",       "locked_im",
+    "samplenr",
 ]
 
 # save to file

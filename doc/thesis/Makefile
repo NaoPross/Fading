@@ -1,5 +1,5 @@
 TEX := xelatex
-TEXARGS := -halt-on-error -interaction=nonstopmode -shell-escape=1
+TEXARGS := --halt-on-error --interaction=nonstopmode --shell-escape=1 --enable-write18
 
 SOURCES := \
 	Fading.tex \
@@ -28,7 +28,8 @@ SOURCES := \
 	figures/tikz/packet-frame.tex \
 	figures/tikz/qpsk-simulations-static.tex \
 	figures/tikz/qpsk-simulations-dynamic.tex \
-	figures/tikz/qpsk-hardware.tex
+	figures/tikz/qam-simulations-dynamic.tex \
+	figures/tikz/hardware.tex
 
 DATA := \
 	figures/data/multipath_frequency_response.dat \
@@ -47,7 +48,12 @@ DATA := \
 	figures/data/qpsk_sim_dynamic_grblock_los_etsi_doppler5_k5.dat \
 	figures/data/qpsk_sim_dynamic_grblock_los_etsi_doppler70_k5.dat \
 	figures/data/qpsk_sim_dynamic_grblock_nlos_etsi_doppler5.dat \
-	figures/data/qpsk_sim_dynamic_grblock_nlos_etsi_doppler70.dat
+	figures/data/qpsk_sim_dynamic_grblock_nlos_etsi_doppler70.dat \
+	\
+	figures/data/qam_sim_dynamic_grblock_los_etsi_doppler5_k5.dat \
+	figures/data/qam_sim_dynamic_grblock_los_etsi_doppler70_k5.dat \
+	figures/data/qam_sim_dynamic_grblock_nlos_etsi_doppler5.dat \
+	figures/data/qam_sim_dynamic_grblock_nlos_etsi_doppler70.dat
 
 
 # Get the main file from the file
@@ -66,6 +72,7 @@ all: $(PDF)
 	/usr/bin/env python3 $<
 
 %.pdf: %.tex $(SOURCES) $(DATA)
+	mkdir -p figures/externalized
 	$(TEX) $(TEXARGS) $<
 	# bibliography
 	biber $(basename $(MAIN))
@@ -79,6 +86,7 @@ clean:
 	@rm -vf tex/*.aux
 	@rm -vf chapters/*.aux
 	@rm -vf figures/tikz/*.aux
+	@rm -vfrd figures/externalized
 
 cleanall: clean
 	@rm -vf $(PDF)

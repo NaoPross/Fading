@@ -195,7 +195,7 @@ class qam_sim(gr.top_block, Qt.QWidget):
             verbose=False,
             log=False)
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(qam_const)
-        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, ((2*carrier_freq)/(3*10e8))/samp_rate, False, 4.0, 21, (0,1.8), (1,0.12), 8 )
+        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, 70/samp_rate, False, 5, 21, (0,0.05e-6/samp_rate,0.12e-6/samp_rate,0.2e-6/samp_rate,0.23e-6/samp_rate,0.5e-6/samp_rate,1.6e-6/samp_rate,2.3e-6/samp_rate,5e-6/samp_rate), (0.7943282347242815,0.7943282347242815,0.7943282347242815,1,1,1,0.5011872336272722,0.31622776601683794,0.19952623149688797), 9 )
         self.channels_channel_model_0 = channels.channel_model(
             noise_voltage=100e-3,
             frequency_offset=1e-3,
@@ -298,7 +298,7 @@ class qam_sim(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
-        self.channels_selective_fading_model_0.set_fDTs(((2*self.carrier_freq)/(3*10e8))/self.samp_rate)
+        self.channels_selective_fading_model_0.set_fDTs(70/self.samp_rate)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate / self.sps)
 
     def get_rrc_taps(self):
@@ -325,7 +325,6 @@ class qam_sim(gr.top_block, Qt.QWidget):
 
     def set_carrier_freq(self, carrier_freq):
         self.carrier_freq = carrier_freq
-        self.channels_selective_fading_model_0.set_fDTs(((2*self.carrier_freq)/(3*10e8))/self.samp_rate)
 
     def get_access_code(self):
         return self.access_code

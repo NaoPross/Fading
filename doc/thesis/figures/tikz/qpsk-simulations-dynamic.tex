@@ -13,7 +13,8 @@
 				#5
 			]
 
-			\addplot[only marks, scatter] table [x index = #2, y index = #3] {#1};
+			\addplot[only marks, scatter, point meta = \thisrow{samplenr}]
+				table [x index = #2, y index = #3] {#1};
 		\end{axis}
 	\end{tikzpicture}
 	\hfill
