@@ -293,24 +293,6 @@ Thus, they will be distributed among the other whole numbers. A window function 
 	
 \end{lstlisting}
 
-%
-%\begin{figure}
-%	\centering
-%	\input{figures/tikz/qpsk-sim-constellations-static}
-%	\caption{
-%		Constellation diagrams for a simulated link using QPSK with AWGN and Rayleighan fading.
-%	}
-%\end{figure}
-%
-% \begin{figure}
-% 	\centering
-% 	\input{figures/tikz/qpsk-sim-constellations-dynamic}
-% 	\caption{
-% 		Constellation diagrams for a simulated link using QPSK with AWGN and Rayleighan fading. The paramters are: frequency offset of 0.2 \%, \SI{100}{\milli\volt} noise, dopper shift for \(v = \SI{2}{\meter\per\second}\), and a NLOS urban PDP.
-% 	}
-% 	\label{fig:dynamic-exp}
-% \end{figure}
-
 \subsection{Fading with statistical model}
 
 In order to represent the effect of the multipaht fading not only statically, a second model was created using the Frequency Selective Fading Model from Gnu Radio, according to \ref{sec:statistical-model},which was implemented after the algorithm from the paper \cite{Alimohammad2009}, with the help of the sum-of sinusoid principal (SOS). The algorithm in this block is implemented with the aim that only a small number of sinusoids are needed. 
@@ -369,16 +351,6 @@ The numbers of tags used in this case are similar to the number of given values.
 	\end{tabular}
 	\caption{Extended Typical Urban model (ETU) ETSI Standard PDP values for multipath fading propagation conditions \cite{ETSI}. \label{tab:etsi-tap-values}}
 \end{table}
-
-% \begin{figure}
-% 	\centering
-% 	\input{figures/tikz/qpsk-sim-constellations-dynamic-exp-NLOS-5}
-% 	\caption{
-% 		Constellation diagrams for a simulated link using QPSK and Rayleighan fading. With the ETU model and a Doppler frequency of \(\SI{5}{\hertz}\).
-% 	}
-% 	\label{fig:dynamic-exp-real}
-% \end{figure}
-
 
 \subsection{Measurements/Demonstration}
 
@@ -447,15 +419,6 @@ As in \ref{sec:GUI} described the GUI was implemented, but unfortunately the par
 
 The second part which is missing is to be able to change the timing plot for the different scattering plots.
 
-%\begin{figure}
-%	\centering
-%	\label{fig:GUI}
-%	\input{figures/screenshots/gui_screenshot.png}
-%	\caption{
-%		Screenshot from the GUI
-%	}
-%\end{figure}
-
 % TODO : Piczure of the setup
 %TODO: Plots from the Hardware 
 \subsection{Incomplete parts}
@@ -498,4 +461,12 @@ Without those only the amplitudes could be seen in the Plots, with all the noise
 		TODO QPSK hardware
 	}
 \end{figure}
+% \newpage
+% \begin{figure}
+% 	\centering
+% 	\input{figures/tikz/qam-simulations-static}
+% 	\caption{
+% 		TODO QPSK hardware
+% 	}
+% \end{figure}
 \restoregeometry
