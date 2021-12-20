@@ -2,9 +2,17 @@
 
 \chapter{Conclusions} \label{chp:conclusions}
 
+The goal to build a functional demonstrator could be realized, unfortunately not with all futures as originally planned. A functional receiver and transmitter chain, for QPSK were implemented.
 
-\section{Next Steps}
+Some different typ of multiple fading model were tested and illustrated.
+Two different Models for the simulation options are build. One discrete time model whish is  basicly a FIR filter in the channel, the other with a statistical model which is based on a GR block.
+One other file to implement the hardware with. Unfortunately it wasent possible to measure those in a meaningful way. For that a least square approximation could be used as described in the further steps. An other difficulty is to reproduce the same effect in a simulation compare with the hardware, because of al the side effect of the environment, which cant be predicted in a simulation.
 
-Create some exacter calculation environment to verifite the simulation in a exacter way.
+%TODo :Mention QAM16 
 
-Show the BER with the help of a least Square approximation.
+
+\section{Further Steps}
+
+To improve this project a simulation environment could be implementer, which can be replicated for more accurate measurements. So then it is possible to compare the simulation with the measurements.
+
+An other  developnet basde on this project could be to show the BER with the help of a least Square approximation.(like in the paper)
