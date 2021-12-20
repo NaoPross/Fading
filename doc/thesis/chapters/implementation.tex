@@ -273,7 +273,7 @@ In order to study the effects of multipath fading, a series of simulations have 
 For the statical version according to \ref{sec:discrete-time-model} for implement and illustrate the fading effect, a separate block was created and implemented in the channel. Nearer shown in \ref{lst:fractional-delay-fir}. This block is based on a FIR filter. It can be displayed with a direct path (LOS) or without one (NLOS).
 With the help of this filter, the delay of the line of side paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed ray. 
 
-A special case is show in \figref{qpsk-simulations-static}, where the delay in sample is the same as the sample per symbol value or a multiple of it. An other example is shown in the same figure,with more diffident delayed paths, with the delay values of \texttt{[0.25,4,6.3,3.25]} and the amplitude values of \texttt{[0.2,0.5,0.4,0.08]}.
+A special case is show in \figref{fig:qpsk-simulations-static}, where the delay in sample is the same as the sample per symbol value or a multiple of it. An other example is shown in the same figure,with more diffident delayed paths, with the delay values of \texttt{[0.25,4,6.3,3.25]} and the amplitude values of \texttt{[0.2,0.5,0.4,0.08]}.
 Unfortunately, these simulation values do not correspond to the reality, because too many incalculable side effects occur, which aren't possible to illustrate in this simulation.
 
 This block was additionally implemented with the method described in \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample. Which in turn means that the other sampled values do not add up to zero.
@@ -350,14 +350,15 @@ The power delay profile which specify the delay in time for each impulse need to
 The magnitudes of the pulses are given with the linear value. In practices the avarage path gain of a fading path is in the range of \([ -20 \text{dB} , 0\text{dB}]\).
 
 To add some movement, like a movable transmitter some Doppler shift can be initialized after the formula \eqref{Doppler-shift}. But it need to be normalized with the sampling rate. 
-An example of such a simulation plot is shown in \figref{fig:dynamic-exp}.
+An example of such a simulation plot is shown in \figref{fig:qpsk-simulations-dynamic}.
 
 When nothing mentioned the number of how many FIR- filter taps are used is eight.
+%TODO: Should this be mentoned
 
 \subsubsection{Issues}
-%TODO: überhaubt erwähnen ?
-Some difficulty was how to check the correct the statistical models, if there is noise in the channel, from the fading effect, especially when the doppler frequency is included. This was difficult to recreate, when the Parameter haven't the special case in which the the amplitude and the phase shift can be seen exactly. 
-To have som indication to verified the plot, mainly whether the movement could be correct a little Matlab model was used with the same values for the different distributions.
+
+Some difficulty was how to check the correction of the statistical models, if there is noise in the channel, from the fading effect, especially when the doppler frequency is included. This was difficult to recreate, when the parameter haven't the special case in which the the amplitude and the phase shift can be seen exactly. 
+To have some indication to verified the plot, mainly whether the movement could be correct a little Matlab model was used with the same values for the different distributions.
 
 %TODO: Other Plots?
 \subsubsection{Real value example}
@@ -406,7 +407,7 @@ The numbers of tags used in this case are similar to the number of given values.
 % \end{figure}
 
 
-\subsection{Measurements}
+\subsection{Measurements/Demonstration}
 
 \skelpar[5]{
 	Do some masurements
@@ -499,7 +500,7 @@ Without those only the amplitudes could be seen in the Plots, with all the noise
 }
 \begin{figure}
 	\centering
-	\label{qpsk-simulations-static}
+	\label{fig:qpsk-simulations-static}
 	\input{figures/tikz/qpsk-simulations-static}
 	\caption{
 		Simulations of a static fading channel models with different tap values. The samples were generated using the custom block discussed in section \ref{sec:discrete-time-model-fir}. For the 1 tap model the fading tap was \(0.2\delta(n - 0.25)\), and for the 4 tap model uses \(0.2 \delta(n - 0.25) + 0.08 \delta(n - 3.25) + 0.5 \delta(n - 4) + 0.4 \delta(n - 6.3)\). In both cases the delays are given in samples.
@@ -510,6 +511,7 @@ Without those only the amplitudes could be seen in the Plots, with all the noise
 \newpage
 \begin{figure}
 	\centering
+	\label{fig:qpsk-simulations-dynamic}
 	\input{figures/tikz/qpsk-simulations-dynamic}
 	\caption{
 		Simulations with a dynamic fading channel model using PDP values of the Extended Typical Urban model (ETU) of the ETSI standard normative Annex B.2 in \cite{ETSI}. The color gradient represents progression in time.
