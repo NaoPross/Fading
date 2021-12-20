@@ -7,11 +7,11 @@ import numpy as np
 samples = utils.load_samples(__file__)
 
 # range of samples we want to show
-start = 1e3
-end = start +50
+start = 250e3
+end = start +400
 
 # select every second samples
-select_samples = lambda arr: arr[int(start):int(end):2]
+select_samples = lambda arr: arr[int(start):int(end):6]
 values = map(select_samples, samples)
 
 # split into imaginary and real parts

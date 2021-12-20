@@ -1,6 +1,6 @@
 % vim: set ts=2 sw=2 noet spell:
 
-\chapter{Implementation}
+\chapter{Implementation} \label{chp:implementation}
 
 \section{Overview}
 
@@ -47,7 +47,7 @@ class myblock(gr.sync_block):
 
 \subsection{Dear PyGUI}\label{sec:GUI}
 
-To construct a graphical interface for a demonstration platform the Dear IMGUI (immediate graphical user interface) library was chosen, mainly for its ease of use, wide range of techincal capabilites and high refresh rate. Dear PyGUI (DPG) are the Python bindings for the Dear IMGUI library.
+To construct a graphical interface for a demonstration platform the Dear IMGUI (immediate mode graphical user interface) library was chosen, mainly for its ease of use, wide range of techincal capabilites and high refresh rate. Dear PyGUI (DPG) are the Python bindings for the Dear IMGUI library.
 
 The DPG GUI communicates with the GR flow graphs using the IP/UDP protocol. This decision to separate the project into two parts that communicate over the IP network was made because it is not very easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configure flow graph on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time.
 
@@ -394,7 +394,7 @@ The numbers of tags used in this case are similar to the number of given values.
 		\SI{5.0}{\micro\second} & \(\SI{-7.0}{\decibel} \approx 0.1995\) \\
 		\bottomrule
 	\end{tabular}
-	\caption{Extended Typical Urban model (ETU) ETSI Standard PDP values for multipath fading propagation conditions. \cite{ETSI}. \label{tab:etsi-tap-values}}
+	\caption{Extended Typical Urban model (ETU) ETSI Standard PDP values for multipath fading propagation conditions \cite{ETSI}. \label{tab:etsi-tap-values}}
 \end{table}
 
 % \begin{figure}
@@ -515,6 +515,14 @@ Without those only the amplitudes could be seen in the Plots, with all the noise
 	\input{figures/tikz/qpsk-simulations-dynamic}
 	\caption{
 		Simulations with a dynamic fading channel model using PDP values of the Extended Typical Urban model (ETU) of the ETSI standard normative Annex B.2 in \cite{ETSI}. The color gradient represents progression in time.
+	}
+\end{figure}
+\newpage
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpsk-hardware}
+	\caption{
+		TODO QPSK hardware
 	}
 \end{figure}
 \restoregeometry
