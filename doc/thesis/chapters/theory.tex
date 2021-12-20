@@ -51,12 +51,12 @@ Both bit vectors \(\vec{m}_i, \vec{m}_q \in \{0,1\}^{\sqrt{M}}\) are sent throug
 \begin{equation}
 	m_i(t) = \text{Level}(\vec{m}_i) \cdot p(t),
 \end{equation}
-i.e. a pulse function\footnote{Typically a root raised cosine to optimize for bandwidth \cite{Hsu}.} \(p(t)\) scaled by the interpreted binary value, written here using a ``Level'' function. So at this point a level of each analog waveform is encodes \(\sqrt{M}\) bits per unit time, and there are two of such waveforms.
+i.e. a pulse function\footnote{Typically a root raised cosine to optimize for bandwidth \cite{Hsu}.} \(p(t)\) scaled by the interpreted binary value, written here using a ``Level'' function. So at this point a level of each analog waveform encodes \(\sqrt{M}\) bits per unit time, and there are two such waveforms.
 
 
 \paragraph{Mixer}
 
-Having analog level signals, it is this now possible to mix them with radio frequency carriers. Because there are two waveforms, one might expect that two carrier frequencies are necessary, however this is not the case. The two component \(m_i(t)\) and \(m_q(t)\) are mixed with two different periodic signals \(\phi_i(t)\) and \(\phi_q(t)\) that have the same frequency \(\omega_c = 2\pi / T\). How this is possible is explained in the next section.
+Having analog level signals, it is now possible to mix them with radio frequency carriers. Because there are two waveforms, one might expect that two carrier frequencies are necessary, however this is not the case. The two component \(m_i(t)\) and \(m_q(t)\) are mixed with two different periodic signals \(\phi_i(t)\) and \(\phi_q(t)\) that have the same frequency \(\omega_c = 2\pi / T\). How this is possible is explained in the next section.
 
 
 \subsection{Orthogonality of carrier signals}
@@ -150,7 +150,7 @@ In our relatively simple model we are going to include an additive white Gaussia
 
 \subsection{Geometric model}
 
-The simplest way to understand the multipath fading, is to consider it from a geometrical perspective. \figref{fig:multipath-sketch} is a sketch a wireless transmission system affected by multipath fading. The sender's antenna radiates an electromagnetic wave in the direction of the receiver (red line), however even under the best circumstances a part of the signal is dispersed in other directions (blue lines).
+The simplest way to understand multipath fading, is to consider it from a geometrical perspective. \figref{fig:multipath-sketch} is a sketch of a wireless transmission system affected by multipath fading. The sender's antenna radiates an electromagnetic wave in the direction of the receiver (red line), however even under the best circumstances a part of the signal is dispersed in other directions (blue lines).
 
 \begin{figure}
 	\centering
@@ -179,7 +179,7 @@ A further complication arises, when one end (or both) is not stationary. In that
 	}
 \end{figure}
 
-We have thus observed that the arrangement can be modelled as a linear time-\emph{varying} system (LTV), if the sender or the receiver (or anything else in the channel) is moving, and as a linear time \emph{invariant} (LTI) system if the geometry is stationary. Regardless of which of the two cases, linearity alone is sufficient to approximate the channel as finite impulse response (FIR) filter \cite{Messier}. We can rewrite LTV version of equation \eqref{eqn:geom-multipath-rx} using a convolution product as following:
+We have thus observed that the arrangement can be modelled as a linear time-\emph{varying} system (LTV), if the sender or the receiver (or anything else in the channel) is moving, and as a linear time \emph{invariant} (LTI) system if the geometry is stationary. Regardless of which of the two cases, linearity alone is sufficient to approximate the channel as a finite impulse response (FIR) filter \cite{Messier}. We can rewrite an LTV version of equation \eqref{eqn:geom-multipath-rx} using a convolution product as follows:
 \begin{align*}
 	r(t) = \sum_k c_k(t) s(t - \tau_k(t)) &= \sum_k c_k(t) \int_\mathbb{R} s(\tau) \delta(\tau - \tau_k(t)) \,d\tau \\
 		&= \int_\mathbb{R} s(\tau) \sum_k c_k(t) \delta(\tau - \tau_k(t)) \,d\tau = s(\tau) * h(\tau, t),
@@ -192,13 +192,13 @@ that describes the \emph{channel impulse response} (CIR). This function depends 
 
 \subsection{Spectrum of a multipath fading channel}
 
-With a continuous time channel model we can now discuss the spectral properties of a fading channel since the frequency response is the Fourier transform of the impulse response, mathematically \(H(f, t) = \fourier h(\tau, t)\). In this case however \(h(\tau, t)\) depends on two time variables, but that is actually not an issue, it just means that the frequency response is also changing over time. Hence we perform the Fourier transform with respect to the channel (convolution) time variable \(\tau\) to obtain
+With a continuous time channel model we can now discuss the spectral properties of a fading channel since the frequency response is the Fourier transform of the impulse response, mathematically \(H(f, t) = \fourier h(\tau, t)\). In this case \(h(\tau, t)\) depends on two time variables, but that is actually not an issue. It just means that the frequency response is also changing over time. Hence we perform the Fourier transform with respect to the channel (convolution) time variable \(\tau\) to obtain
 \begin{equation} \label{eqn:multipath-frequency-response}
 	H(f, t) = \int_\mathbb{R} \sum_k c_k(t) \delta(\tau - \tau_k(t)) e^{-2\pi jf\tau} \, d\tau
 	= \sum_k c_k(t) e^{-2\pi jf \tau_k(t)}.
 \end{equation}
 
-Equation \eqref{eqn:multipath-frequency-response} shows that the frequency response is a periodic complex exponential, which has some important implications. Notice that if there is only one tap (term), the magnitude of \(H(f, t)\) is a constant (with respect to \(f\)) since \(|e^{j\alpha f}| = 1\). This means that the channels attenuates all frequencies by the same amount, therefore it is said to be a \emph{frequency non-selective} or \emph{flat fading} channel. Whereas in the case when there is more than one tap, the taps interfere destructively at certain frequencies and the channel is called \emph{frequency selective}. To illustrate how this happens, plots of the frequency response of a two tap channel model are shown in \figref{fig:multipath-frequency-response-plots}. On the left is the magnitude of \(H(f, t)\), which presents periodic ``dips'', and on the right complex loci for the two taps (red and blue), as well as their sum (magenta), over the frequency range near the first dip (2 to 2.5 MHz) are shown.
+Equation \eqref{eqn:multipath-frequency-response} shows that the frequency response is a periodic complex exponential, which has some important implications. Notice that if there is only one tap (term), the magnitude of \(H(f, t)\) is a constant (with respect to \(f\)) since \(|e^{j\alpha f}| = 1\). This means that the channel attenuates all frequencies by the same amount, therefore it is said to be a \emph{frequency non-selective} or \emph{flat fading} channel. Whereas in the case when there is more than one tap, the taps interfere destructively at certain frequencies and the channel is called \emph{frequency selective}. To illustrate how this happens, plots of the frequency response of a two tap channel model are shown in \figref{fig:multipath-frequency-response-plots}. On the left is the magnitude of \(H(f, t)\), which presents periodic ``dips'', and on the right complex loci for the two taps (red and blue), as well as their sum (magenta), over the frequency range near the first dip (2 to 2.5 MHz) are shown.
 
 
 \begin{figure}
@@ -215,7 +215,7 @@ Equation \eqref{eqn:multipath-frequency-response} shows that the frequency respo
 
 \subsection{Quantifying dispersion}
 
-Having discussed how multipath fading affects communication systems, the next important step is to be able quantify its effects to be able to compare different multipath channels to each other.
+Having discussed how multipath fading affects communication systems, the next important step is to be able to quantify its effects to be able to compare different multipath channels to each other.
 
 An intuitive parameter to quantify how dispersive channel is, is to take the time difference between the fastest and slowest paths with significant energy. What in the literature is called \emph{delay spread}, and is denoted here by \(T_d\). Consequently, a low delay spread means that all paths have more or less the same length, while a high delay spread implies that there is a large difference in length among the paths. Thus \(T_d\) could be be defined as
 \begin{equation}
@@ -237,7 +237,7 @@ Another important parameter for quantifying dispersion is \emph{coherence bandwi
 
 % TODO: discuss the "bins" of discrete time
 
-Since in practice signal processing is done digitally, it is meaningful to discuss the properties of a discrete-time model. To keep the complexity of the model manageable some assumptions are necessary, thus the sent discrete signal\footnote{This is an abuse of notation. The argument \(n\) is used to mean the \(n\)-th digital sample of \(s\), whereas \(s(t)\) is used for the analog waveform. A more correct but longer notation is \(s(nT)\), where \(T\) is the sample time.} \(s(n)\) is assumed to have a finite single sided bandwidth \(W\). This implies that in the time-domain signal is a series of sinc-shaped pulses each shifted from the previous by a time interval \(T = 1 / (2W)\) (Nyquist rate):
+Since in practice signal processing is done digitally, it is meaningful to discuss the properties of a discrete-time model. To keep the complexity of the model manageable some assumptions are necessary, thus the sent discrete signal\footnote{This is an abuse of notation. The argument \(n\) is used to mean the \(n\)-th digital sample of \(s\), whereas \(s(t)\) is used for the analog waveform. A more correct but longer notation is \(s(nT)\), where \(T\) is the sample time.} \(s(n)\) is assumed to have a finite single sided bandwidth \(W\). This implies that in the time-domain the signal is a series of sinc-shaped pulses each shifted from the previous by a time interval \(T = 1 / (2W)\) (Nyquist rate):
 \begin{equation}
 	s(t) = \sum_n s(n) \sinc(t/T - n)
 \end{equation}
