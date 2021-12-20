@@ -133,7 +133,7 @@ The Hilbert transform is a linear operator that introduces a phase shift of \(\p
 Phase shift keying (PSK) is another popular family of modulation schemes for digital signals, that is however simpler than QAM. In PSK as the name suggests only the phase of the envelope changes, which means that the symbols have all the same amplitude. Thus, instead of arranging the symbols into a grid as done in QAM, \(M\)-PSK distributes the symbols over the unit circle at equidistant intervals of \(2\pi / M\) radians \cite{Mathis,Kneubuehler}. An example of 8-PSK is shown in \figref{fig:psk-constellation}. Mathematically the process of a PSK modulation can be described by making the phase of a carrier function of the message signal. For a complex exponential carrier:
 \begin{equation}
 	s(t) = \exp\left(\omega_c t + \varphi(t)\right), \quad\text{where}\quad
-	\varphi = \frac{2\pi \cdot \text{Level}(\vec{m}(t))}{M}, \vec{m} \in \{0,1\}^{M}.
+	\varphi = \frac{2\pi \cdot \text{Level}(\vec{m})}{M}, \quad \vec{m} \in \{0,1\}^{\log_2 M}.
 \end{equation}
 
 It is worth noting that the case of 4-PSK, also known as quaternary phase shift keying (QPSK), is a special case, because its constellation is (up to a constant phase) a 4-ary QAM.
