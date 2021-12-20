@@ -17,6 +17,8 @@
 	titlepage, abstract = on,
 	% header and footers
 	automark,
+	% remove numbers
+	numbers = noenddot
 ]{scrreprt}
 
 %% Language configuration
@@ -116,16 +118,21 @@
 		% \textbf{Notation} & \bfseries Description \\
 		% \midrule
 		\multicolumn{2}{l}{\itshape Mathematics} \\
-		\vec{v},\, \vec{m} & Vector quantity \\
+		j                  & Imaginary unit \\
 		\phi^*             & Complex conjugate of \(\phi\) \\
+		\vec{v},\, \vec{m} & Vector quantity \\
+		\E{X}              & Expectation of a random variable \(X\) \\
 		\midrule
 		\multicolumn{2}{l}{\itshape Physical quantities} \\
-		t      & Time \\
-		T      & Period \\
-		\tau   & Convolution time \\
-		f      & Frequency in Hz \\
-		\omega & Frequency in radians per second \\
-		\Omega & Digital frequency in radians per sample \\
+		t       & Time \\
+		T       & Period \\
+		\tau    & Convolution time \\
+		f       & Frequency in Hz \\
+		\omega  & Frequency in radians per second \\
+		\Omega  & Digital frequency in radians per sample \\
+		\varphi & Phase angle \\
+		c_0     & Speed of light \\
+		v       & Velocity \\
 		\midrule
 		\multicolumn{2}{l}{\itshape Modulation schemes} \\
 		n(t)    & Additive white Gaussian noise (AWGN) \\
@@ -140,14 +147,14 @@
 		r(m)    & Received samples \\
 		\midrule
 		\multicolumn{2}{l}{\itshape Channel modelling} \\
-		h(t)       & LTI impluse response, \(h(\tau, t\) for the LTV IR \\
+		h(t)       & LTI impluse response, \(h(\tau, t)\) for the LTV IR \\
 		h(m)       & LTI discrete time impulse response, \(h_l(m)\) for the LTV discrete time IR \\
 		H(f)       & LTI Frequency response, \(H(f, t)\) for the LTV frequency response \\
 		c_k        & Tap attenuation \\
 		\tau_k     & Tap delay \\
 		T_d        & Delay spread \\
 		B_c        & Coherence bandwidth \\
-		R_{xy}     & Correlation between \(x\) and \(y\) \\
+		R_{xy}     & Correlation between \(x\) and \(y\), also written as \(x \star y\) \\
 		\bottomrule
 	\end{tabularx}
 
@@ -206,5 +213,12 @@
 	%% TODO: remove in final version
 	\printskelnotes
 	\printbibliography
+
+	\appendix
+	\chapter{Appendix}
+
+	\begin{itemize}
+		\item
+	\end{itemize}
 
 \end{document}
