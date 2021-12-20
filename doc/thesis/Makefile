@@ -27,7 +27,8 @@ SOURCES := \
 	figures/tikz/rayleigh-rice-pdf-plots.tex \
 	figures/tikz/packet-frame.tex \
 	figures/tikz/qpsk-simulations-static.tex \
-	figures/tikz/qpsk-simulations-dynamic.tex
+	figures/tikz/qpsk-simulations-dynamic.tex \
+	figures/tikz/qpsk-hardware.tex
 
 DATA := \
 	figures/data/multipath_frequency_response.dat \

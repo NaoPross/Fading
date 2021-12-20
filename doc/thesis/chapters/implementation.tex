@@ -1,6 +1,6 @@
 % vim: set ts=2 sw=2 noet spell:
 
-\chapter{Implementation}
+\chapter{Implementation} \label{chp:implementation}
 
 \section{Overview}
 
@@ -393,7 +393,7 @@ The numbers of tags used in this case are similar to the number of given values.
 		\SI{5.0}{\micro\second} & \(\SI{-7.0}{\decibel} \approx 0.1995\) \\
 		\bottomrule
 	\end{tabular}
-	\caption{Extended Typical Urban model (ETU) ETSI Standard PDP values for multipath fading propagation conditions. \cite{ETSI}. \label{tab:etsi-tap-values}}
+	\caption{Extended Typical Urban model (ETU) ETSI Standard PDP values for multipath fading propagation conditions \cite{ETSI}. \label{tab:etsi-tap-values}}
 \end{table}
 
 % \begin{figure}
@@ -513,6 +513,14 @@ Without those only the amplitudes could be seen in the Plots, with all the noise
 	\input{figures/tikz/qpsk-simulations-dynamic}
 	\caption{
 		Simulations with a dynamic fading channel model using PDP values of the Extended Typical Urban model (ETU) of the ETSI standard normative Annex B.2 in \cite{ETSI}. The color gradient represents progression in time.
+	}
+\end{figure}
+\newpage
+\begin{figure}
+	\centering
+	\input{figures/tikz/qpsk-hardware}
+	\caption{
+		TODO QPSK hardware
 	}
 \end{figure}
 \restoregeometry
