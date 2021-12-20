@@ -1,0 +1,34 @@
+% vim: set ts=2 sw=2 noet:
+\begin{tikzpicture}[
+		blk/.style = {
+			draw, rectangle, thick, black,
+			minimum width = 15mm,
+			minimum height = 3mm,
+			outer sep = 1mm,
+			pattern = vertical lines,
+			pattern color = lightgray,
+		},
+	]
+
+	\foreach \i in {0,1,...,4}{
+		\coordinate (blkC\i) at (15mm*\i,0);
+		\node[blk] (blk\i) at (blkC\i) {};
+		\node[below] (phi\i) at (blk\i.south west) {\(\varphi_{\i}\)};
+	}
+	% last phase 
+	\node[below] (phi5) at (blk4.south east) {\(\varphi_{5}\)};
+
+	% first block
+	\node[blk, minimum width = 10mm, xshift = 2.5mm, fill = red!30] (S) at (-15mm,0) {};
+	\node[anchor = east] at (S.west) {Input};
+
+	% last block
+	\node[blk, minimum width = 9mm, xshift = -3mm, fill = blue!30] (E) at ($(blk4)+(15mm,0)$) {};
+
+	% labels
+	\draw[thick, latex-] (blk3.north) to[out = 90, in = 180] ++(5mm,6mm)
+		node[right] {Chunk of \(N\) samples};
+
+	\draw[thick, latex-] (blk0.north east) ++(-1mm,0) to[out = 90, in = 0] ++(-5mm,6mm)
+		node[left] (tags) {Phase tags};
+\end{tikzpicture}

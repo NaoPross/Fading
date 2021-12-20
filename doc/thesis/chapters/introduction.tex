@@ -1,14 +1,14 @@
 % vim: set ts=2 sw=2 noet spell spelllang=en:
 
-\chapter{Introduction}
+\chapter{Introduction} \label{chp:introduction}
 
 \section{Background}
 
 It is undeniable that in the last two decades wireless devices have become extremely ubiquitous, and are no longer employed under carefully chosen conditions.
 
-Nowadays smart phones, internet of things (IoT) devices and many other wireless devices are carried around by everyone and have to work in environments that are very far from ideal. Furthermore in addition to the already large class of networked appliances, next generation wireless devices in urban environments will include the new category of vehicles \cite{AntonescuTB17}, where reliability of intra-vehicular communication directly translates into safety. While at the same time in rural regions, developing countries as well as in other low-user density areas, wireless transmission links using mesh networks have become a practical alternative to wired broadband \cite{Macmillan2019tidal,Subramanian2006rethinking,Flickenger2007wireless}.
+Nowadays smart phones, internet of things (IoT) devices and many other wireless devices omnipresent have to work in environments that are very far from ideal. Furthermore in addition to the already large class of networked appliances, next generation wireless devices in urban environments will include the new category of vehicles \cite{AntonescuTB17}, where reliability of intra-vehicular communication directly translates into safety. While at the same time in rural regions, developing countries as well as in other low-user density areas, wireless transmission links using mesh networks have become a practical alternative to wired broadband \cite{Macmillan2019tidal,Subramanian2006rethinking,Flickenger2007wireless}.
 
-The study of problems concerning wireless devices is thus a very relevant topic today. More specifically, a common issue in the previously mentioned use cases is the so called \emph{multipath fading effect}, which degrade the reliability of the transmission link \cite{Mathis, Gallager}. The presence of fading was actually foreseen \cite{Frederiksen2002overview,Maddocks1993introduction} and today most modern transmission schemes implement measures to reduce the effects fading \cite{Mathis,Hsu}.
+Thus today the study of problems concerning wireless devices is very relevant topic. In particular, a common issue observed in the previously mentioned use cases is the so called \emph{multipath fading effect}, that degrades the reliability of a wireless transmission links \cite{Mathis, Gallager}. The problem of fading was actually foreseen \cite{Frederiksen2002overview,Maddocks1993introduction} and today most modern transmission schemes implement measures to reduce the effects fading \cite{Mathis,Hsu}.
 
 This work studies the multipath fading effect, and how it affects modern digital transmission systems that use quadrature amplitude (QAM) and phase shift keying (PSK) modulation.
 
@@ -18,13 +18,8 @@ As described in the document given at the beginning of the semester:
 \begin{quote}
 	The goal is to develop a SDR-based demonstrator, consisting of one transmitter and one receiver, to illustrate the impact of different fading effects on the signal. To get a brief understanding of the concept of fading channels, the project should be started with a literature research followed by simulation of different scenarios, which then can be reproduced by measurements.
 \end{quote}
-The task description document is found in the appendix.
+The entire task description is found in the appendix.
 
 \section{Overview}
 
-In the first chapter some theoretical basics where introduced, which are imported for the topic and later on for the implementation. The theory covers  fundamentals for the modulation schemes and channel models used. Further more the mathematical basics for the different models in this project, to describe multipath fading are define.  
-
-The next chapter contains the whole implementation part, description from the tools, which were used and how they are implemented.
-More details about the transmitter and receiver chains and the channel model with the different fading effect models. In addition to that, the problems and some open points in the project are discussed. 
-
-At least the conclusion part, in which the results were showed and some further steps are discussed. 
+In chapter \ref{chp:theory} the theoretical formulation and mathematical basis for the modulation schemes and channel models that have been used in this project are presented. Specifically \(M\)-ary QAM, \(M\)-PSK modulation, and three models for multipath fading are explained (continuous time, discrete time and statistical). Chapter \ref{chp:implementation} describes in detail our implementation. The transmitter and receiver chains are explained and simulations as well as measurements under different multipath fading conditions are presented. Finally some problems of the current implementation project are addressed. Chapter \ref{chp:conclusions} discusses the results of the project, and suggests how the device could be improved in the future.

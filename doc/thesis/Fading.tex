@@ -58,8 +58,12 @@
 \pgfdeclarelayer{foreground}
 \pgfsetlayers{background,main,foreground}
 
-\usepackage{graphicx}   % Include pictures
-\usepackage{subcaption} % Subfigures
+% Include pictures
+\usepackage{graphicx}
+% Subfigures
+\usepackage{subcaption}
+% Frames around includegraphics
+\usepackage[export]{adjustbox}
 
 %% Placeholders
 \usepackage{skeldoc}
@@ -223,8 +227,27 @@
 	\appendix
 	\chapter{Appendix}
 
+	\section{Certificaton of authorship}
+	We hereby certify that this thesis has been composed by us and is based on our own work, unless stated otherwise. No other person's work has been used without due acknowledgement in this thesis. All references and verbatim extracts have been quoted, and all sources of information, including graphs and data sets, have been specifically acknowledged.
+
+	\vspace{5mm}
+	\begin{tabular}{ ll }
+		\bfseries Place & \bfseries Date \\
+		Rapperswil & 23. December 2021
+	\end{tabular}
+	\vspace{1cm}
+	\begin{flushright}
+		\begin{tabularx}{\linewidth}{ rXX }
+			Signatures
+				& \hrulefill & \hrulefill \\
+				& Naoki Sean Pross & Sara Cinzia Halter \\
+		\end{tabularx}
+	\end{flushright}
+
+  \section{Attached documents}
 	\begin{itemize}
-		\item
+		\item Task Description
+		\item Project Plan
 	\end{itemize}
 
 \end{document}

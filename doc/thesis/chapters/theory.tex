@@ -1,6 +1,6 @@
 % vim: set ts=2 sw=2 noet spell:
 
-\chapter{Theory}
+\chapter{Theory} \label{chp:theory}
 
 \begin{figure}
 	\centering
@@ -41,7 +41,7 @@ Quadrature amplitude modulation is a family of modern digital modulation methods
 
 \paragraph{Bit splitter}
 
-As mentioned earlier, quadrature modulation allows sending more than one bit per unit time. The first step is to use a so called bit splitter, that converts the continuous bitstream \(m(n)\) into pairs of chunks of \(\sqrt{M}\) bits each. The two bit vectors of length \(\sqrt{M}\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\) in figure \ref{fig:quadrature-modulation}, are called in-phase and quadrature component respectively\cite{Hsu}. The reason will become more clear later.
+As mentioned above, quadrature modulation allows to send more than one bit per unit time. The first step is to use a so called bit splitter, that converts the continuous bitstream \(m(n)\) into pairs of chunks of \(\sqrt{M}\) bits each. The two bit vectors of length \(\sqrt{M}\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\) in figure \ref{fig:quadrature-modulation}, are called in-phase and quadrature component respectively\cite{Hsu}. The reason will become more clear later.
 
 \paragraph{Binary to level converter}
 
@@ -395,7 +395,7 @@ Extending the previous NLOS case, if there is a line of sight (LOS) path (red si
 		\frac{1}{\sqrt{N}}\sum_{n=1}^{N} e^{j \vartheta_k}
 	\right).
 \end{equation}
-Notice that by letting \(K = 0\), that is no power in the LOS path, \eqref{eqn:mult-fading-los} becomes \eqref{eqn:mult-fading-nlos} or Rayleigh distributed (as expected). Conversely when \(K \to \infty\), i.e. no power in the NLOS paths, then \(f \to 1\) and so the fading disappears. The new amplitude density in this case is:
+Notice that by letting \(K = 0\), that is no power in the LOS path, \eqref{eqn:mult-fading-los} becomes \eqref{eqn:mult-fading-nlos} or Rayleigh distributed (as expected). Conversely when \(K \to \infty\), i.e. no power in the NLOS paths, then \(f \to 1\) and the fading disappears. The new amplitude density in this case is:
 \begin{equation}
 	p(a)= 2a(1+K) \exp{\left(-K -a^2 (K+1) \right)} I_0 \left(2a\sqrt{K(1+K)} \right),
 \end{equation}
