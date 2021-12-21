@@ -15,7 +15,7 @@
 
 \section{Overview}
 
-The following two sections will briefly introduce mathematical formulations of the modulation schemes and of the channel models used in this project. The notation used is summarised in \figref{fig:notation}. For conciseness, encoding schemes and (digital) signal processing calculations are left out and discussed later.  Section \ref{sec:multipath-fading} presents an established mathematical model to understand multipath fading, as well as a brief description of a discrete-time model and the intricacies caused by the sampling process. Finally, the concept of stochastic models is mentioned, as they are often used to simulate multipath channels \cite{Messier,Mathis}.
+The following two sections will briefly introduce mathematical formulations of the modulation schemes and of the channel models used in this project. The notation used is summarized in \figref{fig:notation}. For conciseness, encoding schemes and (digital) signal processing calculations are left out and discussed later.  Section \ref{sec:multipath-fading} presents an established mathematical model to understand multipath fading, as well as a brief description of a discrete-time model and the intricacies caused by the sampling process. Finally, the concept of stochastic models is mentioned, as they are often used to simulate multipath channels \cite{Messier,Mathis}.
 
 %% TODO: A section on maths?
 % \section{Signal space and linear operators}
@@ -59,7 +59,7 @@ Having analog level signals, it is now possible to mix them with radio frequency
 
 \subsection{Orthogonality of carrier signals}
 
-Before explaining how the two carrier signals are generated, some important mathematical properties of \(\phi_i\) and \(\phi_q\) have to be discussed, in order to modulate two messages over the same frequency \(\omega_c\). The two carriers need to be \emph{orthonormal}\footnote{Actually orthogonality alone would be sufficient, however then the left side of \eqref{eqn:orthonormal-condition} would not equal 1, and an inconvenient factor would be introduced in many later equations \cite{Gallager,Hsu}.} to each other, mathematically this is expressed by the conditions \cite{Gallager}
+Before explaining how the two carrier signals are generated, some important mathematical properties of \(\phi_i\) and \(\phi_q\) have to be discussed, in order to modulate two messages over the same frequency \(\omega_c\). The two carriers need to be \emph{orthonormal}\footnote{Actually orthogonality alone would be sufficient, however then the left side of \eqref{eqn:orthonormal-condition} would not equal 1, and an inconvenient factor would be introduced in many later equations \cite{Gallager,Hsu}.} to each other. Mathematically this is expressed by the conditions \cite{Gallager}
 \begin{subequations} \label{eqn:orthonormal-conditions}
 	\begin{align}
 		\langle \phi_i, \phi_q \rangle
@@ -112,7 +112,7 @@ In \figref{fig:qam-constellation} the dots of the constellation have coordinates
 
 \subsection{Construction of orthogonal carrier signals}
 
-Knowing why there is a need for orthogonal carriers, we should now discuss which functions satisfy the property described by \eqref{eqn:orthogonal-condition}. If \(\phi_i\) is a real valued signal (which is typical) it is possible to find a function the quadrature carrier using the \emph{Hilbert transform} (sometimes called Hilbert filter):
+Knowing why there is a need for orthogonal carriers, we should now discuss which functions satisfy the property described by \eqref{eqn:orthogonal-condition}. If \(\phi_i\) is a real valued signal (which is typical) it is possible to find a function for the quadrature carrier using the \emph{Hilbert transform} (sometimes called Hilbert filter):
 \begin{equation}
 	\hilbert g(t) = g(t) * \frac{1}{\pi t}
 		= \frac{1}{\pi} \int_\mathbb{R} \frac{g(\tau)}{t - \tau} \,d\tau
@@ -128,7 +128,7 @@ The Hilbert transform is a linear operator that introduces a phase shift of \(\p
 
 \section{Phase shift keying (\(M\)-PSK)}
 
-Phase shift keying (PSK) is another popular family of modulation schemes for digital signals, that is however simpler than QAM. In PSK as the name suggests only the phase of the envelope changes, which means that the symbols have all the same amplitude. Thus, instead of arranging the symbols into a grid as done in QAM, \(M\)-PSK distributes the symbols over the unit circle at equidistant intervals of \(2\pi / M\) radians \cite{Mathis,Kneubuehler}. An example of 8-PSK is shown in \figref{fig:psk-constellation}. Mathematically the process of a PSK modulation can be described by making the phase of a carrier function of the message signal. For a complex exponential carrier:
+Phase shift keying (PSK) is another popular family of modulation schemes for digital signals, that is simpler than QAM. In PSK as the name suggests only the phase of the envelope changes, which means that the symbols have all the same amplitude. Thus, instead of arranging the symbols into a grid as done in QAM, \(M\)-PSK distributes the symbols over the unit circle at equidistant intervals of \(2\pi / M\) radians \cite{Mathis,Kneubuehler}. An example of 8-PSK is shown in \figref{fig:psk-constellation}. Mathematically the process of a PSK modulation can be described by making the phase of a carrier function of the message signal. For a complex exponential carrier:
 \begin{equation}
 	s(t) = \exp\left(\omega_c t + \varphi(t)\right), \quad\text{where}\quad
 	\varphi = \frac{2\pi \cdot \text{Level}(\vec{m})}{M}, \quad \vec{m} \in \{0,1\}^{\log_2 M}.
@@ -184,7 +184,7 @@ obtaining a new function
 \begin{equation} \label{eqn:multipath-impulse-response}
 	h(\tau, t) = \sum_k c_k(t) \delta(\tau - \tau_k(t)),
 \end{equation}
-that describes the \emph{channel impulse response} (CIR). This function depends on two time parameters: actual time \(t\) and convolution time \(\tau\). To better understand \(h(\tau, t)\), consider an example shown in figure \ref{fig:multipath-impulse-response}. Each stem represents a weighted Dirac delta, so each series of stems of the same color, along the convolution time \(\tau\) axis, is a channel response at some specific time \(t\). Along the other axis we see how the entire channel response changes over time\footnote{In the figure only a finite number of stems was drawn, but actually the weights \(c_k(t)\) of the Dirac deltas change continuously.}. Notice that the stems are not quite aligned to the \(\tau\) time raster (dotted lines), that is because in \eqref{eqn:multipath-impulse-response} not only the weights \(c_k\) but also the delays \(\tau_k\) are time dependent.
+that describes the \emph{channel impulse response} (CIR). This function depends on two time parameters: actual time \(t\) and convolution time \(\tau\). To better understand \(h(\tau, t)\), consider an example shown in \figref{fig:multipath-impulse-response}. Each stem represents a weighted Dirac delta, so each series of stems of the same color, along the convolution time \(\tau\) axis, is a channel response at some specific time \(t\). Along the other axis we see how the entire channel response changes over time\footnote{In the figure only a finite number of stems was drawn, but actually the weights \(c_k(t)\) of the Dirac deltas change continuously.}. Notice that the stems are not quite aligned to the \(\tau\) time raster (dotted lines), that is because in \eqref{eqn:multipath-impulse-response} not only the weights \(c_k\) but also the delays \(\tau_k\) are time dependent.
 
 \subsection{Spectrum of a multipath fading channel}
 
@@ -213,7 +213,7 @@ Equation \eqref{eqn:multipath-frequency-response} shows that the frequency respo
 
 Having discussed how multipath fading affects communication systems, the next important step is to be able to quantify its effects in order to to compare different multipath channels to each other.
 
-An intuitive parameter to quantify how dispersive channel is, is to take the time difference between the fastest and slowest paths with significant energy. What in the literature is called \emph{delay spread}, and is denoted here by \(T_d\). Consequently, a low delay spread means that all paths have more or less the same length, while a high delay spread implies that there is a large difference in length among the paths. Thus \(T_d\) could be be defined as
+An intuitive parameter to quantify how dispersive a channel is, is to take the time difference between the fastest and slowest paths with significant energy. In the literature this is called \emph{delay spread} \cite{Messier}, and here it is denoted by \(T_d\). Consequently, a low delay spread means that all paths have more or less the same length, while a high delay spread implies that there is a large difference in length among the paths. Thus \(T_d\) could be be defined as
 \begin{equation}
 	T_d = \max_{k} (\tau_k(t)) -  \min_{k} (\tau_k(t)),
 \end{equation}
@@ -251,7 +251,7 @@ The waveform \(s(t)\) is then convolved with the CIR function \(h(\tau, t)\) (wi
 			\frac{t - \tau_k(t)}{T} - n
 		\right),
 \end{align*}
-which is then sampled at the Nyquist rate of \(2W = 1/T\), resulting in a set of samples\footnote{Again, the abusing notation \(r(m)\) means the \(m\)-th digital sample of \(r(t)\), i.e. \(r(mT)\).} \cite{Messier}:
+which is then sampled at the Nyquist rate of \(2W = 1/T\), resulting in a set of samples\footnote{Again, the notation \(r(m)\) means the \(m\)-th digital sample of \(r(t)\), i.e. \(r(mT)\).} \cite{Messier}:
 \[
 	r(m) = \sum_n s(n) \sum_k c_k(mT) \sinc\left(m - \frac{\tau_k(mT)}{T} - n\right).
 \]
@@ -296,13 +296,13 @@ From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-respo
 	}
 \end{figure}
 
-As mentioned in \ref{sec:discrete-time-model} a FIR filter can be used to simulate discrete-time models of multipath fading. But with FIR filters the delays can only be integer multiples of the sample rate. When the delays are non integer an approximation needs to be done, that is because FIR filters have a transfer function of the form
+As mentioned in the section before a FIR filter can be used to simulate discrete-time models of multipath fading. But with FIR filters the delays can only be integer multiples of the sample rate. When the delays are non integer an approximation needs to be done. That is because FIR filters have a transfer function of the form
 \begin{equation} \label{eqn:transfer-function-fir}
 	H(j\omega) = \sum_{n = 0}^{N} h(n) e^{-j\omega nT}
 	\quad \text{commonly written as} \quad
 	H(z) = \sum_{n = 0}^{N} h(n) z^{-n},
 \end{equation}
-but a non integer delay of \(\tau\) in the frequency domain is \(H_\tau(j\omega) = e^{-j\omega \tau}\). There are multiple ways to find coefficients \(h(n)\) that approximate \(H_\tau\) \cite{Valimaki1995}, in this case the least squares method was used by minimizing the error function
+but a non integer delay of \(\tau\) in the frequency domain is \(H_\tau(j\omega) = e^{-j\omega \tau}\). There are multiple ways to find coefficients \(h(n)\) that approximate \(H_\tau\) \cite{Valimaki1995}. In this case the least squares method was used by minimizing the error function
 \begin{equation}
 	E(j\omega) = H(j\omega) - H_\tau(j\omega).
 \end{equation}
@@ -310,14 +310,14 @@ The least square method plus the assumption of finite bandwidth and the requirem
 \begin{equation}
 	h(n)= \begin{cases}
 		\sinc (n - \tau) & 0 \leq n \leq N \\ 
-		0 & \text { otherwise }
-	\end{cases},
+		0 & \text { otherwise},
+	\end{cases}
 \end{equation}
 where the odd order of the filter \(N\) should satisfy the condition
 \begin{equation} \label{eqn:fractional-fir-length}
 	N = 2 \lfloor \tau \rfloor + 1
 \end{equation}
-for a minimal error in the approximation \cite{Valimaki1995}. It is worth mentioning that it is also possible to build FIR filters of even length with a different condition, or that do not satisfy \eqref{eqn:fractional-fir-length}, in which cases more consideration is required. An example of a fractional delay FIR filter is shown in \figref{fig:fractional-delay-sinc-plot}.
+for a minimal error in the approximation \cite{Valimaki1995}. It is worth mentioning that it is also possible to build FIR filters of even length with a different condition, or ones that do not satisfy \eqref{eqn:fractional-fir-length}, in which cases more consideration is required. An example of a fractional delay FIR filter is shown in \figref{fig:fractional-delay-sinc-plot}.
 
 \subsection{Statistical model} \label{sec:statistical-model}
 
@@ -336,7 +336,7 @@ Before discussing the models themselves, their underlying statistical assumption
 	% 	0 &= \E{h_l(m) h_k^*(m)} \text { for } l \neq k. \label{eqn:stat-us}
 	% \end{align}
 \end{subequations}
-Equation \eqref{eqn:stat-wss} states that the fading CIR is a \emph{wide sense stationary} (WSS) stochastic process, while \eqref{eqn:stat-us} is the \emph{uncorrelated scattering} assumption, which loosely speaking states that the path do not interfere with each other. The latter is more realistic than the former, but WSS is still useful as it considerably simplifies the mathematical formulation \cite{Messier}.
+Equation \eqref{eqn:stat-wss} states that the fading CIR is a \emph{wide sense stationary} (WSS) stochastic process, while \eqref{eqn:stat-us} is the \emph{uncorrelated scattering} assumption, which loosely speaking states that the paths do not interfere with each other. The latter is more realistic than the former, but WSS is still useful as it considerably simplifies the mathematical formulation \cite{Messier}.
 
 \paragraph{NLOS case}
 
@@ -348,7 +348,7 @@ Multipath fading is a form of multiplicative noise, as mathematically confirmed 
 	= e^{j\omega_c \tau} \sum_k c_k(t) e^{-j\omega_c \tau_k(t)}
 	= e^{j\omega_c \tau} \cdot f(t).
 \end{equation}
-If there is no line of sight (NLOS), it is reasonable to assume that all path have more or less the same attenuation, i.e. all \(c_k\) are the same. Another reasonable assumption in this case is that all paths are equally likely to be taken, or in other words the delays \(-\omega_c \tau_k\) can be replaced with random variables \(\vartheta_k\) that are uniformly distributed on \([0,2\pi)\) \cite{Hoher2013,Mathis}; physically this can be imagined as a ``ring of scattering objects'' around the receiver \cite{Messier} as sketched in \figref{fig:ring-of-scattering-objects} (without the red line of sight signal). Finally, assuming that there are infinitely many paths the random variable for the multiplicative fading noise becomes
+If there is no line of sight (NLOS), it is reasonable to assume that all paths have more or less the same attenuation, i.e. all \(c_k\) are the same. Another reasonable assumption in this case is that all paths are equally likely to be taken, or in other words the delays \(-\omega_c \tau_k\) can be replaced with random variables \(\vartheta_k\) that are uniformly distributed on \([0,2\pi)\) \cite{Hoher2013,Mathis}; physically this can be imagined as a ``ring of scattering objects'' around the receiver \cite{Messier} as sketched in \figref{fig:ring-of-scattering-objects} (without the red line of sight signal). Finally, assuming that there are infinitely many paths the random variable for the multiplicative fading noise becomes
 \begin{equation} \label{eqn:mult-fading-nlos}
 	f = \lim_{N\rightarrow\infty} \frac{1}{\sqrt{N}}
 		\sum_{k=1}^{N} e^{j \vartheta_k },
