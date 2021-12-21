@@ -53,17 +53,17 @@ class myblock(gr.sync_block):
 	\caption{Screenshot of the graphical interface of receiver built using the DearPyGUI library.}
 \end{figure}
 
-To construct a graphical interface for a demonstration platform the Dear IMGUI (immediate mode graphical user interface) library was chosen, mainly for its ease of use, wide range of techincal capabilites and high refresh rate. Dear PyGUI (DPG) are the Python bindings for the Dear IMGUI library.
+To construct a graphical interface for a demonstration platform the Dear IMGUI (immediate mode graphical user interface) library was chosen, mainly for its ease of use, wide range of technical capabilites and high refresh rate. Dear PyGUI (DPG) are the Python bindings for the Dear IMGUI library.
 
-The DPG GUI communicates with the GR flow graphs using the IP/UDP protocol. This decision to separate the project into two parts that communicate over the IP network was made because it is not easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configure flow graph on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time. As a side effect, in theory this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph.
+The DPG GUI communicates with the GR flow graphs using the IP/UDP protocol. This decision to separate the project into two parts that communicate over the IP network was made because it is not easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configured flow graphs on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time. As a side effect, in theory this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph.
 
+%TODO: Describe GUI Plott.
 \section{Hardware}
 
 As receivers and transmitter devices for the SDR setup two USRP B210 devices from Ettus Research were used. Some technical specifications are shown in \tabref{tab:usrp-specs}. GR provides off the shelf blocks that interface with the official API provided from Ettus Research.
 
 \begin{table}[h]
-	%TODO sepzifikationen ampssen / genauer? https://www.ettus.com/wp-content/uploads/2019/01/b200-b210_spec_sheet.pdf
-	% https://kb.ettus.com/B200/B210/B200mini/B205mini#FAQ
+%TODO: Abstand einheiten
 	\centering
 	\begin{tabular}{ll}
 		\toprule
@@ -90,18 +90,20 @@ As receivers and transmitter devices for the SDR setup two USRP B210 devices fro
 	}
 \end{figure}
 
-To compute the empirical bit error rate (BER) of the setup, the data has to be framed by the transmitter and the bitstream needs to be synchronized on the receiver side. The structure of a data packet used in the implementation is shown in \figref{fig:dataframe}. A frame begins with an user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the theoretical maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple. % TODO: explain why its simpler this way
+To compute the empirical bit error rate (BER) of the setup, the data has to be framed by the transmitter and the bitstream needs to be synchronized on the receiver side. The structure of a data packet used in the implementation is shown in \figref{fig:dataframe}. A frame begins with a user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the theoretical maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple. % TODO: explain why its simpler this way
 
 
 \subsection{Modulation}
 
 GR provides a constellation modulator block, that already implements several standard constellations (QPSK and 16ary-QAM being of interest for us). The block also already integrates a root raised cosine filter, whose phase bandwidth (roll-off factor) can be given as parameter; in all flow graphs the roll off factor is \(\alpha = 0.35\).
 
+%TODO: Warum alpha 0.35
+
 \section{Receiver chain}
 
 \subsection{Envelope detector}
 
-What is here referred to as envelope detector has the purpose of synchronizing the symbols and equalizing the input signal amplitude. This is accomplished in GRC using two blocks: a polyphase clock sync and a constant modulus adaptive (CMA) filter equalizer. The input signal for the envelope detector has 4 samples per symbol, while the output has only one sample per symbol. The choice of the CMA equalizer later turned out to be a mistake in the QAM flow graphs, as it only works for envelope with a constant amplitude. In the latest version least mean square decision-directed (LMS-DD) equalizers have been used.
+What is here referred to as envelope detector has the purpose of synchronizing the symbols and equalizing the input signal amplitude. This is accomplished in GRC using two blocks: a polyphase clock sync and a constant modulus adaptive (CMA) filter equalizer. The input signal for the envelope detector has 4 samples per symbol, while the output has only one sample per symbol. The choice of the CMA equalizer later turned out to be a mistake in the QAM flow graphs, as it only works for envelopes with a constant amplitude. In the latest version least mean square decision-directed (LMS-DD) equalizers have been used.
 
 % \paragraph{Polyphase Clock Sync}
 % %TODO : nochmals anschauen ob dieese erklärung verständlich ist und richtig interpretiert wurde.
@@ -144,7 +146,7 @@ The relevant observation to make in \eqref{eqn:xc-oop-copy} that since \(R_{aa}\
 \end{enumerate}
 
 \subsubsection{Implementing fine phase and frequency correction} \label{sec:implement-phasecorr}
-
+%TODO: Figure
 To implement in GR what was discussed in section \ref{sec:phasecorr} two blocks shown in \figref{fig:phasecorr-blocks} were used: a correlator estimator block, and a custom block. The former essentially implements the first 3 of the steps discussed at the end of section \ref{sec:phasecorr}. The correlator estimator block is given a sequence of samples, and when the cross correlation between them and the input stream is higher than a certain threshold (90\% of the amplitude of a perfect autocorrelation), it produces a ``tag'' in the output stream, that contains the phase estimate.
 
 Tags are GR's way of working with metadata that is attached to a sample. Internally tags are just polymorphic data structures containing a number indicating the absolute offset (in samples), and a pair of arbitrary values called ``key'' and ``value''. Tags are passed on from one block to the next like sample streams (unless the block specifies to do otherwise).
@@ -159,7 +161,7 @@ Thus, the tagged stream is processed with a custom block, of which a simplified 
 
 \subsubsection{Performance of the implementation}\label{sec:preforming-implementation}
 
-The phase and frequency correction block was implemented with the design goal of being able to correct under ideal conditions a maximal frequency offsets of \(\hat{\epsilon} = 0.1\%\), which is sufficient to take into account small Doppler shifts at walking speed (\(v = \SI{2}{\meter\per\second}\)) with carrier at \(f_c = 2.4\) GHz. The USRP B210 devices have an internal clock frequency accuracy of \(\epsilon = 1\text{ ppm} = 10^{-6}\), which results in a total frequency offset of
+The phase and frequency correction block was implemented with the design goal of being able to correct a maximum frequency offset of \(\hat{\epsilon} = 0.1\%\) under ideal conditions, which is sufficient to take into account small Doppler shifts at walking speed (\(v = \SI{2}{\meter\per\second}\)) with carrier at \(f_c = 2.4\) GHz. The USRP B210 devices have an internal clock frequency accuracy of \(\epsilon = 1\text{ ppm} = 10^{-6}\), which results in a total frequency offset of
 \begin{equation}\label{eq:doppler}
 	\Delta f = f_c \left( \frac{v}{c_0} + \epsilon \right)
 	= \SI{2.4}{\giga\hertz} \left(
@@ -243,14 +245,13 @@ In order to study the effects of multipath fading, a series of simulations have 
 
 \subsection{Fading with discrete time model} \label{sec:discrete-time-model-fir}
 
-For the statical version according to \ref{sec:discrete-time-model} for implement and illustrate the fading effect, a separate block was created and implemented in the channel. Nearer shown in \ref{lst:fractional-delay-fir}. This block is based on a FIR filter. It can be displayed with a direct path (LOS) or without one (NLOS).
-With the help of this filter, the delay of the line of side paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed ray. 
+ To implement and illustrate the fading effect, for the statical version according to \ref{sec:discrete-time-model}, a separate block was created and implemented in the channel shown in listing \ref{lst:fractional-delay-fir}. This block is based on a FIR filter. It can be displayed with a direct path (LOS) or without one (NLOS).
+With the help of this filter, the delay of the line of sight paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed ray. 
 
-A special case is show in \figref{fig:qpsk-simulations-static}, where the delay in sample is the same as the sample per symbol value or a multiple of it. An other example is shown in the same figure,with more diffident delayed paths, with the delay values of \texttt{[0.25,4,6.3,3.25]} and the amplitude values of \texttt{[0.2,0.5,0.4,0.08]}.
-Unfortunately, these simulation values do not correspond to the reality, because too many incalculable side effects occur, which aren't possible to illustrate in this simulation.
+A special case is show in \figref{fig:qpsk-simulations-static}, where the delay in sample given is the same as the sample per symbol value or a multiple of it. An other example is shown in the same figure,with more diffident delayed paths. These simulation values do not realistically correspond to the reality, because too many incalculable side effects occur, which aren't possible to illustrate in this simulation.
 
-This block was additionally implemented with the method described in \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample. Which in turn means that the other sampled values do not add up to zero.
-Thus, they will be distributed among the other whole numbers. A window function could also be implemented to limit these values. Here none was implemented because the sinc function is restricted.
+This block was additionally implemented with the method described in \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample, which in turn means that the other sampled values do not add up to zero.
+Thus, they will be distributed among the other whole numbers. A window function could also be implemented to limit these values. Here  a simple restricted for the sinc function is implemented.
 
 \begin{lstlisting}[
 	texcl = true, language = python, escapechar = {`},
@@ -295,31 +296,31 @@ Thus, they will be distributed among the other whole numbers. A window function 
 
 \subsection{Fading with statistical model}
 
-In order to represent the effect of the multipath fading not only statically, a second model was created using the Frequency Selective Fading Model from GR, according to \ref{sec:statistical-model},which was implemented after the algorithm from the paper \cite{Alimohammad2009}, with the help of the sum-of sinusoid principal (SOS). The algorithm in this block is implemented with the aim that only a small number of sinusoids are needed. 
-This number represent the sinusoids which are simulated for each ray, for the foaling simulations shown the value 8 has been chosen.
+In order to represent the effect of multipath fading not only statically, a second model was created using the Frequency Selective Fading Model from GR, according to \ref{sec:statistical-model}, which was implemented using the algorithm from the paper \cite{Alimohammad2009}, with the help of the sum-of sinusoid principle (SOS). The algorithm in this block is implemented with the aim that only a small number of sinusoids are needed to simulate each ray. For the simulations shown the value 8 has been chosen.
 
-It can also be chosen whish statical model should be taken for the simulation Rayleigh or Rician. When the Rician model is taken, a realistic value for the factor \(K\) needs to be given. Which is between zero and ten. As mentioned earlier, when  \(K=0\) the distribution is the same as with the Rayleight model. For a factor \(K = 5.1\) the probability function is gaussian distributed.
+It is furter possible to choose between Rayleigh or Rician for the statistical modeling. When the Rician model is chosen, a realistic value for the factor \(K\) (which is between zero and ten) needs to be given. As mentioned earlier, if \(K=0\) the distribution is the same as with the Rayleigh model. For a factor \(K = 5.1\) the probability function is gaussian distributed.
+
 %TODO : Sätze anpassen
 
-The power delay profile which specifies the delay in time uses sample as unit. For this delay vector some realistic values are for the first delay \cite{Mathworks}. If there is non line of sight it should be zero. The second delayed path depends on the environment of the measurement. In an indoor environment it is usually between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on the bandwidth. 
+The power delay profile which specifies the delay in time, which uses sample as unit. For this delay vector some realistic values are for the first delay \cite{Mathworks} given as. If there is  line of sight component this should be zero. The second delayed path depends on the environment of the measurement. In an indoor environment it is usually between \(10^{-9}\) to \(10^{-7}\) and in an outdoor environment between \(10^{-7}\) to \(10^{-5}\). The other values depends on the bandwidth. 
 
-The magnitudes of the pulses are given with the linear value. In practices the average path gain of a fading path is in the range of \([ -20 \text{dB} , 0\text{dB}]\).
+The magnitudes of the pulses are given in the linear value. In practice the average path gain of a fading path is in the range of \([ -20 \text{dB} , 0\text{dB}]\).
 
-To add some movement, some Doppler shift can be introduced according to the formula \eqref{Doppler-shift}. But it needs to be normalized with the sampling rate. 
+To add movement, some Doppler shift can be introduced according to the formula \eqref{Doppler-shift}. But this frequency needs to be normalized with the sampling rate. 
 An example of such a simulation plot is shown in \figref{fig:qpsk-simulations-dynamic}.
 
 When nothing else is mentioned, the number of FIR-filter taps used is eight.
-%TODO: Should this be mentoned
+
 
 \subsubsection{Issues}
 
-A difficulty was to check the correctness of the statistical models, if there is noise in the channel from the fading effect. Especially when the Doppler frequency is included. This was difficult to recreate, when the amplitude and phase parameter are not in a special state in which the amplitude and the phase shift can be seen exactly. 
-To have some indication to verify the plot, mainly whether the movement could be correct, a little Matlab model was used with the same values for the different distributions. With this, the model could be verified.
+A difficulty is to check the correctness of the statistical models, if there is noise in the channel from the fading effect. Especially when the Doppler effect is included. Then the simulation was difficult to recreate, when the amplitude and phase parameter are not in a special state in which the amplitude and the phase shift could be seen exactly. 
+To have some indication to verify the plot, mainly whether the movement of the signal could be correct, a Matlab model was used with the same values as im the GR simulation, for the different distributions. With this, the model could be verified to be correct.
 
 %TODO: Other Plots?
 \subsubsection{Real value example}
 
-In order to obtain a realistic simulation the values for multipath fading propagation condition for a Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute) were used\cite{ETSI}, with the values shown in \tabref{tab:etsi-tap-values}. For those the maximum Doppler frequency possibilities are predefined. In the following examples \figref{fig:dynamic-exp-real} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, opposed to the in \eqref{eq:doppler} calculated value for a walking speed of \(\SI{2}{\meter\per\second}\), where the Doppler frequency is \(\SI{16}{\hertz}\). Those predefined values correspond to a speed of
+In order to obtain a realistic simulation the values for multipath fading propagation conditions for an Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute) were used\cite{ETSI}, with the values shown in \tabref{tab:etsi-tap-values}. For those the maximum Doppler frequency possibilities are predefined. In the following examples \figref{fig:dynamic-exp-real} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, opposed to the values calculated in \eqref{eq:doppler}for a walking speed of \(\SI{2}{\meter\per\second}\), where the Doppler frequency is \(\SI{16}{\hertz}\). Those predefined values correspond to a speed of
 \begin{equation}
 	v = \frac{\Delta f}{f_c}\cdot c_0 = \frac{\SI{5}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{0.625}{\meter\per\second}
 \end{equation}
@@ -359,25 +360,25 @@ The numbers of tags used in this case are the number of given values.
 	\centering
 	\includegraphics[frame, width = \linewidth]{figures/screenshots/Hardware_indoor.png}
 	\caption{
-		Plot from the GNU Radio Sink for en indoor environment test with the demonstrator.
+		Plot from the GNU Radio sink for en indoor environment test with the demonstrator.
 		\label{fig:GR-Hardware-indoor}
 	}
 \end{figure}
 To demonstrate the fading effect, the two SDRs are used.
-The BER in an indore enviroment, for example the lab is about 
+The BER in an indoor enviroment, for example the lab is about 
 
 \skelpar[5]{
 	Do some masurements
 }
 
 \subsection{Empirical BER} \label{sec:ber}
-To find out how accurate the simulations are comparer with a simulation of the fadinng effect and tested measurements, the byte error rate of the system is calculated. This is done with the help of a user specified \(k\)-byte test frame in the beginning of each vector. Implemented according to the code in \ref{lst:ber-work}. Every bit is compared with the test vector at the beginning before the modulation and demodulation part. 
-Because of the fact that the test vector has some random bit at the end, the bit error rate has always an average value of 32, even if its perfect match. To only focus on the BER of the signal, this value is subtracted. 
+To find out how accurate the simulations are compared with a simulation of the fading effect and measurements, the bit error rate of the system is calculated. This is done with the help of a user specified \(k\)-byte test frame in the beginning of each vector. As seen in listing \ref{lst:ber-work}. Every bit is compared with the test vector at the beginning before the modulation and demodulation part. 
+Because of the fact that the test vector has some random bit at the end, the bit error rate has always an average value of 32, even if the tow different vectors are  perfect match. To only focus on the BER of the signal, this value is subtracted. 
 
-The vector which is used as test vector is: \texttt{[0x1f, 0x35, 0x12, 0x48]}. Because this numbers are well suited to compare.%TODO: verweissen auf erklährung 
+The vector which was used as test vector is: \texttt{[0x1f, 0x35, 0x12, 0x48]}. Because this numbers are well suited to compare.%TODO: verweissen auf erklährung das diese gut coreliren
 
 
-For generating the bit error rate a bit stream with a specific length is comped with the test vector. To make it simpler and to avoid mistakes, the last 200 bits of this individual BER are taken to find an average and the highest value. 
+For generating the bit error rate a bit stream with a specific length is compared with the test vector. To make it simpler and to avoid mistakes, the last 200 values of this individual BER are taken to find an average and the highest single value of them. 
 
 \skelpar[5]{
 	Maybe more 
