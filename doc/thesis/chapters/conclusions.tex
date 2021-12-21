@@ -7,7 +7,7 @@
 The goal to build a functional demonstrator had been achieved, unfortunately not all of the originally planned features were implemented. A stable wireless link using QPSK modulation that computes the BER was developed.
 
 Some different typ of multiple fading model were tested and illustrated.
-Two different Models for the simulation options are build. One discrete time model whish is  basicly a FIR filter in the channel, the other with a statistical model which is based on a GR block.
+Two different Models for the simulation options are built. One discrete time model whish is  basically a FIR filter in the channel, the other with a statistical model which is based on a GR block.
 
 One other file to implement the hardware with. Unfortunately it was not possible to measure those in a meaningful way. For that a least square approximation could be used as described in the further steps. An other difficulty is to reproduce the same effect in a simulation compare with the hardware, because of al the side effect of the environment, which cant be predicted in a simulation.
 
@@ -23,7 +23,7 @@ An interesting continuation of the current work could be to automate the collect
 
 The current GUI prototype built with DearPyGUI has some issues, the most critical begin a single-threaded application. The interprocess communication (with GR's flow graphs) should be on a separate thread from the graphics. The problem is not noticeable as long as the flow graphs in the background keep sending data, but as soon as the UDP/IP data stream stops the timeout of the socket interface causes the interface to run at less that 20 frames per second.
 
-In addition to fixing the aforementioned issue, a very important missing feature that is currently missing is the ability to change the fading parameters in real time from within the GUI. Dear PyGUI offers many graphical elements that could be used to control the parameters, however a new GR block would need to be created to propagate the updated values into the flow graph.
+In addition to fixing the aforementioned issue, a very important feature that is currently missing is the ability to change the fading parameters in real time from within the GUI. Dear PyGUI offers many graphical elements that could be used to control the parameters, however a new GR block would need to be created to propagate the updated values into the flow graph.
 
 \subsection{Channel parameters estimation with Pilot Symbols}
 
@@ -31,11 +31,11 @@ In addition to fixing the aforementioned issue, a very important missing feature
 
 \section{Closing words}
 
-\section{Acknowledgements}
+\section{Acknowledgments}
 
 
-We would like to thank everyone who took the time to help us. Specially Michel Nyffenegger, Nicola Ramagnano for his explanations, with the GNU Radio tool,
-Marcel Kluser, who has provided the equipment, Prof. Dr. Heinz Mathis for the opportunity and to our fiends whose supported us in different ways.
+We would like to thank everyone who took the time to help us. Specially Michel Nyffenegger, Nicola Ramagnano for their explanations, with the GNU Radio tool,
+Marcel Kluser, who has provided the equipment, Prof. Dr. Heinz Mathis for the opportunity and to our friends whose supported us in different ways.
 
 
 
