@@ -55,7 +55,7 @@ class myblock(gr.sync_block):
 
 To construct a graphical interface for a demonstration platform the Dear IMGUI (immediate mode graphical user interface) library was chosen, mainly for its ease of use, wide range of techincal capabilites and high refresh rate. Dear PyGUI (DPG) are the Python bindings for the Dear IMGUI library.
 
-The DPG GUI communicates with the GR flow graphs using the IP/UDP protocol. This decision to separate the project into two parts that communicate over the IP network was made because it is not very easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configure flow graph on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time. As a side effect, in theory this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph.
+The DPG GUI communicates with the GR flow graphs using the IP/UDP protocol. This decision to separate the project into two parts that communicate over the IP network was made because it is not easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configure flow graph on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time. As a side effect, in theory this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph.
 
 \section{Hardware}
 
@@ -295,24 +295,25 @@ Thus, they will be distributed among the other whole numbers. A window function 
 
 \subsection{Fading with statistical model}
 
-In order to represent the effect of the multipaht fading not only statically, a second model was created using the Frequency Selective Fading Model from Gnu Radio, according to \ref{sec:statistical-model},which was implemented after the algorithm from the paper \cite{Alimohammad2009}, with the help of the sum-of sinusoid principal (SOS). The algorithm in this block is implemented with the aim that only a small number of sinusoids are needed. 
+In order to represent the effect of the multipath fading not only statically, a second model was created using the Frequency Selective Fading Model from GR, according to \ref{sec:statistical-model},which was implemented after the algorithm from the paper \cite{Alimohammad2009}, with the help of the sum-of sinusoid principal (SOS). The algorithm in this block is implemented with the aim that only a small number of sinusoids are needed. 
 This number represent the sinusoids which are simulated for each ray, for the foaling simulations shown the value 8 has been chosen.
 
-It can also be chosen whish statical model should be taken for the simulation Rayleigh or Rician. When the Rician model is taken also a realistic value for the factor \(K\) need to be given. Whish is something between zero and ten. As mentioned earlier, when  \(K=0\) the distribution is the same as with the Rayleight model. For a faktor \(K = 5.1\) the probability function is gaussien distributed.
+It can also be chosen whish statical model should be taken for the simulation Rayleigh or Rician. When the Rician model is taken, a realistic value for the factor \(K\) needs to be given. Which is between zero and ten. As mentioned earlier, when  \(K=0\) the distribution is the same as with the Rayleight model. For a factor \(K = 5.1\) the probability function is gaussian distributed.
+%TODO : Sätze anpassen
 
-The power delay profile which specify the delay in time for each impulse need to be in sample. For this delayed vector some realistic values are for the first delay \cite{Mathworks}, when theirs non line of side zero. The second delayed path depend on the environment of measurement. In an indoor environment it is usually between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on  the bandwidth. 
+The power delay profile which specifies the delay in time uses sample as unit. For this delay vector some realistic values are for the first delay \cite{Mathworks}. If there is non line of sight it should be zero. The second delayed path depends on the environment of the measurement. In an indoor environment it is usually between \(1\cdot10^{-9}\) to \(1\cdot10^{-7}\) and in an outdoor environment between \(1\cdot10^{-7}\) to \(1\cdot10^{-5}\). The rest depends on the bandwidth. 
 
-The magnitudes of the pulses are given with the linear value. In practices the avarage path gain of a fading path is in the range of \([ -20 \text{dB} , 0\text{dB}]\).
+The magnitudes of the pulses are given with the linear value. In practices the average path gain of a fading path is in the range of \([ -20 \text{dB} , 0\text{dB}]\).
 
-To add some movement, like a movable transmitter some Doppler shift can be initialized after the formula \eqref{Doppler-shift}. But it need to be normalized with the sampling rate. 
+To add some movement, some Doppler shift can be introduced according to the formula \eqref{Doppler-shift}. But it needs to be normalized with the sampling rate. 
 An example of such a simulation plot is shown in \figref{fig:qpsk-simulations-dynamic}.
 
-When nothing mentioned the number of how many FIR- filter taps are used is eight.
+When nothing else is mentioned, the number of FIR-filter taps used is eight.
 %TODO: Should this be mentoned
 
 \subsubsection{Issues}
 
-Some difficulty was how to check the correction of the statistical models, if there is noise in the channel, from the fading effect, especially when the doppler frequency is included. This was difficult to recreate, when the parameter haven't the special case in which the the amplitude and the phase shift can be seen exactly. 
+A difficulty was to check the correctness of the statistical models, if there is noise in the channel from the fading effect. Especially when the Doppler frequency is included. This was difficult to recreate, when the amplitude and phase parameter in which the amplitude and the phase shift can be seen exactly. 
 To have some indication to verified the plot, mainly whether the movement could be correct a little Matlab model was used with the same values for the different distributions.
 
 %TODO: Other Plots?
