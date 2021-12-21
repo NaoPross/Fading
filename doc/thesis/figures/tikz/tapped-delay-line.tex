@@ -20,7 +20,8 @@
 		sum/.style = {
 			circle, draw, thick,
 			black, fill = white,
-			minimum size = 4mm,
+			minimum size = 6mm,
+			inner sep = 0, outer sep = 0,
 		},
 	]
 
@@ -28,35 +29,44 @@
 		\node[block] (B0) {\(z^{-1}\)}; & \node[dot] (D0) {}; &
 		\node[block] (B1) {\(z^{-1}\)}; & \node[dot] (D1) {}; &
 		\node[block] (B2) {\(z^{-1}\)}; & \node[dot] (D2) {}; & \node (dots) {\ldots}; & 
-		\node[block] (Bk) {\(z^{-1}\)}; & \node[dot] (Dk) {};
+		\node[block] (Bk) {\(z^{-1}\)}; &
 		\\
 		& \node[prod] (P0) {\(\times\)}; &
 		& \node[prod] (P1) {\(\times\)}; &
 		& \node[prod] (P2) {\(\times\)}; & &
 		& \node[prod] (Pk) {\(\times\)}; &
-		\\
-		& & & & \node[sum] (S) {\(\Sigma\)}; \\
+		\\[6mm]
+		& & & & & & & & \node[sum] (S) {\(+\)}; \\
 	};
 
-	\draw[thick]
-		% tapped delayed line
-		(B0.west) -- ++(-5mm,0) node[left] {\(s\)}
-		(B0.east) -- (D0) -- (B1.west)
-		(B1.east) -- (D1) -- (B2.west)
-		(B2.east) -- (D2) -- (dots) -- (Bk.west) 
-		(Bk.east) -- (Dk) -- ++(5mm,0)
-		% taps asd sum
-		(D0) -- (P0) |- (S)
-		(D1) -- (P1) -- ++(0,-6mm) -- (S)
-		(D2) -- (P2) -- ++(0,-6mm) -- (S)
-		(Dk) -- (Pk) |- (S)
+	\begin{scope}[thick, -latex]
+		% delayed line
+		\draw[latex-] (B0.west) -- ++(-5mm,0) node[left] {\(s(n)\)};
+		\draw (B0.east) -- (D0) -- (B1.west);
+		\draw (B1.east) -- (D1) -- (B2.west);
+		\draw (B2.east) -- (D2) -- (dots) -- (Bk.west);
+
+		% taps
+		\draw (D0) -- (P0);
+		\draw (P0) |- (S);
+
+		\draw (D1) -- (P1);
+		\draw (P1.south) |- ($(S) + (150:10mm)$) -- (S);
+
+		\draw (D2) -- (P2);
+		\draw (P2.south) |- ($(S) + (120:10mm)$) -- (S);
+
+		\draw (Bk) -| (Pk);
+		\draw (Pk) -- (S);
+
 		% product weights
-		(P0.west) -- ++(-3mm,0) node[left] {\(h_1\)}
-		(P1.west) -- ++(-3mm,0) node[left] {\(h_2\)}
-		(P2.west) -- ++(-3mm,0) node[left] {\(h_3\)}
-		(Pk.west) -- ++(-3mm,0) node[left] {\(h_l\)}
+		\draw[latex-] (P0.west) -- ++(-4mm,0) node[left] {\(h_1(m)\)};
+		\draw[latex-] (P1.west) -- ++(-4mm,0) node[left] {\(h_2(m)\)};
+		\draw[latex-] (P2.west) -- ++(-4mm,0) node[left] {\(h_3(m)\)};
+		\draw[latex-] (Pk.west) -- ++(-4mm,0) node[left] {\(h_l(m)\)};
+
 		% result
-		(S.south) |- ++(1cm,-3mm) node[right] {\(r\)}
-	;
+		\draw (S.south) |- ++(1cm,-3mm) node[right] {\(r(m)\)};
+	\end{scope}
 
 \end{tikzpicture}
