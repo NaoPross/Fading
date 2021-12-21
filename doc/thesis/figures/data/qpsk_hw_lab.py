@@ -18,13 +18,17 @@ values = map(select_samples, samples)
 get_parts = lambda v: (np.real(v), np.imag(v))
 parts = [p for v in map(get_parts, values) for p in v]
 
+# add 'samplenr' metadata
+parts += [np.arange(0, len(parts[0]))]
+
 # zip data and add header
 data = np.array(list(zip(*parts)))
 headers = [
     "channel_re",      "channel_im",
     "synchronized_re", "synchronized_im",
     "equalized_re",    "equalized_im",
-    "locked_re",       "locked_im"
+    "locked_re",       "locked_im",
+    "samplenr",
 ]
 
 # save to file
