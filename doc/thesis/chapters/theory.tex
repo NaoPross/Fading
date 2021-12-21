@@ -279,23 +279,6 @@ From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-respo
 
 \subsection{Simulating multipath CIR with FIR filters} \label{sec:fractional-delay}
 
-\begin{figure}
-	\centering
-	\begin{subfigure}{.4\linewidth}
-		\includegraphics[width=\linewidth]{./figures/screenshots/Fractional_delay_6}
-		\caption{Integer delay of 6 samples.}
-	\end{subfigure}
-	\hskip 5mm
-	\begin{subfigure}{.4\linewidth}
-		\includegraphics[width=\linewidth]{./figures/screenshots/Fractional_delay_637}
-		\caption{Fractional delay of 6.37 samples.}
-	\end{subfigure}
-	\caption{
-		FIR filters for integer and fractional delays.
-		\label{fig:fractional-delay-sinc-plot}
-	}
-\end{figure}
-
 As mentioned in the section before a FIR filter can be used to simulate discrete-time models of multipath fading. But with FIR filters the delays can only be integer multiples of the sample rate. When the delays are non integer an approximation needs to be done. That is because FIR filters have a transfer function of the form
 \begin{equation} \label{eqn:transfer-function-fir}
 	H(j\omega) = \sum_{n = 0}^{N} h(n) e^{-j\omega nT}
@@ -318,6 +301,23 @@ where the odd order of the filter \(N\) should satisfy the condition
 	N = 2 \lfloor \tau \rfloor + 1
 \end{equation}
 for a minimal error in the approximation \cite{Valimaki1995}. It is worth mentioning that it is also possible to build FIR filters of even length with a different condition, or ones that do not satisfy \eqref{eqn:fractional-fir-length}, in which cases more consideration is required. An example of a fractional delay FIR filter is shown in \figref{fig:fractional-delay-sinc-plot}.
+
+\begin{figure}
+	\centering
+	\begin{subfigure}{.4\linewidth}
+		\includegraphics[width=\linewidth]{./figures/screenshots/Fractional_delay_6}
+		\caption{Integer delay of 6 samples.}
+	\end{subfigure}
+	\hskip 5mm
+	\begin{subfigure}{.4\linewidth}
+		\includegraphics[width=\linewidth]{./figures/screenshots/Fractional_delay_637}
+		\caption{Fractional delay of 6.37 samples.}
+	\end{subfigure}
+	\caption{
+		FIR filters for integer and fractional delays.
+		\label{fig:fractional-delay-sinc-plot}
+	}
+\end{figure}
 
 \subsection{Statistical model} \label{sec:statistical-model}
 
