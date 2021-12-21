@@ -399,9 +399,9 @@ For generating the byte error rate it is focus on byte-blocks of a specific leng
 
 \subsection{Non modulated access codes}
 
-Currently as described in section \ref{sec:data-frame}, the access codes are put as bytes in front of the frame in the \(k\)-byte preamble. For this to work, the access code bytes must still have a good autocorrelation function after being modulated into symbols using the chosen modulation scheme. This works well with QPSK, because the constellation is quite simple and the length of the sequence is only halved after the modulation (since QPKS has 2 bits per symbol). Thus in the QPSK flow graph, the longest known 13 bit Barker sequence \texttt{0x1f35} padded with zeros after MSB is sufficient (\(\approx 7\) symbols).
+Currently as described in section \ref{sec:data-frame}, the access codes are put as bytes in front of the frame in the \(k\)-byte preamble. For this to work, the access code bytes must still have a good autocorrelation function after being modulated into symbols using the chosen modulation scheme. This works well with QPSK, because the constellation is quite simple and the length of the sequence is only halved after the modulation (since QPKS has 2 bits per symbol). Thus, in the QPSK flow graph the longest known Barker sequence  \texttt{0x1f35} (13 bits, left padded with zeros) is sufficient (\(\approx 7\) symbols).
 
-With QAM however, the complexity of the constellation and the higher number of bits per symbol makes it increasingly difficult to find binary sequences that after being modulated still retain a good autocorrelation function. A better solution would be to use for example a \emph{constant amplitude zero autocorrelation waveform} (CAZAC) of length \(N\), which is computed with
+With QAM however, the complexity of the constellation and the higher number of bits per symbol makes it increasingly difficult to find binary sequences retain a good autocorrelation function after being modulated. A better solution would be to use for example a \emph{constant amplitude zero autocorrelation waveform} (CAZAC) of length \(N\), which is computed with
 \begin{equation}
 	u_k = \exp\left(j\frac{M\pi K}{N}\right) \text{ where }
 	K = \begin{cases}
@@ -409,31 +409,33 @@ With QAM however, the complexity of the constellation and the higher number of b
 		k(k+1) & \text{when } N \text{ is odd}
 	\end{cases},
 \end{equation}
-and \(M\) is relatively prime to \(N\). CAZAC waveforms are ideal because they have a Dirac delta as autocorrelation\cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Though unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer (but not CMA). Thus to use CAZAC waveforms the transmitter needs to put them in front of the modulated symbols (for example using a correctly parametrized stream mux block in GR), and the receiver would need to synchronize with the sequence before the clock recovery or equalization. The latter is especially problematic because then it is no longer possible to identify the peak by comparing the autocorrelation value to a fixed threshold as done in section \ref{sec:implement-phasecorr}.
+and \(M\) is relatively prime to \(N\) \cite{Chu1972}. CAZAC waveforms are ideal because they have a Dirac delta as autocorrelation \cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Though unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer (but not CMA). Thus to use CAZAC waveforms the transmitter needs to put them in front of the modulated symbols (for example using a correctly parametrized stream mux block in GR), and the receiver would need to synchronize with the sequence before the clock recovery or equalization. The latter is especially problematic because then it is no longer possible to identify the peak by comparing the autocorrelation value to a fixed threshold as done in section \ref{sec:implement-phasecorr}.
 
+\subsection{Single threaded GUI application}
 
-\subsubsection{GUI Parameter change}
-%TODO: Picture of the GUI
-As in \ref{sec:GUI} described the GUI was implemented, but unfortunately the parts where the parameter could be changed, will showing the current simulation isn`t possibl
- like the noise voltage of the channel or the bandwidth from the Polyphase Clock , the Gain of the Equalizer aren`t implemented yet. Actually everything which needs a responds from the interfaces to the GR. 
-
-The second part which is missing is to be able to change the timing plot for the different scattering plots.
-
-% TODO : Piczure of the setup
-%TODO: Plots from the Hardware 
 \subsection{Incomplete parts}
 
-\subsubsection{Hardware clock}
+\subsection{Clock synchronization issues}
+
 Unfortunately the SDR needs an external clock generator. For that a Rubidium Frequency STd. Model FS725 is used. Better said two of them, to make them more movable and independent, with the clock frequency \SI{10}{\mega\hertz}. Those Rubidiums where used, because the synchronization, dosn`t work as planed in \ref{sec:preforming-implementation}. 
 %TODO: Right squenz?
 Without those only the amplitudes could be seen in the Plots, with all the noise from the inter-symbol differences. 
 
+\subsection{GUI Parameter change}
+
+As in \ref{sec:GUI} described the GUI was implemented, but unfortunately the parts where the parameter could be changed, will showing the current simulation isn't possibl like the noise voltage of the channel or the bandwidth from the Polyphase Clock , the Gain of the Equalizer aren't implemented yet. Actually everything which needs a responds from the interfaces to the GR. 
+
+The second part which is missing is to be able to change the timing plot for the different scattering plots.
+
+% TODO : Picture of the setup
+% TODO: Plots from the Hardware
 
 
 \newgeometry{
 	top = 25mm, bottom = 25mm,
 	inner = 15mm, outer = 15mm,
 }
+% \section{Constellation plots}
 \begin{figure}
 	\centering
 	\label{fig:qpsk-simulations-static}
