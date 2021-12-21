@@ -17,7 +17,7 @@ One other file to implement the hardware with. Unfortunately it was not possible
 
 \subsection{Improve BER measurements and simulations}
 
-An interesting continuation of the current work could be to automate the collection of the BER data, and to measure and observe the influence of each parameters in the fading channel model. In addition, new flow graphs for further modulation schemes could be easily added to the current framework.
+A missing feature in this work is an automated collection of the BER data, which would allow to more easily to observe and measure the influence of each parameters in the fading channel model.
 
 \subsection{Improvements of GUI frontend}
 
@@ -27,7 +27,16 @@ In addition to fixing the aforementioned issue, a very important feature that is
 
 \subsection{Channel parameters estimation with Pilot Symbols}
 
+An interesting continuation of this work could be to regularly interpolate some so called pilot symbols in the modulated data stream. Briefly, the pilot symbol assisted modulation (PSAM) technique consists of periodically inserting informationless (known) symbols in the data stream, which are then used to estimate the fading parameters of the communication channel. More details are presented in \cite{Xiaoyi1999} (and its references) from which the illustrations in \figref{fig:psam} were taken.
 
+\begin{figure}
+	\centering
+	\includegraphics[width = \linewidth]{figures/xiaoyi-psam-figures}
+	\caption{
+		Illustration of the pilot symbols assisted modulation (PSAM) frame format (left), and PSAM fading interpolation method (right). The PSAM technique allows to compute the fading (denoted in the figure with \(\tilde{z}_n\)) by interpolating measurements of informationless symbols (pilot symbols) over multiple frames. Both figures were taken from \cite{Xiaoyi1999}, which presents an analytical method to compute the BER from the PSAM and multilevel quadrature amplitude modulation (M-QAM) parameters.
+		\label{fig:psam}
+	}
+\end{figure}
 
 \section{Closing words}
 
