@@ -35,23 +35,21 @@ The following two sections will briefly introduce mathematical formulations of t
 
 Quadrature amplitude modulation is a family of modern digital modulation methods, that use an analog carrier signal. The simple yet effective idea behind QAM is to encode extra information into an orthogonal carrier signal, thus increasing the number of bits sent per unit of time (symbol) \cite{Gallager,Kneubuehler,Mathis,Hsu}. A block diagram of the process is shown in \figref{fig:quadrature-modulation}.
 
-%% TODO: Quick par on "we will dicusss M-Ary QAM, M is 2^something"
-
 \subsection{Modulation of a digital message}
 
 \paragraph{Bit splitter}
 
-As mentioned above, quadrature modulation allows to send more than one bit per unit time. The first step is to use a so called bit splitter, that converts the continuous bitstream \(m(n)\) into pairs of chunks of \(\sqrt{M}\) bits each. The two bit vectors of length \(\sqrt{M}\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\) in figure \ref{fig:quadrature-modulation}, are called in-phase and quadrature component respectively\cite{Hsu}. The reason will become more clear later.
+As mentioned above, quadrature modulation allows to send more than one bit per unit time. The first step is to use a so called bit splitter, that converts the continuous bit stream \(m(n)\) into pairs of chunks of \(\kappa = \log_2 \sqrt{M}\) bits each, where \(M\) is a power of 2. The two bit vectors of length \(\kappa\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\) in figure \ref{fig:quadrature-modulation}, are called in-phase and quadrature component respectively\cite{Hsu}. The reason will become more clear later.
 
 \paragraph{Binary to level converter}
 
 %% TODO: explain why gray code
 
-Both bit vectors \(\vec{m}_i, \vec{m}_q \in \{0,1\}^{\sqrt{M}}\) are sent through a binary to level converter. It's purpose is to reinterpret the bit vectors as numbers, usually in gray code, and to convert them into analog waveforms, which we will denote with \(m_i(t)\) and \(m_q(t)\) respectively. Mathematically the binary to level converter can be described as:
+Both bit vectors \(\vec{m}_i, \vec{m}_q \in \{0,1\}^\kappa\) are sent through a binary to level converter. It's purpose is to reinterpret the bit vectors as numbers, usually in gray code, and to convert them into analog waveforms, which we will denote with \(m_i(t)\) and \(m_q(t)\) respectively. Mathematically the binary to level converter can be described as:
 \begin{equation}
 	m_i(t) = \text{Level}(\vec{m}_i) \cdot p(t),
 \end{equation}
-i.e. a pulse function\footnote{Typically a root raised cosine to optimize for bandwidth \cite{Hsu}.} \(p(t)\) scaled by the interpreted binary value, written here using a ``Level'' function. So at this point a level of each analog waveform encodes \(\sqrt{M}\) bits per unit time, and there are two such waveforms.
+i.e. a pulse function\footnote{Typically a root raised cosine to optimize for bandwidth \cite{Hsu}.} \(p(t)\) scaled by the interpreted binary value, written here using a ``Level'' function. So there are \(2^\kappa = \sqrt{M}\) levels the analog waveforms \(m_i(t)\) and \(m_q(t)\) can take, and each level encodes \(\kappa\) bits per unit time.
 
 
 \paragraph{Mixer}
@@ -93,7 +91,7 @@ A graphical way to see what is happening, is to observe a so called \emph{conste
 A concrete example for \(M = 16\): if the message is 1110 the bit splitter creates two values \(\vec{m}_q = 11\) and \(\vec{m}_i = 10\); both are converted into analog amplitudes (symbols) \(m_q = 3\) and \(m_i = 4\); that are then mixed with their respective carrier, resulting in \(s(t)\) being the point inside the bottom right sub-quadrant of the top right quadrant (blue dot in \figref{fig:qam-constellation}).
 \vspace{1em}
 
-In \figref{fig:qam-constellation} the dots of the constellation have coordinates that begin on the bottom left corner, and are nicely aligned on a grid. Both are not a necessary requirement for QAM, in fact there are many schemes (for example when \(M = 32\)) that are arranged on a non square shape, and place the dots in different orders. The only constraint that most QAM modulators have in common, with regards to the geometry of the constellation, is that between any two adjacent dots (along the axis, not diagonally) only one bit of the represented value changes (gray code). This is done to improve the bit error rate (BER) of the transmission.
+In \figref{fig:qam-constellation} the dots of the constellation have coordinates that begin on the bottom left corner, and are nicely aligned on a grid. Both are not a necessary requirement for QAM, in fact there are schemes that are arranged on a non square shape, and place the dots in different orders. For example, when \(M = 32\) the dots are arranged on a \(6\times 6\) grid, but the outermost corners are not used. The only constraint that most QAM modulators have in common, with regards to the geometry of the constellation, is that between any two adjacent dots (along the axis, not diagonally) only one bit of the represented value changes (gray code). This is done to improve the bit error rate (BER) of the transmission.
 
 \begin{figure}
 	\hfill
@@ -242,25 +240,29 @@ Finally, another important mean of parametrizing a multipath fading channel is w
 
 Since in practice signal processing is done digitally, it is meaningful to discuss the properties of a discrete-time model. To keep the complexity of the model manageable some assumptions are necessary, thus the sent discrete signal\footnote{This is an abuse of notation. The argument \(n\) is used to mean the \(n\)-th digital sample of \(s\), whereas \(s(t)\) is used for the analog waveform. A more correct but longer notation is \(s(nT)\), where \(T\) is the sample time.} \(s(n)\) is assumed to have a finite single sided bandwidth \(W\). This implies that the time-domain the signal is a series of sinc-shaped pulses each shifted from the previous by a time interval \(T = 1 / (2W)\) (Nyquist rate) \cite{Messier}:
 \begin{equation}
-	s(t) = \sum_n s(n) \sinc(t/T - n).
+	s(t) = \sum_n s(n) \sinc \left(\frac{t}{T} - n\right).
 \end{equation}
 The waveform \(s(t)\) is then convolved with the CIR function \(h(\tau, t)\) (with respect to \(\tau\)) from the continuous time model resulting in the waveform at the receiver
 \begin{align*}
-	r(t) &= \int_ \mathbb{R} \sum_n s(n) \sinc(\tau / T - n) \sum_k c_k(t) \delta(\tau - \tau_k(t)) \,d\tau \\
-	&= \sum_n s(n) \sum_k c_k(t) \sinc(t/T - \tau_k(t)/T - n),
+	r(t) &= \int_ \mathbb{R} \sum_n s(n) \sinc \left(
+			\frac{\tau}{T} - n
+		\right) \sum_k c_k(t) \delta(\tau - \tau_k(t)) \,d\tau \\
+	&= \sum_n s(n) \sum_k c_k(t) \sinc\left(
+			\frac{t - \tau_k(t)}{T} - n
+		\right),
 \end{align*}
 which is then sampled at the Nyquist rate of \(2W = 1/T\), resulting in a set of samples\footnote{Again, the abusing notation \(r(m)\) means the \(m\)-th digital sample of \(r(t)\), i.e. \(r(mT)\).} \cite{Messier}:
 \[
-	r(m) = \sum_n s(n) \sum_k c_k(mT) \sinc(m - \tau_k(mT)/T - n).
+	r(m) = \sum_n s(n) \sum_k c_k(mT) \sinc\left(m - \frac{\tau_k(mT)}{T} - n\right).
 \]
-Finally the substitution \(l = m - n\) eliminates the sender's sample counter \(n\) (unknown to the receiver) and reformulates \(r(m)\) as a discrete convolution product of with a discrete CIR function \(h_l(m)\) \cite{Messier}:
+Finally, the substitution \(l = m - n\) eliminates the sender's sample counter \(n\) (unknown to the receiver), and reformulates \(r(m)\) as a discrete convolution product of \(s(n)\) with a discrete CIR function \(h_l(m)\) \cite{Messier}:
 \begin{equation}
-	r(m) = \sum_l s(m - l) \sum_k c_k(mT) \sinc(l - \tau_k(mT)/T) 
+	r(m) = \sum_l s(m - l) \sum_k c_k(mT) \sinc\left(l - \frac{\tau_k(mT)}{T}\right) 
 	= \sum_l s(m - l) h_l (m).
 \end{equation}
 This result is very similar to the continuous time model described by \eqref{eqn:multipath-impulse-response} in the sense that each received digital sample is a sent sample convolved with a different discrete channel response (because of time variance). To see how the discrete CIR
 \begin{equation} \label{eqn:discrete-multipath-impulse-response}
-	h_l(m) = \sum_k c_k(mT) \sinc(l - \tau(mT)/T)
+	h_l(m) = \sum_k c_k(mT) \sinc\left(l - \frac{\tau(mT)}{T}\right)
 \end{equation}
 is different from \eqref{eqn:multipath-impulse-response} consider again the plot of \(h(\tau,t)\) in \figref{fig:multipath-impulse-response}. The plot of \(h_l(m)\) would have discrete axes with \(m\) replacing \(t\) and \(l\) instead of \(\tau\), and because of the finite bandwidth in the \(l\) axis instead of Dirac deltas there would be superposed sinc functions.
 
