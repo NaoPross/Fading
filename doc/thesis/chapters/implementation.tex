@@ -92,7 +92,9 @@ To compute the empirical bit error rate (BER) of the setup, the data has to be f
 
 GR provides a constellation modulator block, that already implements several standard constellations (QPSK and 16-ary QAM being of interest for us). The block also already integrates a root raised cosine filter, whose phase bandwidth (roll-off factor) can be given as parameter; in all flow graphs the roll off factor is \(\alpha = 0.35\).
 
-%TODO: Warum alpha 0.35
+% TODO: Warum alpha 0.35
+%
+% Because we had no restrictions on bandwidth (except for the physical ones, which are unreachable). Though, we are in the 2.4 GHz spectrum which is pretty crowded. For a sanity check: we are using a very short symbol time of around T = 1 / 1 MHz = 1 us, then the bandwidth with \alpha = 0.35 is B = (1 + \alpha) / (2 * T) = 675 kHz. Pretty small, when compared for ex to WiFi 802.11g channels that are like 20 MHz wide.
 
 \section{Receiver chain}
 
