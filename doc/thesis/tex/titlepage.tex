@@ -1,21 +1,46 @@
 % vim: set ts=2 sw=2 noet:
 
 \begin{titlepage}
-	
-%	{\large Multipath Fading Demonstration Platform using Software Defined Radio\par}
-%	\vspace{1cm}
-%	{\scshape Naoki Sean Pross \and Sara Cinzia Halter\par}
-%	\vspace{1cm}
-% 	{\scshape Semester Thesis\par}
-%	{\scshape December 23, 2021\par}
+	\newgeometry{
+		outer = 3cm, inner = 3cm,
+	}
+	\centering
 
-%	TODO. Picture
-%	\vfill
-%	Field of Study \par
-%	Wireless Communications
-%	Advisor, Examiner \par
-%	Prof. Dr. Heinz Mathis
-%	OST Eastern Switzerland University of Applied Sciences, Rapperswil
+	{\huge\bfseries\sffamily
+		Multipath Fading Demonstration Platform using Software Defined Radio
+	\par}
 
-	
+	\vspace{1cm}
+
+	{\large\slshape
+		Naoki Sean Pross, \qquad Sara Cinzia Halter
+	\par}
+
+	\vspace{1cm}
+
+	{\scshape
+		Semester Thesis
+	\par}
+
+	{
+		OST --- Eastern Switzerland University of Applied Sciences, Rapperswil
+	\par}
+
+	{\
+		December 23\textsuperscript{rd}, Fall Semster 2021
+	\par}
+
+	\vfill
+	% \includegraphics[width = \linewidth]{figures/}
+	\resizebox{.9\linewidth}{!}{
+		\input{figures/tikz/multipath-sketch}
+	}
+	\vfill
+
+	\begin{tabular}{rl}
+		\bfseries\sffamily Field of Study & Wireless Communications \\
+		\bfseries\sffamily Topic          & Multipath Fading        \\
+		\bfseries\sffamily Examiner       & Prof. Dr. Heinz Mathis  \\
+	\end{tabular}
+	\restoregeometry
 \end{titlepage}
