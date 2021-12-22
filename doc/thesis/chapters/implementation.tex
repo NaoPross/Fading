@@ -244,7 +244,9 @@ def block_phase(self, start, end):
 	\label{fig:GUI}}
 \end{figure}
 
-The GUI is implemented with the Dear PyGUI tool as described in section \ref{sec:GUI}. In \figref{fig:GUI} the surface of it is shown. There are illustrated the four different constellation plots from the channel, the synchronized after the polyphase clock sync, the equalized after the equalizer and the locked one at the end of the receiver chain.  The GUI shows the BER of the constellation  and a time plot. The surface contains also a block diagram where actually the variable parameter should be, as described in the further section \ref{GUI-improfment}.
+The GUI is implemented with the Dear PyGUI library as introduced in section \ref{sec:GUI}. In \figref{fig:GUI} the graphical interface of it is shown. 
+Four different constellation plots are illustrated: the channel itself, after the polyphase clock synchronization, after the equalizer and the locked constellation.
+The GUI shows the BER of the constellation and a time domain plot. The interface also contains a block diagram.
 
 
 \section{Channel simulations}
@@ -253,15 +255,16 @@ In order to study the effects of multipath fading, a series of simulations have 
 
 \subsection{Fading with discrete time model} \label{sec:discrete-time-model-fir}
 
- To implement and illustrate the fading effect, for the statical version according to section \ref{sec:discrete-time-model}, a separate block was created and implemented in the channel shown in listing \ref{lst:fractional-delay-fir}. This block is based on a FIR filter. It can be displayed with a direct path (LOS) or without one (NLOS).
-With the help of this filter, the delay of the line of sight paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed ray. 
+ To implement and illustrate a static fading effect corresponding to section \ref{sec:discrete-time-model}, a custom block was created. The work function of the block is shown in listing \ref{lst:fractional-delay-fir}. This block is based on a FIR filter. It can be configured to simulate a with direct path (LOS) or without (NLOS).
+ In this block it is possible to simulate any number of paths with different attenuations.
 
-A special case is show in \figref{fig:qpsk-simulations-static}, where the delay in sample given is the same as the sample per symbol value or a multiple of it. An other example is shown in the same figure, with more different delayed paths.
+A special case is show in the first and second colum of \figref{fig:qpsk-simulations-static}, where the delay is  a multiple of the symbol time. Another example with more taps is shown in the third colum.
 
- These simulation values do not realistically correspond to the reality, because there are incalculable side effects which occur. Those aren't possible to illustrate in this simulation.
+These simulation values are however not realistic, because the static model is too simple. It does not account for other effects, such as changes in the environment. 
 
-The block was additionally implemented with the method described in section \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample, which in turn means that the other sampled values do not add up to zero.
-Thus, they will be distributed among the other whole numbers. A window function could also be implemented to limit these values. Here  a simple restricted for the sinc function was made.
+The block  additionally implemented the method described in section \ref{sec:fractional-delay} to allow non-integer delays. 
+Here the sinc pulse was limited using a simple boxcar function, the filter could be improved by using for example a Hann window.
+
 
 \begin{lstlisting}[
 	texcl = true, language = python, escapechar = {`},
@@ -306,33 +309,31 @@ Thus, they will be distributed among the other whole numbers. A window function 
 
 \subsection{Fading with statistical model}
 
-In order to represent the effect of multipath fading not only statically, a second model was created using the Frequency Selective Fading Model from GR, according to section \ref{sec:statistical-model}, which was implemented using the algorithm from the paper \cite{Alimohammad2009}, with the help of the sum-of sinusoid principle (SOS). The algorithm in this block is implemented with the aim that only a small number of sinusoids are needed to simulate each ray. For the simulations shown the value 8 has been chosen.
+In order to represent the effect of multipath fading not only statically, a second statical model fro GR was used. The block named Frequency Selective Fading Model is implemented using the algorithm from \cite{Alimohammad2009}, with the help of the sum-of sinusoid principle (SOS). The algorithm in this block is implemented with the aim that only a small number of sinusoids are needed to simulate each ray. For the simulations shown, the recommended value of 8 has been chosen.
 
-It is further possible to choose between Rayleigh or Rician for the statistical modeling. When the Rician model is chosen, a realistic value for the factor \(K\) (which is between zero and ten) needs to be given. As mentioned earlier, if \(K=0\) the distribution is the same as with the Rayleigh model. For a factor \(K = 5.1\) the probability function is gaussian distributed.
+In the block it is possible to choose between Rayleigh or Rician for the statistical modeling. When the Rician model is chosen, a realistic value for the \(K\) factor (between zero and ten \cite{Mathworks}) needs to be given. As mentioned in section \ref{{sec:statistical-model}}, if \(K=0\) the distribution is the same as in the Rayleigh model. 
 
-%TODO : Sätze anpassen
+The delays of the power profile are specified in samples. Those vectors depend on the environment. 
 
-The power delay profile which specifies the delay in time, which uses sample as unit. For this delay vector some realistic values are for the first delay \cite{Mathworks} given as. If there is  line of sight component this should be zero. The second delayed path depends on the environment of the measurement. In an indoor environment it is usually between \(10^{-9}\) to \(10^{-7}\) and in an outdoor environment between \(10^{-7}\) to \(10^{-5}\). The other values depends on the bandwidth. 
+The magnitudes of the pulses are given in their linear values. In practice the average path gain of a fading path is in the range from \( -20 \text{dB}\) to   \(0\text{dB}\).
 
-The magnitudes of the pulses are given in the linear value. In practice the average path gain of a fading path is in the range of \([ -20 \text{dB} , 0\text{dB}]\).
+To add movement, some Doppler shift can be introduced, but this frequency offset needs to be normalized with the sampling rate. 
 
-To add movement, some Doppler shift can be introduced according to the formula \eqref{Doppler-shift}. But this frequency needs to be normalized with the sampling rate. 
-An example of such a simulation plot is shown in \figref{fig:qpsk-simulations-dynamic}.
 
-When nothing else is mentioned, the number of FIR-filter taps used is eight.
+%When nothing else is mentioned, the number of FIR-filter taps used is eight.
 
 
 \subsubsection{Issues}
 
-A difficulty is to check the correctness of the statistical models, if there is noise in the channel from the fading effect. Especially when the Doppler effect is included. Then the simulation is difficult to recreate, when the amplitude and phase parameter are not in a special state, in which the amplitude and the phase shift could be seen exactly. 
-To have some indication to verify the plot, mainly whether the movement of the signal could be correct, a Matlab model was used with the same values as in the GR simulation, for the different distributions. With this, the model could be verified to be correct.
+It is difficult to check, whether the noise generated from the statistical model is correct. Especially when the Doppler effect is included. Then the simulation is difficult to recreate, when the amplitude and phase parameter are not in a special state, in which the amplitude and the phase shift can be seen exactly. 
+To have a possibility to verify the plot, mainly whether the movement of the signal could be correct, a Matlab model with the same values as in the GR simulation was used. Using this method, the model turned out to be correct.
 
 \subsubsection{Real value example}
 
-In order to obtain a realistic simulation the values for multipath fading propagation conditions for an Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute) were used \cite{ETSI}, with the values shown in \tabref{tab:etsi-tap-values}. For those the maximum Doppler frequency possibilities are predefined. In the following examples \figref{fig:qpsk-simulations-dynamic} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, opposed to the values calculated in \eqref{eq:doppler} for a walking speed of \(\SI{2}{\meter\per\second}\), where the Doppler frequency is \(\SI{16}{\hertz}\). Those predefined values correspond to a speed of
+In order to obtain a realistic simulation, the values for multipath fading propagation conditions of an Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute) were used \cite{ETSI}. The values shown in \tabref{tab:etsi-tap-values}. For these  values the maximum Doppler frequency possibilities are predefined. In the following examples in \figref{fig:qpsk-simulations-dynamic} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, opposed to the are values calculated in \eqref{eq:doppler} for a walking speed of \(\SI{2}{\meter\per\second}\), where the Doppler frequency is \(\SI{16}{\hertz}\). Those predefined values correspond to a speed of
 \begin{align}
-	v &= \frac{\Delta f}{f_c}\cdot c_0 &= \frac{\SI{5}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{0.625}{\meter\per\second}, \text{ and} \\
-	v &= \frac{\Delta f}{f_c}\cdot c_0 &= \frac{\SI{70}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{8.75}{\meter\per\second}.
+	v_1 &= \frac{\Delta f}{f_c}\cdot c_0 &= \frac{\SI{5}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{0.625}{\meter\per\second}, \text{ and} \\
+	v_2 &= \frac{\Delta f}{f_c}\cdot c_0 &= \frac{\SI{70}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{8.75}{\meter\per\second}.
 \end{align}
 The numbers of taps used in this case are the number of given values.
 
@@ -356,7 +357,7 @@ The numbers of taps used in this case are the number of given values.
 	\caption{Extended Typical Urban model (ETU) ETSI Standard PDP values for multipath fading propagation conditions \cite{ETSI}. \label{tab:etsi-tap-values}}
 \end{table}
 
-\subsection{Measurements / Demonstration}
+\subsection{Measurements}
 
 %\begin{figure}
 %	\centering
@@ -394,12 +395,12 @@ The numbers of taps used in this case are the number of given values.
 \end{figure}
 
 
-To demonstrate the fading effect, the two SDRs are used. For that some different measurements were made.
-For example one in an indoor environment, the Lab. An other in an outdoor environment, the set up is shown in \figref{fig:mesurement-set-up-outside}.
-The result of those measurements are illustrated in \figref{fig:hardware-mesurement}. Because of the current set up the distance between the two SDRs were only about \si{2}-\SI{3}{\meter}.
-The signal were sent with a gain value of 0.4. The phase change and amplitude changes could be seen well. Specially when the transmitter or the receiver were moved, the change of them get faster.
+To demonstrate the fading effect, two SDRs were used. For that multiple different measurements were made.
+For example one in an indoor environment, the Lab. Another in an outdoor environment: The set up is shown in \figref{fig:mesurement-set-up-outside}.
+The results of those measurements are illustrated in \figref{fig:hardware-mesurement}. Because of the USB cables the distance between the two SDRs was only about \si{2} to \SI{3}{\meter}.
+The signals were all sent with a gain value of 0.4. The phase and amplitude changes could be seen well. Especially when the transmitter or the receiver were moved, the change of them got faster.
 
-The BER, which will be described in detail in the next section, was on average 2.37 for the outdoor environment and for the indoor about 2.67. It makes sense that the fading effect occurs more in an indoor environment, because there were more possibility for reflections at this distance as in the outdoor environment. 
+The BER, which will be described in detail in the next section, on average was 2.37 for the outdoor environment and about 2.67 for indoors. It makes sense that the fading effect occurs more in an indoor environment, because there were more surfaces for reflections. 
 
 
 
