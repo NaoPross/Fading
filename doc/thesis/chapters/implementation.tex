@@ -4,22 +4,17 @@
 
 \section{Overview}
 
-First the tools used in this project are introduced. Then implementations of the transmitter and receiver chains is explained. Subsequently simulations and measurements of fading channels with an empirically computed bit error rate (BER) are presented. Finally, the issues and the state of our current implementation is discussed.
+To illustrate the effects of multipath fading on a wireless transmission link, two machines with an USRP B210 each (hardware) were set up to run a software defined radio (SDR) using the GNU Radio (GR) signal processing toolkit. The latter can also be used as standalone (without hardware) to simulate a channel model. Therefore, simulations of different scenarios affected by multipath fading were elaborated and constructed using a static FIR model\footnote{As discussed in sections \ref{sec:discrete-time-model} and \ref{sec:fractional-delay}} and dynamic statistical model\footnote{See section \ref{sec:statistical-model}}. To present the results a graphical interface was made using the Dear IMGUI framework.
+
+The rest of the chapter is structured as follows. First the tools used in this project are introduced. Then implementations of the transmitter and receiver chains is explained. Subsequently simulations and measurements of fading channels with an empirically computed bit error rate (BER) are presented. Finally, the issues and the state of our current implementation is discussed.
 
 \section{Software Stack}
 
 \subsection{GNU Radio}
 
-For both the signal processing and the simulations the GNU Radio (GR) toolkit was chosen, as it already had drivers for the USRP hardware. GR is an open-source free software framework that can be used to build signal processing chains and software defined radios (SDR). GR is composed of two parts: a C\texttt{++} library with Python bindings to write signal processing code, and GNU Radio Companion (GRC), a graphical user interface to more easily construct signal processing chains by representing signal processing algorithms as ``blocks'' that are chained together with arrows, essentially drawing a diagram called ``flow graph''. An example of a flow graph is shown in \figref{fig:flowgraph}.
+For both the signal processing and the simulations the GNU Radio (GR) toolkit was chosen, as it already had drivers for the USRP hardware. GR is an open-source free software framework that can be used to build signal processing chains and SDRs. GR is composed of two parts: a C\texttt{++} library with Python bindings to write signal processing code, and GNU Radio Companion (GRC). GRC is a graphical user interface made to more easily construct signal processing chains. Signal processing algorithms as ``blocks'' that are chained together with arrows, essentially drawing a diagram called ``flow graph''. An example of a flow graph is shown in \figref{fig:flowgraph}.
 
 Internally GR works by keeping multiple memory buffers of samples, that are passed as pointers to the signal processing algorithms' ``work functions''. When the signal processing is complete, the output buffer of one block is given to the next block as input according to how they were connected in the flow graph. The structure of a block is shown in the Python listing \ref{lst:gr-block-py}. To improve performance GR creates a thread for each work function to parallelize the workload of the concurrently running signal processing blocks. For more details see the GNU Radio Wiki and User Manual in \cite{GRWiki}.
-
-\begin{figure}
-	\caption{
-		A GNU Radio flow graph.
-		\label{fig:flowgraph}
-	}
-\end{figure}
 
 {\newcommand{\placeholder}[1]{\textit{\(\langle\)\,\textrm{#1}\,\(\rangle\)}}
 \begin{lstlisting}[
@@ -95,11 +90,18 @@ To compute the empirical bit error rate (BER) of the setup, the data has to be f
 
 \subsection{Modulation}
 
-GR provides a constellation modulator block, that already implements several standard constellations (QPSK and 16ary-QAM being of interest for us). The block also already integrates a root raised cosine filter, whose phase bandwidth (roll-off factor) can be given as parameter; in all flow graphs the roll off factor is \(\alpha = 0.35\).
+GR provides a constellation modulator block, that already implements several standard constellations (QPSK and 16-ary QAM being of interest for us). The block also already integrates a root raised cosine filter, whose phase bandwidth (roll-off factor) can be given as parameter; in all flow graphs the roll off factor is \(\alpha = 0.35\).
 
 %TODO: Warum alpha 0.35
 
 \section{Receiver chain}
+
+\begin{figure}
+	\caption{
+		Cutout GNU Radio flow graph used to synchronize, equalize and lock the envelope.
+		\label{fig:flowgraph}
+	}
+\end{figure}
 
 \subsection{Envelope detector}
 
