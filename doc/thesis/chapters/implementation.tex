@@ -147,7 +147,7 @@ The relevant observation to make in \eqref{eqn:xc-oop-copy} that since \(R_{aa}\
 
 \subsubsection{Implementing fine phase and frequency correction} \label{sec:implement-phasecorr}
 
-To implement in GR what was discussed in section \ref{sec:phasecorr} two blocks shown in \figref{fig:sync-lock-flowgraph} were used: a correlator estimator block, and a custom block. The former essentially implements the first 3 of the steps discussed at the end of section \ref{sec:phasecorr}. The correlator estimator block is given a sequence of samples, and when the cross correlation between them and the input stream is higher than a certain threshold (90\% of the amplitude of a perfect autocorrelation), it produces a ``tag'' in the output stream, that contains the phase estimate.
+To implement in GR what was discussed in the previous section the two blocks shown in \figref{fig:sync-lock-flowgraph} were used: a correlator estimator block, and a custom block. The former essentially implements the first 3 of the steps discussed at the end of section \ref{sec:phasecorr}. The correlator estimator block is given a sequence of samples, and when the cross correlation between them and the input stream is higher than a certain threshold (90\% of the amplitude of a perfect autocorrelation), it produces a ``tag'' in the output stream, that contains the phase estimate.
 
 Tags are GR's way of working with metadata that is attached to a sample. Internally tags are just polymorphic data structures containing a number indicating the absolute offset (in samples), and a pair of arbitrary values called ``key'' and ``value''. Tags are passed on from one block to the next like sample streams (unless the block specifies to do otherwise).
 
@@ -245,13 +245,15 @@ In order to study the effects of multipath fading, a series of simulations have 
 
 \subsection{Fading with discrete time model} \label{sec:discrete-time-model-fir}
 
- To implement and illustrate the fading effect, for the statical version according to \ref{sec:discrete-time-model}, a separate block was created and implemented in the channel shown in listing \ref{lst:fractional-delay-fir}. This block is based on a FIR filter. It can be displayed with a direct path (LOS) or without one (NLOS).
+ To implement and illustrate the fading effect, for the statical version according to section \ref{sec:discrete-time-model}, a separate block was created and implemented in the channel shown in listing \ref{lst:fractional-delay-fir}. This block is based on a FIR filter. It can be displayed with a direct path (LOS) or without one (NLOS).
 With the help of this filter, the delay of the line of sight paths are illustrated. In this block it is possible to simulate any number of these paths with different strengths, as long as there is an associated amplitude specified for each delayed ray. 
 
-A special case is show in \figref{fig:qpsk-simulations-static}, where the delay in sample given is the same as the sample per symbol value or a multiple of it. An other example is shown in the same figure,with more diffident delayed paths. These simulation values do not realistically correspond to the reality, because too many incalculable side effects occur, which aren't possible to illustrate in this simulation.
+A special case is show in \figref{fig:qpsk-simulations-static}, where the delay in sample given is the same as the sample per symbol value or a multiple of it. An other example is shown in the same figure, with more different delayed paths.
 
-This block was additionally implemented with the method described in \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample, which in turn means that the other sampled values do not add up to zero.
-Thus, they will be distributed among the other whole numbers. A window function could also be implemented to limit these values. Here  a simple restricted for the sinc function is implemented.
+ These simulation values do not realistically correspond to the reality, because there are incalculable side effects which occur. Those aren't possible to illustrate in this simulation.
+
+The block was additionally implemented with the method described in section \ref{sec:fractional-delay} to allow non-integer delay values compared to the samples shown in \figref{fig:fractional-delay-sinc-plot}. Where the sinc function does not select an integer sample, which in turn means that the other sampled values do not add up to zero.
+Thus, they will be distributed among the other whole numbers. A window function could also be implemented to limit these values. Here  a simple restricted for the sinc function was made.
 
 \begin{lstlisting}[
 	texcl = true, language = python, escapechar = {`},
@@ -296,9 +298,9 @@ Thus, they will be distributed among the other whole numbers. A window function 
 
 \subsection{Fading with statistical model}
 
-In order to represent the effect of multipath fading not only statically, a second model was created using the Frequency Selective Fading Model from GR, according to \ref{sec:statistical-model}, which was implemented using the algorithm from the paper \cite{Alimohammad2009}, with the help of the sum-of sinusoid principle (SOS). The algorithm in this block is implemented with the aim that only a small number of sinusoids are needed to simulate each ray. For the simulations shown the value 8 has been chosen.
+In order to represent the effect of multipath fading not only statically, a second model was created using the Frequency Selective Fading Model from GR, according to section \ref{sec:statistical-model}, which was implemented using the algorithm from the paper \cite{Alimohammad2009}, with the help of the sum-of sinusoid principle (SOS). The algorithm in this block is implemented with the aim that only a small number of sinusoids are needed to simulate each ray. For the simulations shown the value 8 has been chosen.
 
-It is furter possible to choose between Rayleigh or Rician for the statistical modeling. When the Rician model is chosen, a realistic value for the factor \(K\) (which is between zero and ten) needs to be given. As mentioned earlier, if \(K=0\) the distribution is the same as with the Rayleigh model. For a factor \(K = 5.1\) the probability function is gaussian distributed.
+It is further possible to choose between Rayleigh or Rician for the statistical modeling. When the Rician model is chosen, a realistic value for the factor \(K\) (which is between zero and ten) needs to be given. As mentioned earlier, if \(K=0\) the distribution is the same as with the Rayleigh model. For a factor \(K = 5.1\) the probability function is gaussian distributed.
 
 %TODO : Sätze anpassen
 
@@ -314,13 +316,13 @@ When nothing else is mentioned, the number of FIR-filter taps used is eight.
 
 \subsubsection{Issues}
 
-A difficulty is to check the correctness of the statistical models, if there is noise in the channel from the fading effect. Especially when the Doppler effect is included. Then the simulation was difficult to recreate, when the amplitude and phase parameter are not in a special state in which the amplitude and the phase shift could be seen exactly. 
-To have some indication to verify the plot, mainly whether the movement of the signal could be correct, a Matlab model was used with the same values as im the GR simulation, for the different distributions. With this, the model could be verified to be correct.
+A difficulty is to check the correctness of the statistical models, if there is noise in the channel from the fading effect. Especially when the Doppler effect is included. Then the simulation is difficult to recreate, when the amplitude and phase parameter are not in a special state, in which the amplitude and the phase shift could be seen exactly. 
+To have some indication to verify the plot, mainly whether the movement of the signal could be correct, a Matlab model was used with the same values as in the GR simulation, for the different distributions. With this, the model could be verified to be correct.
 
 %TODO: Other Plots?
 \subsubsection{Real value example}
 
-In order to obtain a realistic simulation the values for multipath fading propagation conditions for an Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute) were used \cite{ETSI}, with the values shown in \tabref{tab:etsi-tap-values}. For those the maximum Doppler frequency possibilities are predefined. In the following examples \figref{fig:dynamic-exp-real} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, opposed to the values calculated in \eqref{eq:doppler} for a walking speed of \(\SI{2}{\meter\per\second}\), where the Doppler frequency is \(\SI{16}{\hertz}\). Those predefined values correspond to a speed of
+In order to obtain a realistic simulation the values for multipath fading propagation conditions for an Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute) were used \cite{ETSI}, with the values shown in \tabref{tab:etsi-tap-values}. For those the maximum Doppler frequency possibilities are predefined. In the following examples \figref{fig:qpsk-simulations-dynamic} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, opposed to the values calculated in \eqref{eq:doppler} for a walking speed of \(\SI{2}{\meter\per\second}\), where the Doppler frequency is \(\SI{16}{\hertz}\). Those predefined values correspond to a speed of
 \begin{align}
 	v &= \frac{\Delta f}{f_c}\cdot c_0 &= \frac{\SI{5}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{0.625}{\meter\per\second}, \text{ and} \\
 	v &= \frac{\Delta f}{f_c}\cdot c_0 &= \frac{\SI{70}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{8.75}{\meter\per\second}.
@@ -353,12 +355,45 @@ The numbers of taps used in this case are the number of given values.
 	\centering
 	\includegraphics[frame, width = \linewidth]{figures/screenshots/Hardware_indoor.png}
 	\caption{
-		Plot from the GNU Radio sink for en indoor environment test with the demonstrator.
+		Plot from the GNU Radio sink for an indoor environment demonstrator.
 		\label{fig:GR-Hardware-indoor}
 	}
 \end{figure}
+
+\begin{figure}
+	\centering
+	\hfill
+	\begin{subfigure}[t]{.47\linewidth}
+		\includegraphics[frame, width = \linewidth]{figures/picture/PC210002.JPG}
+		\caption{
+			Reviser SDR in the outdoor environment set up.
+			\label{fig:sdr1}
+		}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[t]{.47\linewidth}
+		\centering
+		\includegraphics[frame, width = \linewidth]{figures/picture/PC210011.JPG}
+		\caption{
+		 Transmitter SDR in the outdoor environment measurement set up.
+			\label{fig:sdr2}
+		}
+	\end{subfigure}
+	\hfill
+	\caption{
+		Outdoor measurement set up.
+		\label{fig:mesurement-set-up-outside}
+	}
+\end{figure}
+
+
 To demonstrate the fading effect, the two SDRs are used.
+
+
 The BER in an indoor enviroment, for example the lab is about 
+
+
+%TODO.Describe Mesurement
 
 
 \subsection{Empirical BER} \label{sec:ber}
@@ -412,13 +447,20 @@ With QAM however, the complexity of the constellation and the higher number of b
 \end{equation}
 and \(M\) is relatively prime to \(N\) \cite{Chu1972}. CAZAC waveforms are ideal because they have a Dirac delta as autocorrelation \cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer (but not CMA, which unfortunately cannot be used for QAM). Thus, to use CAZAC waveforms, the transmitter needs to put them in front of the modulated symbols (for example using a correctly parametrized Stream MUX block in GR), and the receiver would need to synchronize with the sequence before the clock recovery or equalization. The latter is especially problematic because then it is no longer possible to identify the peak by comparing the autocorrelation value to a fixed threshold as done in section \ref{sec:implement-phasecorr}. Because of the aforementioned reasons, in its current state the QAM flow graph is unable to lock and decode any signals.
 
+
+%TODO: Show figurs with QAM 
+
+
 \subsection{Single threaded GUI application} \label{sec:gui-issue-single-threaded}
 
 The current GUI prototype built with DearPyGUI has some issues, the most critical begin that it is a single-threaded program. The interprocess communications (with GR's flow graphs) should be on a separate thread from the graphics, what is currently not the case. The problem is not noticeable as long as the flow graphs in the background keep sending data, but as soon as the UDP/IP data stream stops, the timeout of the socket interface causes the interface to run at less than 20 frames per second.
 
+
+%TODO: GUI description
+
 \subsection{Clock synchronization issues}
 
-Unfortunately the two SDR need an external clock generator. For that a Rubidium Frequency standard device (Model FS725) is used with the clock frequency of \SI{10}{\mega\hertz}. Two of them are used to make them more movable and independent. Those Rubidiums where needed, because the synchronization does not work as planed in \ref{sec:preforming-implementation}. 
+Unfortunately the two SDR need an external clock generator. For that a Rubidium Frequency standard device (Model FS725) is used with the clock frequency of \SI{10}{\mega\hertz}. Two of them are used to make them more movable and independent. Those clock generators  where needed, because the synchronization does not work as planed in \ref{sec:preforming-implementation}. 
 %TODO: Right squenz?
 Without those only the amplitudes could be seen in the plots. 
 
@@ -428,6 +470,7 @@ Without those only the amplitudes could be seen in the plots.
 \section{Produced constellation plots}
 
 % TODO anayl
+%TODO achsenbeschrieftung 
 
 
 \newgeometry{
