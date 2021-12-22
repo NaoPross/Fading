@@ -9,22 +9,22 @@
 	}
 	\caption{
 		Block diagram of the developed wireless communication system with annotated signal names. Frequency domain representations of signals use the uppercase symbol of their respective time domain name. Amplification constants in the channel (for \(s(t)\) and \(r(t)\)) were omitted throughout the document for readability.
-		\label{fig:notation}
+		\label{fig:blockdiagram}
 	}
 \end{figure}
 
 \section{Overview}
 
-The following two sections will briefly introduce mathematical formulations of the modulation schemes and of the channel models used in this project. The notation used is summarized in \figref{fig:notation}. For conciseness, encoding schemes and (digital) signal processing calculations are left out and discussed later.  Section \ref{sec:multipath-fading} presents an established mathematical model to understand multipath fading, as well as a brief description of a discrete-time model and the intricacies caused by the sampling process. Finally, the concept of stochastic models is mentioned, as they are often used to simulate multipath channels \cite{Messier,Mathis}.
+The sections \ref{sec:mqam} and \ref{sec:mpsk} will briefly introduce the mathematical formulations of the QAM and PSK modulation schemes. Section \ref{sec:multipath-fading} the channel models used in this project are explained. The setup is summarized as a block diagram in \figref{fig:blockdiagram}. For conciseness, encoding schemes and (digital) signal processing calculations are left out and discussed later. Section \ref{sec:multipath-fading} presents an established mathematical model to understand multipath fading, as well as a brief description of a discrete-time model and the intricacies caused by the sampling process. Finally, the concept of stochastic models is mentioned, as they are often used to simulate multipath channels \cite{Messier,Mathis}.
 
 %% TODO: A section on maths?
 % \section{Signal space and linear operators}
 
-\section{Quadrature amplitude modulation (\(M\)-ary QAM)}
+\section{Quadrature amplitude modulation (\(M\)-ary QAM)} \label{sec:mqam}
 
 \begin{figure}
 	\centering
-	\resizebox{\linewidth}{!}{
+	\resizebox{.9\linewidth}{!}{
 		\input{figures/tikz/qam-modulator}
 	}
 	\caption{
@@ -39,7 +39,7 @@ Quadrature amplitude modulation is a family of modern digital modulation methods
 
 \paragraph{Bit splitter}
 
-As mentioned above, quadrature modulation allows to send more than one bit per unit time. The first step is to use a so called bit splitter, that converts the continuous bit stream \(m(n)\) into pairs of chunks of \(\kappa = \log_2 \sqrt{M}\) bits each, where \(M\) is a power of 2. The two bit vectors of length \(\kappa\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\) in figure \ref{fig:quadrature-modulation}, are called in-phase and quadrature component respectively\cite{Hsu}. The reason will become more clear later.
+As mentioned above, quadrature modulation allows to send more than one bit per unit time. The first step of the process, is to use a so called bit splitter, that converts the continuous bit stream \(m(n)\) into pairs of chunks of \(\kappa = \log_2 \sqrt{M}\) bits each, where \(M\) is a power of 2. The two bit vectors of length \(\kappa\), denoted by \(\vec{m}_i\) and \(\vec{m}_q\) in figure \ref{fig:quadrature-modulation}, are called in-phase and quadrature component respectively\cite{Hsu}. The reason will become more clear later.
 
 \paragraph{Binary to level converter}
 
@@ -54,12 +54,12 @@ i.e. a pulse function\footnote{Typically a root raised cosine to optimize for ba
 
 \paragraph{Mixer}
 
-Having analog level signals, it is now possible to mix them with radio frequency carriers. Because there are two waveforms, one might expect that two carrier frequencies are necessary, however this is not the case. The two component \(m_i(t)\) and \(m_q(t)\) are mixed with two different periodic signals \(\phi_i(t)\) and \(\phi_q(t)\) that have the same frequency \(\omega_c = 2\pi / T\). How this is possible is explained in the next section.
+By having analog level signals, it is now possible to mix them with radio frequency carriers. Because there are two waveforms, one might expect that two carrier frequencies are necessary, however this is not the case. The two component \(m_i(t)\) and \(m_q(t)\) are mixed with two different periodic signals \(\phi_i(t)\) and \(\phi_q(t)\) that have the same frequency \(\omega_c = 2\pi / T\). How this is possible is explained in the next section.
 
 
 \subsection{Orthogonality of carrier signals}
 
-Before explaining how the two carrier signals are generated, some important mathematical properties of \(\phi_i\) and \(\phi_q\) have to be discussed, in order to modulate two messages over the same frequency \(\omega_c\). The two carriers need to be \emph{orthonormal}\footnote{Actually orthogonality alone would be sufficient, however then the left side of \eqref{eqn:orthonormal-condition} would not equal 1, and an inconvenient factor would be introduced in many later equations \cite{Gallager,Hsu}.} to each other. Mathematically this is expressed by the conditions \cite{Gallager}
+Before explaining how the two carrier signals are generated, some important mathematical properties of \(\phi_i\) and \(\phi_q\) have to be discussed. In order to modulate two messages over the same frequency \(\omega_c\), the two carriers need to be \emph{orthonormal}\footnote{Actually orthogonality alone would be sufficient, however then the left side of \eqref{eqn:orthonormal-condition} would not equal 1, and an inconvenient factor would be introduced in many later equations \cite{Gallager,Hsu}.} to each other. Mathematically this is expressed by the conditions \cite{Gallager}
 \begin{subequations} \label{eqn:orthonormal-conditions}
 	\begin{align}
 		\langle \phi_i, \phi_q \rangle
@@ -82,9 +82,9 @@ Notice that assuming \(m_i\) and \(m_q\) are constant\footnote{This is an approx
 		&= m_i \underbrace{\int_T \phi_i \phi_i^* \,dt}_{1}
 			+ m_q \underbrace{\int_T \phi_q \phi_i^* \,dt}_{0} = m_i,
 \end{align*}
-which effectively means that it is possible to isolate a single component \(m_i(t)\) out of \(s(t)\). The same of course works with \(\phi_q\) as well resulting in \(\langle s, \phi_q \rangle = m_q\). Thus (remarkably) it is possible to send two signals on the same frequency, without them interfering with each other. Since each signal can represent one of \(\sqrt{M}\) values, by having two we obtain \(\sqrt{M} \cdot \sqrt{M} = M\) possible combinations.
+which effectively means that it is possible to isolate a single component \(m_i(t)\) out of \(s(t)\). The same of course works with \(\phi_q\) as well resulting in \(\langle s, \phi_q \rangle = m_q\). Thus (remarkably) it is possible to send two different signals over the same frequency, without them interfering with each other. Since each signal can represent one of \(\sqrt{M}\) values, by having two we obtain \(\sqrt{M} \cdot \sqrt{M} = M\) possible combinations.
 
-A graphical way to see what is happening, is to observe a so called \emph{constellation diagram}. An example is shown in \figref{fig:qam-constellation} for \(M = 16\). The two carrier signals \(\phi_i\) and \(\phi_q\) can be understood as bases of a coordinate system, in which the two amplitude levels of the two modulated messages, determine a position in the grid.
+A graphical way to see what is happening, is to observe a so called \emph{constellation diagram}. An example is shown in \figref{fig:qam-constellation} for \(M = 16\). The two carrier signals \(\phi_i\) and \(\phi_q\) can be understood as bases of a coordinate system, in which the two amplitude levels of the modulated messages determine a position in the grid.
 
 \paragraph{Example}
 
@@ -112,7 +112,7 @@ In \figref{fig:qam-constellation} the dots of the constellation have coordinates
 
 \subsection{Construction of orthogonal carrier signals}
 
-Knowing why there is a need for orthogonal carriers, we should now discuss which functions satisfy the property described by \eqref{eqn:orthogonal-condition}. If \(\phi_i\) is a real valued signal (which is typical) it is possible to find a function for the quadrature carrier using the \emph{Hilbert transform} (sometimes called Hilbert filter):
+Knowing why there is a need for orthogonal carriers, it should now be discussed which functions satisfy the property described by \eqref{eqn:orthogonal-condition}. If \(\phi_i\) is a real valued signal (which is typical) it is possible to find a function for the quadrature carrier using the \emph{Hilbert transform} (sometimes called Hilbert filter):
 \begin{equation}
 	\hilbert g(t) = g(t) * \frac{1}{\pi t}
 		= \frac{1}{\pi} \int_\mathbb{R} \frac{g(\tau)}{t - \tau} \,d\tau
@@ -126,27 +126,27 @@ The Hilbert transform is a linear operator that introduces a phase shift of \(\p
 % \subsection{Spectral properties of a QAM signal}
 % \skelpar[4]{Spectral properties of QAM}
 
-\section{Phase shift keying (\(M\)-PSK)}
+\section{Phase shift keying (\(M\)-PSK)} \label{sec:mpsk}
 
-Phase shift keying (PSK) is another popular family of modulation schemes for digital signals, that is simpler than QAM. In PSK as the name suggests only the phase of the envelope changes, which means that the symbols have all the same amplitude. Thus, instead of arranging the symbols into a grid as done in QAM, \(M\)-PSK distributes the symbols over the unit circle at equidistant intervals of \(2\pi / M\) radians \cite{Mathis,Kneubuehler}. An example of 8-PSK is shown in \figref{fig:psk-constellation}. Mathematically the process of a PSK modulation can be described by making the phase of a carrier function of the message signal. For a complex exponential carrier:
+Phase shift keying (PSK) is another popular family of modulation schemes for digital signals that is simpler than QAM. In PSK as the name suggests only the phase of the envelope changes, which implies that all symbols have the same amplitude. Thus, instead of arranging the symbols into a grid, as is done in QAM, \(M\)-PSK distributes the symbols over the unit circle at equidistant intervals of \(2\pi / M\) radians \cite{Mathis,Kneubuehler}. An example of 8-PSK is shown in \figref{fig:psk-constellation}. Mathematically the process of a PSK modulation can be described by making the carrier's phase of the message. For a complex exponential carrier:
 \begin{equation}
-	s(t) = \exp\left(\omega_c t + \varphi(t)\right), \quad\text{where}\quad
+	s(t) = \exp j\left(\omega_c t + \varphi(t)\right), \quad\text{where}\quad
 	\varphi = \frac{2\pi \cdot \text{Level}(\vec{m})}{M}, \quad \vec{m} \in \{0,1\}^{\log_2 M}.
 \end{equation}
 
-It is worth noting that the case of 4-PSK, also known as quaternary phase shift keying (QPSK), is a special case, because its constellation is (up to a constant phase) a 4-ary QAM.
+It is worth noting that the case of 4-PSK, also known as quaternary phase shift keying (QPSK), is a special case, because its constellation is (up to a constant phase difference) the same as a 4-ary QAM.
 
 \section{Multipath fading} \label{sec:multipath-fading}
 
 In the previous section, we discussed how the data is modulated and demodulated at the two ends of the transmission system. This section discusses what happens between the transmitter and receiver when the modulated passband signal is transmitted wirelessly.
 
-In theory because wireless transmission happens through electromagnetic radiation, to model a wireless channel one would need to solve Maxwell's equations for either the electric or magnetic field, however in practice that is not (analytically) possible. Instead what is typically done, is to model the impulse response of the channel using a geometrical or statistical model, parametrized by a set of coefficients that are either simulated or measured experimentally \cite{Gallager}.
+In theory because wireless transmission happens through electromagnetic radiation, to model a wireless channel one would need to solve Maxwell's equations for either the electric or magnetic field, however in practice that is usually not (analytically) possible. Instead what is typically done, is to model the impulse response of the channel using a geometrical or statistical model, that is parametrized by a set of coefficients, which are either simulated or measured experimentally \cite{Gallager}.
 
-In our relatively simple model we are going to include an additive white Gaussian noise (AWGN) and a Rician (or Rayleighan) fading; both are required to model physical effects of the real world. The former in particular is relevant today, as it mathematically describes dense urban environments.
+In our relatively simple model we are going to include an additive white Gaussian noise (AWGN) and a Rician (or Rayleighan) fading; both are required to model physical effects of the real world. The former in particular is relevant today, as it describes the noise patterns of dense urban environments \cite{Messier}.
 
 \subsection{Geometric model}
 
-The simplest way to understand multipath fading, is to consider it from a geometrical perspective. \figref{fig:multipath-sketch} is a sketch of a wireless transmission system affected by multipath fading. The sender's antenna radiates an electromagnetic wave in the direction of the receiver (red line), however even under the best circumstances a part of the signal is dispersed in other directions (blue lines).
+The simplest way to understand multipath fading, is to consider it from a geometrical perspective. \figref{fig:multipath-sketch} is a sketch of a wireless transmission system affected by multipath fading. The transmitter's antenna radiates an electromagnetic wave in the direction of the receiver (red line), however even under the best circumstances a part of the signal is dispersed in other directions (blue lines).
 
 \begin{figure}
 	\centering
@@ -157,14 +157,14 @@ The simplest way to understand multipath fading, is to consider it from a geomet
 	}
 \end{figure}
 
-The problem is that, as is geometrically evident, some paths are longer than others. Because of this fact, the signal is seen by the receiver multiple times with different phase shifts~\cite{Gallager,Messier}. To mathematically model this effect, we describe the received signal \(r(t)\) as a linear combination of delayed copies of the sent signal \(s(t)\), each with a different attenuation \(c_k\) and phase shift \(\tau_k\):
+The problem is that, as is geometrically evident, some paths are longer than others. Because of electromagnetic wave travel at a constant speed, the signal is seen by the receiver multiple times with different phase shifts~\cite{Gallager,Messier}. To analytically model this effect, we describe the received signal \(r(t)\) as a linear combination of delayed copies of the sent signal \(s(t)\), each with a different attenuation \(c_k\) and phase shift \(\tau_k\):
 \begin{equation} \label{eqn:geom-multipath-rx}
 	r(t) = \sum_k c_k s(t - \tau_k).
 \end{equation}
 
 The linearity of the model is justified by the assumption that the underlying electromagnetic waves behave linearly (superposition holds) \cite{Gallager}. How many copies of \(s(t)\) (usually referred to as ``taps'' or ``rays'') should be included in \eqref{eqn:geom-multipath-rx}, depends on the precision requirements of the model.
 
-A further complication arises, when one end (or both) is not stationary. In that case the lengths of the paths change over time, and as a result both the delays \(\tau_k\) as well as the attenuations \(c_k\) become functions of time: \(\tau_k(t)\) and \(c_k(t)\) respectively \cite{Gallager,Messier}. Even worse when the velocity at which the device is moving is high, then Doppler shifts of the electromagnetic wave frequency become non negligible \cite{Gallager}.
+A further complication arises, when one end (or both) is not stationary. In that case the lengths of the paths change over time, and as a result the delays \(\tau_k\) and the attenuations \(c_k\) become functions of time: \(\tau_k(t)\) and \(c_k(t)\) respectively \cite{Gallager,Messier}. Even worse is when the velocity at which the device is moving is high, since then Doppler shifts of the electromagnetic wave frequency become non negligible \cite{Gallager}.
 
 \begin{figure}
 	\centering
@@ -175,7 +175,7 @@ A further complication arises, when one end (or both) is not stationary. In that
 	}
 \end{figure}
 
-Thus the arrangement can be modelled as a linear time-\emph{varying} system (LTV), if the transmitter or the receiver (or anything else in the channel) is moving, and as a linear time \emph{invariant} (LTI) system if the geometry is stationary. Regardless of which of the two cases, linearity alone is sufficient to approximate the channel as a finite impulse response (FIR) filter \cite{Messier}. We can rewrite an LTV version of equation \eqref{eqn:geom-multipath-rx} using a convolution product as follows:
+Thus the arrangement can be modelled as a linear time-\emph{varying} system (LTV), if the transmitter or the receiver (or anything else in the channel) is moving, and as a linear time \emph{invariant} (LTI) system if the geometry is stationary. We can rewrite an LTV version of equation \eqref{eqn:geom-multipath-rx} using a convolution product as follows:
 \begin{align*}
 	r(t) = \sum_k c_k(t) s(t - \tau_k(t)) &= \sum_k c_k(t) \int_\mathbb{R} s(\tau) \delta(\tau - \tau_k(t)) \,d\tau \\
 		&= \int_\mathbb{R} s(\tau) \sum_k c_k(t) \delta(\tau - \tau_k(t)) \,d\tau = s(\tau) * h(\tau, t),
@@ -188,13 +188,13 @@ that describes the \emph{channel impulse response} (CIR). This function depends 
 
 \subsection{Spectrum of a multipath fading channel}
 
-With a continuous time channel model the spectral properties of a fading channel can now be discussed, since the frequency response is the Fourier transform of the impulse response, i.e. \(H(f, t) = \fourier h(\tau, t)\). In this case \(h(\tau, t)\) depends on two time variables, but that is actually not an issue. It just means that the frequency response is also changing over time. Hence we perform the Fourier transform with respect to the channel (convolution) time variable \(\tau\) to obtain
+With a continuous time channel model the spectral properties of a fading channel can now be discussed. The frequency response is the Fourier transform of the impulse response, i.e. \(H(f, t) = \fourier h(\tau, t)\), though in this case \(h(\tau, t)\) depends on two time variables, but that is actually not an issue. It just means that the frequency response is also changing over time. Hence we perform the Fourier transform with respect to the channel (convolution) time variable \(\tau\) to obtain
 \begin{equation} \label{eqn:multipath-frequency-response}
 	H(f, t) = \int_\mathbb{R} \sum_k c_k(t) \delta(\tau - \tau_k(t)) e^{-2\pi jf\tau} \, d\tau
 	= \sum_k c_k(t) e^{-2\pi jf \tau_k(t)}.
 \end{equation}
 
-Equation \eqref{eqn:multipath-frequency-response} shows that the frequency response is a periodic complex exponential, which has some important implications. Notice that if there is only one tap (term), the magnitude of \(H(f, t)\) is a constant (with respect to \(f\)) since \(|e^{j\alpha f}| = 1\). This means that the channel attenuates all frequencies by the same amount, therefore it is said to be a \emph{frequency non-selective} or \emph{flat fading} channel. Whereas in the case when there is more than one tap, the taps interfere destructively at certain frequencies and the channel is called \emph{frequency selective}. To illustrate how this happens, plots of the frequency response of a two tap channel model are shown in \figref{fig:multipath-frequency-response-plots}. On the left is the magnitude of \(H(f, t)\), which presents periodic ``dips'', and on the right complex loci for the two taps (red and blue), as well as their sum (magenta), over the frequency range near the first dip (2 to 2.5 MHz) are shown.
+Equation \eqref{eqn:multipath-frequency-response} shows that the frequency response is a periodic complex exponential. This has some important implications. Notice that if there is only one tap (term), the magnitude of \(H(f, t)\) is a constant (with respect to \(f\)) since \(|e^{j\alpha f}| = 1\). This means that the channel attenuates all frequencies by the same amount, therefore it is said to be a \emph{frequency non-selective} or \emph{flat fading} channel. Whereas in the case when there is more than one tap, the taps interfere destructively at certain frequencies and the channel is called \emph{frequency selective}. To illustrate how this happens, plots of the frequency response of a two tap channel model are shown in \figref{fig:multipath-frequency-response-plots}. On the left is the magnitude of \(H(f, t)\), which presents periodic ``dips'' when the taps interfere destructively. On the right complex loci for the two taps (red and blue), as well as their sum (magenta) are shown, for values over the frequency range near the first dip (2 to 2.5 MHz).
 
 
 \begin{figure}
@@ -224,8 +224,7 @@ Another important parameter for quantifying dispersion is \emph{coherence bandwi
 	B_c \approx \frac{1}{T_d}.
 \end{equation}
 
-Finally, another important mean of parametrizing a multipath fading channel is what is called a \emph{power delay profile} (PDP). PDPs are nothing but a list of taps for a FIR model of multipath fading \cite{Mathis}. The weight of each tap in the PDP corresponds to the average channel tap power \(\expectation\{|h_l|^2\}\) (hence the name \emph{power} delay profile) and is usually given in decibel \cite{Mathis,Messier}. An example is shown at the end of chapter \ref{chp:implementation} in \tabref{tab:etsi-tap-values}.
-
+Finally, another important mean of parametrizing a multipath fading channel is what is called a \emph{power delay profile} (PDP). PDPs are nothing but a list of taps for a FIR model of multipath fading \cite{Mathis}. The weight of each tap in the PDP corresponds to the average channel tap power (hence the name \emph{power} delay profile) and is usually given in decibel \cite{Mathis,Messier}. An example is shown at the end of chapter \ref{chp:implementation} in \tabref{tab:etsi-tap-values}.
 
 % \subsection{Effects of multipath fading on modulation constellations}
 % 
@@ -238,7 +237,7 @@ Finally, another important mean of parametrizing a multipath fading channel is w
 
 % TODO: discuss the "bins" of discrete time
 
-Since in practice signal processing is done digitally, it is meaningful to discuss the properties of a discrete-time model. To keep the complexity of the model manageable some assumptions are necessary, thus the sent discrete signal\footnote{This is an abuse of notation. The argument \(n\) is used to mean the \(n\)-th digital sample of \(s\), whereas \(s(t)\) is used for the analog waveform. A more correct but longer notation is \(s(nT)\), where \(T\) is the sample time.} \(s(n)\) is assumed to have a finite single sided bandwidth \(W\). This implies that the time-domain the signal is a series of sinc-shaped pulses each shifted from the previous by a time interval \(T = 1 / (2W)\) (Nyquist rate) \cite{Messier}:
+Since in practice signal processing is done digitally, it is meaningful to discuss the properties of a discrete-time model. To keep the complexity of the model manageable some assumptions are necessary, thus the sent discrete signal\footnote{This is an abuse of notation. The argument \(n\) is used to mean the \(n\)-th digital sample of \(s\), whereas \(s(t)\) is used for the analog waveform. A more correct but longer notation is \(s(nT)\), where \(T\) is the sample time.} \(s(n)\) is assumed to have a finite single sided bandwidth \(W\) and the sampling is assumed to be ideal. This implies that the time-domain signal is a series of sinc-shaped pulses each shifted from the previous by a time interval \(T = 1 / (2W)\) (Nyquist rate) \cite{Messier}:
 \begin{equation}
 	s(t) = \sum_n s(n) \sinc \left(\frac{t}{T} - n\right).
 \end{equation}
@@ -264,7 +263,7 @@ This result is very similar to the continuous time model described by \eqref{eqn
 \begin{equation} \label{eqn:discrete-multipath-impulse-response}
 	h_l(m) = \sum_k c_k(mT) \sinc\left(l - \frac{\tau(mT)}{T}\right)
 \end{equation}
-is different from \eqref{eqn:multipath-impulse-response} consider again the plot of \(h(\tau,t)\) in \figref{fig:multipath-impulse-response}. The plot of \(h_l(m)\) would have discrete axes with \(m\) replacing \(t\) and \(l\) instead of \(\tau\), and because of the finite bandwidth in the \(l\) axis instead of Dirac deltas there would be superposed sinc functions.
+is different from \eqref{eqn:multipath-impulse-response} consider again the plot of \(h(\tau,t)\) in \figref{fig:multipath-impulse-response}. The plot of \(h_l(m)\) would have discrete axes with \(m\) replacing \(t\) and \(l\) instead of \(\tau\). Because of the finite bandwidth in the \(l\) axis instead of Dirac deltas there would be superposed sinc functions.
 
 \begin{figure}
 	\centering
@@ -275,11 +274,11 @@ is different from \eqref{eqn:multipath-impulse-response} consider again the plot
 	}
 \end{figure}
 
-From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-response} can be interpreted as a simple tapped delay line \cite{Messier, Gallager}, schematically drawn in \figref{fig:tapped-delay-line}, which confirms that the presented mathematical model is indeed a FIR filter. Simple multipath channels can be simulated with just a few lines of code, for example the data for the static fading channel in \figref{fig:multipath-frequency-response-plots} is generated in just four lines of Python. The difficulty of fading channels in practice lies in the estimation of the constantly changing parameters \(c_k(t)\) and \(\tau_k(t)\) \cite{Messier}.
+From a signal processing perspective \eqref{eqn:discrete-multipath-impulse-response} can be interpreted as a simple tapped delay line \cite{Messier, Gallager}, as schematically drawn in \figref{fig:tapped-delay-line}. Together with linearity, this confirms that the presented model is indeed just a FIR filter. Simple multipath channels can be simulated with just a few lines of code, for example the data for the static fading channel in \figref{fig:multipath-frequency-response-plots} is generated in just four lines of Python. The difficulty of fading channels in practice lies in the estimation of the constantly changing parameters \(c_k(t)\) and \(\tau_k(t)\) \cite{Messier}.
 
 \subsection{Simulating multipath CIR with FIR filters} \label{sec:fractional-delay}
 
-As mentioned in the section before a FIR filter can be used to simulate discrete-time models of multipath fading. But with FIR filters the delays can only be integer multiples of the sample rate. When the delays are non integer an approximation needs to be done. That is because FIR filters have a transfer function of the form
+As mentioned in the previous section a FIR filter can be used to simulate discrete-time models of multipath fading. But with FIR filters the delays can only be integer multiples of the sample rate. When the delays are non integer an approximation needs to be done. That is because FIR filters have a transfer function of the form
 \begin{equation} \label{eqn:transfer-function-fir}
 	H(j\omega) = \sum_{n = 0}^{N} h(n) e^{-j\omega nT}
 	\quad \text{commonly written as} \quad
@@ -289,7 +288,7 @@ but a non integer delay of \(\tau\) in the frequency domain is \(H_\tau(j\omega)
 \begin{equation}
 	E(j\omega) = H(j\omega) - H_\tau(j\omega).
 \end{equation}
-The least square method plus the assumption of finite bandwidth and the requirement of causality gives the following rule for computing the FIR filter coefficients \cite{Valimaki1995}:
+The least square method together with the assumption of finite bandwidth and the requirement of causality gives the following rule for computing the FIR filter coefficients \cite{Valimaki1995}:
 \begin{equation}
 	h(n)= \begin{cases}
 		\sinc (n - \tau) & 0 \leq n \leq N \\ 
@@ -342,7 +341,7 @@ Equation \eqref{eqn:stat-wss} states that the fading CIR is a \emph{wide sense s
 
 Recall that \(h(\tau, t)\) is a function of time because \(c_k\) and \(\tau_k\) change over time. The idea of the statistical model is to replace the cumulative change caused by \(c_k\) and \(\tau_k\) (which are difficult to estimate) with a single random variable \(f\). This is done as follows.
 
-Multipath fading is a form of multiplicative noise, as mathematically confirmed by the fact that convolving a complex baseband signal \(e^{j\omega_c t}\) with the fading CIR \(h(\tau, t)\) gives
+Multipath fading is a form of multiplicative noise, as confirmed by the fact that convolving a complex baseband signal \(e^{j\omega_c t}\) with the fading CIR \(h(\tau, t)\) gives
 \begin{equation}
 	e^{j\omega_c \tau} * h(t, \tau) = \sum_k c_k(t) e^{j\omega_c(\tau - \tau_k(t))}
 	= e^{j\omega_c \tau} \sum_k c_k(t) e^{-j\omega_c \tau_k(t)}
@@ -355,7 +354,7 @@ If there is no line of sight (NLOS), it is reasonable to assume that all paths h
 \end{equation}
 where the \(c_k\) where omitted, since they are assumed to be all equal \cite{Hoher2013}. The factor \(1/\sqrt{N}\) is introduced such that \(\expectation \{|f|^2\} = 1\). It then can be shown that the probability density function of \(|f|\) is
 \begin{equation}
-	p(a)= 2a e^{-a^2}, \text{ or } |f| \sim \mathcal{R},
+	p(a)= 2a e^{-a^2}, \text{ or } |f| \sim \mathrm{Rayleigh},
 \end{equation}
 i.e. the amplitude of \(f\) is \emph{Raileigh} distributed \cite{Hoher2013}. The probability density function of a Rayleigh distributed random variable is shown in \figref{fig:rayleigh-rice-pdf}.
 

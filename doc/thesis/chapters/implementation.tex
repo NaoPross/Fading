@@ -4,15 +4,15 @@
 
 \section{Overview}
 
-To illustrate the effects of multipath fading on a wireless transmission link, two machines with an USRP B210 each (hardware) were set up to run a software defined radio (SDR) using the GNU Radio (GR) signal processing toolkit. The latter can also be used as standalone (without hardware) to simulate a channel model. Therefore, simulations of different scenarios affected by multipath fading were elaborated and constructed using a static FIR model\footnote{As discussed in sections \ref{sec:discrete-time-model} and \ref{sec:fractional-delay}} and dynamic statistical model\footnote{See section \ref{sec:statistical-model}}. To present the results a graphical interface was made using the Dear IMGUI framework.
+To illustrate the effects of multipath fading on a wireless transmission link, two machines with an USRP B210 each (hardware) were set up to run a software defined radio (SDR) using the GNU Radio (GR) signal processing toolkit. The latter can also be used as standalone (without hardware) to simulate a channel model. Therefore, simulations of different scenarios affected by multipath fading were elaborated and constructed first using a static FIR model\footnote{As discussed in sections \ref{sec:discrete-time-model} and \ref{sec:fractional-delay}}, and then with a dynamic statistical model\footnote{See section \ref{sec:statistical-model}}. To present the results a graphical interface was made using the Dear IMGUI framework.
 
-The rest of the chapter is structured as follows. First the tools used in this project are introduced. Then implementations of the transmitter and receiver chains is explained. Subsequently simulations and measurements of fading channels with an empirically computed bit error rate (BER) are presented. Finally, the issues and the state of our current implementation is discussed.
+The rest of the chapter is structured as follows. First the tools used in this project are introduced. Then implementations of the transmitter and receiver chains is explained. Subsequently simulations and measurements of fading channels with their respective empirically computed bit error rate (BER) are presented. Finally, the current state of the implementation and issues are discussed.
 
 \section{Software Stack}
 
 \subsection{GNU Radio}
 
-For both the signal processing and the simulations the GNU Radio (GR) toolkit was chosen, as it already had drivers for the USRP hardware. GR is an open-source free software framework that can be used to build signal processing chains and SDRs. GR is composed of two parts: a C\texttt{++} library with Python bindings to write signal processing code, and GNU Radio Companion (GRC). GRC is a graphical user interface made to more easily construct signal processing chains. Signal processing algorithms as ``blocks'' that are chained together with arrows, essentially drawing a diagram called ``flow graph''. An example of a flow graph can be seen in \figref{fig:sync-lock-flowgraph}.
+For both the signal processing and the simulations the GNU Radio (GR) toolkit was chosen, as it already had integrations with the USRP hardware drivers. GR is an open-source free software framework that can be used to build signal processing chains and SDRs. GR is composed of two parts: a C\texttt{++} library with Python bindings to write signal processing code, and GNU Radio Companion (GRC). GRC is a graphical user interface made to more easily construct signal processing chains. Signal processing algorithms are graphically shown as ``blocks'' that can be chained together with arrows, essentially drawing a diagram called ``flow graph''. An example of a flow graph can be seen in \figref{fig:sync-lock-flowgraph}.
 
 Internally GR works by keeping multiple memory buffers of samples, that are passed as pointers to the signal processing algorithms' ``work functions''. When the signal processing is complete, the output buffer of one block is given to the next block as input according to how they were connected in the flow graph. The structure of a block is shown in the Python listing \ref{lst:gr-block-py}. To improve performance GR creates a thread for each work function to parallelize the workload of the concurrently running signal processing blocks. For more details see the GNU Radio Wiki and User Manual in \cite{GRWiki}.
 
@@ -44,12 +44,10 @@ class myblock(gr.sync_block):
 
 To construct a graphical interface for a demonstration platform the Dear IMGUI (immediate mode graphical user interface) library was chosen, mainly for its ease of use, wide range of technical capabilites and high refresh rate. Dear PyGUI (DPG) are the Python bindings for the Dear IMGUI library.
 
-The DPG GUI communicates with the GR flow graphs using the IP/UDP protocol. This decision to separate the project into two parts that communicate over the IP network was made because it is not easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configured flow graphs on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time. As a side effect, in theory this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph.
+The DPG front-end communicates with the GR flow graphs using the IP/UDP protocol. This decision to separate the project into two parts that communicate over the IP network was made because it is not easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configured flow graphs on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time. As a side effect, theoretically this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph. Though the latency caused by the UDP/IP could be substantial.
 
 %TODO: Describe GUI Plott.
 \section{Hardware}
-
-As receivers and transmitter devices for the SDR setup two USRP B210 devices from Ettus Research were used. Some technical specifications are shown in \tabref{tab:usrp-specs}. GR provides off the shelf blocks that interface with the official API provided from Ettus Research.
 
 \begin{table}[h]
 	\centering
@@ -58,12 +56,14 @@ As receivers and transmitter devices for the SDR setup two USRP B210 devices fro
 		Dimensions               & \(9.7 \times 15.5 \times 1.5\)\,cm \\
 		Ports                    & 2\,TX, 2\,RX, Half or Full Duplex   \\
 		RF frequencies           & \SI{70}{\mega\hertz} to \SI{6}{\giga\hertz} \\
-		Bandwidth                & \SI{200}{\kilo\hertz}--\SI{56}{\mega\hertz} \\
+		Bandwidth                & \SI{200}{\kilo\hertz} --- \SI{56}{\mega\hertz} \\
 		External reference input & \SI{10}{\mega\hertz}                         \\
 		\bottomrule
 	\end{tabular}
 	\caption{USRP B210 specifications \cite{EttusUSRPB210}. \label{tab:usrp-specs}}
 \end{table}
+
+As already mentioned, for the receiver and transmitter in the SDR setup two USRP B210 devices from Ettus Research were used. Some technical specifications of the device are shown in \tabref{tab:usrp-specs}. GR provides off the shelf blocks that interface with the official API provided from Ettus Research.
 
 \section{Transmitter chain}
 
@@ -78,7 +78,7 @@ As receivers and transmitter devices for the SDR setup two USRP B210 devices fro
 	}
 \end{figure}
 
-To compute the empirical bit error rate (BER) of the setup, the data has to be framed by the transmitter and the bitstream needs to be synchronized on the receiver side. The structure of a data packet used in the implementation is shown in \figref{fig:dataframe}. A frame begins with a user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols. Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the theoretical maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple. % TODO: explain why its simpler this way
+To compute the empirical bit error rate (BER) of the setup, the data has to be framed by the transmitter and the bitstream needs to be synchronized on the receiver side. The structure of a data packet used in the implementation is shown in \figref{fig:dataframe}. A frame begins with a user specified \(k\)-byte preamble, that in the current implementation serves as synchronization pattern. Another use case for the preamble sequence could be to introduce channel estimation pilot symbols (this will be discussed more in section \ref{sec:psam}). Following the preamble are 4 bytes encoded using a (31, 26) Hamming code (plus 1 padding bit), that contain metadata about the packet, namely payload ID and payload length. Because the payload length in bytes is encoded in 21 bits, the theoretical maximum payload size is 2 MiB, which together with 32 possible unique IDs gives a maximum data transfer with unique frame headers of 64 MiB. These constraints are a result of decisions made to keep the implementation simple. % TODO: explain why its simpler this way
 
 
 \subsection{Modulation}
@@ -120,14 +120,14 @@ which is equivalent to a convolution, with the left term being time-reversed com
 	= \int_\mathbb{R} a(\tau) a^*(\tau - 0) \,d\tau
 	= \int_\mathbb{R} |a(\tau)|^2 \,d\tau \in \mathbb{R},
 \end{equation}
-which is a real number. And more importantly the correlation with an out of phase copy \(a'(t) = a(t) e^{j\varphi}\) at 0 is
+which is a real number. And more importantly the correlation with an out of phase copy \(a'(t) = a(t) e^{j\varphi}\) at \(t = 0\) is
 \begin{equation} \label{eqn:xc-oop-copy}
 	% R_{a'a} =
 	(a' \star a)(0) 
 	= \int_\mathbb{R} a(\tau)e^{j\varphi}  a^*(\tau) \,d\tau
 	= R_{aa} e^{j\varphi}.
 \end{equation}
-The relevant observation to make in \eqref{eqn:xc-oop-copy} that since \(R_{aa}\) is a real number, the phase of the cross correlation at \(t = 0\) is the phase of \(a'(t)\). This fact can be exploited to implement fine phase correction for the received envelope in relatively few steps as follows:
+The relevant observation to make in \eqref{eqn:xc-oop-copy} is that since \(R_{aa}\) is a real number, the phase of the cross correlation at \(t = 0\) is the phase of \(a'(t)\). This fact can be exploited to implement fine phase correction for the received envelope in relatively few steps as follows:
 \begin{enumerate}
 	\item Compute the cross correlation \(R_{ra}\) of the envelope \(r(t)\) with the access code \(a(t)\),
 	\item Find the maximum value of \(\hat{R}_{ra} = \max R_{ra}(t)\) (correlation peak),
@@ -139,18 +139,18 @@ The relevant observation to make in \eqref{eqn:xc-oop-copy} that since \(R_{aa}\
 	\centering
 	\includegraphics[width = .95\linewidth]{figures/screenshots/sync_lock}
 	\caption{
-		Part of the GNU Radio flow graph for the QPSK modulated link (with hardware). The shown blocks are used to synchronize, equalize and lock the envelope.
+		Part of the GNU Radio flow graph for the QPSK modulated link (with hardware). The shown blocks are used to equalize and lock the envelope.
 		\label{fig:sync-lock-flowgraph}
 	}
 \end{figure}
 
 \subsubsection{Implementing fine phase and frequency correction} \label{sec:implement-phasecorr}
 
-To implement in GR what was discussed in the previous section the two blocks shown in \figref{fig:sync-lock-flowgraph} were used: a correlator estimator block, and a custom block. The former essentially implements the first 3 of the steps discussed at the end of section \ref{sec:phasecorr}. The correlator estimator block is given a sequence of samples, and when the cross correlation between them and the input stream is higher than a certain threshold (90\% of the amplitude of a perfect autocorrelation), it produces a ``tag'' in the output stream, that contains the phase estimate.
+To implement in GR what was discussed above the two blocks shown in \figref{fig:sync-lock-flowgraph} were used: a correlator estimator block, and a custom block. The former essentially implements the first 3 of the steps discussed at the end of the previous subsection. The correlator estimator block is given a sequence of samples, and when the cross correlation between them and the input stream is higher than a certain threshold (90\% of the amplitude of a perfect autocorrelation), it produces a ``tag'' in the output stream, that contains the phase estimate.
 
 Tags are GR's way of working with metadata that is attached to a sample. Internally tags are just polymorphic data structures containing a number indicating the absolute offset (in samples), and a pair of arbitrary values called ``key'' and ``value''. Tags are passed on from one block to the next like sample streams (unless the block specifies to do otherwise).
 
-Thus, the tagged stream is processed with a custom block, of which a simplified version of its work function shown in listing \ref{lst:phasecorr-work}. The custom block also implements fine frequency correction (shown in listing \ref{lst:phasecorr-blockphase}) by linearly interpolating the phase estimates between each pair of tags (called chunk). This can be rather trivially be formulated for a chunk of \(N\) samples with the
+Thus, the tagged stream is processed with a custom block, of which a simplified version of its work function shown in listing \ref{lst:phasecorr-work}. The custom block also implements fine frequency correction (shown in listing \ref{lst:phasecorr-blockphase}) by linearly interpolating the phase estimates between each pair of tags (called chunk). This can be rather trivially be formulated for a chunk of \(N\) samples as the
 \begin{subequations}
 	\begin{align}
 		k\text{-th chunk digital frequency} \quad  & \Omega_k = (\varphi_{k+1} - \varphi_k) / N, \text{ and the }\\
@@ -173,7 +173,7 @@ Because the frequency estimate is linearly interpolated, the phase error may not
 	\implies T = 1/f_s \leq \frac{1}{2\Delta f N' \kappa},
 	\iff N' \leq \frac{1}{2\Delta f T \kappa},
 \end{equation}
-must hold. By further setting \(\kappa = 4\) and \(N' = 32\) we obtain a minimum sampling frequency of approximately \(\SI{618.5}{\kilo\hertz}\), or conversely by letting \(f_s = \SI{1}{\mega\hertz}\) we have a maximum frame length of \(N' = 51\) symbols. In other words, roughly every 50 symbols the system must send an access code sequence. This result is rather unfortunate as it requires a lot more processing power than expected.
+must hold. By further setting \(\kappa = 4\) and \(N' = 32\) we obtain a minimum sampling frequency of approximately \(\SI{618.5}{\kilo\hertz}\), or conversely by letting \(f_s = \SI{1}{\mega\hertz}\) we have a maximum frame length of \(N' = 51\) symbols. In other words, roughly every 50 symbols the system must send an access code sequence. This result is rather unfortunate as it means that more processing power than expected is required.
 
 \begin{figure}
 	\centering
