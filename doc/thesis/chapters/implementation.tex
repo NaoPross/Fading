@@ -350,14 +350,14 @@ The numbers of taps used in this case are the number of given values.
 
 \subsection{Measurements / Demonstration}
 
-\begin{figure}
-	\centering
-	\includegraphics[frame, width = \linewidth]{figures/screenshots/Hardware_indoor.png}
-	\caption{
-		Plot from the GNU Radio sink for an indoor environment demonstrator.
-		\label{fig:GR-Hardware-indoor}
-	}
-\end{figure}
+%\begin{figure}
+%	\centering
+%	\includegraphics[frame, width = \linewidth]{figures/screenshots/Hardware_indoor.png}
+%	\caption{
+%		Plot from the GNU Radio sink for an indoor environment demonstrator.
+%		\label{fig:GR-Hardware-indoor}
+%	}
+%\end{figure}
 
 \begin{figure}
 	\centering
@@ -386,10 +386,12 @@ The numbers of taps used in this case are the number of given values.
 \end{figure}
 
 
-To demonstrate the fading effect, the two SDRs are used.
+To demonstrate the fading effect, the two SDRs are used. For that some different measurements were made.
+For example one in an indoor environment, the Lab. An other in an outdoor environment, the set up is shown in \figref{fig:mesurement-set-up-outside}.
+The result of those measurements are illustrated in \figref{fig:hardware-mesurement}. Because of the current set up the distance between the two SDRs were only about \si{2}-\SI{3}{\meter}.
+The signal were sent with a gain value of 0.4. The phase change and amplitude changes could be seen well. Specially when the transmitter or the receiver were moved, the change of them get faster.
 
-
-The BER in an indoor enviroment, for example the lab is about 
+The BER which will be described in detail in the next section was on average 2.37 for the outdoor environment and for the indoor about 2.67. It makes sense that the fading effect occurs more in an indoor environment, because there were more possibility for reflections at this distance as in the outdoor environment. 
 
 
 %TODO.Describe Mesurement
@@ -508,6 +510,7 @@ Without those only the amplitudes could be seen in the plots.
 	\input{figures/tikz/hardware}
 	\caption{
 		HARDWARE
+	\label{fig:hardware-mesurement}
 	}
 \end{figure}
 \newpage
