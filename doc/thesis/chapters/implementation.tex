@@ -46,7 +46,6 @@ To construct a graphical interface for a demonstration platform the Dear IMGUI (
 
 The DPG front-end communicates with the GR flow graphs using the IP/UDP protocol. This decision to separate the project into two parts that communicate over the IP network was made because it is not easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configured flow graphs on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time. As a side effect, theoretically this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph. Though the latency caused by the UDP/IP could be substantial.
 
-%TODO: Describe GUI Plott.
 \section{Hardware}
 
 \begin{table}[h]
@@ -177,7 +176,6 @@ must hold. By further setting \(\kappa = 4\) and \(N' = 32\) we obtain a minimum
 
 \begin{figure}
 	\centering
-	% TODO: move code into separate file
 	\input{figures/tikz/phasecorr-blockprocessing-diagram}
 	\caption{
 		Graphical representation of the input samples for the work function of the fine phase and frequency correction block (shown in listing \ref{lst:phasecorr-work}). Roughly every \(N\) samples there is a tag containing the information of the phase error (computed using the cross correlation peak). The white `chunks' of samples can be corrected using their respective left and right tag values. The samples in the red chunk need phase information from the previous block processing. The samples in the blue chunk need a phase information from the future, which is not attainable. Thus for the blue chunk the frequency estimate of the previous chunk is used.
@@ -237,6 +235,17 @@ def block_phase(self, start, end):
 	# compute chunk values
 	return sphase * np.ones(nsamples) + freq * np.arange(0, nsamples)
 \end{lstlisting}
+
+\subsection{GUI implementation}
+\begin{figure}
+	\centering
+	\includegraphics[frame, width = \linewidth]{figures/screenshots/gui_screenshot}
+	\caption{Screenshot of the graphical interface of receiver built using the DearPyGUI library.
+	\label{fig:GUI}}
+\end{figure}
+
+The GUI is implemented with the Dear PyGUI tool as described in section \ref{sec:GUI}. In \figref{fig:GUI} the surface of it is shown. There are illustrated the four different constellation plots from the channel, the synchronized after the polyphase clock sync, the equalized after the equalizer and the locked one at the end of the receiver chain.  The GUI shows the BER of the constellation  and a time plot. The surface contains also a block diagram where actually the variable parameter should be, as described in the further section \ref{GUI-improfment}.
+
 
 \section{Channel simulations}
 
@@ -318,7 +327,6 @@ When nothing else is mentioned, the number of FIR-filter taps used is eight.
 A difficulty is to check the correctness of the statistical models, if there is noise in the channel from the fading effect. Especially when the Doppler effect is included. Then the simulation is difficult to recreate, when the amplitude and phase parameter are not in a special state, in which the amplitude and the phase shift could be seen exactly. 
 To have some indication to verify the plot, mainly whether the movement of the signal could be correct, a Matlab model was used with the same values as in the GR simulation, for the different distributions. With this, the model could be verified to be correct.
 
-%TODO: Other Plots?
 \subsubsection{Real value example}
 
 In order to obtain a realistic simulation the values for multipath fading propagation conditions for an Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute) were used \cite{ETSI}, with the values shown in \tabref{tab:etsi-tap-values}. For those the maximum Doppler frequency possibilities are predefined. In the following examples \figref{fig:qpsk-simulations-dynamic} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, opposed to the values calculated in \eqref{eq:doppler} for a walking speed of \(\SI{2}{\meter\per\second}\), where the Doppler frequency is \(\SI{16}{\hertz}\). Those predefined values correspond to a speed of
@@ -454,9 +462,6 @@ and \(M\) is relatively prime to \(N\) \cite{Chu1972}. CAZAC waveforms are ideal
 
 The current GUI prototype built with DearPyGUI has some issues, the most critical begin that it is a single-threaded program. The interprocess communications (with GR's flow graphs) should be on a separate thread from the graphics, what is currently not the case. The problem is not noticeable as long as the flow graphs in the background keep sending data, but as soon as the UDP/IP data stream stops, the timeout of the socket interface causes the interface to run at less than 20 frames per second.
 
-
-%TODO: GUI description
-
 \subsection{Clock synchronization issues}
 
 Unfortunately the two SDR need an external clock generator. For that a Rubidium Frequency standard device (Model FS725) is used with the clock frequency of \SI{10}{\mega\hertz}. Two of them are used to make them more movable and independent. Those clock generators  where needed, because the synchronization does not work as planed in \ref{sec:preforming-implementation}. 
@@ -514,8 +519,4 @@ In this section the plots from the simulation and the hardware are shown.
 \newpage
 \restoregeometry
 
-\begin{figure}
-	\centering
-	\includegraphics[frame, width = \linewidth]{figures/screenshots/gui_screenshot}
-	\caption{Screenshot of the graphical interface of receiver built using the DearPyGUI library.}
-\end{figure}
+
