@@ -52,15 +52,14 @@ The DPG GUI communicates with the GR flow graphs using the IP/UDP protocol. This
 As receivers and transmitter devices for the SDR setup two USRP B210 devices from Ettus Research were used. Some technical specifications are shown in \tabref{tab:usrp-specs}. GR provides off the shelf blocks that interface with the official API provided from Ettus Research.
 
 \begin{table}[h]
-%TODO: Abstand einheiten
 	\centering
 	\begin{tabular}{ll}
 		\toprule
-		Dimensions               & \(9.7 \times 15.5 \times 1.5\) cm \\
-		Ports                    & 2 TX, 2 RX, Half or Full Duplex   \\
-		RF frequencies           & 70MHz to 6GHz                     \\
-		Bandwidth                & 200kHz -- 56MHz                   \\
-		External reference input & 10 MHz                            \\
+		Dimensions               & \(9.7 \times 15.5 \times 1.5\)\,cm \\
+		Ports                    & 2\,TX, 2\,RX, Half or Full Duplex   \\
+		RF frequencies           & \SI{70}{\mega\hertz} to \SI{6}{\giga\hertz} \\
+		Bandwidth                & \SI{200}{\kilo\hertz}--\SI{56}{\mega\hertz} \\
+		External reference input & \SI{10}{\mega\hertz}                         \\
 		\bottomrule
 	\end{tabular}
 	\caption{USRP B210 specifications \cite{EttusUSRPB210}. \label{tab:usrp-specs}}
