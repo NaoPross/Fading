@@ -261,7 +261,7 @@ Finally, the substitution \(l = m - n\) eliminates the sender's sample counter \
 \end{equation}
 This result is very similar to the continuous time model described by \eqref{eqn:multipath-impulse-response} in the sense that each received digital sample is a sent sample convolved with a different discrete channel response (because of time variance). To see how the discrete CIR
 \begin{equation} \label{eqn:discrete-multipath-impulse-response}
-	h_l(m) = \sum_k c_k(mT) \sinc\left(l - \frac{\tau(mT)}{T}\right)
+	h_l(m) = \sum_k c_k(mT) \sinc\left(l - \frac{\tau_k(mT)}{T}\right)
 \end{equation}
 is different from \eqref{eqn:multipath-impulse-response} consider again the plot of \(h(\tau,t)\) in \figref{fig:multipath-impulse-response}. The plot of \(h_l(m)\) would have discrete axes with \(m\) replacing \(t\) and \(l\) instead of \(\tau\). Because of the finite bandwidth in the \(l\) axis instead of Dirac deltas there would be superposed sinc functions.
 

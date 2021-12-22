@@ -1,11 +1,14 @@
 % !TeX program = xelatex
 % !TeX encoding = utf8
+% !TeX root = slides.tex
 \documentclass[xetex, onlymath, handout]{beamer}
 \usefonttheme{serif}
 \usetheme{hsr}
 
 % use lmodern for math
 \usepackage{lmodern}
+
+\usepackage{tex/docmacros}
 
 %% Pretty figures
 \usepackage{circuitikz}  % Electric diagrams
@@ -59,100 +62,88 @@
 
 \section{Multipath Fading}
 
-\begin{frame}{Multipath Fading sketch}
+\begin{frame}{Multipath fading}
 	\begin{figure}
 		\centering
 		\input{figures/tikz/multipath-sketch}
 	\end{figure}
-	\begin{equation} \label{eqn:multipath-impulse-response}
-		h(\tau, t) = \sum_k c_k(t) \delta(\tau - \tau_k(t)),
-	\end{equation}
+  \vspace{\baselineskip}
+  \[
+    r(t) = \sum_k c_k s(t - \tau_k).
+  \]
 \end{frame}
 
-\begin{frame}{Spectrum of a multipath fading channel}
+\begin{frame}[fragile]{Impulse reponse of a multipath fading channel}
+  \begin{figure}
+    \centering
+    \input{figures/tikz/multipath-impulse-response}
+  \end{figure}
+  \[
+		h(\tau, t) = \sum_k c_k(t) \delta(\tau - \tau_k(t))
+  \]
+\end{frame}
+
+\begin{frame}[fragile]{Spectrum of a multipath fading channel}
 	\begin{figure}
 		\centering
 		\resizebox{\linewidth}{!}{
 			\input{figures/tikz/multipath-frequency-response-plots}
-			% \skelfig[width = .8 \linewidth, height = 3cm]{}
 		}
 	\end{figure}
-	\begin{equation} 
-		H(f, t) = \int_\mathbb{R} \sum_k c_k(t) \delta(\tau - \tau_k(t)) e^{-2\pi jf\tau} \, d\tau
-		= \sum_k c_k(t) e^{-2\pi jf \tau_k(t)}.
-	\end{equation}
 \end{frame}
-
-
 
 \subsection{Discrete-time model}
 
-\begin{frame}{Discrete-time model}
+\begin{frame}[fragile]{Discrete-time and FIR}
 	\begin{figure}
 		\centering
-		\input{figures/tikz/tapped-delay-line}
+    \resizebox{\linewidth}{!}{
+      \input{figures/tikz/tapped-delay-line}
+    }
 	\end{figure}
-	\begin{equation} 
-		h_l(m) = \sum_k c_k(mT) \sinc(l - \tau(mT)/T)
-	\end{equation}
+  \vspace{\baselineskip}
+  \[
+    h_l(m) = \sum_k c_k(mT) \sinc\left(l - \frac{\tau_k(mT)}{T}\right)
+  \]
 \end{frame}
-
 
 \subsection{Statistical model}
 
 \begin{frame}[fragile]{Statistical model}
   \begin{columns}
-    \begin{column}{.5\linewidth}
-      \begin{itemize}
-        \item Raileigh distribution (NLOS)
-        \item Rician distribution (LOS) 
-     \end{itemize}
+    \begin{column}{.4\linewidth}
+      Assuming WSSUS
+      \[
+        \theta_k \sim \mathcal{U}(0, 2\pi)
+      \]
+      The NLOS Fading
+      \[
+        f = \lim_{N \to \infty} \frac{1}{\sqrt{N}} \sum_{k=1}^N e^{j\theta_k}
+      \]
+      \[
+        f \sim \mathrm{ Rayleigh}
+      \]
+      if there is a LOS
+      \[
+        f \sim \mathrm{ Rice}(K)
+      \]
     \end{column}
-    \begin{column}{.5\linewidth}
-  	  \begin{figure}
-  		\centering
-  		\resizebox{!}{4cm}{%
-  			\input{figures/tikz/ring-of-scattering-objects}
-  		}
-  	 \end{figure}
+    \begin{column}{.6\linewidth}
+      \begin{figure}
+        \centering
+        \resizebox{\linewidth}{!}{%
+          \input{figures/tikz/ring-of-scattering-objects}
+          }
+      \end{figure}
     \end{column}
   \end{columns}
 \end{frame}
-
-
-
-
 
 \section{Implementation}
 
 %TODO: Mabe picture Hardware, Bicture GR.
 
-\begin{frame}{Tools}
-  \begin{columns}
-	\begin{column}{.5\linewidth}
-		\begin{itemize}
-			\item Software Stack
-				\begin{itemize}
-					\item GNU Radio
-					\item Dear PyGUI
-				\end{itemize}
-			\item Hardware
-			\begin{itemize}
-				\item USRP B210
-			\end{itemize}
-		\end{itemize}
-	\end{column}
-	\begin{column}{.5\linewidth}
-		\begin{figure}
-		\centering
-		\includegraphics[frame, width = \linewidth]{figures/screenshots/gui_screenshot}
-		\end{figure}
-	\end{column}
-\end{columns}
-\end{frame}
-
-
-\begin{frame}{Blockdiagram}
+\begin{frame}{Block Diagram}
 	\begin{figure}
 		\centering
 		\resizebox{.9\linewidth}{!}{
@@ -162,26 +153,65 @@
 	\end{figure}
 \end{frame}
 
+\subsection{Transmitter and Receiver Chains}
 
-
-\subsection{Transmitter and Receiver chain}
-
-\begin{frame}{Transmitter chain}
-	
+\begin{frame}{Transmitter}
+  \begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/picture/PC210002}
+  \end{figure}
 \end{frame}
 
-\begin{frame}{Receiver chain}
-	
+\begin{frame}{Framed data packets}
+  \begin{figure}
+    \centering
+    \resizebox{\linewidth}{!}{
+      \input{figures/tikz/packet-frame}
+    }
+  \end{figure}
+  \begin{itemize}
+    \item Very short payload
+    \item \(k\)-Byte preamble is a Barker code \texttt{0x1f35} for Sync
+    \item Should be replaced with CAZAC
+  \end{itemize}
 \end{frame}
+
+\begin{frame}{Receiver}
+  \begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/picture/PC210011}
+  \end{figure}
+\end{frame}
+
+
+% \begin{frame}{Tools}
+%   \begin{columns}
+% 	\begin{column}{.5\linewidth}
+% 		\begin{itemize}
+% 			\item Software Stack
+% 				\begin{itemize}
+% 					\item GNU Radio
+% 					\item Dear PyGUI
+% 				\end{itemize}
+% 			\item Hardware
+% 			\begin{itemize}
+% 				\item USRP B210
+% 			\end{itemize}
+% 		\end{itemize}
+% 	\end{column}
+% 	\begin{column}{.5\linewidth}
+% 		\begin{figure}
+% 		\centering
+% 		\includegraphics[width = \linewidth]{figures/screenshots/gui_screenshot}
+% 		\end{figure}
+% 	\end{column}
+% \end{columns}
+% \end{frame}
 
 \subsection{Channel model}
 
 \begin{frame}{Discrete-time model}
-	\begin{figure}
-		\centering
-		\input{figures/tikz/qpsk-simulations-static}
-	\end{figure}
-	the 1 tap model the fading tap was \(0.2\delta(n - 0.25)\), and for the 4 tap model uses \(0.2 \delta(n - 0.25) + 0.08 \delta(n - 3.25) + 0.5 \delta(n - 4) + 0.4 \delta(n - 6.3)\). In both cases the delays are given in samples.
+
 \end{frame}
 
 \begin{frame}{Statistical model}
@@ -197,7 +227,6 @@
 \section{Measurement/Demonstration}
 
 %%Tools
-
 
 \end{document}
 
