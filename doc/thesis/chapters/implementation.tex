@@ -12,7 +12,7 @@ The rest of the chapter is structured as follows. First the tools used in this p
 
 \subsection{GNU Radio}
 
-For both the signal processing and the simulations the GNU Radio (GR) toolkit was chosen, as it already had drivers for the USRP hardware. GR is an open-source free software framework that can be used to build signal processing chains and SDRs. GR is composed of two parts: a C\texttt{++} library with Python bindings to write signal processing code, and GNU Radio Companion (GRC). GRC is a graphical user interface made to more easily construct signal processing chains. Signal processing algorithms as ``blocks'' that are chained together with arrows, essentially drawing a diagram called ``flow graph''. An example of a flow graph is shown in \figref{fig:flowgraph}.
+For both the signal processing and the simulations the GNU Radio (GR) toolkit was chosen, as it already had drivers for the USRP hardware. GR is an open-source free software framework that can be used to build signal processing chains and SDRs. GR is composed of two parts: a C\texttt{++} library with Python bindings to write signal processing code, and GNU Radio Companion (GRC). GRC is a graphical user interface made to more easily construct signal processing chains. Signal processing algorithms as ``blocks'' that are chained together with arrows, essentially drawing a diagram called ``flow graph''. An example of a flow graph can be seen in \figref{fig:sync-lock-flowgraph}.
 
 Internally GR works by keeping multiple memory buffers of samples, that are passed as pointers to the signal processing algorithms' ``work functions''. When the signal processing is complete, the output buffer of one block is given to the next block as input according to how they were connected in the flow graph. The structure of a block is shown in the Python listing \ref{lst:gr-block-py}. To improve performance GR creates a thread for each work function to parallelize the workload of the concurrently running signal processing blocks. For more details see the GNU Radio Wiki and User Manual in \cite{GRWiki}.
 
@@ -97,9 +97,11 @@ GR provides a constellation modulator block, that already implements several sta
 \section{Receiver chain}
 
 \begin{figure}
+	\centering
+	\includegraphics[width = .95\linewidth]{figures/screenshots/sync_lock}
 	\caption{
-		Cutout GNU Radio flow graph used to synchronize, equalize and lock the envelope.
-		\label{fig:flowgraph}
+		Part of the GNU Radio flow graph for the QPSK modulated link (with hardware). The shown blocks are used to synchronize, equalize and lock the envelope.
+		\label{fig:sync-lock-flowgraph}
 	}
 \end{figure}
 
@@ -149,7 +151,7 @@ The relevant observation to make in \eqref{eqn:xc-oop-copy} that since \(R_{aa}\
 
 \subsubsection{Implementing fine phase and frequency correction} \label{sec:implement-phasecorr}
 %TODO: Figure
-To implement in GR what was discussed in section \ref{sec:phasecorr} two blocks shown in \figref{fig:phasecorr-blocks} were used: a correlator estimator block, and a custom block. The former essentially implements the first 3 of the steps discussed at the end of section \ref{sec:phasecorr}. The correlator estimator block is given a sequence of samples, and when the cross correlation between them and the input stream is higher than a certain threshold (90\% of the amplitude of a perfect autocorrelation), it produces a ``tag'' in the output stream, that contains the phase estimate.
+To implement in GR what was discussed in section \ref{sec:phasecorr} two blocks shown in \figref{fig:sync-lock-flowgraph} were used: a correlator estimator block, and a custom block. The former essentially implements the first 3 of the steps discussed at the end of section \ref{sec:phasecorr}. The correlator estimator block is given a sequence of samples, and when the cross correlation between them and the input stream is higher than a certain threshold (90\% of the amplitude of a perfect autocorrelation), it produces a ``tag'' in the output stream, that contains the phase estimate.
 
 Tags are GR's way of working with metadata that is attached to a sample. Internally tags are just polymorphic data structures containing a number indicating the absolute offset (in samples), and a pair of arbitrary values called ``key'' and ``value''. Tags are passed on from one block to the next like sample streams (unless the block specifies to do otherwise).
 
@@ -414,21 +416,23 @@ For generating the bit error rate a bit stream with a specific length is compare
 
 \section{Issues in the current implementation}
 
-\subsection{Non modulated access codes}
+\subsection{Non modulated access codes} \label{sec:access-code-issue}
 
 Currently, as described in section \ref{sec:data-frame}, the access codes are put as bytes in front of the frame in the \(k\)-byte preamble. For this to work, the access code bytes must still have a good autocorrelation function after being modulated into symbols using the chosen modulation scheme. This works well with QPSK, because the constellation is quite simple and the length of the sequence is only halved after the modulation (since QPKS has 2 bits per symbol). Thus, in the QPSK flow graph the longest known Barker sequence  \texttt{0x1f35} (13 bits, left padded with zeros) is sufficient (\(\approx 7\) symbols).
 
-With QAM however, the complexity of the constellation and the higher number of bits per symbol makes it increasingly difficult to find binary sequences retain a good autocorrelation function after being modulated. A better solution would be to use for example a \emph{constant amplitude zero autocorrelation waveform} (CAZAC) of length \(N\), which is computed with
+With QAM however, the complexity of the constellation and the higher number of bits per symbol makes it increasingly difficult to find binary sequences that retain a good autocorrelation after being modulated. A better solution for example would be to use a \emph{constant amplitude zero autocorrelation waveform} (CAZAC) of length \(N\), which is computed with
 \begin{equation}
 	u_k = \exp\left(j\frac{M\pi K}{N}\right) \text{ where }
 	K = \begin{cases}
 		k^2 & \text{when } N \text{ is even} \\
-		k(k+1) & \text{when } N \text{ is odd}
-	\end{cases},
+		k(k+1) & \text{when } N \text{ is odd},
+	\end{cases}
 \end{equation}
-and \(M\) is relatively prime to \(N\) \cite{Chu1972}. CAZAC waveforms are ideal because they have a Dirac delta as autocorrelation \cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Though unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer (but not CMA). Thus, to use CAZAC waveforms, the transmitter needs to put them in front of the modulated symbols (for example using a correctly parametrized stream mux block in GR), and the receiver would need to synchronize with the sequence before the clock recovery or equalization. The latter is especially problematic because then it is no longer possible to identify the peak by comparing the autocorrelation value to a fixed threshold as done in section \ref{sec:implement-phasecorr}.
+and \(M\) is relatively prime to \(N\) \cite{Chu1972}. CAZAC waveforms are ideal because they have a Dirac delta as autocorrelation \cite{Chu1972}, i.e. \(R_{uu}(\tau) = \delta(\tau)\). Unfortunately, since these complex values are not on any constellation point they break some assumptions of the polyphase clock sync and the LMD DD equalizer (but not CMA, which unfortunately cannot be used for QAM). Thus, to use CAZAC waveforms, the transmitter needs to put them in front of the modulated symbols (for example using a correctly parametrized Stream MUX block in GR), and the receiver would need to synchronize with the sequence before the clock recovery or equalization. The latter is especially problematic because then it is no longer possible to identify the peak by comparing the autocorrelation value to a fixed threshold as done in section \ref{sec:implement-phasecorr}. Because of the aforementioned reasons, in its current state the QAM flow graph is unable to lock and decode any signals.
 
-\subsection{Single threaded GUI application}
+\subsection{Single threaded GUI application} \label{sec:gui-issue-single-threaded}
+
+The current GUI prototype built with DearPyGUI has some issues, the most critical begin that it is a single-threaded program. The interprocess communications (with GR's flow graphs) should be on a separate thread from the graphics, what is currently not the case. The problem is not noticeable as long as the flow graphs in the background keep sending data, but as soon as the UDP/IP data stream stops, the timeout of the socket interface causes the interface to run at less than 20 frames per second.
 
 \subsection{Incomplete parts}
 
@@ -437,13 +441,6 @@ and \(M\) is relatively prime to \(N\) \cite{Chu1972}. CAZAC waveforms are ideal
 Unfortunately the two SDR need an external clock generator. For that a Rubidium Frequency standard device (Model FS725) is used with the clock frequency of \SI{10}{\mega\hertz}. Two of them are used to make them more movable and independent. Those Rubidiums where needed, because the synchronization does not work as planed in \ref{sec:preforming-implementation}. 
 %TODO: Right squenz?
 Without those only the amplitudes could be seen in the plots. 
-
-\subsection{GUI Parameter change}
-%TODO: conclusion
-
-As in \ref{sec:GUI} described the GUI was implemented, but unfortunately the parts where the parameter could be changed, will showing the current simulation isn't possibl like the noise voltage of the channel or the bandwidth from the Polyphase Clock , the Gain of the Equalizer aren't implemented yet. Actually everything which needs a responds from the interfaces to the GR. 
-
-The second part which is missing is to be able to change the timing plot for the different scattering plots.
 
 % TODO : Picture of the setup
 % TODO: Plots from the Hardware
@@ -469,7 +466,7 @@ The second part which is missing is to be able to change the timing plot for the
 	\centering
 	\input{figures/tikz/qpsk-simulations-dynamic}
 	\caption{
-		Simulations with a dynamic fading channel model using PDP values of the Extended Typical Urban model (ETU) of the ETSI standard normative Annex B.2 in \cite{ETSI}. The color gradient represents progression in time.
+		Simulations with QPSK modulation and a dynamic fading channel model that uses PDP values of the Extended Typical Urban model (ETU) from the ETSI standard normative Annex B.2 in \cite{ETSI}. The PDP values from the standard are reported in \tabref{tab:etsi-tap-values}. The color gradient represents progression in time: yellow samples are more recent than the blue samples.
 		\label{fig:qpsk-simulations-dynamic}
 	}
 \end{figure}
@@ -478,14 +475,14 @@ The second part which is missing is to be able to change the timing plot for the
 	\centering
 	\input{figures/tikz/qam-simulations-dynamic}
 	\caption{
-		TODO QAM simulation
+		Simulation using the same channel parameters as in \figref{fig:qpsk-simulations-dynamic}, but with a 16-ary QAM modulation scheme. Unfortunately, because of the issue discussed in section \ref{sec:access-code-issue} the receiver cannot lock and decode the envelope.
 	}
 \end{figure}
 \begin{figure}
 	\centering
 	\input{figures/tikz/hardware}
 	\caption{
-		TODO QPSK hardware
+		HARDWARE
 	}
 \end{figure}
 \newpage
