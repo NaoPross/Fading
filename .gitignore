@@ -1,6 +1,7 @@
 doc/thesis/Fading.pdf
 doc/thesis/figures/externalized
 doc/projectplan/ProjectPlan.pdf
+doc/slides/figures/data
 
 *.figlist
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,latex,python
