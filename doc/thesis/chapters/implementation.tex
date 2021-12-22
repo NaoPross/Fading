@@ -391,10 +391,8 @@ For example one in an indoor environment, the Lab. An other in an outdoor enviro
 The result of those measurements are illustrated in \figref{fig:hardware-mesurement}. Because of the current set up the distance between the two SDRs were only about \si{2}-\SI{3}{\meter}.
 The signal were sent with a gain value of 0.4. The phase change and amplitude changes could be seen well. Specially when the transmitter or the receiver were moved, the change of them get faster.
 
-The BER which will be described in detail in the next section was on average 2.37 for the outdoor environment and for the indoor about 2.67. It makes sense that the fading effect occurs more in an indoor environment, because there were more possibility for reflections at this distance as in the outdoor environment. 
+The BER, which will be described in detail in the next section, was on average 2.37 for the outdoor environment and for the indoor about 2.67. It makes sense that the fading effect occurs more in an indoor environment, because there were more possibility for reflections at this distance as in the outdoor environment. 
 
-
-%TODO.Describe Mesurement
 
 
 \subsection{Empirical BER} \label{sec:ber}
@@ -465,11 +463,11 @@ Unfortunately the two SDR need an external clock generator. For that a Rubidium 
 %TODO: Right squenz?
 Without those only the amplitudes could be seen in the plots. 
 
-% TODO : Picture of the setup
+
 % TODO: Plots from the Hardware
 
 \section{Produced constellation plots}
-
+In this section the plots from the simulation and the hardware are shown.
 % TODO anayl
 %TODO achsenbeschrieftung 
 
@@ -509,7 +507,7 @@ Without those only the amplitudes could be seen in the plots.
 	\centering
 	\input{figures/tikz/hardware}
 	\caption{
-		HARDWARE
+		Plots from the different measurements with the two SDRs.
 	\label{fig:hardware-mesurement}
 	}
 \end{figure}

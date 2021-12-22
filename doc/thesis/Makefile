@@ -36,6 +36,7 @@ DATA := \
 	figures/data/rice_pdf.dat \
 	\
 	figures/data/qpsk_hw_lab.dat \
+	figures/data/qpsk_hw_outdoors_1.dat \
 	figures/data/qam_hw_lab.dat \
 	\
 	figures/data/qpsk_sim_nochannel.dat \
