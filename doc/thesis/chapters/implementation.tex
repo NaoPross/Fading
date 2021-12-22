@@ -42,12 +42,6 @@ class myblock(gr.sync_block):
 
 \subsection{Dear PyGUI}\label{sec:GUI}
 
-\begin{figure}
-	\centering
-	\includegraphics[frame, width = \linewidth]{figures/screenshots/gui_screenshot}
-	\caption{Screenshot of the graphical interface of receiver built using the DearPyGUI library.}
-\end{figure}
-
 To construct a graphical interface for a demonstration platform the Dear IMGUI (immediate mode graphical user interface) library was chosen, mainly for its ease of use, wide range of technical capabilites and high refresh rate. Dear PyGUI (DPG) are the Python bindings for the Dear IMGUI library.
 
 The DPG GUI communicates with the GR flow graphs using the IP/UDP protocol. This decision to separate the project into two parts that communicate over the IP network was made because it is not easy to extend the graphical interface of GRC without interfering with the sophisticated multi-threaded architecture of GR. Furthermore, this allows to have multiple correctly configured flow graphs on disk and to choose which one to run and display on the graphical interface, instead of having a single flow graph whose parameters need to be changed each time. As a side effect, in theory this setup allows to have one computer running the graphical interface, and another remote machine running just the flow graph.
@@ -98,15 +92,6 @@ GR provides a constellation modulator block, that already implements several sta
 
 \section{Receiver chain}
 
-\begin{figure}
-	\centering
-	\includegraphics[width = .95\linewidth]{figures/screenshots/sync_lock}
-	\caption{
-		Part of the GNU Radio flow graph for the QPSK modulated link (with hardware). The shown blocks are used to synchronize, equalize and lock the envelope.
-		\label{fig:sync-lock-flowgraph}
-	}
-\end{figure}
-
 \subsection{Envelope detector}
 
 What is here referred to as envelope detector has the purpose of synchronizing the symbols and equalizing the input signal amplitude. This is accomplished in GRC using two blocks: a polyphase clock sync and a constant modulus adaptive (CMA) filter equalizer. The input signal for the envelope detector has 4 samples per symbol, while the output has only one sample per symbol. The choice of the CMA equalizer later turned out to be a mistake in the QAM flow graphs, as it only works for envelopes with a constant amplitude. In the latest version least mean square decision-directed (LMS-DD) equalizers have been used.
@@ -151,8 +136,17 @@ The relevant observation to make in \eqref{eqn:xc-oop-copy} that since \(R_{aa}\
 	\item Remove the phase offset in the envelope by multiplying it with the complex conjugate of the offset, that is \(\hat{r}(t) = r(t) e^{-j\varphi}\).
 \end{enumerate}
 
+\begin{figure}
+	\centering
+	\includegraphics[width = .95\linewidth]{figures/screenshots/sync_lock}
+	\caption{
+		Part of the GNU Radio flow graph for the QPSK modulated link (with hardware). The shown blocks are used to synchronize, equalize and lock the envelope.
+		\label{fig:sync-lock-flowgraph}
+	}
+\end{figure}
+
 \subsubsection{Implementing fine phase and frequency correction} \label{sec:implement-phasecorr}
-%TODO: Figure
+
 To implement in GR what was discussed in section \ref{sec:phasecorr} two blocks shown in \figref{fig:sync-lock-flowgraph} were used: a correlator estimator block, and a custom block. The former essentially implements the first 3 of the steps discussed at the end of section \ref{sec:phasecorr}. The correlator estimator block is given a sequence of samples, and when the cross correlation between them and the input stream is higher than a certain threshold (90\% of the amplitude of a perfect autocorrelation), it produces a ``tag'' in the output stream, that contains the phase estimate.
 
 Tags are GR's way of working with metadata that is attached to a sample. Internally tags are just polymorphic data structures containing a number indicating the absolute offset (in samples), and a pair of arbitrary values called ``key'' and ``value''. Tags are passed on from one block to the next like sample streams (unless the block specifies to do otherwise).
@@ -326,19 +320,12 @@ To have some indication to verify the plot, mainly whether the movement of the s
 %TODO: Other Plots?
 \subsubsection{Real value example}
 
-In order to obtain a realistic simulation the values for multipath fading propagation conditions for an Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute) were used\cite{ETSI}, with the values shown in \tabref{tab:etsi-tap-values}. For those the maximum Doppler frequency possibilities are predefined. In the following examples \figref{fig:dynamic-exp-real} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, opposed to the values calculated in \eqref{eq:doppler}for a walking speed of \(\SI{2}{\meter\per\second}\), where the Doppler frequency is \(\SI{16}{\hertz}\). Those predefined values correspond to a speed of
-\begin{equation}
-	v = \frac{\Delta f}{f_c}\cdot c_0 = \frac{\SI{5}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{0.625}{\meter\per\second}
-\end{equation}
-and
-\begin{equation}
-	v = \frac{\Delta f}{f_c}\cdot c_0 = \frac{\SI{70}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{8.75}{\meter\per\second}
-\end{equation}.
-
-The numbers of tags used in this case are the number of given values.
-\skelpar[5]{
-	More simulation plots. Beschreiben.
-}
+In order to obtain a realistic simulation the values for multipath fading propagation conditions for an Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute) were used \cite{ETSI}, with the values shown in \tabref{tab:etsi-tap-values}. For those the maximum Doppler frequency possibilities are predefined. In the following examples \figref{fig:dynamic-exp-real} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, opposed to the values calculated in \eqref{eq:doppler} for a walking speed of \(\SI{2}{\meter\per\second}\), where the Doppler frequency is \(\SI{16}{\hertz}\). Those predefined values correspond to a speed of
+\begin{align}
+	v &= \frac{\Delta f}{f_c}\cdot c_0 &= \frac{\SI{5}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{0.625}{\meter\per\second}, \text{ and} \\
+	v &= \frac{\Delta f}{f_c}\cdot c_0 &= \frac{\SI{70}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{8.75}{\meter\per\second}.
+\end{align}
+The numbers of taps used in this case are the number of given values.
 
 \begin{table}[b]
 	\centering
@@ -360,7 +347,7 @@ The numbers of tags used in this case are the number of given values.
 	\caption{Extended Typical Urban model (ETU) ETSI Standard PDP values for multipath fading propagation conditions \cite{ETSI}. \label{tab:etsi-tap-values}}
 \end{table}
 
-\subsection{Measurements/Demonstration}
+\subsection{Measurements / Demonstration}
 
 \begin{figure}
 	\centering
@@ -373,9 +360,6 @@ The numbers of tags used in this case are the number of given values.
 To demonstrate the fading effect, the two SDRs are used.
 The BER in an indoor enviroment, for example the lab is about 
 
-\skelpar[5]{
-	Do some masurements
-}
 
 \subsection{Empirical BER} \label{sec:ber}
 To find out how accurate the simulations are compared with a simulation of the fading effect and measurements, the bit error rate of the system is calculated. This is done with the help of a user specified \(k\)-byte test frame in the beginning of each vector. As seen in listing \ref{lst:ber-work}. Every bit is compared with the test vector at the beginning before the modulation and demodulation part. 
@@ -385,10 +369,6 @@ The vector which was used as test vector is: \texttt{[0x1f, 0x35, 0x12, 0x48]}. 
 
 
 For generating the bit error rate a bit stream with a specific length is compared with the test vector. To make it simpler and to avoid mistakes, the last 200 values of this individual BER are taken to find an average and the highest single value of them. 
-
-\skelpar[5]{
-	Maybe more 
-}
 
 
 \begin{lstlisting}[
@@ -436,8 +416,6 @@ and \(M\) is relatively prime to \(N\) \cite{Chu1972}. CAZAC waveforms are ideal
 
 The current GUI prototype built with DearPyGUI has some issues, the most critical begin that it is a single-threaded program. The interprocess communications (with GR's flow graphs) should be on a separate thread from the graphics, what is currently not the case. The problem is not noticeable as long as the flow graphs in the background keep sending data, but as soon as the UDP/IP data stream stops, the timeout of the socket interface causes the interface to run at less than 20 frames per second.
 
-\subsection{Incomplete parts}
-
 \subsection{Clock synchronization issues}
 
 Unfortunately the two SDR need an external clock generator. For that a Rubidium Frequency standard device (Model FS725) is used with the clock frequency of \SI{10}{\mega\hertz}. Two of them are used to make them more movable and independent. Those Rubidiums where needed, because the synchronization does not work as planed in \ref{sec:preforming-implementation}. 
@@ -447,12 +425,15 @@ Without those only the amplitudes could be seen in the plots.
 % TODO : Picture of the setup
 % TODO: Plots from the Hardware
 
+\section{Produced constellation plots}
+
+% TODO anayl
+
 
 \newgeometry{
 	top = 25mm, bottom = 25mm,
 	inner = 15mm, outer = 15mm,
 }
-% \section{Constellation plots}
 \begin{figure}
 	\centering
 	\label{fig:qpsk-simulations-static}
@@ -489,3 +470,9 @@ Without those only the amplitudes could be seen in the plots.
 \end{figure}
 \newpage
 \restoregeometry
+
+\begin{figure}
+	\centering
+	\includegraphics[frame, width = \linewidth]{figures/screenshots/gui_screenshot}
+	\caption{Screenshot of the graphical interface of receiver built using the DearPyGUI library.}
+\end{figure}
