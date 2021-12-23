@@ -1,0 +1,9 @@
+In our semeter thesis, we have built a multipath fading demonstration platform using a software defined radio.
+
+Multipath fading is common problem that affects today's wireless devices. Multipath refers to the fact that, when a transmitter radiates a signal, some of the electromagnetic waves do not go straight to the receiver. What happens instead, is that some waves get reflected in the channel, thus taking a longer path to the receiver, and interfere destructively with eachother.
+
+This is a block diagram of our platform. The transmitter modulates the data using either QPSK or QAM. We have simulated a channel model with additive white gaussian noise, and multipath fading. The receiver's signal processing chain demodulates the data and computes the empirical bit error rate.
+
+Here we have a few pictures of our setup for the measurements. We used two USRP B210 software defined radios with a Rubidium clock generator each.
+
+And here's a screenshot of the graphical interface we built to demonstrate the effect of multipath fading.
