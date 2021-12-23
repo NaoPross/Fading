@@ -1,0 +1,139 @@
+% !TeX program = xelatex
+% !TeX encoding = utf8
+% !TeX root = slides.tex
+\documentclass[xetex, onlymath, handout]{beamer}
+\usefonttheme{serif}
+\usetheme{hsr}
+
+% use lmodern for math
+\usepackage{lmodern}
+
+\usepackage{tex/docmacros}
+
+%% Pretty figures
+\usepackage{circuitikz}  % Electric diagrams
+\usepackage{pgfplots}    % Pretty plots
+\usepackage{tikz}        % Pretty drawings
+\usepackage{tikz-3dplot} % More dimensions!
+
+\usetikzlibrary{
+	external,
+	calc,
+	positioning,
+	backgrounds,
+	decorations.pathreplacing,
+	calligraphy,
+	decorations.markings,
+	matrix,
+	arrows,
+	patterns,
+}
+\pgfplotsset{compat=newest}
+
+% math packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage[T1]{fontenc}
+\usepackage{beramono} % monospaced
+\usepackage{roboto} % other
+\renewcommand*\familydefault{\sfdefault}
+
+% metadata
+\title{Multipath Fading Demonstration Platform using Software Defined Radio}
+\author{Naoki Sean Pross \and Sara Cinzia Halter}
+\date{23. December 2021}
+
+\institute[OST]{OST FHO Campus Rapperswil}
+
+
+\begin{document}
+
+\frame{
+  \maketitle
+}
+
+\section{Multipath Fading}
+
+\begin{frame}{Multipath fading}
+	\begin{figure}
+		\centering
+		\input{figures/tikz/multipath-sketch}
+	\end{figure}
+  \vspace{\baselineskip}
+  \[
+    r(t) = \sum_k c_k s(t - \tau_k).
+  \]
+\end{frame}
+
+
+
+\section{Implementation}
+
+\begin{frame}{Block Diagram}
+	\begin{figure}
+		\centering
+		\resizebox{.9\linewidth}{!}{
+			\input{figures/tikz/overview}
+		}
+		
+	\end{figure}
+\end{frame}
+	
+\subsection{Transmitter and Receiver Chains}
+
+\begin{frame}{Transmitter and Receiver Chains}
+	\begin{columns}
+		    \begin{column}{.5\linewidth}
+		    \centering
+		     \includegraphics[width=\linewidth]{figures/picture/PC210002}
+		    \end{column}
+		    \begin{column}{.5\linewidth}
+		      \begin{figure}
+		      	\centering
+		        \includegraphics[width=\linewidth]{figures/picture/PC210011}
+		      \end{figure}
+		    \end{column}
+	 \end{columns}
+\end{frame}
+
+
+\begin{frame}{Channel model}
+\begin{columns}
+	\begin{column}{.5\linewidth}
+		\begin{itemize}
+			\item Discrete-time model
+		\end{itemize}
+		\vspace{0.2cm}
+		\begin{figure}
+			\includegraphics[width=\linewidth]{figures/screenshots/discred_time}
+		\end{figure}
+	\end{column}
+	\begin{column}{.5\linewidth}
+		\begin{itemize}
+			\item Statistical model
+		\end{itemize}
+		\vspace{0.2cm}
+		\begin{column}{.5\linewidth}
+			\begin{figure}
+				\includegraphics[width=\linewidth]{figures/screenshots/selectiv_1}
+			\end{figure}
+		\end{column}
+		\begin{column}{.5\linewidth}
+			\begin{figure}
+				\includegraphics[width=\linewidth]{figures/screenshots/selectiv_2}
+			\end{figure}
+		\end{column}
+	\end{column}
+\end{columns}
+\end{frame}
+
+
+
+
+
+%%Tools
+
+\end{document}
+
+% vim:et:ts=2:sw=2:wrap:nolinebreak:
