@@ -183,31 +183,6 @@
   \end{figure}
 \end{frame}
 
-
-% \begin{frame}{Tools}
-%   \begin{columns}
-% 	\begin{column}{.5\linewidth}
-% 		\begin{itemize}
-% 			\item Software Stack
-% 				\begin{itemize}
-% 					\item GNU Radio
-% 					\item Dear PyGUI
-% 				\end{itemize}
-% 			\item Hardware
-% 			\begin{itemize}
-% 				\item USRP B210
-% 			\end{itemize}
-% 		\end{itemize}
-% 	\end{column}
-% 	\begin{column}{.5\linewidth}
-% 		\begin{figure}
-% 		\centering
-% 		\includegraphics[width = \linewidth]{figures/screenshots/gui_screenshot}
-% 		\end{figure}
-% 	\end{column}
-% \end{columns}
-% \end{frame}
-
 \subsection{Channel model}
 
 \begin{frame}{Discrete-time model}
@@ -217,7 +192,7 @@
 		\vspace{1cm}
 		\begin{itemize}
 			\item FIR filter
-			\item Allows non integer delays
+			\item Allows for non integer delays
 		\end{itemize}
 	\end{column}
 	\begin{column}{.6\linewidth}
@@ -231,18 +206,23 @@
 \end{frame}
 
 \begin{frame}{Statistical model}
-
 	\begin{figure}
 		\centering
-		\includegraphics[width=\linewidth]{figures/screenshots/FSFM}
+		\includegraphics[width=.6\linewidth]{figures/screenshots/FSFM}
 	\end{figure}
+\end{frame}
 
+\begin{frame}{Graphical user interface}
+  \begin{figure}
+    \centering
+    \includegraphics[width = \linewidth]{figures/screenshots/gui_screenshot}
+  \end{figure}
+  Built with DearPyGUI, talks to GR via UDP/IP.
 \end{frame}
 
 \section{Conclusion}
 
 \begin{frame}{Further steps}
-
 	\begin{figure}
 		\centering
 		\includegraphics[width = \linewidth]{figures/xiaoyi-psam-figures}
@@ -253,8 +233,6 @@
 		\item Portable transmitter on a Raspberry PI
 		\item Channel parameters estimation with PSAM
 	\end{itemize}
-
-	
 \end{frame}
 
 \section{Demonstration}
