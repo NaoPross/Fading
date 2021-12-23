@@ -211,20 +211,64 @@
 \subsection{Channel model}
 
 \begin{frame}{Discrete-time model}
-
+\begin{columns}
+	\begin{column}{.4\linewidth}
+		\includegraphics[width=\linewidth]{figures/screenshots/FIR_block}
+		\vspace{1cm}
+		\begin{itemize}
+			\item FIR filter
+			\item Allows non integer delays
+		\end{itemize}
+	\end{column}
+	\begin{column}{.6\linewidth}
+		\begin{figure}
+			\centering
+			\includegraphics[width=0.8\linewidth]{figures/screenshots/Fractional_delay_6}\\
+			\includegraphics[width=0.8\linewidth]{figures/screenshots/Fractional_delay_637}
+		\end{figure}
+	\end{column}
+\end{columns}
 \end{frame}
 
 \begin{frame}{Statistical model}
-	
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\linewidth]{figures/screenshots/FSFM}
+	\end{figure}
+
 \end{frame}
 
 \section{Conclusion}
 
 \begin{frame}{Further steps}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width = \linewidth]{figures/xiaoyi-psam-figures}
+	\end{figure}
+	\begin{itemize}
+		\item Improve BER measurements and simulations
+		\item Improvements in the GUI front-end
+		\item Portable transmitter on a Raspberry PI
+		\item Channel parameters estimation with PSAM
+	\end{itemize}
+
 	
 \end{frame}
 
-\section{Measurement/Demonstration}
+\section{Demonstration}
+
+\begin{frame}{Demonstration}
+		\begin{itemize}
+			\item Simulation
+				\begin{itemize}
+					\item Discrete-time model
+					\item Statistical model
+				\end{itemize}
+			\item Hardware
+		\end{itemize}
+\end{frame}
 
 %%Tools
 
