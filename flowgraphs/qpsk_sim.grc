@@ -56,7 +56,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [472, 572.0]
+    coordinate: [456, 556.0]
     rotation: 0
     state: true
 - name: excess_bw
@@ -257,7 +257,7 @@ blocks:
     bus_structure: null
     coordinate: [992, 524.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: blocks_file_sink_1
   id: blocks_file_sink
   parameters:
@@ -275,7 +275,7 @@ blocks:
     bus_structure: null
     coordinate: [1280, 820.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: blocks_file_sink_2
   id: blocks_file_sink
   parameters:
@@ -293,7 +293,7 @@ blocks:
     bus_structure: null
     coordinate: [528, 1084.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: blocks_file_sink_3
   id: blocks_file_sink
   parameters:
@@ -311,7 +311,7 @@ blocks:
     bus_structure: null
     coordinate: [768, 828.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: blocks_null_source_0
   id: blocks_null_source
   parameters:
@@ -484,12 +484,12 @@ blocks:
     bus_structure: null
     coordinate: [312, 716.0]
     rotation: 0
-    state: bypassed
+    state: enabled
 - name: channels_selective_fading_model_0
   id: channels_selective_fading_model
   parameters:
     K: '5'
-    LOS: 'True'
+    LOS: 'False'
     N: '8'
     affinity: ''
     alias: ''
@@ -507,7 +507,7 @@ blocks:
     bus_structure: null
     coordinate: [592, 572.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: digital_cma_equalizer_cc_0
   id: digital_cma_equalizer_cc
   parameters:
@@ -657,7 +657,7 @@ blocks:
     bus_structure: null
     coordinate: [648, 740.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: fadingui_netsink_0
   id: fadingui_netsink
   parameters:
@@ -889,9 +889,9 @@ blocks:
     comment: ''
     grid: 'False'
     gui_hint: ''
-    label1: ''
+    label1: Synchronized
     label10: ''
-    label2: ''
+    label2: Lookd
     label3: ''
     label4: ''
     label5: ''

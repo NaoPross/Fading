@@ -104,7 +104,7 @@ class qpsk_sim(gr.top_block, Qt.QWidget):
         self.qtgui_const_sink_x_1.enable_axis_labels(True)
 
 
-        labels = ['', '', '', '', '',
+        labels = ['Synchronized', 'Lookd', '', '', '',
             '', '', '', '', '']
         widths = [1, 1, 1, 1, 1,
             1, 1, 1, 1, 1]
@@ -149,7 +149,14 @@ class qpsk_sim(gr.top_block, Qt.QWidget):
             log=False)
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(qpsk_const)
         self.digital_cma_equalizer_cc_0 = digital.cma_equalizer_cc(15, 1, 2e-3, 1)
-        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, 5/samp_rate, True, 5, 0, (0,0.05e-6/samp_rate,0.12e-6/samp_rate,0.2e-6/samp_rate,0.23e-6/samp_rate,0.5e-6/samp_rate,1.6e-6/samp_rate,2.3e-6/samp_rate,5e-6/samp_rate), (0.7943282347242815,0.7943282347242815,0.7943282347242815,1,1,1,0.5011872336272722,0.31622776601683794,0.19952623149688797), 9 )
+        self.channels_selective_fading_model_0 = channels.selective_fading_model( 8, 5/samp_rate, False, 5, 0, (0,0.05e-6/samp_rate,0.12e-6/samp_rate,0.2e-6/samp_rate,0.23e-6/samp_rate,0.5e-6/samp_rate,1.6e-6/samp_rate,2.3e-6/samp_rate,5e-6/samp_rate), (0.7943282347242815,0.7943282347242815,0.7943282347242815,1,1,1,0.5011872336272722,0.31622776601683794,0.19952623149688797), 9 )
+        self.channels_channel_model_0 = channels.channel_model(
+            noise_voltage=100e-3,
+            frequency_offset=2e-3,
+            epsilon=1.0,
+            taps=[np.exp(1j * 30 / 180 * np.pi)],
+            noise_seed=243,
+            block_tags=False)
         self.blocks_vector_source_x_0 = blocks.vector_source_b(testvec, True, 1, [])
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
         self.blocks_tagged_stream_align_0 = blocks.tagged_stream_align(gr.sizeof_char*1, 'frame_start')
@@ -170,8 +177,9 @@ class qpsk_sim(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_stream_mux_0, 0), (self.digital_constellation_modulator_0, 0))
         self.connect((self.blocks_stream_to_vector_0, 0), (self.fadingui_ber_0, 0))
         self.connect((self.blocks_tagged_stream_align_0, 0), (self.blocks_repack_bits_bb_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.channels_selective_fading_model_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.channels_channel_model_0, 0))
         self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_stream_mux_0, 0))
+        self.connect((self.channels_channel_model_0, 0), (self.channels_selective_fading_model_0, 0))
         self.connect((self.channels_selective_fading_model_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
         self.connect((self.channels_selective_fading_model_0, 0), (self.fadingui_netsink_0, 0))
         self.connect((self.digital_cma_equalizer_cc_0, 0), (self.digital_corr_est_cc_0, 0))

@@ -181,7 +181,7 @@ class qpsk_hw(gr.top_block, Qt.QWidget):
         self.qtgui_const_sink_x_0_0.enable_axis_labels(True)
 
 
-        labels = ['', '', '', '', '',
+        labels = ['Synchronized', 'Equalized', 'Looked', '', '',
             '', '', '', '', '']
         widths = [1, 1, 1, 1, 1,
             1, 1, 1, 1, 1]
@@ -208,10 +208,6 @@ class qpsk_hw(gr.top_block, Qt.QWidget):
         self._qtgui_const_sink_x_0_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0_0.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_const_sink_x_0_0_win)
         self.fadingui_phasecorrection_0 = fadingui.phasecorrection(frame_len)
-        self.fadingui_netsink_4_0 = fadingui.netsink(address='udp://localhost:31416', dtype="complex", vlen=1)
-        self.fadingui_netsink_4 = fadingui.netsink(address='udp://localhost:31417', dtype="complex", vlen=1)
-        self.fadingui_netsink_3 = fadingui.netsink(address='udp://localhost:31419', dtype="complex", vlen=1)
-        self.fadingui_netsink_1 = fadingui.netsink(address='udp://localhost:31418', dtype="complex", vlen=1)
         self.fadingui_ber_0 = fadingui.ber(vgl=testvec + list(np.zeros(4)), vlen=frame_len,address='udp://localhost:31420')
         self.digital_pfb_clock_sync_xxx_0 = digital.pfb_clock_sync_ccf(sps, 2 * np.pi / 100, rrc_taps, 32, 16, 1.5, 1)
         self.digital_lms_dd_equalizer_cc_0 = digital.lms_dd_equalizer_cc(15, 3e-3, 1, qpsk_const)
@@ -230,14 +226,6 @@ class qpsk_hw(gr.top_block, Qt.QWidget):
         self.blocks_stream_to_vector_0 = blocks.stream_to_vector(gr.sizeof_char*1, frame_len)
         self.blocks_stream_mux_0 = blocks.stream_mux(gr.sizeof_char*1, [len(testvec), 4])
         self.blocks_repack_bits_bb_0 = blocks.repack_bits_bb(2, 8, "", False, gr.GR_LSB_FIRST)
-        self.blocks_file_sink_3 = blocks.file_sink(gr.sizeof_gr_complex*1, 'data/locked_qpsk_hw.dat', False)
-        self.blocks_file_sink_3.set_unbuffered(False)
-        self.blocks_file_sink_2 = blocks.file_sink(gr.sizeof_gr_complex*1, 'data/equalized_qpsk_hw.dat', False)
-        self.blocks_file_sink_2.set_unbuffered(False)
-        self.blocks_file_sink_1 = blocks.file_sink(gr.sizeof_gr_complex*1, 'data/synchronized_qpsk_hw.dat', False)
-        self.blocks_file_sink_1.set_unbuffered(False)
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_gr_complex*1, 'data/channel_qpsk_hw.dat', False)
-        self.blocks_file_sink_0.set_unbuffered(False)
         self.blocks_complex_to_mag_0 = blocks.complex_to_mag(1)
         self.analog_random_source_x_0 = blocks.vector_source_b(list(map(int, numpy.random.randint(0, 255, 400))), True)
 
@@ -257,21 +245,13 @@ class qpsk_hw(gr.top_block, Qt.QWidget):
         self.connect((self.digital_constellation_modulator_0, 0), (self.uhd_usrp_sink_0, 0))
         self.connect((self.digital_corr_est_cc_0, 1), (self.blocks_complex_to_mag_0, 0))
         self.connect((self.digital_corr_est_cc_0, 0), (self.fadingui_phasecorrection_0, 0))
-        self.connect((self.digital_lms_dd_equalizer_cc_0, 0), (self.blocks_file_sink_2, 0))
         self.connect((self.digital_lms_dd_equalizer_cc_0, 0), (self.digital_corr_est_cc_0, 0))
-        self.connect((self.digital_lms_dd_equalizer_cc_0, 0), (self.fadingui_netsink_1, 0))
         self.connect((self.digital_lms_dd_equalizer_cc_0, 0), (self.qtgui_const_sink_x_0_0, 1))
-        self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.blocks_file_sink_1, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.digital_lms_dd_equalizer_cc_0, 0))
-        self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.fadingui_netsink_4, 0))
         self.connect((self.digital_pfb_clock_sync_xxx_0, 0), (self.qtgui_const_sink_x_0_0, 0))
-        self.connect((self.fadingui_phasecorrection_0, 0), (self.blocks_file_sink_3, 0))
         self.connect((self.fadingui_phasecorrection_0, 0), (self.digital_constellation_decoder_cb_0, 0))
-        self.connect((self.fadingui_phasecorrection_0, 0), (self.fadingui_netsink_3, 0))
         self.connect((self.fadingui_phasecorrection_0, 0), (self.qtgui_const_sink_x_0_0, 2))
-        self.connect((self.uhd_usrp_source_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.uhd_usrp_source_0, 0), (self.digital_pfb_clock_sync_xxx_0, 0))
-        self.connect((self.uhd_usrp_source_0, 0), (self.fadingui_netsink_4_0, 0))
 
 
     def closeEvent(self, event):
