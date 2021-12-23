@@ -45,7 +45,7 @@
 \usepackage{pgfgantt}
 
 %% Landscape pages
-\usepackage{pdflscape}
+\usepackage{lscape}
 
 % Metadata
 \title{Fading illustration with SDR -- Project Plan}
@@ -288,13 +288,13 @@ If there will be some time left, we may also use a car to demonstrate some other
 			\ganttgroup{Research}{2021-09-21}{2021-11-28}
 			\ganttnewline
 			
-			\ganttbar[progress=20]{Theory}{2021-09-22}{2021-11-28}
+			\ganttbar[progress=0]{Theory}{2021-09-22}{2021-11-28}
 			\ganttnewline
 
-			\ganttbar [progress=25]{Software Toolboxes}{2021-09-27}{2021-10-31}
+			\ganttbar [progress=0]{Software Toolboxes}{2021-09-27}{2021-10-31}
 			\ganttnewline
 						
-			\ganttbar[progress=6]{Hardware}{2021-10-04}{2021-10-31}
+			\ganttbar[progress=0]{Hardware}{2021-10-04}{2021-10-31}
 			\ganttnewline			
 
 			\ganttgroup{Prototype}{2021-10-04}{2021-10-31}
@@ -312,7 +312,7 @@ If there will be some time left, we may also use a car to demonstrate some other
 			\ganttgroup{Documentation}{2021-09-21}{2021-12-20}
 			\ganttnewline
 			
-			\ganttbar{Project Plan}{2021-09-21}{2021-10-04}
+			\ganttbar[progress=0]{Project Plan}{2021-09-21}{2021-10-04}
 			\ganttmilestone{Submission}{2021-10-05}
 			\ganttbar[progress=0]{Elevator Pitch Video}{2021-11-08}{2021-11-28}
 			\ganttbar[progress=0]{Abstract}{2021-12-02}{2021-12-09}
@@ -362,7 +362,7 @@ If there will be some time left, we may also use a car to demonstrate some other
 			milestone height = .3,
 			% colored elements
 			bar/.append style={
-				fill = teal!30!white,
+				fill = cyan!30!white,
 			},
 			bar incomplete/.append style={
 				fill = white
@@ -404,7 +404,7 @@ If there will be some time left, we may also use a car to demonstrate some other
 			\ganttgroup{Demonstration}{2021-11-03}{2021-12-05}
 			\ganttnewline
 			
-			\ganttbar[progress=100]{Simulation}{2021-10-13}{2021-10-18}
+			\ganttbar[progress=100]{Sim}{2021-10-13}{2021-10-18}
 			\ganttbar[progress=100]{Hardware}{2021-10-18}{2021-10-31}
 			\ganttmilestone{Working SDR TX -- RX}{2021-11-01}
 			\ganttbar[progress=100]{Fading model}{2021-11-03}{2021-12-19}

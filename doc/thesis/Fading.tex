@@ -64,6 +64,8 @@
 \usepackage{subcaption}
 % Frames around includegraphics
 \usepackage[export]{adjustbox}
+% Include PDF
+\usepackage{pdfpages}
 
 %% Placeholders
 \usepackage{skeldoc}
@@ -243,5 +245,7 @@
 		\item Task Description
 		\item Project Plan
 	\end{itemize}
-	%TODO Projectplan
+
+	\includepdf[openright, pages=-]{appendix/SA_HS2021_Fading}
+	\includepdf[openright, pages=-]{appendix/ProjectPlan}
 \end{document}
