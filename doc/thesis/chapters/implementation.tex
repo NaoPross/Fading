@@ -256,14 +256,8 @@ In order to study the effects of multipath fading, a series of simulations have 
 \subsection{Fading with discrete time model} \label{sec:discrete-time-model-fir}
 
  To implement and illustrate a static fading effect corresponding to section \ref{sec:discrete-time-model}, a custom block was created. The work function of the block is shown in listing \ref{lst:fractional-delay-fir}. This block is based on a FIR filter. It can be configured to simulate a with direct path (LOS) or without (NLOS).
- In this block it is possible to simulate any number of paths with different attenuations.
 
-A special case is show in the first and second colum of \figref{fig:qpsk-simulations-static}, where the delay is  a multiple of the symbol time. Another example with more taps is shown in the third colum.
-
-These simulation values are however not realistic, because the static model is too simple. It does not account for other effects, such as changes in the environment. 
-
-The block  additionally implemented the method described in section \ref{sec:fractional-delay} to allow non-integer delays. 
-Here the sinc pulse was limited using a simple boxcar function, the filter could be improved by using for example a Hann window.
+ In this block it is possible to simulate any number of paths with different attenuations. A special case is show in the first and second colum of \figref{fig:qpsk-simulations-static}, where the delay is a multiple of the symbol time. Another example with more taps is shown in the third colum.  These simulation values are however not realistic, because the static model is too simple. It does not account for other effects, such as changes in the environment. The block additionally implemented the method described in section \ref{sec:fractional-delay} to allow non-integer delays. Here the sinc pulse was limited using a simple boxcar function, the filter could be improved by using for example a Hann window.
 
 
 \begin{lstlisting}[
@@ -311,13 +305,7 @@ Here the sinc pulse was limited using a simple boxcar function, the filter could
 
 In order to represent the effect of multipath fading not only statically, a second statical model fro GR was used. The block named Frequency Selective Fading Model is implemented using the algorithm from \cite{Alimohammad2009}, with the help of the sum-of sinusoid principle (SOS). The algorithm in this block is implemented with the aim that only a small number of sinusoids are needed to simulate each ray. For the simulations shown, the recommended value of 8 has been chosen.
 
-In the block it is possible to choose between Rayleigh or Rician for the statistical modeling. When the Rician model is chosen, a realistic value for the \(K\) factor (between zero and ten \cite{Mathworks}) needs to be given. As mentioned in section \ref{{sec:statistical-model}}, if \(K=0\) the distribution is the same as in the Rayleigh model. 
-
-The delays of the power profile are specified in samples. Those vectors depend on the environment. 
-
-The magnitudes of the pulses are given in their linear values. In practice the average path gain of a fading path is in the range from \( -20 \text{dB}\) to   \(0\text{dB}\).
-
-To add movement, some Doppler shift can be introduced, but this frequency offset needs to be normalized with the sampling rate. 
+In the block it is possible to choose between Rayleigh or Rician for the statistical modeling. When the Rician model is chosen, a realistic value for the \(K\) factor (between zero and ten \cite{Mathworks}) needs to be given. As mentioned in section \ref{sec:statistical-model}, if \(K=0\) the distribution is the same as in the Rayleigh model. The delays of the power profile are specified in samples. Those vectors depend on the environment. The magnitudes of the pulses are given in their linear values. In practice the average path gain of a fading path is in the range from \SI{-20}{\decibel} to \SI{0}{\decibel}. To add movement, some Doppler shift can be introduced, but this frequency offset needs to be normalized with the sampling rate.
 
 
 %When nothing else is mentioned, the number of FIR-filter taps used is eight.
@@ -328,34 +316,35 @@ To add movement, some Doppler shift can be introduced, but this frequency offset
 It is difficult to check, whether the noise generated from the statistical model is correct. Especially when the Doppler effect is included. Then the simulation is difficult to recreate, when the amplitude and phase parameter are not in a special state, in which the amplitude and the phase shift can be seen exactly. 
 To have a possibility to verify the plot, mainly whether the movement of the signal could be correct, a Matlab model with the same values as in the GR simulation was used. Using this method, the model turned out to be correct.
 
-\subsubsection{Real value example}
+\subsubsection{Example with realistic values}
 
-In order to obtain a realistic simulation, the values for multipath fading propagation conditions of an Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute) were used \cite{ETSI}. The values shown in \tabref{tab:etsi-tap-values}. For these  values the maximum Doppler frequency possibilities are predefined. In the following examples in \figref{fig:qpsk-simulations-dynamic} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, opposed to the are values calculated in \eqref{eq:doppler} for a walking speed of \(\SI{2}{\meter\per\second}\), where the Doppler frequency is \(\SI{16}{\hertz}\). Those predefined values correspond to a speed of
-\begin{align}
-	v_1 &= \frac{\Delta f}{f_c}\cdot c_0 &= \frac{\SI{5}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{0.625}{\meter\per\second}, \text{ and} \\
-	v_2 &= \frac{\Delta f}{f_c}\cdot c_0 &= \frac{\SI{70}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{8.75}{\meter\per\second}.
-\end{align}
-The numbers of taps used in this case are the number of given values.
-
-\begin{table}[b]
+\begin{table}[hb]
 	\centering
-	\begin{tabular}{rr}
+	\begin{tabular}{rr rr}
 		\toprule
+		\bfseries Excess tap delay & \bfseries Relative power &
 		\bfseries Excess tap delay & \bfseries Relative power \\
 		\midrule
-		\SI{   0}{\nano\second} & \(\SI{-1.0}{\decibel} \approx 0.7943\) \\
-		\SI{  50}{\nano\second} & \(\SI{-1.0}{\decibel} \approx 0.7943\) \\
-		\SI{ 120}{\nano\second} & \(\SI{-1.0}{\decibel} \approx 0.7943\) \\
-		\SI{ 200}{\nano\second} & \(\SI{ 0.0}{\decibel} = 1.0000\) \\
-		\SI{ 230}{\nano\second} & \(\SI{ 0.0}{\decibel} = 1.0000\) \\
-		\SI{ 500}{\nano\second} & \(\SI{ 0.0}{\decibel} = 1.0000\) \\
+		\SI{   0}{\nano\second} & \(\SI{-1.0}{\decibel} \approx 0.7943\) &
 		\SI{1.6}{\micro\second} & \(\SI{-3.0}{\decibel} \approx 0.5011\) \\
+		\SI{  50}{\nano\second} & \(\SI{-1.0}{\decibel} \approx 0.7943\) &
 		\SI{2.3}{\micro\second} & \(\SI{-5.0}{\decibel} \approx 0.3162\) \\
+		\SI{ 120}{\nano\second} & \(\SI{-1.0}{\decibel} \approx 0.7943\) &
 		\SI{5.0}{\micro\second} & \(\SI{-7.0}{\decibel} \approx 0.1995\) \\
+		\SI{ 200}{\nano\second} & \(\SI{ 0.0}{\decibel} = 1.0000\)       \\
+		\SI{ 230}{\nano\second} & \(\SI{ 0.0}{\decibel} = 1.0000\)       \\
+		\SI{ 500}{\nano\second} & \(\SI{ 0.0}{\decibel} = 1.0000\)       \\
 		\bottomrule
 	\end{tabular}
 	\caption{Extended Typical Urban model (ETU) ETSI Standard PDP values for multipath fading propagation conditions \cite{ETSI}. \label{tab:etsi-tap-values}}
 \end{table}
+
+In order to obtain a realistic simulation, the values for multipath fading propagation conditions of an Extended Typical Urban (ETU) model, from the ETSI (European Telecommunication Standards Institute) were used \cite{ETSI}. The values shown in \tabref{tab:etsi-tap-values}. For these  values the maximum Doppler frequency possibilities are predefined. In the following examples in \figref{fig:qpsk-simulations-dynamic} either \(\SI{5}{\hertz}\) or \(\SI{70}{\hertz}\) were used, opposed to the are values calculated in \eqref{eq:doppler} for a walking speed of \(\SI{2}{\meter\per\second}\), where the Doppler frequency is \(\SI{16}{\hertz}\). Those predefined values correspond to a speed of
+\begin{align}
+	v_1 &= \frac{\Delta f}{f_c}\cdot c_0 = \frac{\SI{5}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{0.625}{\meter\per\second}, \text{ and} \\
+	v_2 &= \frac{\Delta f}{f_c}\cdot c_0 = \frac{\SI{70}{\hertz}}{\SI{2.4}{\giga\hertz}}\cdot \SI{3e8}{\meter\per\second}= \SI{8.75}{\meter\per\second}.
+\end{align}
+The numbers of taps used in this case are the number of given values.
 
 \subsection{Measurements}
 
@@ -405,13 +394,8 @@ The BER, which will be described in detail in the next section, on average was 2
 
 
 \subsection{Empirical BER} \label{sec:ber}
-To find out how accurate the simulations are compared with a simulation of the fading effect and measurements, the bit error rate of the system is calculated. This is done with the help of a user specified \(k\)-byte test frame in the beginning of each vector. As seen in listing \ref{lst:ber-work}. Every bit is compared with the test vector at the beginning before the modulation and demodulation part. 
-Because of the fact that the test vector has some random bit at the end, the bit error rate has always an average value of 32, even if the tow different vectors are  perfect match. To only focus on the BER of the signal, this value is subtracted. 
 
-The vector which was used as test vector is: \texttt{[0x1f, 0x35, 0x12, 0x48]}. Because this numbers are well suited to compare.%TODO: verweissen auf erklährung das diese gut coreliren
-
-
-For generating the bit error rate a bit stream with a specific length is compared with the test vector. To make it simpler and to avoid mistakes, the last 200 values of this individual BER are taken to find an average and the highest single value of them. 
+To find out how accurate the simulations are compared with a simulation of the fading effect and measurements, the bit error rate of the system is calculated. This is done with the help of a user specified \(2\)-byte test payload followed by 2 randomly generated bytes. As seen in the simplified listing \ref{lst:ber-work}, every bit is compared with the test vector after the demodulation stage. Because of the fact that the test vector has some random bits at the end, the bit error rate has always an average value of 32, even if the test vector perfectly matches. To only focus on the true BER of the signal, this value is subtracted. The random byte at the ends were introduced to help the feedback loops in the synchronization and equalization stages, which would otherwise would drift and lose their operating point. The test vector used is \texttt{[0x12, 0x48]}, because these binary numbers are easy to recognize in a continuous bit stream. For generating the bit error rate a bit stream with a specific length is compared with the test vector. To make it simpler and to avoid mistakes, additionally an average BER over the last 200 test vectors is computed.
 
 
 \begin{lstlisting}[
@@ -473,7 +457,7 @@ Without those only the amplitudes could be seen in the plots.
 % TODO: Plots from the Hardware
 
 \section{Produced constellation plots}
-In this section the plots from the simulation and the hardware are shown.
+In the next few pages the constellation plots from the simulation results and the hardware measurements are shown.
 % TODO anayl
 %TODO achsenbeschrieftung 
 
@@ -484,12 +468,12 @@ In this section the plots from the simulation and the hardware are shown.
 }
 \begin{figure}
 	\centering
-	\label{fig:qpsk-simulations-static}
 	\input{figures/tikz/qpsk-simulations-static}
 	\caption{
 		Simulations of a static fading channel models with different tap values. The samples were generated using the custom block discussed in section \ref{sec:discrete-time-model-fir}. For the 1 tap model the fading tap was \(0.2\delta(n - 0.25)\), and for the 4 tap model uses \(0.2 \delta(n - 0.25) + 0.08 \delta(n - 3.25) + 0.5 \delta(n - 4) + 0.4 \delta(n - 6.3)\). In both cases the delays are given in samples.
 		% delay = [0.25, 3.25, 4, 6.3]
 		% ampl =  [0.2, 0.08, 0.5, 0.4]
+		\label{fig:qpsk-simulations-static}
 	}
 \end{figure}
 \newpage
@@ -513,8 +497,8 @@ In this section the plots from the simulation and the hardware are shown.
 	\centering
 	\input{figures/tikz/hardware}
 	\caption{
-		Plots from the different measurements with the two SDRs.
-	\label{fig:hardware-mesurement}
+		Constellation plots from the different measurements with the two SDRs.
+		\label{fig:hardware-mesurement}
 	}
 \end{figure}
 \newpage
